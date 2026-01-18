@@ -294,33 +294,80 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                                 <User className="w-3 h-3" /> Nombre Organizador
                             </label>
 
-                            {/* Organizer Selector */}
+                            {/* Organizer Selector - Custom Dropdown with Images */}
                             {allOrganizers.length > 0 && (
-                                <div className="mb-3">
-                                    <select
-                                        className="w-full bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm rounded-lg p-2 mb-2 focus:border-kuma-gold focus:outline-none"
-                                        onChange={(e) => {
-                                            const orgId = e.target.value;
-                                            if (orgId === "custom") return;
-                                            const org = allOrganizers.find(o => o.id === orgId);
-                                            if (org) {
-                                                setFormData(prev => ({
-                                                    ...prev,
-                                                    organizer: {
-                                                        name: org.name,
-                                                        logo: org.logo
-                                                    }
-                                                }));
+                                <div className="mb-4 relative">
+                                    <label className="text-[10px] uppercase font-bold text-zinc-500 mb-1 block">Cargar de Base de Datos:</label>
+
+                                    {/* Trigger Button */}
+                                    <div
+                                        onClick={() => {
+                                            // Close if already open, or open
+                                            const dropdown = document.getElementById('organizer-dropdown');
+                                            if (dropdown) dropdown.classList.toggle('hidden');
+                                        }}
+                                        className="w-full bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-300 text-sm rounded-lg p-3 flex items-center justify-between cursor-pointer transition-colors"
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            {allOrganizers.find(o => o.name === formData.organizer?.name) ? (
+                                                <>
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img
+                                                        src={allOrganizers.find(o => o.name === formData.organizer?.name)?.logo}
+                                                        alt="Logo"
+                                                        className="w-5 h-5 rounded-full object-cover border border-zinc-700"
+                                                    />
+                                                    {formData.organizer?.name}
+                                                </>
+                                            ) : (
+                                                "Seleccionar de la lista..."
+                                            )}
+                                        </span>
+                                        <Minus className="w-4 h-4 rotate-90 text-zinc-500" />
+                                    </div>
+
+                                    {/* Dropdown List */}
+                                    <div
+                                        id="organizer-dropdown"
+                                        className="hidden absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto custom-scrollbar"
+                                    >
+                                        {allOrganizers.map(org => (
+                                            <div
+                                                key={org.id}
+                                                onClick={() => {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        organizer: {
+                                                            name: org.name,
+                                                            logo: org.logo
+                                                        }
+                                                    }));
+                                                    document.getElementById('organizer-dropdown')?.classList.add('hidden');
+                                                }}
+                                                className="flex items-center gap-3 p-3 hover:bg-zinc-800 cursor-pointer border-b border-zinc-800 last:border-0 transition-colors group"
+                                            >
+                                                <div className="w-8 h-8 rounded-full overflow-hidden border border-zinc-700 group-hover:border-red-500 transition-colors shrink-0">
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img src={org.logo} alt={org.name} className="w-full h-full object-cover" />
+                                                </div>
+                                                <span className="text-sm font-medium text-zinc-300 group-hover:text-white truncate">
+                                                    {org.name}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Click Outside Listener (Simple version) */}
+                                    <div
+                                        className="fixed inset-0 z-10 hidden"
+                                        id="dropdown-overlay"
+                                        onClick={(e) => {
+                                            const dropdown = document.getElementById('organizer-dropdown');
+                                            if (dropdown && !dropdown.classList.contains('hidden')) {
+                                                dropdown.classList.add('hidden');
                                             }
                                         }}
-                                        defaultValue=""
-                                    >
-                                        <option value="" disabled>-- Cargar desde Base de Datos --</option>
-                                        {allOrganizers.map(org => (
-                                            <option key={org.id} value={org.id}>{org.name}</option>
-                                        ))}
-                                        <option value="custom" disabled>------------------</option>
-                                    </select>
+                                    />
                                 </div>
                             )}
 
