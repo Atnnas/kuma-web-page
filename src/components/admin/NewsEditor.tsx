@@ -7,7 +7,7 @@ import { createNewsItem, updateNewsItem } from "@/lib/actions/news";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Calendar, Image as ImageIcon, Type, AlignLeft, Layers, Loader2, Plus, Trash2, Upload } from "lucide-react";
+import { Calendar, Image as ImageIcon, Type, AlignLeft, Layers, Loader2, Plus, Trash2, Upload, Minus } from "lucide-react";
 import { compressImage } from "@/lib/image-utils";
 
 interface NewsEditorProps {
@@ -184,18 +184,18 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                                 className={`object-cover w-full h-full ${!formData.image ? 'opacity-50 grayscale' : ''}`}
                             />
 
-                            {/* Only show delete button if there is an actual image set, or if we want to allow clearing to placeholder */}
+                            {/* Delete Button (Always Visible) */}
                             {formData.image && (
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <Button
-                                        type="button"
-                                        onClick={() => handleChange("image", "")}
-                                        className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full h-auto w-auto"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleChange("image", "")}
+                                    className="absolute top-2 right-2 z-20 bg-red-600 hover:bg-red-700 text-white w-6 h-6 flex items-center justify-center rounded-full shadow-md transition-transform hover:scale-110"
+                                    title="Eliminar Portada"
+                                >
+                                    <Minus className="w-4 h-4 font-bold" />
+                                </button>
                             )}
+
                             {!formData.image && (
                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                     <span className="text-xs font-bold text-white/50 uppercase tracking-widest">Sin Imagen</span>
@@ -205,22 +205,23 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
 
                         {/* Gallery Images */}
                         {formData.images?.map((url, index) => (
-                            <div key={index} className="relative aspect-video rounded-lg overflow-hidden border border-zinc-800 group">
+                            <div key={index} className="relative aspect-video rounded-lg overflow-hidden border border-zinc-800 group shadow-sm hover:shadow-md transition-shadow">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={url} alt={`Gallery ${index}`} className="object-cover w-full h-full" />
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <Button
-                                        type="button"
-                                        onClick={() => {
-                                            const newImages = [...(formData.images || [])];
-                                            newImages.splice(index, 1);
-                                            setFormData(prev => ({ ...prev, images: newImages }));
-                                        }}
-                                        className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full h-auto w-auto"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                </div>
+
+                                {/* Delete Button (Always Visible) */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const newImages = [...(formData.images || [])];
+                                        newImages.splice(index, 1);
+                                        setFormData(prev => ({ ...prev, images: newImages }));
+                                    }}
+                                    className="absolute top-2 right-2 z-20 bg-red-600 hover:bg-red-700 text-white w-6 h-6 flex items-center justify-center rounded-full shadow-md transition-transform hover:scale-110"
+                                    title="Eliminar Imagen"
+                                >
+                                    <Minus className="w-4 h-4 font-bold" />
+                                </button>
                             </div>
                         ))}
                     </div>
