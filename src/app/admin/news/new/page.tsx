@@ -6,7 +6,11 @@ import { Save } from "lucide-react";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
+import { useRouter } from "next/navigation";
+
 export default function NewPostPage() {
+    const router = useRouter();
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -20,25 +24,15 @@ export default function NewPostPage() {
                         <p className="text-zinc-400 mt-1">Comparte tus conocimientos con el dojo.</p>
                     </div>
                 </div>
-                <div className="flex gap-3">
-                    <Button variant="ghost" className="text-zinc-400">Descartar</Button>
-                    <Button className="bg-red-600 hover:bg-red-700 text-white gap-2">
-                        <Save className="h-4 w-4" />
-                        Publicar
-                    </Button>
-                </div>
             </div>
 
             {/* Metadata Form */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 space-y-4">
-                    <input
-                        type="text"
-                        placeholder="Título de la publicación"
-                        className="w-full bg-transparent text-4xl font-bold text-white placeholder-zinc-600 outline-none border-b border-zinc-800 py-4 focus:border-red-600 transition-colors"
-                        autoFocus
+                    <NewsEditor
+                        onSave={() => router.push('/admin/news')}
+                        onCancel={() => router.push('/admin/news')}
                     />
-                    <NewsEditor />
                 </div>
 
                 {/* Sidebar Settings */}
