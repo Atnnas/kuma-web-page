@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import Image from "next/image";
+import { PhilosophicalQuote } from "@/components/ui/PhilosophicalQuote";
 
 export function Hero() {
     const [animationStep, setAnimationStep] = useState(0); // 0: Start, 1: Spun, 2: Slashed
@@ -125,6 +126,11 @@ export function Hero() {
                     >
                         Un camino integral
                     </motion.p>
+
+                    {/* RANDOM PHILOSOPHICAL QUOTE */}
+                    <div className="relative z-30">
+                        <PhilosophicalQuote />
+                    </div>
                 </motion.div>
 
             </motion.div>
