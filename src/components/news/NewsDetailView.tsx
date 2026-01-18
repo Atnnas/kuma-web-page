@@ -238,7 +238,7 @@ export function NewsDetailView({ newsItem }: NewsDetailViewProps) {
 
             {/* Lightbox Modal */}
             <AnimatePresence>
-                {lightboxOpen && selectedImage && (
+                {lightboxOpen && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -248,25 +248,72 @@ export function NewsDetailView({ newsItem }: NewsDetailViewProps) {
                     >
                         <Button
                             onClick={closeLightbox}
-                            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 h-auto mr-4 mt-2 z-50"
+                            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 h-auto mr-4 mt-2 z-50 transition-colors"
                         >
                             <X className="w-6 h-6" />
                         </Button>
 
-                        {/* Scrollable Container for Tall Images */}
+                        {/* Navigation Buttons (Lightbox) */}
+                        {allImages.length > 1 && (
+                            <>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setGalleryIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+                                    }}
+                                    className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 z-50 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full backdrop-blur-sm transition-all"
+                                >
+                                    <ChevronLeft className="w-8 h-8" />
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setGalleryIndex((prev) => (prev + 1) % allImages.length);
+                                    }}
+                                    className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 z-50 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full backdrop-blur-sm transition-all"
+                                >
+                                    <ChevronRight className="w-8 h-8" />
+                                </button>
+                            </>
+                        )}
+
+                        {/* Scrollable Container with Swipe */}
                         <div
                             className="w-full h-full overflow-y-auto flex items-center justify-center"
-                            onClick={(e) => e.stopPropagation()} // Allow clicking inside to not close, but we want click anywhere to close? User requested scroll.
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            {/* Wrapper to allow scroll if image is taller than screen */}
-                            <div className="relative w-full max-w-5xl my-auto">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src={selectedImage}
-                                    alt="Full screen"
-                                    className="w-full h-auto object-contain rounded-lg shadow-2xl"
-                                />
-                            </div>
+                            <AnimatePresence mode="wait" initial={false}>
+                                <motion.div
+                                    key={galleryIndex}
+                                    initial={{ opacity: 0, x: 50 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -50 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                    drag="x"
+                                    dragConstraints={{ left: 0, right: 0 }}
+                                    dragElastic={0.2}
+                                    onDragEnd={(e, { offset, velocity }) => {
+                                        const swipe = offset.x;
+                                        if (swipe < -50 || velocity.x < -100) {
+                                            setGalleryIndex((prev) => (prev + 1) % allImages.length);
+                                        } else if (swipe > 50 || velocity.x > 100) {
+                                            setGalleryIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+                                        }
+                                    }}
+                                    className="relative w-full max-w-6xl my-auto cursor-grab active:cursor-grabbing"
+                                >
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src={allImages[galleryIndex]}
+                                        alt={`Full screen ${galleryIndex + 1}`}
+                                        className="w-full h-auto object-contain rounded-lg shadow-2xl max-h-[90vh]"
+                                        draggable={false}
+                                    />
+                                    <div className="text-center mt-4 text-white/50 text-sm font-medium">
+                                        {galleryIndex + 1} / {allImages.length}
+                                    </div>
+                                </motion.div>
+                            </AnimatePresence>
                         </div>
                     </motion.div>
                 )}
