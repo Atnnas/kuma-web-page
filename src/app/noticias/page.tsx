@@ -14,7 +14,8 @@ export default async function NewsPage() {
     // }
 
     // Try to seed if empty (Auto-seed for convenience)
-    await seedNews();
+    // Try to seed if empty (Auto-seed for convenience)
+    // await seedNews(); // DISABLED: User wants only manual content
 
     // Fetch data on the server
     const newsItems = await getNews();
