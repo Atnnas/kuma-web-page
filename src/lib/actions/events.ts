@@ -145,6 +145,9 @@ export async function deleteEvent(id: string) {
         revalidatePath("/calendario");
         revalidatePath("/admin/events");
         return { success: true };
+    } catch (error) {
+        console.error("Error deleting event:", error);
+        return { success: false, error: "Failed to delete event" };
     }
 }
 
