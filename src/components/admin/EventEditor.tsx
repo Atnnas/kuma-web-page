@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { IEvent } from "@/models/Event";
 import { Button } from "@/components/ui/Button";
 import { createEvent, updateEvent } from "@/lib/actions/events";
 import { getRecentImages } from "@/lib/actions/news"; // Reuse this action
+import { getOrganizers } from "@/lib/actions/organizers";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, MapPin, Type, Image as ImageIcon, Globe, User, Link as LinkIcon, Info, Loader2, Clock, Check, Upload, Minus } from "lucide-react";
 import { DatePicker } from "@/components/ui/DatePicker";
@@ -24,7 +25,9 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
     const [isLoading, setIsLoading] = useState(false);
     const [isMapOpen, setIsMapOpen] = useState(false);
     const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+    const [showMediaLibrary, setShowMediaLibrary] = useState(false);
     const [recentImages, setRecentImages] = useState<string[]>([]);
+    const [allOrganizers, setAllOrganizers] = useState<{ id: string, name: string, logo: string }[]>([]);
     const [formData, setFormData] = useState<Partial<IEvent>>({
         title: initialData?.title || "",
         description: initialData?.description || "",
@@ -57,6 +60,11 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
             }
         }));
     };
+
+    // Load organizers on mount
+    useEffect(() => {
+        getOrganizers().then(setAllOrganizers);
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -286,12 +294,44 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                             <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                                 <User className="w-3 h-3" /> Nombre Organizador
                             </label>
+
+                            {/* Organizer Selector */}
+                            {allOrganizers.length > 0 && (
+                                <div className="mb-3">
+                                    <select
+                                        className="w-full bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm rounded-lg p-2 mb-2 focus:border-kuma-gold focus:outline-none"
+                                        onChange={(e) => {
+                                            const orgId = e.target.value;
+                                            if (orgId === "custom") return;
+                                            const org = allOrganizers.find(o => o.id === orgId);
+                                            if (org) {
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    organizer: {
+                                                        name: org.name,
+                                                        logo: org.logo
+                                                    }
+                                                }));
+                                            }
+                                        }}
+                                        defaultValue=""
+                                    >
+                                        <option value="" disabled>-- Cargar desde Base de Datos --</option>
+                                        {allOrganizers.map(org => (
+                                            <option key={org.id} value={org.id}>{org.name}</option>
+                                        ))}
+                                        <option value="custom" disabled>------------------</option>
+                                    </select>
+                                </div>
+                            )}
+
                             <input
                                 type="text"
                                 value={formData.organizer?.name}
                                 onChange={(e) => handleNestedChange("organizer", "name", e.target.value)}
                                 className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-red-500 focus:outline-none transition-colors"
                                 required
+                                placeholder="Nombre manual..."
                             />
                         </div>
                         <div className="space-y-2">

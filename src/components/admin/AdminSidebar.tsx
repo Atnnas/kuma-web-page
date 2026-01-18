@@ -13,7 +13,8 @@ import {
     Menu,
     X,
     LogOut,
-    Calendar
+    Calendar,
+    Briefcase
 } from "lucide-react";
 import { handleSignOut } from "@/lib/actions";
 
@@ -21,6 +22,7 @@ const menuItems = [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { label: "Noticias", href: "/admin/news", icon: Newspaper },
     { label: "Calendario", href: "/admin/events", icon: Calendar },
+    { label: "Organizadores", href: "/admin/organizers", icon: Briefcase },
     { label: "Usuarios", href: "/admin/users", icon: Users },
     { label: "Configuración", href: "/admin/settings", icon: Settings },
 ];
