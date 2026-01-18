@@ -31,22 +31,12 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
     const [isOpenCountry, setIsOpenCountry] = useState(false);
 
     useEffect(() => {
-        const fetchCountries = async () => {
-            try {
-                const res = await fetch("https://restcountries.com/v3.1/all?fields=name,flags,translations");
-                if (res.ok) {
-                    const data = await res.json();
-                    const formatted = data.map((c: any) => ({
-                        name: c.translations?.spa?.common || c.name.common,
-                        flag: c.flags?.png
-                    })).sort((a: any, b: any) => a.name.localeCompare(b.name));
-                    setCountries(formatted);
-                }
-            } catch (error) {
-                console.error("Failed to load countries");
-            }
+        const loadCountries = async () => {
+            const { getCountries } = await import("@/lib/actions/countries");
+            const data = await getCountries();
+            setCountries(data);
         };
-        fetchCountries();
+        loadCountries();
     }, []);
     const [recentImages, setRecentImages] = useState<string[]>([]);
     const [allOrganizers, setAllOrganizers] = useState<{ id: string, name: string, logo: string }[]>([]);

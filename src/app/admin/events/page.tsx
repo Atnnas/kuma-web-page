@@ -5,7 +5,7 @@ import { getPublicEvents, deleteEvent } from "@/lib/actions/events";
 import { IEvent } from "@/models/Event";
 import { EventEditor } from "@/components/admin/EventEditor";
 import { Button } from "@/components/ui/Button";
-import { Plus, Edit2, Trash2, Calendar, MapPin, Loader2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Calendar, MapPin, Loader2, Globe } from "lucide-react";
 import Image from "next/image";
 
 export default function AdminEventsPage() {
@@ -53,6 +53,19 @@ export default function AdminEventsPage() {
     return (
         <div className="p-4 md:p-12 md:pl-80 pt-8 min-h-screen text-white">
             <div className="flex flex-col md:flex-row justify-end items-center mb-6 gap-6">
+                {/* Database Seed Button */}
+                <Button
+                    onClick={async () => {
+                        const { seedCountries } = await import("@/lib/actions/countries");
+                        const res = await seedCountries();
+                        alert(res.message || res.error);
+                    }}
+                    className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2"
+                    title="Cargar lista de países en la BD"
+                >
+                    <Globe className="w-4 h-4" /> Inicializar Países
+                </Button>
+
                 <Button
                     onClick={handleCreate}
                     className="w-full md:w-auto bg-red-600 hover:bg-white hover:text-red-600 text-white px-8 py-4 md:py-6 rounded-full font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(220,38,38,0.4)] transition-all flex items-center justify-center gap-2 group"
