@@ -90,12 +90,7 @@ export default async function NewsDetailPage({ params }: Props) {
             {/* Content Section */}
             <div className="container mx-auto px-4 max-w-4xl -mt-8 relative z-10">
                 <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-8 md:p-12 shadow-2xl backdrop-blur-sm">
-                    {/* Share & Actions */}
-                    <div className="flex justify-end mb-8 border-b border-white/5 pb-6">
-                        <Button className="text-zinc-400 hover:text-white hover:bg-white/10" variant="ghost" size="sm">
-                            <Share2 className="w-4 h-4 mr-2" /> Compartir
-                        </Button>
-                    </div>
+
 
                     {/* Main Text */}
                     <div className="prose prose-invert prose-lg max-w-none prose-headings:font-serif prose-headings:font-bold prose-p:text-zinc-300 prose-p:leading-relaxed prose-strong:text-white prose-a:text-red-500 hover:prose-a:text-red-400">
