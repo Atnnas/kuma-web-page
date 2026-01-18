@@ -130,9 +130,17 @@ export default function AdminEventsPage() {
                                             <div className="flex flex-wrap items-center gap-2 md:gap-4 text-sm text-zinc-400">
                                                 <div className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/5 max-w-full overflow-hidden">
                                                     <MapPin className="w-3 h-3 text-red-500 shrink-0" />
-                                                    <span className="font-medium truncate">
-                                                        {event.location.flag} {event.location.country} - {event.location.address}
-                                                    </span>
+                                                    <div className="flex items-center gap-1 overflow-hidden truncate">
+                                                        {event.location.flag && event.location.flag.startsWith('http') ? (
+                                                            /* eslint-disable-next-line @next/next/no-img-element */
+                                                            <img src={event.location.flag} alt="Flag" className="w-4 h-3 object-cover rounded-[1px]" />
+                                                        ) : (
+                                                            <span>{event.location.flag}</span>
+                                                        )}
+                                                        <span className="font-medium truncate">
+                                                            {event.location.country} - {event.location.address}
+                                                        </span>
+                                                    </div>
                                                     {event.location.mapLink && (
                                                         <a
                                                             href={event.location.mapLink}

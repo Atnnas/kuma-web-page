@@ -1,49 +1,19 @@
-export const COUNTRY_FLAGS: Record<string, string> = {
-    "Costa Rica": "🇨🇷",
-    "Panamá": "🇵🇦",
-    "Panama": "🇵🇦",
-    "México": "🇲🇽",
-    "Mexico": "🇲🇽",
-    "San José": "🇨🇷", // Implicit
-    "Estados Unidos": "🇺🇸",
-    "USA": "🇺🇸",
-    "Canadá": "🇨🇦",
-    "Canada": "🇨🇦",
-    "Colombia": "🇨🇴",
-    "Argentina": "🇦🇷",
-    "Chile": "🇨🇱",
-    "Perú": "🇵🇪",
-    "Peru": "🇵🇪",
-    "España": "🇪🇸",
-    "Spain": "🇪🇸",
-    "Brasil": "🇧🇷",
-    "Brazil": "🇧🇷",
-    "Japón": "🇯🇵",
-    "Japan": "🇯🇵",
-    "Guatemala": "🇬🇹",
-    "Honduras": "🇭🇳",
-    "El Salvador": "🇸🇻",
-    "Nicaragua": "🇳🇮",
-    "Venezuela": "🇻🇪",
-    "Italia": "🇮🇹",
-    "Francia": "🇫🇷",
-    "Alemania": "🇩🇪",
-    // Add more as needed
-};
+export async function searchCountryFlag(query: string): Promise<string | null> {
+    if (!query || query.length < 3) return null;
 
-export const getFlagForCountry = (country: string): string => {
-    if (!country) return "🏳️"; // Default white flag
+    try {
+        // Use REST Countries API
+        const res = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(query)}?fields=flags,cca2`);
+        if (!res.ok) return null;
 
-    // Exact match
-    if (COUNTRY_FLAGS[country]) return COUNTRY_FLAGS[country];
-
-    // Case insensitive/Partial match
-    const lower = country.toLowerCase();
-    for (const [key, flag] of Object.entries(COUNTRY_FLAGS)) {
-        if (key.toLowerCase() === lower || lower.includes(key.toLowerCase())) {
-            return flag;
+        const data = await res.json();
+        // Return the first match's PNG flag
+        if (data && data.length > 0 && data[0].flags?.png) {
+            return data[0].flags.png;
         }
+        return null;
+    } catch (error) {
+        console.error("Error fetching flag:", error);
+        return null;
     }
-
-    return "🏳️";
-};
+}

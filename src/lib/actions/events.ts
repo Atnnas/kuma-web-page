@@ -4,7 +4,7 @@ import connectDB from "@/lib/db";
 import Event, { IEvent } from "@/models/Event";
 import { requireSuperAdmin } from "@/lib/auth-utils";
 import { revalidatePath } from "next/cache";
-import { getFlagForCountry } from "@/lib/flags";
+import { searchCountryFlag } from "@/lib/flags";
 
 export async function syncEventFlags() {
     try {
@@ -14,20 +14,26 @@ export async function syncEventFlags() {
 
         for (const ev of events) {
             const currentCountry = ev.location.country;
-            const newFlag = getFlagForCountry(currentCountry);
+            if (!currentCountry) continue;
 
-            // Update if different or missing
-            if (!ev.location.flag || ev.location.flag !== newFlag) {
+            // Fetch new flag from API
+            const newFlag = await searchCountryFlag(currentCountry);
+
+            // Update if valid and different
+            if (newFlag && (!ev.location.flag || ev.location.flag !== newFlag)) {
                 ev.location.flag = newFlag;
                 await ev.save();
                 count++;
+
+                // Be nice to the API
+                await new Promise(r => setTimeout(r, 200));
             }
         }
 
         revalidatePath("/admin/events");
         revalidatePath("/");
 
-        return { success: true, message: `Se actualizaron ${count} eventos con sus banderas.` };
+        return { success: true, message: `Se actualizaron ${count} eventos con sus banderas (vía Internet).` };
     } catch (error) {
         console.error("Flag sync failed:", error);
         return { success: false, error: "Error al sincronizar banderas" };
