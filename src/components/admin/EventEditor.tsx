@@ -24,7 +24,30 @@ interface EventEditorProps {
 export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isMapOpen, setIsMapOpen] = useState(false);
-    const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+    const [showMediaLibrary, setShowMediaLibrary] = useState(false); // Controls the modal visibility
+    const [selectingFor, setSelectingFor] = useState<"organizer" | "location">("organizer"); // Track what we are selecting for
+
+    const [countries, setCountries] = useState<any[]>([]);
+    const [isOpenCountry, setIsOpenCountry] = useState(false);
+
+    useEffect(() => {
+        const fetchCountries = async () => {
+            try {
+                const res = await fetch("https://restcountries.com/v3.1/all?fields=name,flags,translations");
+                if (res.ok) {
+                    const data = await res.json();
+                    const formatted = data.map((c: any) => ({
+                        name: c.translations?.spa?.common || c.name.common,
+                        flag: c.flags?.png
+                    })).sort((a: any, b: any) => a.name.localeCompare(b.name));
+                    setCountries(formatted);
+                }
+            } catch (error) {
+                console.error("Failed to load countries");
+            }
+        };
+        fetchCountries();
+    }, []);
     const [recentImages, setRecentImages] = useState<string[]>([]);
     const [allOrganizers, setAllOrganizers] = useState<{ id: string, name: string, logo: string }[]>([]);
     const [formData, setFormData] = useState<Partial<IEvent>>({
@@ -231,40 +254,80 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2 relative">
                             <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                <Globe className="w-3 h-3" /> País
+                                PAÍS
                             </label>
-                            <input
-                                type="text"
-                                value={formData.location?.country}
-                                onChange={(e) => {
-                                    handleNestedChange("location", "country", e.target.value);
-                                }}
-                                onBlur={async (e) => {
-                                    const val = e.target.value;
-                                    if (val) {
-                                        const { searchCountryFlag } = await import("@/lib/flags");
-                                        const flagUrl = await searchCountryFlag(val);
-                                        if (flagUrl) {
-                                            setFormData(prev => ({
-                                                ...prev,
-                                                location: {
-                                                    ...prev.location!,
-                                                    flag: flagUrl
-                                                }
-                                            }));
-                                        }
-                                    }
-                                }}
-                                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-red-500 focus:outline-none transition-colors"
-                                placeholder="Ej: Costa Rica (Busca bandera automáticamente...)"
-                                required
-                            />
-                            {formData.location?.flag && (
-                                <div className="absolute right-3 top-9 pointer-events-none">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={formData.location.flag} alt="Flag" className="h-5 w-auto rounded shadow-sm" />
+                            {/* Country Selector - Searchable Combobox */}
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={formData.location?.country}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            location: {
+                                                ...prev.location!,
+                                                country: val,
+                                                // If user clears input, clear flag. If typing, keep flag until new selection or custom search found?
+                                                // Actually, let's keep it simple: just text update. The dropdown handles the flag.
+                                            }
+                                        }));
+                                        setIsOpenCountry(true);
+                                    }}
+                                    onFocus={() => setIsOpenCountry(true)}
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 pl-10 text-white focus:border-red-500 focus:outline-none transition-colors"
+                                    placeholder="Buscar país..."
+                                    required
+                                />
+                                <div className="absolute left-3 top-3.5 text-zinc-500">
+                                    <Globe className="w-4 h-4" />
                                 </div>
-                            )}
+
+                                {formData.location?.flag && (
+                                    <div className="absolute right-3 top-2.5 pointer-events-none">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={formData.location.flag} alt="Flag" className="h-6 w-auto rounded border border-zinc-700" />
+                                    </div>
+                                )}
+
+                                {/* Dropdown List */}
+                                {isOpenCountry && (
+                                    <>
+                                        <div
+                                            className="fixed inset-0 z-10"
+                                            onClick={() => setIsOpenCountry(false)}
+                                        />
+                                        <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto custom-scrollbar">
+                                            {countries
+                                                .filter(c => c.name.toLowerCase().includes((formData.location?.country || '').toLowerCase()))
+                                                .map((country: any) => (
+                                                    <div
+                                                        key={country.name}
+                                                        onClick={() => {
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                location: {
+                                                                    ...prev.location!,
+                                                                    country: country.name,
+                                                                    flag: country.flag
+                                                                }
+                                                            }));
+                                                            setIsOpenCountry(false);
+                                                        }}
+                                                        className="flex items-center gap-3 p-3 hover:bg-zinc-800 cursor-pointer border-b border-zinc-800 last:border-0"
+                                                    >
+                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                        <img src={country.flag} alt={country.name} className="w-8 h-auto rounded shadow-sm" />
+                                                        <span className="text-zinc-300">{country.name}</span>
+                                                    </div>
+                                                ))}
+                                            {countries.length === 0 && (
+                                                <div className="p-4 text-center text-zinc-500 text-sm">Cargando países...</div>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
                         </div>
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
