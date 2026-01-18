@@ -9,6 +9,7 @@ export interface INews extends Document {
     isPremium: boolean;
     date: Date;
     slug: string;
+    newsNumber?: number; // Optional on interface for now
     createdAt: Date;
     updatedAt: Date;
 }
@@ -40,8 +41,14 @@ const NewsSchema = new Schema<INews>(
             type: Date,
             default: Date.now,
         },
+        // For sequential URLs
+        newsNumber: {
+            type: Number,
+            unique: false, // Unique false for now to avoid issues with existing data, can handle logic manually
+        },
         slug: {
             type: String,
+            required: true,
             unique: true,
         },
         images: {

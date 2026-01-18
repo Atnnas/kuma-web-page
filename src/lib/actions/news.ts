@@ -105,13 +105,17 @@ export async function createNewsItem(data: Partial<INews>) {
             return { success: false, error: "Missing required fields" };
         }
 
-        // Generate short numeric ID (6 digits)
-        const shortId = Math.floor(100000 + Math.random() * 900000);
-        const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + shortId;
+        // Find the latest newsNumber to increment
+        const lastNews = await News.findOne({}, { newsNumber: 1 }).sort({ newsNumber: -1 });
+        const nextNumber = (lastNews?.newsNumber || 0) + 1;
+
+        // Slug is just the number
+        const slug = nextNumber.toString();
 
         const newItem = await News.create({
             ...data,
             slug,
+            newsNumber: nextNumber, // Save the number too
             date: data.date || new Date(),
         });
 
