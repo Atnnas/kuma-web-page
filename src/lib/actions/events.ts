@@ -19,14 +19,15 @@ export async function syncEventFlags() {
             // Fetch new flag from API
             const newFlag = await searchCountryFlag(currentCountry);
 
-            // Update if valid and different
-            if (newFlag && (!ev.location.flag || ev.location.flag !== newFlag)) {
+            // Force Update check
+            if (newFlag && ev.location.flag !== newFlag) {
+                console.log(`Updating flag for ${currentCountry}: ${newFlag}`);
                 ev.location.flag = newFlag;
                 await ev.save();
                 count++;
 
-                // Be nice to the API
-                await new Promise(r => setTimeout(r, 200));
+                // Be nice to the API (though static map is fast)
+                await new Promise(r => setTimeout(r, 50));
             }
         }
 
