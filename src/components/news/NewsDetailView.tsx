@@ -27,6 +27,7 @@ export function NewsDetailView({ newsItem }: NewsDetailViewProps) {
 
     // Carousel State
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [galleryIndex, setGalleryIndex] = useState(0); // For the gallery carousel
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
     // Lightbox State
@@ -156,26 +157,81 @@ export function NewsDetailView({ newsItem }: NewsDetailViewProps) {
                             </h2>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {newsItem.images.map((img: string, index: number) => (
-                                <motion.div
-                                    key={index}
-                                    whileHover={{ y: -5 }}
-                                    onClick={() => openLightbox(img)}
-                                    className="relative aspect-video rounded-xl overflow-hidden group border border-zinc-800 hover:border-red-900/50 transition-all duration-300 shadow-lg cursor-zoom-in"
-                                >
-                                    <Image
-                                        src={img}
-                                        alt={`Galería ${index + 1}`}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                                        <ZoomIn className="w-8 h-8 text-white drop-shadow-lg" />
-                                    </div>
-                                </motion.div>
-                            ))}
+                        {/* Gallery Carousel */}
+                        <div className="relative group/gallery">
+                            {/* Navigation Buttons */}
+                            {newsItem.images.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={() => setGalleryIndex((prev) => (prev - 1 + (newsItem.images?.length || 1)) % (newsItem.images?.length || 1))}
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-red-600/80 text-white p-3 rounded-full backdrop-blur-sm transition-all -ml-4 md:-ml-12 opacity-0 group-hover/gallery:opacity-100"
+                                    >
+                                        <ChevronLeft className="w-6 h-6" />
+                                    </button>
+                                    <button
+                                        onClick={() => setGalleryIndex((prev) => (prev + 1) % (newsItem.images?.length || 1))}
+                                        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-red-600/80 text-white p-3 rounded-full backdrop-blur-sm transition-all -mr-4 md:-mr-12 opacity-0 group-hover/gallery:opacity-100"
+                                    >
+                                        <ChevronRight className="w-6 h-6" />
+                                    </button>
+                                </>
+                            )}
+
+                            {/* Carousel Container */}
+                            <div className="overflow-hidden rounded-xl border border-zinc-800 shadow-2xl relative aspect-video">
+                                <AnimatePresence mode="wait" initial={false}>
+                                    <motion.div
+                                        key={galleryIndex}
+                                        initial={{ opacity: 0, x: 100 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -100 }}
+                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                        drag="x"
+                                        dragConstraints={{ left: 0, right: 0 }}
+                                        dragElastic={0.2}
+                                        onDragEnd={(e, { offset, velocity }) => {
+                                            const swipe = offset.x; // negative is left
+                                            if (swipe < -50 || velocity.x < -100) {
+                                                setGalleryIndex((prev) => (prev + 1) % (newsItem.images?.length || 1));
+                                            } else if (swipe > 50 || velocity.x > 100) {
+                                                setGalleryIndex((prev) => (prev - 1 + (newsItem.images?.length || 1)) % (newsItem.images?.length || 1));
+                                            }
+                                        }}
+                                        onClick={() => newsItem.images && openLightbox(newsItem.images[galleryIndex])}
+                                        className="absolute inset-0 cursor-grab active:cursor-grabbing"
+                                    >
+                                        <Image
+                                            src={newsItem.images[galleryIndex]}
+                                            alt={`Galería ${galleryIndex + 1}`}
+                                            fill
+                                            className="object-cover"
+                                            draggable={false}
+                                        />
+                                        <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 hover:opacity-100 pointer-events-none">
+                                            <ZoomIn className="w-12 h-12 text-white drop-shadow-lg" />
+                                        </div>
+                                    </motion.div>
+                                </AnimatePresence>
+
+                                {/* Counter Widget */}
+                                <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/10 z-10 pointer-events-none">
+                                    {galleryIndex + 1} / {newsItem.images.length}
+                                </div>
+                            </div>
                         </div>
+
+                        {/* Thumbnails (Optional, simplified to dots for now or omitted to keep clean single view as requested) */}
+                        {newsItem.images.length > 1 && (
+                            <div className="flex justify-center mt-6 gap-2">
+                                {newsItem.images.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setGalleryIndex(idx)}
+                                        className={`h-1.5 rounded-full transition-all ${idx === galleryIndex ? 'w-8 bg-red-600' : 'w-2 bg-zinc-700 hover:bg-zinc-500'}`}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
