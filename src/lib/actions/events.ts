@@ -76,6 +76,7 @@ export async function getUpcomingEvents() {
             endDate: event.endDate.toISOString(),
             createdAt: event.createdAt.toISOString(),
             updatedAt: event.updatedAt.toISOString(),
+            participants: event.participants || [], // Ensure array
         }));
     } catch (error) {
         console.error("Error fetching upcoming events:", error);
@@ -144,8 +145,37 @@ export async function deleteEvent(id: string) {
         revalidatePath("/calendario");
         revalidatePath("/admin/events");
         return { success: true };
+    }
+}
+
+// Re-integrated here to solve import issues
+import { auth } from "@/auth";
+
+export async function toggleParticipation(eventId: string, shouldParticipate: boolean) {
+    try {
+        const session = await auth();
+        if (!session?.user?.email) {
+            return { success: false, error: "Must be logged in" };
+        }
+
+        const userId = session.user.id || session.user.email;
+
+        await connectDB();
+
+        if (shouldParticipate) {
+            await Event.findByIdAndUpdate(eventId, {
+                $addToSet: { participants: userId }
+            });
+        } else {
+            await Event.findByIdAndUpdate(eventId, {
+                $pull: { participants: userId }
+            });
+        }
+
+        revalidatePath("/calendario");
+        return { success: true };
     } catch (error) {
-        console.error("Error deleting event:", error);
-        return { success: false, error: "Failed to delete event" };
+        console.error("Error toggling participation:", error);
+        return { success: false, error: "Failed to update participation" };
     }
 }

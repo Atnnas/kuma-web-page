@@ -5,7 +5,7 @@ import Image from "next/image";
 import { MiniCalendar } from "@/components/ui/MiniCalendar";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { Calendar as CalendarIcon, MapPin, Clock, ExternalLink, Loader2 } from "lucide-react";
-import { toggleParticipation } from "@/lib/actions/participation";
+import { toggleParticipation } from "@/lib/actions/events";
 import clsx from "clsx";
 
 interface EventCardProps {
