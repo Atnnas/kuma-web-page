@@ -7,6 +7,7 @@ import { DayPicker } from "react-day-picker";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { TouchDatePicker } from "./TouchDatePicker";
 
 // Simple utility to merge classes if @/lib/utils doesn't exist
 function classNames(...classes: (string | undefined | null | false)[]) {
@@ -53,82 +54,9 @@ export function DatePicker({ date, setDate, className, placeholder = "Selecciona
 
     // Mobile: Numeric Inputs (Day / Month / Year) - Direct Interaction
     if (isMobile) {
-        // Helpers for extracting parts or defaulting to Today if undefined
-        const isValidDate = date && !isNaN(date.getTime());
-        const dVal = isValidDate ? date!.getDate() : "";
-        const mVal = isValidDate ? date!.getMonth() + 1 : "";
-        const yVal = isValidDate ? date!.getFullYear() : "";
-
-        const updateDateParts = (field: 'day' | 'month' | 'year', value: string) => {
-            const num = parseInt(value, 10);
-            if (isNaN(num)) return; // Prevent NaN updates
-
-            let baseDate = date || new Date();
-            let newDay = baseDate.getDate();
-            let newMonth = baseDate.getMonth();
-            let newYear = baseDate.getFullYear();
-
-            // First, update the target field
-            if (field === 'day') newDay = num;
-            if (field === 'month') newMonth = num - 1; // 0-indexed
-            if (field === 'year') newYear = num;
-
-            // Handle Month Overflow (12 -> 0, -1 -> 11)
-            if (newMonth < 0) newMonth = 0;
-            if (newMonth > 11) newMonth = 11;
-
-            // Handle Day clamping
-            const maxDays = new Date(newYear, newMonth + 1, 0).getDate();
-            if (newDay > maxDays) newDay = maxDays;
-            if (newDay < 1) newDay = 1;
-
-            const newDate = new Date(newYear, newMonth, newDay);
-            setDate(newDate);
-        };
-
         return (
-            <div className={classNames("grid grid-cols-3 gap-2 w-full", className)}>
-                {/* Day */}
-                <div className="flex flex-col">
-                    <label className="text-[10px] text-zinc-500 font-bold uppercase text-center mb-1 tracking-wider">Día</label>
-                    <input
-                        type="number"
-                        value={dVal}
-                        placeholder="DD"
-                        min={1}
-                        max={31}
-                        onChange={(e) => updateDateParts('day', e.target.value)}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-3 px-1 text-center text-white text-xl font-bold focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none transition-all placeholder:text-zinc-700 appearance-auto"
-                    />
-                </div>
-
-                {/* Month */}
-                <div className="flex flex-col">
-                    <label className="text-[10px] text-zinc-500 font-bold uppercase text-center mb-1 tracking-wider">Mes</label>
-                    <input
-                        type="number"
-                        value={mVal}
-                        placeholder="MM"
-                        min={1}
-                        max={12}
-                        onChange={(e) => updateDateParts('month', e.target.value)}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-3 px-1 text-center text-white text-xl font-bold focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none transition-all placeholder:text-zinc-700 appearance-auto"
-                    />
-                </div>
-
-                {/* Year */}
-                <div className="flex flex-col">
-                    <label className="text-[10px] text-zinc-500 font-bold uppercase text-center mb-1 tracking-wider">Año</label>
-                    <input
-                        type="number"
-                        value={yVal}
-                        placeholder="AAAA"
-                        min={1900}
-                        max={2100}
-                        onChange={(e) => updateDateParts('year', e.target.value)}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-3 px-1 text-center text-white text-xl font-bold focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none transition-all placeholder:text-zinc-700 appearance-auto"
-                    />
-                </div>
+            <div className={className}>
+                <TouchDatePicker date={date} setDate={setDate} />
             </div>
         );
     }
