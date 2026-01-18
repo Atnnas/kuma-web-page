@@ -192,7 +192,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                         {isParticipating && (
                             <div className="absolute -left-6 top-[-10px] z-50 animate-in zoom-in-0 slide-in-from-top-10 duration-300 ease-out fill-mode-forwards block hidden md:block">
                                 <Image
-                                    src="/images/yellow-pin.png"
+                                    src="/images/yellow-pin.svg"
                                     alt="Pinned"
                                     width={50}
                                     height={50}
@@ -204,7 +204,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                         {isParticipating && (
                             <div className="absolute top-0 right-10 md:hidden z-50 animate-in zoom-in-0 slide-in-from-top-10 duration-300 ease-out fill-mode-forwards">
                                 <Image
-                                    src="/images/yellow-pin.png"
+                                    src="/images/yellow-pin.svg"
                                     alt="Pinned"
                                     width={40}
                                     height={40}
