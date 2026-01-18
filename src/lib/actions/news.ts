@@ -1,9 +1,9 @@
 "use server";
 
 import connectDB from "@/lib/db";
-import News, { INews } from "@/models/News";
+importNews, { INews } from "@/models/News";
 import { feedItems } from "@/lib/mock-data";
-import { requireSuperAdmin } from "@/lib/auth-utils";
+import { requireSuperAdmin, getCurrentUser } from "@/lib/auth-utils";
 
 // Helper to parse Spanish date string "12 Ene, 2025" to Date object
 const parseSpanishDate = (dateStr: string): Date => {
@@ -233,7 +233,9 @@ export async function getPastEvents() {
 
 export async function getRecentImages() {
     try {
-        await requireSuperAdmin();
+        const user = await getCurrentUser();
+        if (!user) return [];
+
         await connectDB();
 
         // Fetch last 50 news/events to get recent images

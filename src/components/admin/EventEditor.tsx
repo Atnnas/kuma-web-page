@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, MapPin, Type, Image as ImageIcon, Globe, User, Link as LinkIcon, Info, Loader2, Clock, Check, Upload, Minus } from "lucide-react";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { format } from "date-fns";
+import { createPortal } from "react-dom";
 
 const MapPicker = dynamic(() => import("@/components/ui/MapPicker"), { ssr: false });
 
@@ -321,10 +322,10 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
 
                                 {!formData.organizer?.logo && (
                                     <div
-                                        onClick={async () => {
-                                            const images = await getRecentImages();
-                                            setRecentImages(images);
-                                            setShowMediaLibrary(true);
+                                        onClick={() => {
+                                            setRecentImages([]); // Clear previous to show loading
+                                            setShowMediaLibrary(true); // Open immediately
+                                            getRecentImages().then(setRecentImages); // Fetch in background
                                         }}
                                         className="w-full h-24 border-2 border-dashed border-zinc-800 hover:border-red-600/50 bg-zinc-900/30 hover:bg-zinc-900 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all gap-2 group"
                                     >
@@ -361,26 +362,26 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                                 />
                             </div>
 
-                            {/* Media Library Modal */}
-                            <AnimatePresence>
-                                {showMediaLibrary && (
+                            {/* Media Library Modal - Portal to avoid Z-index/Transform traps */}
+                            {showMediaLibrary && typeof document !== 'undefined' && createPortal(
+                                <AnimatePresence>
                                     <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                                        className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
                                         onClick={() => setShowMediaLibrary(false)}
                                     >
                                         <motion.div
                                             initial={{ scale: 0.9, y: 20 }}
                                             animate={{ scale: 1, y: 0 }}
                                             exit={{ scale: 0.9, y: 20 }}
-                                            className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-xl max-h-[70vh] overflow-hidden flex flex-col shadow-2xl"
+                                            className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-xl max-h-[70vh] overflow-hidden flex flex-col shadow-2xl relative"
                                             onClick={(e) => e.stopPropagation()}
                                         >
                                             <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
                                                 <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                                    <ImageIcon className="w-4 h-4 text-kuma-gold" /> Elegir Logo
+                                                    <ImageIcon className="w-4 h-4 text-kuma-gold" /> Elegir Logo del Historial
                                                 </h3>
                                                 <Button
                                                     onClick={() => setShowMediaLibrary(false)}
@@ -390,20 +391,24 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                                                 </Button>
                                             </div>
 
-                                            <div className="flex-1 overflow-y-auto p-4">
-                                                <div className="grid grid-cols-3 gap-3">
-                                                    {/* Upload Option */}
+                                            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                                                <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
+                                                    {/* Upload Option inside Portal */}
                                                     <div
-                                                        onClick={() => document.getElementById('event-logo-input')?.click()}
+                                                        onClick={() => {
+                                                            setShowMediaLibrary(false);
+                                                            // Small timeout to allow modal validation to clear before triggering file input
+                                                            setTimeout(() => document.getElementById('event-logo-input')?.click(), 100);
+                                                        }}
                                                         className="aspect-square rounded-lg border-2 border-dashed border-zinc-700 hover:border-red-600 bg-zinc-800/30 hover:bg-zinc-800 flex flex-col items-center justify-center cursor-pointer group transition-all"
                                                     >
                                                         <Upload className="w-6 h-6 text-zinc-500 group-hover:text-red-500 mb-1" />
-                                                        <span className="text-[10px] font-bold text-zinc-400 group-hover:text-white uppercase text-center">
-                                                            Subir Nuevo
+                                                        <span className="text-[10px] font-bold text-zinc-400 group-hover:text-white uppercase text-center leading-tight px-1">
+                                                            Subir<br />Nuevo
                                                         </span>
                                                     </div>
 
-                                                    {/* History */}
+                                                    {/* History Items */}
                                                     {recentImages.map((img, idx) => (
                                                         <div
                                                             key={idx}
@@ -411,7 +416,7 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                                                                 handleNestedChange("organizer", "logo", img);
                                                                 setShowMediaLibrary(false);
                                                             }}
-                                                            className="relative aspect-square rounded-lg overflow-hidden border border-zinc-800 group cursor-pointer hover:border-kuma-gold transition-all"
+                                                            className="relative aspect-square rounded-lg overflow-hidden border border-zinc-800 group cursor-pointer hover:border-kuma-gold transition-all bg-zinc-950"
                                                         >
                                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                                             <img src={img} alt="History" className="w-full h-full object-cover" />
@@ -420,12 +425,21 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                                                             </div>
                                                         </div>
                                                     ))}
+
+                                                    {recentImages.length === 0 && (
+                                                        <div className="col-span-full py-8 flex flex-col items-center justify-center text-zinc-500 gap-2">
+                                                            <Loader2 className="w-6 h-6 animate-spin text-zinc-700" />
+                                                            <span className="text-xs italic">Cargando historial...</span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </motion.div>
                                     </motion.div>
-                                )}
-                            </AnimatePresence>
+                                </AnimatePresence>,
+                                document.body
+                            )}
+                            {/* End Portal */}
                         </div>
                     </div>
 
