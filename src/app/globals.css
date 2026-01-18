@@ -1,0 +1,102 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-cinzel: var(--font-cinzel);
+  --font-montserrat: var(--font-montserrat);
+
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-serif: var(--font-cinzel), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+  --color-kuma-cafe: #6F4E37;
+  --color-gray-200: #e5e7eb;
+
+  /* FLUID TYPOGRAPHY */
+  /* FLUID TYPOGRAPHY - Adjusted for S25 Ultra congruence */
+  --font-size-hero: clamp(2rem, 9vw, 6rem);
+  --font-size-subhero: clamp(0.875rem, 3vw, 1.5rem);
+  --font-size-nav: clamp(0.7rem, 1.5vw, 1.1rem);
+
+  --spacing-container: clamp(1rem, 5vw, 4rem);
+}
+
+/* Glassmorphism Utility with Primal Edge */
+.glass {
+  background-color: rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* FERAL TEXT UTILITIES */
+::selection {
+  background-color: #991b1b;
+  /* Red-800 */
+  color: #fff;
+}
+
+/* Custom Scrollbar - Forged Iron Look */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 2px;
+  border: 1px solid #18181b;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ef4444;
+}
+
+/* Feral Glows */
+.text-feral-glow {
+  text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+}
+
+.box-feral-glow {
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.15);
+}
+
+/* KUMA GOLD / CAFE GRADIENT TEXT */
+/* Creates a seamless flow between White, Kuma Cafe, and Red accents */
+.text-kuma-gold {
+  background: linear-gradient(to bottom right, #ffffff 20%, #b48a73 50%, #6F4E37 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 10px rgba(111, 78, 55, 0.2);
+}
+
+/* A more subtle version for smaller text */
+.text-kuma-subtle {
+  color: #a1a1aa;
+  /* zinc-400 fallback */
+  background: linear-gradient(to right, #d4d4d8, #a8a29e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+body {
+  background-image: url('/images/metal-bear.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-color: #000;
+  color: #e4e4e7;
+  /* Zinc-200 generally better for reading on dark */
+  overflow-x: hidden;
+  /* Fix for horizontal scroll issues */
+  width: 100%;
+}
+
+html {
+  overflow-x: hidden;
+}
