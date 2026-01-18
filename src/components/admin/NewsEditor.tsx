@@ -112,65 +112,61 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                     </div>
                 </div>
 
-                {/* Unified Image Upload */}
+                {/* Unified Image Upload Area */}
                 <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                            <ImageIcon className="w-4 h-4" /> Imágenes
-                        </label>
-                        <div>
-                            <input
-                                id="unified-image-input"
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                className="hidden"
-                                onChange={async (e) => {
-                                    if (e.target.files && e.target.files.length > 0) {
-                                        const newImages: string[] = [];
+                    <input
+                        id="unified-image-input"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={async (e) => {
+                            if (e.target.files && e.target.files.length > 0) {
+                                const newImages: string[] = [];
 
-                                        // Process all files
-                                        for (let i = 0; i < e.target.files.length; i++) {
-                                            const file = e.target.files[i];
-                                            try {
-                                                const base64 = await compressImage(file);
-                                                newImages.push(base64);
-                                            } catch (err) {
-                                                console.error("Error compressing image", err);
-                                            }
-                                        }
-
-                                        // Logic: 
-                                        // If we already have a main image and gallery images, append new ones to gallery?
-                                        // OR: Treat this input as "Add more images".
-
-                                        // If no main image exists, first new image becomes main.
-                                        let startIndex = 0;
-                                        if (!formData.image && newImages.length > 0) {
-                                            handleChange("image", newImages[0]);
-                                            startIndex = 1;
-                                        }
-
-                                        // Remaining images go to gallery
-                                        if (startIndex < newImages.length) {
-                                            const additionalImages = newImages.slice(startIndex);
-                                            setFormData(prev => ({
-                                                ...prev,
-                                                images: [...(prev.images || []), ...additionalImages]
-                                            }));
-                                        }
+                                for (let i = 0; i < e.target.files.length; i++) {
+                                    const file = e.target.files[i];
+                                    try {
+                                        const base64 = await compressImage(file);
+                                        newImages.push(base64);
+                                    } catch (err) {
+                                        console.error("Error compressing image", err);
                                     }
-                                    e.target.value = '';
-                                }}
-                            />
-                            <Button
-                                type="button"
-                                onClick={() => document.getElementById('unified-image-input')?.click()}
-                                className="bg-yellow-500 hover:bg-yellow-400 text-black p-2 h-10 w-10 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.4)] transition-all duration-300 hover:scale-105"
-                                title="Subir Imágenes"
-                            >
-                                <Plus className="w-6 h-6 stroke-[3]" />
-                            </Button>
+                                }
+
+                                let startIndex = 0;
+                                if (!formData.image && newImages.length > 0) {
+                                    handleChange("image", newImages[0]);
+                                    startIndex = 1;
+                                }
+
+                                if (startIndex < newImages.length) {
+                                    const additionalImages = newImages.slice(startIndex);
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        images: [...(prev.images || []), ...additionalImages]
+                                    }));
+                                }
+                            }
+                            e.target.value = '';
+                        }}
+                    />
+
+                    {/* Modern Upload Trigger */}
+                    <div
+                        onClick={() => document.getElementById('unified-image-input')?.click()}
+                        className="group w-full h-32 border-2 border-dashed border-zinc-800 hover:border-red-600/50 bg-zinc-900/50 hover:bg-zinc-900 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(220,38,38,0.1)] gap-3"
+                    >
+                        <div className="h-12 w-12 rounded-full bg-zinc-800 flex items-center justify-center group-hover:scale-110 group-hover:bg-red-600 transition-all duration-300 shadow-xl">
+                            <Upload className="w-6 h-6 text-zinc-400 group-hover:text-white transition-colors" />
+                        </div>
+                        <div className="text-center">
+                            <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">
+                                Click para subir fotos
+                            </p>
+                            <p className="text-[10px] text-zinc-600 mt-1">
+                                Soporta selección múltiple
+                            </p>
                         </div>
                     </div>
 
