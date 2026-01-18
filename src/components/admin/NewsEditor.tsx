@@ -117,7 +117,7 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                     <input
                         id="unified-image-input"
                         type="file"
-                        accept="image/*"
+                        accept="image/png, image/jpeg, image/jpg, image/webp"
                         multiple
                         className="hidden"
                         onChange={async (e) => {
