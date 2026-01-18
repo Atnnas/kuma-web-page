@@ -28,9 +28,10 @@ export function EventCard({ event, userId }: EventCardProps) {
         setTimeout(() => setIsBouncing(false), 300);
 
         if (newState) {
-            // Haptic feedack for mobile
+            // Haptic feedback for mobile
+            // Use longer duration and try pattern for better noticeability
             if (typeof navigator !== "undefined" && navigator.vibrate) {
-                navigator.vibrate(50); // Short, sharp vibration
+                navigator.vibrate([10, 50, 10]); // Short pattern: Tick-Tock
             }
         }
 

@@ -14,7 +14,9 @@ import { EventCard } from "@/components/events/EventCard";
 
 export default async function CalendarPage() {
     const session = await auth();
-    const userId = session?.user?.id || session?.user?.email || undefined; // Match the logic in action
+    // Explicitly handle nulls to satisfy strict TypeScript checks in Vercel
+    const userIdInput = session?.user?.id || session?.user?.email;
+    const userId: string | undefined = userIdInput ? userIdInput : undefined;
 
     const [upcomingEvents, pastEvents] = await Promise.all([
         getUpcomingEvents(),
