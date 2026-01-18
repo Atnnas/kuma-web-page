@@ -25,7 +25,6 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
     const [isLoading, setIsLoading] = useState(false);
     const [isMapOpen, setIsMapOpen] = useState(false);
     const [showMediaLibrary, setShowMediaLibrary] = useState(false);
-    const [showMediaLibrary, setShowMediaLibrary] = useState(false);
     const [recentImages, setRecentImages] = useState<string[]>([]);
     const [allOrganizers, setAllOrganizers] = useState<{ id: string, name: string, logo: string }[]>([]);
     const [formData, setFormData] = useState<Partial<IEvent>>({
