@@ -176,14 +176,20 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
 
                     {/* Display Grid (Main Image + Gallery) */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {/* Main Image Card */}
-                        {formData.image && (
-                            <div className="relative aspect-video rounded-lg overflow-hidden border-2 border-kuma-gold shadow-[0_0_10px_rgba(234,179,8,0.2)] group">
-                                <div className="absolute top-2 left-2 z-10 bg-kuma-gold text-black text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
-                                    PORTADA
-                                </div>
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={formData.image} alt="Main" className="object-cover w-full h-full" />
+                        {/* Main Image Card (Always visible with placeholder) */}
+                        <div className="relative aspect-video rounded-lg overflow-hidden border-2 border-kuma-gold shadow-[0_0_10px_rgba(234,179,8,0.2)] group">
+                            <div className="absolute top-2 left-2 z-10 bg-kuma-gold text-black text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
+                                PORTADA
+                            </div>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={formData.image || "/images/kuma-logo.jpg"}
+                                alt="Main"
+                                className={`object-cover w-full h-full ${!formData.image ? 'opacity-50 grayscale' : ''}`}
+                            />
+
+                            {/* Only show delete button if there is an actual image set, or if we want to allow clearing to placeholder */}
+                            {formData.image && (
                                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <Button
                                         type="button"
@@ -193,8 +199,13 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                                         <Trash2 className="w-4 h-4" />
                                     </Button>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                            {!formData.image && (
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <span className="text-xs font-bold text-white/50 uppercase tracking-widest">Sin Imagen</span>
+                                </div>
+                            )}
+                        </div>
 
                         {/* Gallery Images */}
                         {formData.images?.map((url, index) => (
