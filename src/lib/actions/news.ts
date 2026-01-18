@@ -105,7 +105,9 @@ export async function createNewsItem(data: Partial<INews>) {
             return { success: false, error: "Missing required fields" };
         }
 
-        const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Date.now();
+        // Generate short numeric ID (6 digits)
+        const shortId = Math.floor(100000 + Math.random() * 900000);
+        const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + shortId;
 
         const newItem = await News.create({
             ...data,
