@@ -73,15 +73,19 @@ export default async function CalendarPage() {
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 blur-3xl rounded-full pointer-events-none"></div>
 
                                     <div className="flex items-start gap-3 relative z-10 w-full">
-                                        {/* CR Flag */}
-                                        <div className="w-6 h-4 xs:w-8 xs:h-6 rounded shadow-sm overflow-hidden relative shrink-0 border border-white/10 mt-1.5">
-                                            <Image
-                                                src="https://upload.wikimedia.org/wikipedia/commons/b/bc/Flag_of_Costa_Rica_%28state%29.svg"
-                                                alt="CR"
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        </div>
+                                        {/* Dynamic Flag */}
+                                        {event.location?.flag && event.location.flag.startsWith('http') ? (
+                                            <div className="w-6 h-4 xs:w-8 xs:h-6 rounded shadow-sm overflow-hidden relative shrink-0 border border-white/10 mt-1.5">
+                                                <Image
+                                                    src={event.location.flag}
+                                                    alt={event.location.country || "Flag"}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            </div>
+                                        ) : event.location?.flag ? (
+                                            <div className="text-xl shrink-0 mt-1">{event.location.flag}</div>
+                                        ) : null}
 
                                         {/* Title & Date */}
                                         <div className="flex flex-col flex-1 min-w-0 mr-2">
@@ -130,7 +134,12 @@ export default async function CalendarPage() {
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <MapPin className="w-4 h-4 text-red-600" />
+                                                {event.location?.flag && event.location.flag.startsWith('http') ? (
+                                                    /* eslint-disable-next-line @next/next/no-img-element */
+                                                    <img src={event.location.flag} alt="Flag" className="w-4 h-3 object-cover rounded shadow-sm mr-1.5" />
+                                                ) : (
+                                                    <span className="mr-1.5">{event.location?.flag}</span>
+                                                )}
                                                 <span>{event.location?.country}</span>
                                             </div>
                                             {event.location?.mapLink && (
