@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { INews } from "@/models/News";
 import { Button } from "@/components/ui/Button";
-import { createNewsItem, updateNewsItem } from "@/lib/actions/news";
+import { createNewsItem, updateNewsItem, getRecentImages } from "@/lib/actions/news";
 import { DatePicker } from "@/components/ui/DatePicker";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Calendar, Image as ImageIcon, Type, AlignLeft, Layers, Loader2, Plus, Trash2, Upload, Minus } from "lucide-react";
 import { compressImage } from "@/lib/image-utils";
@@ -18,6 +18,8 @@ interface NewsEditorProps {
 
 export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const [showImagePicker, setShowImagePicker] = useState(false);
+    const [recentImages, setRecentImages] = useState<string[]>([]);
     const [formData, setFormData] = useState<Partial<INews>>({
         title: initialData?.title || "",
         description: initialData?.description || "",
@@ -27,6 +29,13 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
         isPremium: initialData?.isPremium || false,
         images: initialData?.images || [],
     });
+
+    // Load recent images when picker opens
+    const handleOpenPicker = async () => {
+        const images = await getRecentImages();
+        setRecentImages(images);
+        setShowImagePicker(true);
+    };
 
     const isEditing = !!initialData?._id;
 
@@ -154,7 +163,7 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
 
                     {/* Modern Upload Trigger */}
                     <div
-                        onClick={() => document.getElementById('unified-image-input')?.click()}
+                        onClick={handleOpenPicker}
                         className="group w-full h-32 border-2 border-dashed border-zinc-800 hover:border-red-600/50 bg-zinc-900/50 hover:bg-zinc-900 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(220,38,38,0.1)] gap-3"
                     >
                         <div className="h-12 w-12 rounded-full bg-zinc-800 flex items-center justify-center group-hover:scale-110 group-hover:bg-red-600 transition-all duration-300 shadow-xl">
@@ -162,13 +171,102 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                         </div>
                         <div className="text-center">
                             <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">
-                                Click para subir fotos
+                                Subir o Elegir del Historial
                             </p>
                             <p className="text-[10px] text-zinc-600 mt-1">
-                                Soporta selección múltiple
+                                Click para ver opciones
                             </p>
                         </div>
                     </div>
+
+                    {/* Image Picker Modal */}
+                    <AnimatePresence>
+                        {showImagePicker && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                                onClick={() => setShowImagePicker(false)}
+                            >
+                                <motion.div
+                                    initial={{ scale: 0.9, y: 20 }}
+                                    animate={{ scale: 1, y: 0 }}
+                                    exit={{ scale: 0.9, y: 20 }}
+                                    className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col shadow-2xl"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
+                                        <h3 className="text-xl font-serif font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                                            <ImageIcon className="w-5 h-5 text-kuma-gold" /> Biblioteca de Medios
+                                        </h3>
+                                        <Button
+                                            onClick={() => setShowImagePicker(false)}
+                                            className="bg-zinc-800 hover:bg-zinc-700 text-white rounded-full p-2 h-auto w-auto"
+                                        >
+                                            <Minus className="w-4 h-4 rotate-45" /> {/* Close Icon */}
+                                        </Button>
+                                    </div>
+
+                                    <div className="flex-1 overflow-y-auto p-6">
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                            {/* Option 1: Upload New */}
+                                            <div
+                                                onClick={() => {
+                                                    document.getElementById('unified-image-input')?.click();
+                                                    setShowImagePicker(false);
+                                                }}
+                                                className="aspect-[4/3] rounded-xl border-2 border-dashed border-zinc-700 hover:border-red-600 bg-zinc-800/50 hover:bg-zinc-800 flex flex-col items-center justify-center cursor-pointer group transition-all"
+                                            >
+                                                <Upload className="w-8 h-8 text-zinc-500 group-hover:text-red-500 mb-2 transition-colors" />
+                                                <span className="text-xs font-bold text-zinc-400 group-hover:text-white uppercase tracking-wider text-center">
+                                                    Subir Nueva
+                                                </span>
+                                            </div>
+
+                                            {/* History Options */}
+                                            {recentImages.map((img, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    onClick={() => {
+                                                        // Add to form logic
+                                                        if (!formData.image) {
+                                                            handleChange("image", img);
+                                                        } else {
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                images: [...(prev.images || []), img]
+                                                            }));
+                                                        }
+                                                        setShowImagePicker(false);
+                                                    }}
+                                                    className="relative aspect-[4/3] rounded-xl overflow-hidden border border-zinc-800 group cursor-pointer hover:border-kuma-gold transition-all"
+                                                >
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img src={img} alt="History" className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                        <Plus className="w-8 h-8 text-kuma-gold" />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {recentImages.length === 0 && (
+                                            <div className="col-span-full py-8 text-center text-zinc-500 italic text-sm">
+                                                No hay historial reciente. Sube imágenes para poblar esta lista.
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="p-4 bg-zinc-950/50 border-t border-zinc-800 text-center">
+                                        <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
+                                            Mostrando las últimas 20 imágenes utilizadas
+                                        </p>
+                                    </div>
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     {/* Display Grid (Main Image + Gallery) */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -229,7 +327,7 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                         <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => document.getElementById('unified-image-input')?.click()}
+                            onClick={handleOpenPicker}
                             className="relative aspect-video rounded-lg border-2 border-dashed border-zinc-700 hover:border-kuma-gold bg-zinc-900/30 hover:bg-zinc-900/80 flex flex-col items-center justify-center cursor-pointer group transition-colors shadow-lg hover:shadow-[0_0_15px_rgba(234,179,8,0.2)]"
                         >
                             <div className="bg-zinc-800 group-hover:bg-kuma-gold/20 text-zinc-500 group-hover:text-kuma-gold p-3 rounded-full transition-colors mb-2">

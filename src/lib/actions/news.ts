@@ -230,3 +230,34 @@ export async function getPastEvents() {
         return [];
     }
 }
+
+export async function getRecentImages() {
+    try {
+        await requireSuperAdmin();
+        await connectDB();
+
+        // Fetch last 50 news/events to get recent images
+        // We only need the image field
+        const items = await News.find({})
+            .sort({ createdAt: -1 })
+            .limit(50)
+            .select('image images')
+            .lean();
+
+        // Collect all images
+        const allImages = new Set<string>();
+
+        items.forEach((item) => {
+            if (item.image) allImages.add(item.image);
+            if (item.images && Array.isArray(item.images)) {
+                item.images.forEach((img: string) => allImages.add(img));
+            }
+        });
+
+        // Return as array
+        return Array.from(allImages).slice(0, 20); // Limit to top 20 most recent unique
+    } catch (error) {
+        console.error("Error fetching recent images:", error);
+        return [];
+    }
+}
