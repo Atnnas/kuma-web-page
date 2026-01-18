@@ -112,87 +112,91 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                     </div>
                 </div>
 
-                {/* Image Upload */}
-                <div className="space-y-2">
-                    <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                        <ImageIcon className="w-4 h-4" /> Imagen Principal
-                    </label>
-                    <div className="flex items-start gap-4">
-                        <div className="flex-1">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={async (e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) {
-                                        try {
-                                            const base64 = await compressImage(file);
-                                            handleChange("image", base64);
-                                        } catch (err) {
-                                            console.error("Error converting image", err);
-                                        }
-                                    }
-                                }}
-                                className="w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-white hover:file:bg-zinc-700 cursor-pointer"
-                            />
-                            <p className="text-[10px] text-zinc-500 mt-2">* Se comprimirá automáticamente para la web.</p>
-                        </div>
-                        {formData.image && (
-                            <div className="relative h-24 w-40 rounded-lg overflow-hidden border border-zinc-800 shrink-0">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src={formData.image}
-                                    alt="Preview"
-                                    className="object-cover w-full h-full"
-                                />
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Extra Images (Gallery) */}
-                <div className="space-y-4 border-t border-zinc-800 pt-6">
+                {/* Unified Image Upload */}
+                <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                            <ImageIcon className="w-4 h-4" />
+                            <ImageIcon className="w-4 h-4" /> Imágenes
                         </label>
                         <div>
                             <input
-                                id="gallery-input"
+                                id="unified-image-input"
                                 type="file"
                                 accept="image/*"
                                 multiple
                                 className="hidden"
                                 onChange={async (e) => {
-                                    if (e.target.files) {
-                                        const newImages = [...(formData.images || [])];
+                                    if (e.target.files && e.target.files.length > 0) {
+                                        const newImages: string[] = [];
+
+                                        // Process all files
                                         for (let i = 0; i < e.target.files.length; i++) {
                                             const file = e.target.files[i];
                                             try {
                                                 const base64 = await compressImage(file);
                                                 newImages.push(base64);
                                             } catch (err) {
-                                                console.error("Error compressing gallery image", err);
+                                                console.error("Error compressing image", err);
                                             }
                                         }
-                                        setFormData(prev => ({ ...prev, images: newImages }));
+
+                                        // Logic: 
+                                        // If we already have a main image and gallery images, append new ones to gallery?
+                                        // OR: Treat this input as "Add more images".
+
+                                        // If no main image exists, first new image becomes main.
+                                        let startIndex = 0;
+                                        if (!formData.image && newImages.length > 0) {
+                                            handleChange("image", newImages[0]);
+                                            startIndex = 1;
+                                        }
+
+                                        // Remaining images go to gallery
+                                        if (startIndex < newImages.length) {
+                                            const additionalImages = newImages.slice(startIndex);
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                images: [...(prev.images || []), ...additionalImages]
+                                            }));
+                                        }
                                     }
-                                    // Reset input so same files can be selected again if added then deleted
                                     e.target.value = '';
                                 }}
                             />
                             <Button
                                 type="button"
-                                onClick={() => document.getElementById('gallery-input')?.click()}
+                                onClick={() => document.getElementById('unified-image-input')?.click()}
                                 className="bg-yellow-500 hover:bg-yellow-400 text-black p-2 h-10 w-10 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.4)] transition-all duration-300 hover:scale-105"
-                                title="Agregar imágenes desde archivo"
+                                title="Subir Imágenes"
                             >
                                 <Plus className="w-6 h-6 stroke-[3]" />
                             </Button>
                         </div>
                     </div>
 
+                    {/* Display Grid (Main Image + Gallery) */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {/* Main Image Card */}
+                        {formData.image && (
+                            <div className="relative aspect-video rounded-lg overflow-hidden border-2 border-kuma-gold shadow-[0_0_10px_rgba(234,179,8,0.2)] group">
+                                <div className="absolute top-2 left-2 z-10 bg-kuma-gold text-black text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
+                                    PORTADA
+                                </div>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={formData.image} alt="Main" className="object-cover w-full h-full" />
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <Button
+                                        type="button"
+                                        onClick={() => handleChange("image", "")}
+                                        className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full h-auto w-auto"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Gallery Images */}
                         {formData.images?.map((url, index) => (
                             <div key={index} className="relative aspect-video rounded-lg overflow-hidden border border-zinc-800 group">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -213,10 +217,13 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                             </div>
                         ))}
                     </div>
-                    {(!formData.images || formData.images.length === 0) && (
-                        <p className="text-zinc-600 text-xs italic">No hay imágenes en la galería.</p>
+                    {(!formData.image && (!formData.images || formData.images.length === 0)) && (
+                        <p className="text-zinc-600 text-xs italic text-center py-8 border border-dashed border-zinc-800 rounded-lg">
+                            No has subido ninguna imagen. Dale al botón <span className="text-yellow-500 font-bold">+</span>
+                        </p>
                     )}
                 </div>
+
 
                 {/* Description */}
                 <div className="space-y-2">
