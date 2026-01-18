@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getOrganizers, createOrganizer, updateOrganizer, deleteOrganizer, seedOrganizersFromEvents } from "@/lib/actions/organizers";
+import { getOrganizers, createOrganizer, updateOrganizer, deleteOrganizer } from "@/lib/actions/organizers";
 import { Button } from "@/components/ui/Button";
-import { Plus, Edit2, Trash2, Briefcase, Loader2, Upload, RefreshCw, Save, X } from "lucide-react";
+import { Plus, Edit2, Trash2, Briefcase, Loader2, Upload, Save, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
@@ -17,7 +17,6 @@ interface Organizer {
 export default function OrganizersClientPage() {
     const [organizers, setOrganizers] = useState<Organizer[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [isMigrationLoading, setIsMigrationLoading] = useState(false);
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,21 +73,6 @@ export default function OrganizersClientPage() {
         }
     };
 
-    const handleMigration = async () => {
-        if (!confirm("Esto escaneará todos los eventos pasados y agregará sus organizadores a esta lista. ¿Continuar?")) return;
-
-        setIsMigrationLoading(true);
-        const res = await seedOrganizersFromEvents();
-        setIsMigrationLoading(false);
-
-        if (res.success) {
-            alert(res.message);
-            loadOrganizers();
-        } else {
-            alert("Error: " + res.error);
-        }
-    };
-
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -117,15 +101,6 @@ export default function OrganizersClientPage() {
                 </div>
 
                 <div className="flex gap-4">
-                    <Button
-                        onClick={handleMigration}
-                        disabled={isMigrationLoading}
-                        className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700"
-                    >
-                        {isMigrationLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <RefreshCw className="w-4 h-4 mr-2" />}
-                        Sincronizar de Eventos
-                    </Button>
-
                     <Button
                         onClick={handlePrepareCreate}
                         className="bg-red-600 hover:bg-white hover:text-red-600 text-white font-bold uppercase tracking-widest shadow-lg transition-all"
