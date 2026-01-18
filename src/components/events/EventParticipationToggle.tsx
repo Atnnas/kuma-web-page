@@ -17,6 +17,13 @@ export function EventParticipationToggle({ eventId, initialParticipating }: Prop
 
     const handleToggle = (newState: boolean) => {
         setIsParticipating(newState); // Optimistic update
+
+        if (newState) {
+            // Haptic feedback for mobile
+            if (typeof navigator !== "undefined" && navigator.vibrate) {
+                navigator.vibrate([10, 50, 10]);
+            }
+        }
         startTransition(async () => {
             const res = await toggleParticipation(eventId, newState);
             if (!res.success) {
