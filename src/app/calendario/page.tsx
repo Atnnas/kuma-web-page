@@ -14,7 +14,7 @@ import { EventCard } from "@/components/events/EventCard";
 
 export default async function CalendarPage() {
     const session = await auth();
-    const userId = session?.user?.id || session?.user?.email; // Match the logic in action
+    const userId = session?.user?.id || session?.user?.email || undefined; // Match the logic in action
 
     const [upcomingEvents, pastEvents] = await Promise.all([
         getUpcomingEvents(),
