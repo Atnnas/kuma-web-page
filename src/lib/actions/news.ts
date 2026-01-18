@@ -46,6 +46,25 @@ export async function getNews() {
     }
 }
 
+export async function getNewsBySlug(slug: string) {
+    try {
+        await connectDB();
+        const item = await News.findOne({ slug }).lean();
+
+        if (!item) return null;
+
+        return {
+            ...item,
+            id: item._id.toString(),
+            _id: item._id.toString(),
+            date: item.date ? new Date(item.date).toISOString() : new Date().toISOString(),
+        };
+    } catch (error) {
+        console.error("Error fetching news by slug:", error);
+        return null;
+    }
+}
+
 export async function seedNews() {
     try {
         await connectDB();

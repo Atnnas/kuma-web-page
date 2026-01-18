@@ -4,6 +4,7 @@ export interface INews extends Document {
     title: string;
     description: string;
     image: string;
+    images?: string[];
     category: "news" | "event" | "training";
     isPremium: boolean;
     date: Date;
@@ -42,6 +43,10 @@ const NewsSchema = new Schema<INews>(
         slug: {
             type: String,
             unique: true,
+        },
+        images: {
+            type: [String],
+            default: [],
         },
     },
     {

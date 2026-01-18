@@ -7,7 +7,7 @@ import { createNewsItem, updateNewsItem } from "@/lib/actions/news";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Calendar, Image as ImageIcon, Type, AlignLeft, Layers, Loader2 } from "lucide-react";
+import { Calendar, Image as ImageIcon, Type, AlignLeft, Layers, Loader2, Plus, Trash2 } from "lucide-react";
 
 interface NewsEditorProps {
     initialData?: Partial<INews> | null;
@@ -24,6 +24,7 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
         category: initialData?.category || "news",
         date: initialData?.date ? new Date(initialData.date) : new Date(),
         isPremium: initialData?.isPremium || false,
+        images: initialData?.images || [],
     });
 
     const isEditing = !!initialData?._id;
@@ -133,6 +134,62 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                             />
                         </div>
                     )}
+                </div>
+
+                {/* Extra Images (Gallery) */}
+                <div className="space-y-4 border-t border-zinc-800 pt-6">
+                    <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                            <ImageIcon className="w-4 h-4" /> Galería de Imágenes (Opcional)
+                        </label>
+                        <Button
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, images: [...(prev.images || []), ""] }))}
+                            className="bg-zinc-800 text-xs hover:bg-zinc-700 h-8"
+                        >
+                            <Plus className="w-3 h-3 mr-1" /> Agregar Imagen
+                        </Button>
+                    </div>
+
+                    <div className="space-y-3">
+                        {formData.images?.map((url, index) => (
+                            <div key={index} className="flex gap-2 items-start">
+                                <div className="flex-1 space-y-2">
+                                    <input
+                                        type="url"
+                                        value={url}
+                                        onChange={(e) => {
+                                            const newImages = [...(formData.images || [])];
+                                            newImages[index] = e.target.value;
+                                            setFormData(prev => ({ ...prev, images: newImages }));
+                                        }}
+                                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-red-500 focus:outline-none transition-colors text-sm"
+                                        placeholder="https://..."
+                                    />
+                                    {url && (
+                                        <div className="relative h-20 w-32 rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={url} alt="Preview" className="object-cover w-full h-full" />
+                                        </div>
+                                    )}
+                                </div>
+                                <Button
+                                    type="button"
+                                    onClick={() => {
+                                        const newImages = [...(formData.images || [])];
+                                        newImages.splice(index, 1);
+                                        setFormData(prev => ({ ...prev, images: newImages }));
+                                    }}
+                                    className="bg-red-900/20 text-red-500 hover:bg-red-900/40 p-3 h-auto"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+                            </div>
+                        ))}
+                        {(!formData.images || formData.images.length === 0) && (
+                            <p className="text-zinc-600 text-xs italic">No hay imágenes extra en la galería.</p>
+                        )}
+                    </div>
                 </div>
 
                 {/* Description */}
