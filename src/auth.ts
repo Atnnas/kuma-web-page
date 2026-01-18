@@ -79,9 +79,9 @@ export const {
                     if (!existingUser) {
                         // Crear nuevo usuario si no existe
                         await User.create({
-                            name: user.name,
-                            email: user.email,
-                            image: user.image,
+                            name: user.name || "Usuario",
+                            email: user.email as string,
+                            image: user.image || "",
                             role: "user",
                             isActive: true, // Por defecto activo
                         });
