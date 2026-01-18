@@ -20,6 +20,11 @@ export function EventCard({ event, userId }: EventCardProps) {
 
     const handleToggle = (newState: boolean) => {
         setIsParticipating(newState);
+
+        if (newState) {
+            // Audio removed by user request
+        }
+
         startTransition(async () => {
             const res = await toggleParticipation(event._id, newState);
             if (!res.success) {
@@ -32,7 +37,7 @@ export function EventCard({ event, userId }: EventCardProps) {
     return (
         <div
             className={clsx(
-                "group relative bg-zinc-900/80 border rounded-3xl overflow-hidden transition-all duration-500 flex flex-col md:flex-row isolate",
+                "group relative bg-zinc-900/80 border rounded-3xl transition-all duration-500 flex flex-col md:flex-row isolate",
                 isParticipating
                     ? "border-amber-500/50 shadow-[0_0_60px_rgba(245,158,11,0.3)] scale-[1.01]"
                     : "border-zinc-800 hover:border-red-900/50 hover:shadow-[0_0_50px_rgba(220,38,38,0.15)]"
@@ -182,25 +187,25 @@ export function EventCard({ event, userId }: EventCardProps) {
 
                         {/* YELLOW PIN - Left of Mini Calendar */}
                         {isParticipating && (
-                            <div className="absolute -left-6 top-[-10px] z-50 animate-in zoom-in-0 duration-500 bounce-in drop-shadow-2xl grayscale-0 block hidden md:block">
+                            <div className="absolute -left-6 top-[-10px] z-50 animate-in zoom-in-0 slide-in-from-top-10 duration-300 ease-out fill-mode-forwards block hidden md:block">
                                 <Image
                                     src="/images/yellow-pin.png"
                                     alt="Pinned"
                                     width={50}
                                     height={50}
-                                    className="object-contain rotate-[-15deg] drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]"
+                                    className="object-contain rotate-[-15deg] drop-shadow-[0_10px_8px_rgba(0,0,0,0.5)]"
                                 />
                             </div>
                         )}
                         {/* Mobile Pin (different position) */}
                         {isParticipating && (
-                            <div className="absolute top-0 right-10 md:hidden z-50 animate-in zoom-in-0 duration-500 bounce-in">
+                            <div className="absolute top-0 right-10 md:hidden z-50 animate-in zoom-in-0 slide-in-from-top-10 duration-300 ease-out fill-mode-forwards">
                                 <Image
                                     src="/images/yellow-pin.png"
                                     alt="Pinned"
                                     width={40}
                                     height={40}
-                                    className="object-contain rotate-[15deg] drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]"
+                                    className="object-contain rotate-[15deg] drop-shadow-[0_10px_8px_rgba(0,0,0,0.5)]"
                                 />
                             </div>
                         )}
