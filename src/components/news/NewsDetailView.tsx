@@ -148,7 +148,7 @@ export function NewsDetailView({ newsItem }: NewsDetailViewProps) {
                 </div>
 
                 {/* Gallery Section */}
-                {newsItem.images && newsItem.images.length > 0 && (
+                {allImages.length > 0 && (
                     <div className="mt-20">
                         <div className="flex items-center gap-4 mb-8">
                             <div className="h-1 w-12 bg-red-600 rounded-full" />
@@ -160,16 +160,16 @@ export function NewsDetailView({ newsItem }: NewsDetailViewProps) {
                         {/* Gallery Carousel */}
                         <div className="relative group/gallery">
                             {/* Navigation Buttons */}
-                            {newsItem.images.length > 1 && (
+                            {allImages.length > 1 && (
                                 <>
                                     <button
-                                        onClick={() => setGalleryIndex((prev) => (prev - 1 + (newsItem.images?.length || 1)) % (newsItem.images?.length || 1))}
+                                        onClick={() => setGalleryIndex((prev) => (prev - 1 + allImages.length) % allImages.length)}
                                         className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-red-600/80 text-white p-3 rounded-full backdrop-blur-sm transition-all -ml-4 md:-ml-12 opacity-0 group-hover/gallery:opacity-100"
                                     >
                                         <ChevronLeft className="w-6 h-6" />
                                     </button>
                                     <button
-                                        onClick={() => setGalleryIndex((prev) => (prev + 1) % (newsItem.images?.length || 1))}
+                                        onClick={() => setGalleryIndex((prev) => (prev + 1) % allImages.length)}
                                         className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-red-600/80 text-white p-3 rounded-full backdrop-blur-sm transition-all -mr-4 md:-mr-12 opacity-0 group-hover/gallery:opacity-100"
                                     >
                                         <ChevronRight className="w-6 h-6" />
@@ -192,16 +192,16 @@ export function NewsDetailView({ newsItem }: NewsDetailViewProps) {
                                         onDragEnd={(e, { offset, velocity }) => {
                                             const swipe = offset.x; // negative is left
                                             if (swipe < -50 || velocity.x < -100) {
-                                                setGalleryIndex((prev) => (prev + 1) % (newsItem.images?.length || 1));
+                                                setGalleryIndex((prev) => (prev + 1) % allImages.length);
                                             } else if (swipe > 50 || velocity.x > 100) {
-                                                setGalleryIndex((prev) => (prev - 1 + (newsItem.images?.length || 1)) % (newsItem.images?.length || 1));
+                                                setGalleryIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
                                             }
                                         }}
-                                        onClick={() => newsItem.images && openLightbox(newsItem.images[galleryIndex])}
+                                        onClick={() => openLightbox(allImages[galleryIndex])}
                                         className="absolute inset-0 cursor-grab active:cursor-grabbing"
                                     >
                                         <Image
-                                            src={newsItem.images[galleryIndex]}
+                                            src={allImages[galleryIndex]}
                                             alt={`Galería ${galleryIndex + 1}`}
                                             fill
                                             className="object-cover"
@@ -215,15 +215,15 @@ export function NewsDetailView({ newsItem }: NewsDetailViewProps) {
 
                                 {/* Counter Widget */}
                                 <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/10 z-10 pointer-events-none">
-                                    {galleryIndex + 1} / {newsItem.images.length}
+                                    {galleryIndex + 1} / {allImages.length}
                                 </div>
                             </div>
                         </div>
 
                         {/* Thumbnails (Optional, simplified to dots for now or omitted to keep clean single view as requested) */}
-                        {newsItem.images.length > 1 && (
+                        {allImages.length > 1 && (
                             <div className="flex justify-center mt-6 gap-2">
-                                {newsItem.images.map((_, idx) => (
+                                {allImages.map((_, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setGalleryIndex(idx)}
