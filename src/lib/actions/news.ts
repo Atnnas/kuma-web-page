@@ -1,7 +1,7 @@
 "use server";
 
 import connectDB from "@/lib/db";
-importNews, { INews } from "@/models/News";
+import News, { INews } from "@/models/News";
 import { feedItems } from "@/lib/mock-data";
 import { requireSuperAdmin, getCurrentUser } from "@/lib/auth-utils";
 
