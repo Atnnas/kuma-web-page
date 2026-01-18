@@ -140,14 +140,16 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                 <div className="space-y-4 border-t border-zinc-800 pt-6">
                     <div className="flex items-center justify-between">
                         <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                            <ImageIcon className="w-4 h-4" /> Galería de Imágenes (Opcional)
+                            {/* Empty label as requested, or just the icon if we want to keep alignment */}
+                            <ImageIcon className="w-4 h-4" />
                         </label>
                         <Button
                             type="button"
                             onClick={() => setFormData(prev => ({ ...prev, images: [...(prev.images || []), ""] }))}
-                            className="bg-zinc-800 text-xs hover:bg-zinc-700 h-8"
+                            className="bg-yellow-500 hover:bg-yellow-400 text-black p-2 h-10 w-10 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.4)] transition-all duration-300 hover:scale-105"
+                            title="Agregar Imagen a Galería"
                         >
-                            <Plus className="w-3 h-3 mr-1" /> Agregar Imagen
+                            <Plus className="w-6 h-6 stroke-[3]" />
                         </Button>
                     </div>
 
