@@ -4,6 +4,35 @@ import connectDB from "@/lib/db";
 import Event, { IEvent } from "@/models/Event";
 import { requireSuperAdmin } from "@/lib/auth-utils";
 import { revalidatePath } from "next/cache";
+import { getFlagForCountry } from "@/lib/flags";
+
+export async function syncEventFlags() {
+    try {
+        await connectDB();
+        const events = await Event.find({});
+        let count = 0;
+
+        for (const ev of events) {
+            const currentCountry = ev.location.country;
+            const newFlag = getFlagForCountry(currentCountry);
+
+            // Update if different or missing
+            if (!ev.location.flag || ev.location.flag !== newFlag) {
+                ev.location.flag = newFlag;
+                await ev.save();
+                count++;
+            }
+        }
+
+        revalidatePath("/admin/events");
+        revalidatePath("/");
+
+        return { success: true, message: `Se actualizaron ${count} eventos con sus banderas.` };
+    } catch (error) {
+        console.error("Flag sync failed:", error);
+        return { success: false, error: "Error al sincronizar banderas" };
+    }
+}
 
 export async function getPublicEvents() {
     try {

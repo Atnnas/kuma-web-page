@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getPublicEvents, deleteEvent } from "@/lib/actions/events";
+import { getPublicEvents, deleteEvent, syncEventFlags } from "@/lib/actions/events";
 import { IEvent } from "@/models/Event";
 import { EventEditor } from "@/components/admin/EventEditor";
 import { Button } from "@/components/ui/Button";
-import { Plus, Edit2, Trash2, Calendar, MapPin, Loader2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Calendar, MapPin, Loader2, Globe } from "lucide-react";
 import Image from "next/image";
 
 export default function AdminEventsPage() {
@@ -53,6 +53,18 @@ export default function AdminEventsPage() {
     return (
         <div className="p-4 md:p-12 md:pl-80 pt-8 min-h-screen text-white">
             <div className="flex flex-col md:flex-row justify-end items-center mb-6 gap-6">
+                {/* Auto-Sync Flags Button */}
+                <Button
+                    onClick={async () => {
+                        const res = await syncEventFlags();
+                        alert(res.message || res.error);
+                        loadEvents();
+                    }}
+                    className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2"
+                    title="Actualizar iconos de banderas basados en el país"
+                >
+                    <Globe className="w-4 h-4" /> Actualizar Banderas
+                </Button>
 
                 <Button
                     onClick={handleCreate}
@@ -118,7 +130,9 @@ export default function AdminEventsPage() {
                                             <div className="flex flex-wrap items-center gap-2 md:gap-4 text-sm text-zinc-400">
                                                 <div className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/5 max-w-full overflow-hidden">
                                                     <MapPin className="w-3 h-3 text-red-500 shrink-0" />
-                                                    <span className="font-medium truncate">{event.location.country} - {event.location.address}</span>
+                                                    <span className="font-medium truncate">
+                                                        {event.location.flag} {event.location.country} - {event.location.address}
+                                                    </span>
                                                     {event.location.mapLink && (
                                                         <a
                                                             href={event.location.mapLink}

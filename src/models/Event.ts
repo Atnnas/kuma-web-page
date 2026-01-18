@@ -10,6 +10,7 @@ export interface IEvent extends Document {
         address: string;
         image: string; // URL of the country/place image
         mapLink?: string;
+        flag?: string;
     };
     organizer: {
         name: string;
@@ -45,6 +46,7 @@ const EventSchema = new Schema<IEvent>(
             address: { type: String, required: true },
             image: { type: String, required: false },
             mapLink: { type: String, required: false }, // Google Maps Link
+            flag: { type: String, required: false }, // Country Flag Emoji or URL
         },
         organizer: {
             name: { type: String, required: true },

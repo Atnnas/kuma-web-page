@@ -12,6 +12,7 @@ import { Calendar, MapPin, Type, Image as ImageIcon, Globe, User, Link as LinkIc
 import { DatePicker } from "@/components/ui/DatePicker";
 import { format } from "date-fns";
 import { createPortal } from "react-dom";
+import { getFlagForCountry } from "@/lib/flags";
 
 const MapPicker = dynamic(() => import("@/components/ui/MapPicker"), { ssr: false });
 
@@ -236,7 +237,18 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                             <input
                                 type="text"
                                 value={formData.location?.country}
-                                onChange={(e) => handleNestedChange("location", "country", e.target.value)}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    const flag = getFlagForCountry(val);
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        location: {
+                                            ...prev.location!,
+                                            country: val,
+                                            flag: flag
+                                        }
+                                    }));
+                                }}
                                 className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-red-500 focus:outline-none transition-colors"
                                 placeholder="Ej: Costa Rica"
                                 required
