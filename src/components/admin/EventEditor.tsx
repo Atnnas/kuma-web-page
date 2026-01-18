@@ -288,31 +288,35 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                                             onClick={() => setIsOpenCountry(false)}
                                         />
                                         <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto custom-scrollbar">
-                                            {countries
-                                                .filter(c => c.name.toLowerCase().includes((formData.location?.country || '').toLowerCase()))
-                                                .map((country: any) => (
-                                                    <div
-                                                        key={country.name}
-                                                        onClick={() => {
-                                                            setFormData(prev => ({
-                                                                ...prev,
-                                                                location: {
-                                                                    ...prev.location!,
-                                                                    country: country.name,
-                                                                    flag: country.flag
-                                                                }
-                                                            }));
-                                                            setIsOpenCountry(false);
-                                                        }}
-                                                        className="flex items-center gap-3 p-3 hover:bg-zinc-800 cursor-pointer border-b border-zinc-800 last:border-0"
-                                                    >
-                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                        <img src={country.flag} alt={country.name} className="w-8 h-auto rounded shadow-sm" />
-                                                        <span className="text-zinc-300">{country.name}</span>
-                                                    </div>
-                                                ))}
-                                            {countries.length === 0 && (
-                                                <div className="p-4 text-center text-zinc-500 text-sm">Cargando países...</div>
+                                            {countries.length > 0 ? (
+                                                countries
+                                                    .filter(c => c.name.toLowerCase().includes((formData.location?.country || '').toLowerCase()))
+                                                    .map((country: any) => (
+                                                        <div
+                                                            key={country.name}
+                                                            onClick={() => {
+                                                                setFormData(prev => ({
+                                                                    ...prev,
+                                                                    location: {
+                                                                        ...prev.location!,
+                                                                        country: country.name,
+                                                                        flag: country.flag
+                                                                    }
+                                                                }));
+                                                                setIsOpenCountry(false);
+                                                            }}
+                                                            className="flex items-center gap-3 p-3 hover:bg-zinc-800 cursor-pointer border-b border-zinc-800 last:border-0"
+                                                        >
+                                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                            <img src={country.flag} alt={country.name} className="w-8 h-auto rounded shadow-sm" />
+                                                            <span className="text-zinc-300">{country.name}</span>
+                                                        </div>
+                                                    ))
+                                            ) : (
+                                                <div className="p-4 text-center text-zinc-500 text-xs">
+                                                    <p className="mb-2">No hay países cargados.</p>
+                                                    <p className="text-red-500">⚠ Ejecuta "Inicializar Países"</p>
+                                                </div>
                                             )}
                                         </div>
                                     </>
