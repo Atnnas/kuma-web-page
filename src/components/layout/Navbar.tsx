@@ -200,7 +200,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                         {user ? (
                             <div className="flex items-center gap-3 pl-4 border-l border-white/10">
                                 <div className="text-right hidden sm:block">
-                                    <p className="text-xs text-zinc-400 uppercase tracking-wider font-serif">Sensei</p>
+                                    <p className="text-xs text-zinc-400 uppercase tracking-wider font-serif">Kuma</p>
                                     <p className="text-sm font-bold text-white leading-none">{user.name?.split(" ")[0]}</p>
                                 </div>
                                 <div className="relative h-10 w-10 rounded-full border-2 border-red-500/50 overflow-hidden shadow-[0_0_10px_rgba(220,38,38,0.3)]">
@@ -307,7 +307,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                                         </div>
                                         <div>
                                             <p className="text-white font-bold">{user.name}</p>
-                                            <p className="text-xs text-zinc-500">Sensei</p>
+                                            <p className="text-xs text-zinc-500">Kuma</p>
                                         </div>
                                     </div>
                                     <button
