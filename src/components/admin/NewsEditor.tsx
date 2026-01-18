@@ -224,10 +224,25 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
                                 </button>
                             </div>
                         ))}
+
+                        {/* EPIC Add More Card (Always visible at the end) */}
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => document.getElementById('unified-image-input')?.click()}
+                            className="relative aspect-video rounded-lg border-2 border-dashed border-zinc-700 hover:border-kuma-gold bg-zinc-900/30 hover:bg-zinc-900/80 flex flex-col items-center justify-center cursor-pointer group transition-colors shadow-lg hover:shadow-[0_0_15px_rgba(234,179,8,0.2)]"
+                        >
+                            <div className="bg-zinc-800 group-hover:bg-kuma-gold/20 text-zinc-500 group-hover:text-kuma-gold p-3 rounded-full transition-colors mb-2">
+                                <Plus className="w-8 h-8" />
+                            </div>
+                            <span className="text-xs font-bold text-zinc-500 group-hover:text-kuma-gold uppercase tracking-widest transition-colors">
+                                Agregar Más
+                            </span>
+                        </motion.div>
                     </div>
                     {(!formData.image && (!formData.images || formData.images.length === 0)) && (
-                        <p className="text-zinc-600 text-xs italic text-center py-8 border border-dashed border-zinc-800 rounded-lg">
-                            No has subido ninguna imagen. Dale al botón <span className="text-yellow-500 font-bold">+</span>
+                        <p className="text-zinc-600 text-xs italic text-center py-8">
+                            Empieza subiendo tu foto de portada arriba ☝️
                         </p>
                     )}
                 </div>
