@@ -22,7 +22,10 @@ export function EventCard({ event, userId }: EventCardProps) {
         setIsParticipating(newState);
 
         if (newState) {
-            // Audio removed by user request
+            // Haptic feedack for mobile
+            if (typeof navigator !== "undefined" && navigator.vibrate) {
+                navigator.vibrate(50); // Short, sharp vibration
+            }
         }
 
         startTransition(async () => {
