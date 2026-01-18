@@ -28,8 +28,8 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
     const [formData, setFormData] = useState<Partial<IEvent>>({
         title: initialData?.title || "",
         description: initialData?.description || "",
-        startDate: initialData?.startDate ? new Date(initialData.startDate) : new Date(),
-        endDate: initialData?.endDate ? new Date(initialData.endDate) : new Date(),
+        startDate: initialData?.startDate ? new Date(initialData.startDate) : new Date(new Date().setHours(9, 0, 0, 0)),
+        endDate: initialData?.endDate ? new Date(initialData.endDate) : new Date(new Date().setHours(21, 0, 0, 0)),
         location: {
             country: initialData?.location?.country || "",
             address: initialData?.location?.address || "",
