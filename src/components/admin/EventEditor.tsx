@@ -5,8 +5,9 @@ import dynamic from "next/dynamic";
 import { IEvent } from "@/models/Event";
 import { Button } from "@/components/ui/Button";
 import { createEvent, updateEvent } from "@/lib/actions/events";
-import { motion } from "framer-motion";
-import { Calendar, MapPin, Type, Image as ImageIcon, Globe, User, Link as LinkIcon, Info, Loader2, Clock, Check } from "lucide-react";
+import { getRecentImages } from "@/lib/actions/news"; // Reuse this action
+import { motion, AnimatePresence } from "framer-motion";
+import { Calendar, MapPin, Type, Image as ImageIcon, Globe, User, Link as LinkIcon, Info, Loader2, Clock, Check, Upload, Minus } from "lucide-react";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { format } from "date-fns";
 
@@ -21,6 +22,8 @@ interface EventEditorProps {
 export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isMapOpen, setIsMapOpen] = useState(false);
+    const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+    const [recentImages, setRecentImages] = useState<string[]>([]);
     const [formData, setFormData] = useState<Partial<IEvent>>({
         title: initialData?.title || "",
         description: initialData?.description || "",
@@ -294,44 +297,135 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                             <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                                 <ImageIcon className="w-3 h-3" /> Logo Organizador
                             </label>
-                            <div className="flex items-center gap-4">
+
+                            {/* Logo Display & Selection Area */}
+                            <div className="space-y-3">
                                 {formData.organizer?.logo && (
-                                    <div className="relative w-12 h-12 rounded-full overflow-hidden border border-zinc-700 shrink-0 bg-white/5">
-                                        <img src={formData.organizer.logo} alt="Logo" className="w-full h-full object-cover" />
-                                        <button
-                                            type="button"
-                                            onClick={() => handleNestedChange("organizer", "logo", "")}
-                                            className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center text-red-500 font-bold text-lg transition-opacity"
-                                        >
-                                            ×
-                                        </button>
+                                    <div className="flex items-center gap-4 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800">
+                                        <div className="relative w-16 h-16 rounded-full overflow-hidden border border-zinc-700 shrink-0 bg-white/5">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={formData.organizer.logo} alt="Logo" className="w-full h-full object-cover" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-xs text-zinc-400 mb-2">Logo Actual</p>
+                                            <Button
+                                                type="button"
+                                                onClick={() => handleNestedChange("organizer", "logo", "")}
+                                                className="bg-red-600/20 text-red-500 hover:bg-red-600 hover:text-white h-8 text-xs w-full"
+                                            >
+                                                Eliminar Logo
+                                            </Button>
+                                        </div>
                                     </div>
                                 )}
-                                <div className="flex-1">
-                                    <label className="w-full flex items-center justify-center gap-2 bg-zinc-950 border border-zinc-800 border-dashed rounded-lg p-3 text-zinc-400 cursor-pointer hover:border-red-500 hover:text-red-500 transition-colors">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            onChange={(e) => {
-                                                const file = e.target.files?.[0];
-                                                if (file) {
-                                                    if (file.size > 2 * 1024 * 1024) { // 2MB limit
-                                                        alert("El logo es demasiado grande. Máximo 2MB.");
-                                                        return;
-                                                    }
-                                                    const reader = new FileReader();
-                                                    reader.onloadend = () => {
-                                                        handleNestedChange("organizer", "logo", reader.result as string);
-                                                    };
-                                                    reader.readAsDataURL(file);
-                                                }
-                                            }}
-                                        />
-                                        <span className="text-sm font-medium">Subir Logo (Max 2MB)</span>
-                                    </label>
-                                </div>
+
+                                {!formData.organizer?.logo && (
+                                    <div
+                                        onClick={async () => {
+                                            const images = await getRecentImages();
+                                            setRecentImages(images);
+                                            setShowMediaLibrary(true);
+                                        }}
+                                        className="w-full h-24 border-2 border-dashed border-zinc-800 hover:border-red-600/50 bg-zinc-900/30 hover:bg-zinc-900 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all gap-2 group"
+                                    >
+                                        <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center group-hover:bg-red-600/20 group-hover:text-red-500 transition-colors">
+                                            <Upload className="w-4 h-4 text-zinc-400 group-hover:text-red-500" />
+                                        </div>
+                                        <span className="text-xs font-bold text-zinc-500 group-hover:text-zinc-300 uppercase tracking-wide">
+                                            Subir o Elegir Logo
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* Hidden Input for New Uploads */}
+                                <input
+                                    id="event-logo-input"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            if (file.size > 2 * 1024 * 1024) {
+                                                alert("El logo es demasiado grande. Máximo 2MB.");
+                                                return;
+                                            }
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => {
+                                                handleNestedChange("organizer", "logo", reader.result as string);
+                                                setShowMediaLibrary(false);
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }}
+                                />
                             </div>
+
+                            {/* Media Library Modal */}
+                            <AnimatePresence>
+                                {showMediaLibrary && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                                        onClick={() => setShowMediaLibrary(false)}
+                                    >
+                                        <motion.div
+                                            initial={{ scale: 0.9, y: 20 }}
+                                            animate={{ scale: 1, y: 0 }}
+                                            exit={{ scale: 0.9, y: 20 }}
+                                            className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-xl max-h-[70vh] overflow-hidden flex flex-col shadow-2xl"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
+                                                <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                                                    <ImageIcon className="w-4 h-4 text-kuma-gold" /> Elegir Logo
+                                                </h3>
+                                                <Button
+                                                    onClick={() => setShowMediaLibrary(false)}
+                                                    className="bg-zinc-800 hover:bg-zinc-700 text-white rounded-full p-1 h-8 w-8"
+                                                >
+                                                    <Minus className="w-4 h-4 rotate-45" />
+                                                </Button>
+                                            </div>
+
+                                            <div className="flex-1 overflow-y-auto p-4">
+                                                <div className="grid grid-cols-3 gap-3">
+                                                    {/* Upload Option */}
+                                                    <div
+                                                        onClick={() => document.getElementById('event-logo-input')?.click()}
+                                                        className="aspect-square rounded-lg border-2 border-dashed border-zinc-700 hover:border-red-600 bg-zinc-800/30 hover:bg-zinc-800 flex flex-col items-center justify-center cursor-pointer group transition-all"
+                                                    >
+                                                        <Upload className="w-6 h-6 text-zinc-500 group-hover:text-red-500 mb-1" />
+                                                        <span className="text-[10px] font-bold text-zinc-400 group-hover:text-white uppercase text-center">
+                                                            Subir Nuevo
+                                                        </span>
+                                                    </div>
+
+                                                    {/* History */}
+                                                    {recentImages.map((img, idx) => (
+                                                        <div
+                                                            key={idx}
+                                                            onClick={() => {
+                                                                handleNestedChange("organizer", "logo", img);
+                                                                setShowMediaLibrary(false);
+                                                            }}
+                                                            className="relative aspect-square rounded-lg overflow-hidden border border-zinc-800 group cursor-pointer hover:border-kuma-gold transition-all"
+                                                        >
+                                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                            <img src={img} alt="History" className="w-full h-full object-cover" />
+                                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                                <Check className="w-6 h-6 text-kuma-gold" />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
 
