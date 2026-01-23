@@ -11,6 +11,7 @@ export const metadata = {
 
 import { auth } from "@/auth";
 import { EventCard } from "@/components/events/EventCard";
+import { DebugSessionInfo } from "@/components/DebugSessionInfo";
 
 export default async function CalendarPage() {
     const session = await auth();
@@ -57,6 +58,9 @@ export default async function CalendarPage() {
                         />
                     ))}
                 </div>
+
+                {/* DEBUG COMPONENT - REMOVE AFTER FIX */}
+                <DebugSessionInfo userId={userId} events={upcomingEvents} />
 
                 {/* Past Events */}
                 {pastEvents.length > 0 && (
