@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import { MiniCalendar } from "@/components/ui/MiniCalendar";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
@@ -20,12 +20,8 @@ export function EventCard({ event, userId }: EventCardProps) {
 
     const [isBouncing, setIsBouncing] = useState(false);
 
-    // Force sync if props update - This fixes the "Revert" bug in production
-    useEffect(() => {
-        if (userId) {
-            setIsParticipating(event.participants?.includes(userId) || false);
-        }
-    }, [userId, event.participants]);
+    // useEffect removed: We trust the local state + initial prop.
+    // Syncing with lagging server props causes the "Revert" bug in production.
 
     const handleToggle = (newState: boolean) => {
         setIsParticipating(newState);
