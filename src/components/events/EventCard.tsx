@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import Image from "next/image";
 import { MiniCalendar } from "@/components/ui/MiniCalendar";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
@@ -20,7 +20,12 @@ export function EventCard({ event, userId }: EventCardProps) {
 
     const [isBouncing, setIsBouncing] = useState(false);
 
-    // useEffect removed to prevent overriding optimistic state with stale server data during transitions
+    // Force sync if props update - This fixes the "Revert" bug in production
+    useEffect(() => {
+        if (userId) {
+            setIsParticipating(event.participants?.includes(userId) || false);
+        }
+    }, [userId, event.participants]);
 
     const handleToggle = (newState: boolean) => {
         setIsParticipating(newState);
@@ -30,10 +35,9 @@ export function EventCard({ event, userId }: EventCardProps) {
         setTimeout(() => setIsBouncing(false), 300);
 
         if (newState) {
-            // Haptic feedback for mobile
-            // Use longer duration and try pattern for better noticeability
+            // Haptic feedback
             if (typeof navigator !== "undefined" && navigator.vibrate) {
-                navigator.vibrate([10, 50, 10]); // Short pattern: Tick-Tock
+                navigator.vibrate([10, 50, 10]);
             }
         }
 
@@ -44,6 +48,12 @@ export function EventCard({ event, userId }: EventCardProps) {
             }
         });
     };
+
+    // Helper for safe formatted dates
+    const day = new Date(event.startDate).getDate();
+    const month = new Date(event.startDate).toLocaleString('es-ES', { month: 'short' }).replace('.', '');
+    const year = new Date(event.startDate).getFullYear();
+    const time = new Date(event.startDate).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
     return (
         <div
@@ -69,13 +79,13 @@ export function EventCard({ event, userId }: EventCardProps) {
             {/* Date Box (Desktop Only) - Cleaner */}
             <div className="hidden md:flex bg-black/40 p-8 flex-col items-center justify-center min-w-[120px] text-center border-r border-white/5 shrink-0 z-10 relative backdrop-blur-sm">
                 <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-600 leading-none tracking-tighter" suppressHydrationWarning>
-                    {new Date(event.startDate).getDate()}
+                    {day}
                 </div>
                 <span className="text-sm font-bold text-red-500 uppercase tracking-[0.2em] mt-2" suppressHydrationWarning>
-                    {new Date(event.startDate).toLocaleString('es-ES', { month: 'short' }).replace('.', '')}
+                    {month}
                 </span>
                 <span className="text-[10px] text-zinc-500 mt-1 font-mono" suppressHydrationWarning>
-                    {new Date(event.startDate).getFullYear()}
+                    {year}
                 </span>
             </div>
 
@@ -96,7 +106,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                         <div className="flex flex-col">
                             <h3 className="text-lg font-black text-white uppercase leading-none">{event.title}</h3>
                             <span className="text-xs text-red-400 font-bold mt-1" suppressHydrationWarning>
-                                {new Date(event.startDate).getDate()} {new Date(event.startDate).toLocaleString('es-ES', { month: 'short' })}
+                                {`${day} ${month}`}
                             </span>
                         </div>
                     </div>
@@ -123,7 +133,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                             <div className="flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-full border border-white/5">
                                 <Clock className="w-3 h-3 text-red-500" />
                                 <span suppressHydrationWarning>
-                                    {new Date(event.startDate).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                                    {time}
                                 </span>
                             </div>
 
