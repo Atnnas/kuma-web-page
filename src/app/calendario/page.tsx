@@ -23,7 +23,9 @@ export default async function CalendarPage() {
         getPastEvents()
     ]);
 
-    return (
+    if (upcomingEvents.length > 0) {
+        // Debug logs removed
+    } return (
         <main className="min-h-screen bg-black text-white pt-24 pb-20">
             {/* Background Texture */}
             <div className="fixed inset-0 z-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('/images/metal-bear.png')", backgroundSize: 'cover' }}></div>

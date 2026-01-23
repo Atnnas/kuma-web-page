@@ -157,23 +157,29 @@ import { auth } from "@/auth";
 export async function toggleParticipation(eventId: string, shouldParticipate: boolean) {
     try {
         const session = await auth();
+        // console.log("Toggle Participation Session:", session?.user?.email); // DEBUG
+
         if (!session?.user?.email) {
+            // console.error("Toggle Failed: No Session");
             return { success: false, error: "Must be logged in" };
         }
 
         const userId = session.user.id || session.user.email;
+        // console.log("Toggle User ID:", userId, "Event ID:", eventId, "State:", shouldParticipate); // DEBUG
 
         await connectDB();
 
+        let result;
         if (shouldParticipate) {
-            await Event.findByIdAndUpdate(eventId, {
+            result = await Event.findByIdAndUpdate(eventId, {
                 $addToSet: { participants: userId }
             });
         } else {
-            await Event.findByIdAndUpdate(eventId, {
+            result = await Event.findByIdAndUpdate(eventId, {
                 $pull: { participants: userId }
             });
         }
+        // console.log("Update Result:", result ? "Found & Updated" : "Event Not Found"); // DEBUG
 
         revalidatePath("/calendario");
         return { success: true };

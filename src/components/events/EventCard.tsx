@@ -66,13 +66,13 @@ export function EventCard({ event, userId }: EventCardProps) {
 
             {/* Date Box (Desktop Only) - Cleaner */}
             <div className="hidden md:flex bg-black/40 p-8 flex-col items-center justify-center min-w-[120px] text-center border-r border-white/5 shrink-0 z-10 relative backdrop-blur-sm">
-                <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-600 leading-none tracking-tighter">
+                <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-600 leading-none tracking-tighter" suppressHydrationWarning>
                     {new Date(event.startDate).getDate()}
                 </div>
-                <span className="text-sm font-bold text-red-500 uppercase tracking-[0.2em] mt-2">
+                <span className="text-sm font-bold text-red-500 uppercase tracking-[0.2em] mt-2" suppressHydrationWarning>
                     {new Date(event.startDate).toLocaleString('es-ES', { month: 'short' }).replace('.', '')}
                 </span>
-                <span className="text-[10px] text-zinc-500 mt-1 font-mono">
+                <span className="text-[10px] text-zinc-500 mt-1 font-mono" suppressHydrationWarning>
                     {new Date(event.startDate).getFullYear()}
                 </span>
             </div>
@@ -93,7 +93,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                         )}
                         <div className="flex flex-col">
                             <h3 className="text-lg font-black text-white uppercase leading-none">{event.title}</h3>
-                            <span className="text-xs text-red-400 font-bold mt-1">
+                            <span className="text-xs text-red-400 font-bold mt-1" suppressHydrationWarning>
                                 {new Date(event.startDate).getDate()} {new Date(event.startDate).toLocaleString('es-ES', { month: 'short' })}
                             </span>
                         </div>
@@ -120,7 +120,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                         <div className="flex flex-wrap items-center gap-4 md:gap-6 text-xs md:text-sm text-zinc-500 font-medium pt-4 border-t border-white/5 mt-4">
                             <div className="flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-full border border-white/5">
                                 <Clock className="w-3 h-3 text-red-500" />
-                                <span>
+                                <span suppressHydrationWarning>
                                     {new Date(event.startDate).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                             </div>
