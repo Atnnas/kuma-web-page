@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import Image from "next/image";
 import { MiniCalendar } from "@/components/ui/MiniCalendar";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
@@ -19,6 +19,13 @@ export function EventCard({ event, userId }: EventCardProps) {
     const [isPending, startTransition] = useTransition();
 
     const [isBouncing, setIsBouncing] = useState(false);
+
+    // Force sync if props update (crucial for hydration/server-client handoff)
+    useEffect(() => {
+        if (userId) {
+            setIsParticipating(event.participants?.includes(userId) || false);
+        }
+    }, [userId, event.participants]);
 
     const handleToggle = (newState: boolean) => {
         setIsParticipating(newState);
