@@ -33,7 +33,7 @@ export function MiniCalendar({ startDate, endDate, className }: MiniCalendarProp
 
     return (
         <div className={cn("bg-zinc-950 border border-zinc-800 p-2 rounded-lg inline-block", className)}>
-            <div className="text-[10px] font-bold text-center text-zinc-400 uppercase mb-1 tracking-wider border-b border-zinc-800 pb-1">
+            <div className="text-[10px] font-bold text-center text-zinc-400 uppercase mb-1 tracking-wider border-b border-zinc-800 pb-1" suppressHydrationWarning>
                 {days.start.toLocaleString('es-ES', { month: 'short' })}
             </div>
             <div className="grid grid-cols-7 gap-1 w-full text-center">

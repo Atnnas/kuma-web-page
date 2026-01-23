@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useTransition, useOptimistic } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import Image from "next/image";
 import { MiniCalendar } from "@/components/ui/MiniCalendar";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { Calendar as CalendarIcon, MapPin, Clock, ExternalLink, Loader2 } from "lucide-react";
-import { toggleParticipation } from "@/lib/actions/events";
 import clsx from "clsx";
+
+// Fetcher for SWR
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface EventCardProps {
     event: any;
@@ -14,39 +17,60 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, userId }: EventCardProps) {
-    const initialParticipating = userId && event.participants?.includes(userId);
-
-    // NATIVE OPTIMISTIC UI: Prioritizes this state while server action is pending
-    const [optimisticParticipating, setOptimisticParticipating] = useOptimistic(
-        !!initialParticipating,
-        (state: boolean, newStatus: boolean) => newStatus
+    // CLIENT-SIDE FETCHING with EXPLICIT LOADING (Strategy 2: The "Honest" UI)
+    // We fetch the status, but we DO NOT update optimistically. We wait for the server.
+    const { data, mutate } = useSWR(
+        userId ? `/api/events/${event._id}/participation` : null,
+        fetcher,
+        {
+            fallbackData: { isParticipating: userId && event.participants?.includes(userId) },
+            revalidateOnFocus: true,
+            dedupingInterval: 2000
+        }
     );
 
-    const [isPending, startTransition] = useTransition();
+    const isParticipating = data?.isParticipating || false;
     const [isBouncing, setIsBouncing] = useState(false);
+    const [isPending, setIsPending] = useState(false);
 
-    const handleToggle = (newState: boolean) => {
-        // 1. Optimistic Update (Instant)
-        startTransition(async () => {
-            setOptimisticParticipating(newState);
+    const handleToggle = async (desiredState: boolean) => {
+        if (isPending) return;
 
-            // Trigger animation
-            setIsBouncing(true);
-            setTimeout(() => setIsBouncing(false), 300);
+        // 1. Start Loading (Lock UI, Show Spinner)
+        setIsPending(true);
 
-            if (newState) {
+        try {
+            // 2. Perform API Call
+            const response = await fetch(`/api/events/${event._id}/participation`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ participate: desiredState }),
+            });
+
+            if (!response.ok) throw new Error("Failed to update");
+
+            const result = await response.json();
+
+            // 3. Update State ONLY with Server Confirmation
+            // We update the local cache with the confirmed data from the server
+            await mutate({ ...data, isParticipating: result.isParticipating }, false);
+
+            // 4. Trigger Animations only on Success
+            if (result.isParticipating) {
+                setIsBouncing(true);
+                setTimeout(() => setIsBouncing(false), 300);
                 if (typeof navigator !== "undefined" && navigator.vibrate) {
                     navigator.vibrate([10, 50, 10]);
                 }
             }
 
-            // 2. Server Action (Background)
-            const res = await toggleParticipation(event._id, newState);
-
-            // If server fails, we might want to revert, but useOptimistic handles the "pending" state.
-            // When pending finishes, it reverts to the "actual" server data (conceptually).
-            // But since revalidatePath happened, the new prop "initialParticipating" will arrive and take over.
-        });
+        } catch (error) {
+            console.error("Toggle failed", error);
+            // On error, just re-fetch the true state to ensure consistency
+            mutate();
+        } finally {
+            setIsPending(false);
+        }
     };
 
     // Helper for safe formatted dates
@@ -60,7 +84,7 @@ export function EventCard({ event, userId }: EventCardProps) {
             className={clsx(
                 "group relative border overflow-hidden transition-all duration-500 flex flex-col md:flex-row isolate backdrop-blur-md",
                 "rounded-[2.5rem]", // More rounded
-                optimisticParticipating
+                isParticipating
                     ? "bg-zinc-900/60 border-amber-500/40 shadow-[0_0_40px_rgba(245,158,11,0.15)]"
                     : "bg-zinc-900/40 border-white/5 hover:border-red-500/30 hover:bg-zinc-900/60 hover:shadow-[0_0_30px_rgba(220,38,38,0.1)]",
                 isBouncing && "scale-105 transition-transform duration-300 ease-spring"
@@ -149,26 +173,31 @@ export function EventCard({ event, userId }: EventCardProps) {
                             {/* TOGGLE BUTTON */}
                             {userId && (
                                 <div className="flex items-center gap-2 px-2">
-                                    <span className={clsx("text-[10px] font-bold uppercase tracking-wider transition-colors", optimisticParticipating ? "text-amber-500" : "text-zinc-600")}>
-                                        {optimisticParticipating ? "ASISTIRÉ" : "¿VAS A IR?"}
+                                    <span className={clsx("text-[10px] font-bold uppercase tracking-wider transition-colors", isParticipating ? "text-amber-500" : "text-zinc-600")}>
+                                        {isParticipating ? "ASISTIRÉ" : "¿VAS A IR?"}
                                     </span>
                                     <div
-                                        onClick={() => !isPending && handleToggle(!optimisticParticipating)}
+                                        onClick={() => !isPending && handleToggle(!isParticipating)}
                                         className={clsx(
                                             "relative w-10 h-5 rounded-full border cursor-pointer transition-all duration-300 flex items-center px-0.5 select-none",
-                                            optimisticParticipating
+                                            isParticipating
                                                 ? "bg-amber-500/20 border-amber-500"
-                                                : "bg-white/5 border-zinc-700 hover:border-zinc-500"
+                                                : "bg-white/5 border-zinc-700 hover:border-zinc-500",
+                                            isPending && "opacity-80 cursor-wait"
                                         )}
                                     >
                                         <div
                                             className={clsx(
-                                                "w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform duration-300",
-                                                optimisticParticipating
+                                                "w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform duration-300 flex items-center justify-center",
+                                                isParticipating
                                                     ? "translate-x-5 bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.5)]"
                                                     : "translate-x-0 bg-zinc-500"
                                             )}
-                                        />
+                                        >
+                                            {isPending && (
+                                                <Loader2 className="w-2.5 h-2.5 text-black animate-spin" />
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -196,7 +225,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                     <div className="relative flex flex-col items-center justify-center md:items-end md:justify-start shrink-0 pt-4 md:pt-0 border-t md:border-t-0 border-white/5 gap-4">
 
                         {/* PIN - Floating Effect */}
-                        {optimisticParticipating && (
+                        {isParticipating && (
                             <div className="absolute -left-8 top-0 z-50 animate-bounce-slow drop-shadow-2xl hidden md:block">
                                 <Image
                                     src="/images/yellow-pin.svg"
@@ -208,7 +237,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                             </div>
                         )}
                         {/* Mobile Pin */}
-                        {optimisticParticipating && (
+                        {isParticipating && (
                             <div className="absolute top-2 right-4 md:hidden z-50">
                                 <Image
                                     src="/images/yellow-pin.svg"

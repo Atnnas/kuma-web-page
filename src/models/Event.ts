@@ -19,6 +19,7 @@ export interface IEvent extends Document {
 
     type: "tournament" | "seminar" | "exam" | "camp" | "other";
     isPremium: boolean;
+    participants: string[];
     createdAt: Date;
     updatedAt: Date;
 }
@@ -63,6 +64,10 @@ const EventSchema = new Schema<IEvent>(
             type: Boolean,
             default: false,
         },
+        participants: {
+            type: [String], // Array of User IDs
+            default: [],
+        }
     },
     {
         timestamps: true,
