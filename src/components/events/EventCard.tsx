@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useOptimistic } from "react";
 import Image from "next/image";
 import { MiniCalendar } from "@/components/ui/MiniCalendar";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
@@ -15,33 +15,37 @@ interface EventCardProps {
 
 export function EventCard({ event, userId }: EventCardProps) {
     const initialParticipating = userId && event.participants?.includes(userId);
-    const [isParticipating, setIsParticipating] = useState(!!initialParticipating);
-    const [isPending, startTransition] = useTransition();
 
+    // NATIVE OPTIMISTIC UI: Prioritizes this state while server action is pending
+    const [optimisticParticipating, setOptimisticParticipating] = useOptimistic(
+        !!initialParticipating,
+        (state: boolean, newStatus: boolean) => newStatus
+    );
+
+    const [isPending, startTransition] = useTransition();
     const [isBouncing, setIsBouncing] = useState(false);
 
-    // useEffect removed: We trust the local state + initial prop.
-    // Syncing with lagging server props causes the "Revert" bug in production.
-
     const handleToggle = (newState: boolean) => {
-        setIsParticipating(newState);
-
-        // Trigger Jump Animation
-        setIsBouncing(true);
-        setTimeout(() => setIsBouncing(false), 300);
-
-        if (newState) {
-            // Haptic feedback
-            if (typeof navigator !== "undefined" && navigator.vibrate) {
-                navigator.vibrate([10, 50, 10]);
-            }
-        }
-
+        // 1. Optimistic Update (Instant)
         startTransition(async () => {
-            const res = await toggleParticipation(event._id, newState);
-            if (!res.success) {
-                setIsParticipating(!newState);
+            setOptimisticParticipating(newState);
+
+            // Trigger animation
+            setIsBouncing(true);
+            setTimeout(() => setIsBouncing(false), 300);
+
+            if (newState) {
+                if (typeof navigator !== "undefined" && navigator.vibrate) {
+                    navigator.vibrate([10, 50, 10]);
+                }
             }
+
+            // 2. Server Action (Background)
+            const res = await toggleParticipation(event._id, newState);
+
+            // If server fails, we might want to revert, but useOptimistic handles the "pending" state.
+            // When pending finishes, it reverts to the "actual" server data (conceptually).
+            // But since revalidatePath happened, the new prop "initialParticipating" will arrive and take over.
         });
     };
 
@@ -56,7 +60,7 @@ export function EventCard({ event, userId }: EventCardProps) {
             className={clsx(
                 "group relative border overflow-hidden transition-all duration-500 flex flex-col md:flex-row isolate backdrop-blur-md",
                 "rounded-[2.5rem]", // More rounded
-                isParticipating
+                optimisticParticipating
                     ? "bg-zinc-900/60 border-amber-500/40 shadow-[0_0_40px_rgba(245,158,11,0.15)]"
                     : "bg-zinc-900/40 border-white/5 hover:border-red-500/30 hover:bg-zinc-900/60 hover:shadow-[0_0_30px_rgba(220,38,38,0.1)]",
                 isBouncing && "scale-105 transition-transform duration-300 ease-spring"
@@ -145,14 +149,14 @@ export function EventCard({ event, userId }: EventCardProps) {
                             {/* TOGGLE BUTTON */}
                             {userId && (
                                 <div className="flex items-center gap-2 px-2">
-                                    <span className={clsx("text-[10px] font-bold uppercase tracking-wider transition-colors", isParticipating ? "text-amber-500" : "text-zinc-600")}>
-                                        {isParticipating ? "ASISTIRÉ" : "¿VAS A IR?"}
+                                    <span className={clsx("text-[10px] font-bold uppercase tracking-wider transition-colors", optimisticParticipating ? "text-amber-500" : "text-zinc-600")}>
+                                        {optimisticParticipating ? "ASISTIRÉ" : "¿VAS A IR?"}
                                     </span>
                                     <div
-                                        onClick={() => !isPending && handleToggle(!isParticipating)}
+                                        onClick={() => !isPending && handleToggle(!optimisticParticipating)}
                                         className={clsx(
                                             "relative w-10 h-5 rounded-full border cursor-pointer transition-all duration-300 flex items-center px-0.5 select-none",
-                                            isParticipating
+                                            optimisticParticipating
                                                 ? "bg-amber-500/20 border-amber-500"
                                                 : "bg-white/5 border-zinc-700 hover:border-zinc-500"
                                         )}
@@ -160,7 +164,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                                         <div
                                             className={clsx(
                                                 "w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform duration-300",
-                                                isParticipating
+                                                optimisticParticipating
                                                     ? "translate-x-5 bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.5)]"
                                                     : "translate-x-0 bg-zinc-500"
                                             )}
@@ -192,7 +196,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                     <div className="relative flex flex-col items-center justify-center md:items-end md:justify-start shrink-0 pt-4 md:pt-0 border-t md:border-t-0 border-white/5 gap-4">
 
                         {/* PIN - Floating Effect */}
-                        {isParticipating && (
+                        {optimisticParticipating && (
                             <div className="absolute -left-8 top-0 z-50 animate-bounce-slow drop-shadow-2xl hidden md:block">
                                 <Image
                                     src="/images/yellow-pin.svg"
@@ -204,7 +208,7 @@ export function EventCard({ event, userId }: EventCardProps) {
                             </div>
                         )}
                         {/* Mobile Pin */}
-                        {isParticipating && (
+                        {optimisticParticipating && (
                             <div className="absolute top-2 right-4 md:hidden z-50">
                                 <Image
                                     src="/images/yellow-pin.svg"
