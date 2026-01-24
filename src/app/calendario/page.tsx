@@ -29,15 +29,7 @@ export default async function CalendarPage() {
             {/* Background Texture */}
             <div className="fixed inset-0 z-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('/images/metal-bear.png')", backgroundSize: 'cover' }}></div>
 
-            <div className="container mx-auto px-4 2xl:px-24 relative z-10">
-                <div className="text-center mb-10 md:mb-16 space-y-4">
-                    <h1 className="text-4xl xs:text-5xl md:text-7xl 2xl:text-9xl font-serif font-black uppercase tracking-widest text-kuma-gold drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)] leading-tight">
-                        Calendario <span className="text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.5)]">2025</span>
-                    </h1>
-                    <p className="text-zinc-400 text-sm md:text-lg max-w-2xl mx-auto font-serif italic px-4">
-                        "La preparación constante es el camino a la maestría. Aquí encontrarás los próximos desafíos."
-                    </p>
-                </div>
+            <div className="container mx-auto px-4 2xl:px-24 relative z-10 pt-10">
 
                 {upcomingEvents.length === 0 && (
                     <div className="text-center py-20 bg-zinc-900/30 rounded-3xl border border-dashed border-zinc-800">

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
 import { handleSignOut } from "@/lib/actions";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
@@ -170,29 +171,57 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
 
                     {/* Navigation Items - Desktop */}
                     <div className="flex items-center gap-2 relative z-10 flex-1 justify-center">
-                        {navItems.map((item, index) => (
-                            <Link
-                                key={item.name}
-                                href={item.href}
-                                onMouseEnter={() => setHoveredIndex(index)}
-                                onMouseLeave={() => setHoveredIndex(null)}
-                                className="relative px-4 py-2 text-sm md:text-base lg:text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300"
-                            >
-                                {hoveredIndex === index && (
-                                    <motion.div
-                                        layoutId="navbar-hover"
-                                        className="absolute inset-0 bg-white/10 rounded-full"
-                                        initial={false}
-                                        transition={{
-                                            type: "spring",
-                                            stiffness: 400,
-                                            damping: 30,
-                                        }}
-                                    />
-                                )}
-                                <span className="relative z-10 uppercase tracking-wide text-xs md:text-sm lg:text-xs">{item.name}</span>
-                            </Link>
-                        ))}
+                        {navItems.map((item, index) => {
+                            const isActive = pathname === item.href;
+
+                            return (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    onMouseEnter={() => setHoveredIndex(index)}
+                                    onMouseLeave={() => setHoveredIndex(null)}
+                                    className={cn(
+                                        "relative px-4 py-2 text-sm md:text-base lg:text-sm font-medium transition-colors duration-300",
+                                        isActive ? "text-white" : "text-zinc-400 hover:text-white"
+                                    )}
+                                >
+                                    {/* Hover Effect */}
+                                    {hoveredIndex === index && (
+                                        <motion.div
+                                            layoutId="navbar-hover"
+                                            className="absolute inset-0 bg-white/10 rounded-full"
+                                            initial={false}
+                                            transition={{
+                                                type: "spring",
+                                                stiffness: 400,
+                                                damping: 30,
+                                            }}
+                                        />
+                                    )}
+
+                                    {/* Active State - Ingenious Shaded Border */}
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="navbar-active"
+                                            className="absolute inset-0 rounded-full bg-white/5 border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+                                            initial={false}
+                                            transition={{
+                                                type: "spring",
+                                                stiffness: 300,
+                                                damping: 30,
+                                            }}
+                                        />
+                                    )}
+
+                                    <span className={cn(
+                                        "relative z-10 uppercase tracking-wide text-xs md:text-sm lg:text-xs",
+                                        isActive ? "font-bold text-white shadow-black drop-shadow-md" : ""
+                                    )}>
+                                        {item.name}
+                                    </span>
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     {/* Action / User Area */}

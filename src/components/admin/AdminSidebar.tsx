@@ -148,11 +148,11 @@ export function AdminSidebar({ user }: { user?: User }) {
 
             <div className={cn(
                 "fixed top-0 z-[50] flex flex-col transition-transform duration-300 pt-20 lg:pt-0 h-full w-64 bg-zinc-950",
-                // Mobile/Tablet: Right side, slide from right
-                "right-0 border-l border-white/10",
-                isMobileOpen ? "translate-x-0" : "translate-x-full",
+                // Mobile/Tablet: Left side, slide from left
+                "left-0 border-r border-white/10",
+                isMobileOpen ? "translate-x-0" : "-translate-x-full",
                 // Desktop (LG+): Left side, always visible
-                "lg:left-0 lg:right-auto lg:translate-x-0 lg:border-r lg:border-l-0"
+                "lg:translate-x-0"
             )}>
                 {/* Desktop Brand */}
                 {/* Desktop Brand / User Profile Header */}
@@ -231,7 +231,7 @@ export function AdminSidebar({ user }: { user?: User }) {
                         </button>
                     </form>
                 </div>
-            </div>
+            </div >
         </>
     );
 }

@@ -14,7 +14,7 @@ import { differenceInDays } from "date-fns";
 const isNew = (dateString?: string | Date) => {
     if (!dateString) return false;
     const date = new Date(dateString);
-    return differenceInDays(new Date(), date) <= 5;
+    return differenceInDays(new Date(), date) <= 7;
 };
 
 export default function AdminEventsPage() {
