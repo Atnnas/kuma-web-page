@@ -83,8 +83,7 @@ export function PhilosophyDetailed() {
                                 <h3 className="text-sm font-bold text-red-600 uppercase tracking-[0.2em] mb-4">El Símbolo</h3>
                                 <div className="text-6xl text-white mb-4 font-serif">熊</div>
                                 <p className="text-zinc-400 leading-relaxed">
-                                    El Kanji representa la dualidad: la <span className="text-white">hibernación</span> (paciencia, estrategia) y el <span className="text-white">despertar</span> (acción explosiva, defensa feroz).
-                                    Es la calma antes de la tormenta.
+                                    Letra japonesa que viene de China. Significa <span className="text-white">Oso</span> y se lee <span className="text-white">"KUMA"</span>.
                                 </p>
                             </div>
                         </motion.div>
@@ -204,7 +203,7 @@ export function PhilosophyDetailed() {
                         >
                             <h4 className="text-kuma-gold font-bold uppercase tracking-widest text-sm mb-2">El Kanji (熊)</h4>
                             <p className="text-zinc-400 text-sm leading-relaxed">
-                                El ideograma del Oso. Simboliza la dualidad entre la calma de la hibernación y la ferocidad de la defensa.
+                                Letra japonesa que viene de China. Significa <span className="text-white">Oso</span> y se lee <span className="text-white">"KUMA"</span>.
                             </p>
                         </motion.div>
 
