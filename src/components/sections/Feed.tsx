@@ -6,17 +6,17 @@ import { feedItems } from "@/lib/mock-data";
 export function Feed() {
     return (
         <section className="py-20 bg-zinc-950 relative z-10">
-            <div className="max-w-7xl mx-auto px-4 mb-12 text-center">
-                <h2 className="text-4xl md:text-5xl font-black uppercase tracking-widest text-white mb-4">
+            <div className="max-w-7xl 2xl:max-w-[90vw] mx-auto px-4 mb-12 text-center">
+                <h2 className="text-4xl md:text-5xl 2xl:text-7xl font-black uppercase tracking-widest text-white mb-4">
                     Últimas del <span className="text-red-600">Dojo</span>
                 </h2>
-                <p className="text-zinc-400 max-w-2xl mx-auto">
+                <p className="text-zinc-400 max-w-2xl 2xl:text-xl 2xl:max-w-4xl mx-auto">
                     Mantente al día con nuestras noticias, eventos y contenido exclusivo de entrenamiento.
                     <span className="text-red-500 font-semibold block mt-2">Los contenidos exclusivos requieren suscripción activa.</span>
                 </p>
             </div>
 
-            <BentoGrid className="max-w-6xl mx-auto px-4">
+            <BentoGrid className="max-w-6xl 2xl:max-w-[85vw] mx-auto px-4">
                 {feedItems.map((item, i) => (
                     <BentoGridItem
                         key={i}

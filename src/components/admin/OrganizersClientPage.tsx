@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { getOrganizers, createOrganizer, updateOrganizer, deleteOrganizer } from "@/lib/actions/organizers";
 import { Button } from "@/components/ui/Button";
-import { Plus, Edit2, Trash2, Briefcase, Loader2, Upload, Save, X } from "lucide-react";
+import { Edit2, Trash2, Briefcase, Loader2, Upload, Save, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { AdminFloatingButton } from "@/components/admin/AdminFloatingButton";
 
 interface Organizer {
     _id: string;
@@ -89,28 +90,11 @@ export default function OrganizersClientPage() {
     };
 
     return (
-        <div className="p-4 md:p-12 md:pl-80 pt-8 min-h-screen text-white">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
-                <div>
-                    <h1 className="text-3xl font-serif font-black text-white uppercase tracking-widest drop-shadow-lg">
-                        Organizadores
-                    </h1>
-                    <p className="text-zinc-400 text-sm mt-1">
-                        Gestiona las entidades que realizan eventos.
-                    </p>
-                </div>
-
-                <div className="flex gap-4">
-                    <Button
-                        onClick={handlePrepareCreate}
-                        className="bg-red-600 hover:bg-white hover:text-red-600 text-white font-bold uppercase tracking-widest shadow-lg transition-all"
-                    >
-                        <Plus className="w-5 h-5 mr-2" /> Nuevo
-                    </Button>
-                </div>
-            </div>
-
+        <div className="min-h-screen text-white space-y-8">
             {/* List */}
+            {!isModalOpen && (
+                <AdminFloatingButton onClick={handlePrepareCreate} label="Nuevo Organizador" />
+            )}
             {isLoading ? (
                 <div className="flex justify-center py-20">
                     <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
@@ -126,25 +110,32 @@ export default function OrganizersClientPage() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {organizers.map((org) => (
-                        <div key={org.id} className="glass bg-zinc-900/40 border border-white/5 rounded-xl p-4 flex items-center gap-4 hover:border-red-500/30 transition-all group">
-                            <div className="relative w-16 h-16 rounded-full overflow-hidden border border-zinc-700 shrink-0 bg-white/5">
+                        <div key={org.id} className="relative group overflow-hidden rounded-2xl border border-white/5 bg-black/40 backdrop-blur-sm p-6 flex flex-col items-center gap-4 hover:border-red-500/50 hover:bg-black/60 transition-all duration-300 hover:shadow-[0_0_30px_rgba(220,38,38,0.2)]">
+                            {/* Glow Effect */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-red-600/0 via-transparent to-red-600/5 group-hover:to-red-600/10 transition-colors" />
+
+                            <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-zinc-700 shrink-0 bg-white/5 group-hover:scale-105 group-hover:border-red-500 transition-all duration-500 shadow-xl">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={org.logo} alt={org.name} className="w-full h-full object-cover" />
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <h3 className="font-bold text-lg text-white truncate">{org.name}</h3>
-                                <p className="text-xs text-zinc-500">Organizador Registrado</p>
+
+                            <div className="text-center z-10 w-full">
+                                <h3 className="font-black text-xl text-white tracking-wide truncate px-2">{org.name}</h3>
+                                <div className="h-0.5 w-12 bg-red-600 mx-auto my-3 group-hover:w-20 transition-all duration-300" />
+                                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Organizador Oficial</p>
                             </div>
-                            <div className="flex flex-col gap-2">
+
+                            <div className="flex items-center gap-2 mt-2 w-full justify-center">
                                 <button
                                     onClick={() => handlePrepareEdit(org)}
-                                    className="p-2 text-zinc-400 hover:text-white bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
+                                    className="flex-1 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors border border-white/5"
                                 >
-                                    <Edit2 className="w-4 h-4" />
+                                    Editar
                                 </button>
                                 <button
                                     onClick={() => handleDelete(org.id)}
-                                    className="p-2 text-red-500/70 hover:text-red-500 bg-red-500/10 rounded-lg hover:bg-red-500/20 transition-colors"
+                                    className="bg-red-900/20 hover:bg-red-900/40 text-red-500 py-2 px-4 rounded-lg transition-colors border border-red-900/30"
+                                    title="Eliminar"
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </button>

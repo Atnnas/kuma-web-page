@@ -52,7 +52,7 @@ export function Hero() {
                         }}
                         className="relative"
                     >
-                        <div className="h-40 w-40 xs:h-48 xs:w-48 sm:h-64 sm:w-64 md:h-80 md:w-80 lg:h-96 lg:w-96 rounded-full overflow-hidden border-2 md:border-4 border-[#6F4E37] relative bg-black/50 backdrop-blur-sm z-20 transition-all duration-500">
+                        <div className="h-40 w-40 xs:h-48 xs:w-48 sm:h-64 sm:w-64 md:h-80 md:w-80 lg:h-96 lg:w-96 xl:h-[32rem] xl:w-[32rem] 2xl:h-[42rem] 2xl:w-[42rem] rounded-full overflow-hidden border-2 md:border-4 border-[#6F4E37] relative bg-black/50 backdrop-blur-sm z-20 transition-all duration-500">
                             <Image
                                 src="/images/kuma-logo.jpg"
                                 alt="Kuma Dojo Logo"
@@ -93,7 +93,7 @@ export function Hero() {
                                     }
                                 }
                             }}
-                            className="text-4xl xs:text-5xl sm:text-5xl md:text-7xl lg:text-8xl font-black font-serif text-kuma-gold tracking-[0.15em] xs:tracking-widest uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] leading-tight relative z-10"
+                            className="text-4xl xs:text-5xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl 2xl:text-[10rem] font-black font-serif text-kuma-gold tracking-[0.15em] xs:tracking-widest uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] leading-tight relative z-10"
                         >
                             KUMA <span className="text-red-600 drop-shadow-[0_0_30px_rgba(220,38,38,0.6)] whitespace-nowrap">DOJO</span>
                         </motion.h1>

@@ -31,14 +31,14 @@ export default async function AdminDashboard() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-3xl md:text-6xl font-serif font-black uppercase tracking-widest mb-2 text-kuma-gold drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)] break-words">
-                    Bienvenido, <span className="text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.6)]">{session?.user?.name}</span>
+                <h1 className="text-2xl md:text-5xl font-serif font-black uppercase tracking-widest mb-1 text-kuma-gold drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)] break-words leading-tight">
+                    Bienvenido, <span className="text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.6)] block md:inline">{session?.user?.name?.split(' ')[0]}</span>
                 </h1>
                 <p className="text-zinc-400 text-sm md:text-base">Panel de Control General del Kuma Dojo.</p>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
                 <div className="glass p-6 flex items-center gap-4 hover:border-red-500/30 transition-colors group">
                     <div className="h-14 w-14 rounded-full bg-zinc-900/50 flex items-center justify-center text-zinc-400 group-hover:text-blue-500 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all border border-zinc-800 group-hover:border-blue-500/50">
                         <Users className="h-7 w-7" />
@@ -93,10 +93,14 @@ export default async function AdminDashboard() {
                     </h3>
                     <div className="space-y-4">
                         <Link href="/admin/news" className="block w-full bg-zinc-900/80 hover:bg-red-950/30 border border-zinc-800 hover:border-red-900/50 p-4 rounded-lg text-center transition-all hover:scale-[1.02] group">
-                            <span className="font-bold text-zinc-300 group-hover:text-red-400 uppercase tracking-widest text-sm">Gestionar Noticias</span>
+                            <span className="font-bold text-zinc-300 group-hover:text-red-400 uppercase tracking-widest text-sm flex items-center justify-center gap-2">
+                                <Newspaper className="w-4 h-4" /> Noticias
+                            </span>
                         </Link>
                         <Link href="/admin/users" className="block w-full bg-zinc-900/80 hover:bg-red-950/30 border border-zinc-800 hover:border-red-900/50 p-4 rounded-lg text-center transition-all hover:scale-[1.02] group">
-                            <span className="font-bold text-zinc-300 group-hover:text-red-400 uppercase tracking-widest text-sm">Gestionar Usuarios</span>
+                            <span className="font-bold text-zinc-300 group-hover:text-red-400 uppercase tracking-widest text-sm flex items-center justify-center gap-2">
+                                <Users className="w-4 h-4" /> Usuarios
+                            </span>
                         </Link>
                         <Link href="/admin/reports" className="block w-full bg-zinc-900/80 hover:bg-red-950/30 border border-zinc-800 hover:border-red-900/50 p-4 rounded-lg text-center transition-all hover:scale-[1.02] group">
                             <span className="font-bold text-zinc-300 group-hover:text-red-400 uppercase tracking-widest text-sm flex items-center justify-center gap-2">

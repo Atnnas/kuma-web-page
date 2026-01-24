@@ -18,11 +18,11 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
 
     const navItems = [
         { name: "Inicio", href: "/" },
-        { name: "Filosofía", href: "/#filosofia" },
-        { name: "Entrenamiento", href: "/#entrenamiento" },
+        { name: "Filosofía", href: "/#filosofia" }, // Keep philosophy as anchor or move? User didn't specify.
+        { name: "Entrenamiento", href: "/entrenamiento" },
         { name: "Calendario de Eventos", href: "/calendario" },
         { name: "Noticias", href: "/noticias" },
-        { name: "Tienda", href: "/#tienda" },
+        { name: "Tienda", href: "/tienda" },
         ...(user?.role === "super_admin" ? [{ name: "Herramientas", href: "/admin/news" }] : []),
     ];
 
@@ -145,7 +145,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                 className="hidden md:flex fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl items-center justify-center"
             >
-                <div className="relative px-6 py-3 rounded-full border border-white/10 bg-zinc-950/60 backdrop-blur-xl shadow-2xl flex items-center justify-between overflow-hidden w-full">
+                <div className="relative px-6 py-3 md:py-4 lg:py-3 rounded-full border border-white/10 bg-zinc-950/60 backdrop-blur-xl shadow-2xl flex items-center justify-between overflow-hidden w-full">
                     {/* Glow Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-transparent to-red-500/5 pointer-events-none" />
 
@@ -176,7 +176,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                                 href={item.href}
                                 onMouseEnter={() => setHoveredIndex(index)}
                                 onMouseLeave={() => setHoveredIndex(null)}
-                                className="relative px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300"
+                                className="relative px-4 py-2 text-sm md:text-base lg:text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-300"
                             >
                                 {hoveredIndex === index && (
                                     <motion.div
@@ -190,7 +190,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                                         }}
                                     />
                                 )}
-                                <span className="relative z-10 uppercase tracking-wide text-xs">{item.name}</span>
+                                <span className="relative z-10 uppercase tracking-wide text-xs md:text-sm lg:text-xs">{item.name}</span>
                             </Link>
                         ))}
                     </div>

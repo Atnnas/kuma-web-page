@@ -9,7 +9,8 @@ import { Plus, Pencil, Trash2, Calendar, Search, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
-import { AdminBackButton, SwipeBackWrapper } from "@/components/admin/AdminNavigation";
+import { SwipeBackWrapper } from "@/components/admin/AdminNavigation";
+import { AdminFloatingButton } from "@/components/admin/AdminFloatingButton";
 
 export default function AdminNewsPage() {
     const [news, setNews] = useState<any[]>([]);
@@ -61,8 +62,6 @@ export default function AdminNewsPage() {
         <SwipeBackWrapper>
             <div className="">
                 <div className="max-w-6xl mx-auto">
-                    <AdminBackButton label="Volver al Dashboard" />
-
                     {/* Header */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 md:mb-12">
                         <div>
@@ -74,15 +73,11 @@ export default function AdminNewsPage() {
                             </p>
                         </div>
 
-                        {!isEditorOpen && (
-                            <Button
-                                onClick={handleCreate}
-                                className="w-full md:w-auto bg-red-600 hover:bg-white hover:text-red-600 text-white font-bold uppercase tracking-widest px-8 py-6 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.4)] transition-all"
-                            >
-                                <Plus className="mr-2 h-5 w-5" /> Nueva Noticia
-                            </Button>
-                        )}
                     </div>
+
+                    {!isEditorOpen && (
+                        <AdminFloatingButton onClick={handleCreate} label="Nueva Noticia" />
+                    )}
 
                     <AnimatePresence mode="wait">
                         {isEditorOpen ? (
