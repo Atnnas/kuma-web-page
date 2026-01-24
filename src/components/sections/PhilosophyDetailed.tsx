@@ -18,7 +18,7 @@ export function PhilosophyDetailed() {
                     src="/images/grizzly_bear_hero.png"
                     alt="Espíritu del Oso"
                     fill
-                    className="object-cover opacity-80 md:opacity-70" // Increased opacity
+                    className="object-contain md:object-cover object-center opacity-80 md:opacity-70" // Full image on mobile
                     priority
                 />
                 <div className="absolute inset-0 bg-black/50" /> {/* Lighter overlay */}
