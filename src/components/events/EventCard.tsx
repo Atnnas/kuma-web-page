@@ -79,6 +79,9 @@ export function EventCard({ event, userId }: EventCardProps) {
     const year = new Date(event.startDate).getFullYear();
     const time = new Date(event.startDate).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
+    // New Event Logic (3 days from creation)
+    const isNew = event.createdAt && (new Date().getTime() - new Date(event.createdAt).getTime()) < (3 * 24 * 60 * 60 * 1000);
+
     return (
         <div
             className={clsx(
@@ -128,7 +131,14 @@ export function EventCard({ event, userId }: EventCardProps) {
                             />
                         )}
                         <div className="flex flex-col">
-                            <h3 className="text-lg font-black text-white uppercase leading-none">{event.title}</h3>
+                            <h3 className="text-lg font-black text-white uppercase leading-none flex items-center gap-2">
+                                {event.title}
+                                {isNew && (
+                                    <span className="bg-red-500/20 text-red-500 text-[9px] uppercase font-bold px-2 py-0.5 rounded border border-red-500/30 animate-pulse">
+                                        Nuevo
+                                    </span>
+                                )}
+                            </h3>
                             <span className="text-xs text-red-400 font-bold mt-1" suppressHydrationWarning>
                                 {`${day} ${month}`}
                             </span>
@@ -145,6 +155,14 @@ export function EventCard({ event, userId }: EventCardProps) {
                             {event.isPremium && (
                                 <span className="bg-amber-500/20 text-amber-500 text-[9px] uppercase font-bold px-2 py-1 rounded border border-amber-500/30 shrink-0">
                                     Premium
+                                </span>
+                            )}
+                            {isNew && (
+                                <span
+                                    className="bg-red-500/20 text-red-500 text-[9px] uppercase font-bold px-2 py-1 rounded border border-red-500/30 shrink-0 animate-pulse cursor-help"
+                                    title={`Creado el: ${new Date(event.createdAt).toLocaleDateString()}`}
+                                >
+                                    Nuevo
                                 </span>
                             )}
                         </div>

@@ -163,9 +163,11 @@ export function PhilosophyDetailed() {
                         </p>
                     </div>
 
-                    <div className="relative max-w-6xl mx-auto h-[700px] md:h-[600px] flex items-center justify-center"> {/* Increased Height and Width */}
-                        {/* Center Logo */}
-                        <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-3xl border-4 border-[#6F4E37] shadow-[0_0_50px_rgba(111,78,55,0.3)] z-20 bg-black overflow-hidden group">
+                    {/* Mobile: Flex Column / Desktop: Absolute Map */}
+                    <div className="relative max-w-6xl mx-auto flex flex-col md:block items-center justify-center gap-12 md:gap-0 h-auto md:h-[600px]">
+
+                        {/* Center Logo - Order 2 on Mobile (Middle) */}
+                        <div className="relative order-2 md:order-none w-64 h-64 md:absolute md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-80 md:h-80 rounded-3xl border-4 border-[#6F4E37] shadow-[0_0_50px_rgba(111,78,55,0.3)] z-20 bg-black overflow-hidden group shrink-0">
                             <Image
                                 src="/images/kuma-logo.jpg"
                                 alt="Kuma Logo Map"
@@ -176,7 +178,7 @@ export function PhilosophyDetailed() {
                             <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         </div>
 
-                        {/* Connection Lines (Desktop) */}
+                        {/* Connection Lines (Desktop Only) */}
                         <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block z-10" viewBox="0 0 1000 600">
                             {/* 1. KANJI (Right) */}
                             <path d="M600 250 L850 150" stroke="#D4AF37" strokeWidth="2" fill="none" strokeDasharray="5,5" className="opacity-50" />
@@ -193,43 +195,43 @@ export function PhilosophyDetailed() {
 
                         {/* Annotations */}
 
-                        {/* 1. THE KANJI (Right) */}
+                        {/* 1. THE KANJI (Right on Desktop, Top on Mobile) */}
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="absolute top-0 right-0 md:top-20 md:right-0 lg:right-0 max-w-[280px] text-left md:text-right" // Pushed right
+                            className="order-1 md:order-none relative md:absolute md:top-20 md:right-0 lg:right-0 max-w-[280px] text-center md:text-right"
                         >
                             <h4 className="text-kuma-gold font-bold uppercase tracking-widest text-sm mb-2">El Kanji (熊)</h4>
-                            <p className="text-zinc-400 text-sm">
+                            <p className="text-zinc-400 text-sm leading-relaxed">
                                 El ideograma del Oso. Simboliza la dualidad entre la calma de la hibernación y la ferocidad de la defensa.
                             </p>
                         </motion.div>
 
-                        {/* 2. THE BEAR (Left) */}
+                        {/* 2. THE BEAR (Left on Desktop, Bottom 1 on Mobile) */}
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="absolute top-0 left-0 md:top-20 md:left-0 lg:left-0 max-w-[280px] text-left" // Pushed left
+                            className="order-3 md:order-none relative md:absolute md:top-20 md:left-0 lg:left-0 max-w-[280px] text-center md:text-left"
                         >
                             <h4 className="text-white font-bold uppercase tracking-widest text-sm mb-2">El Oso</h4>
-                            <p className="text-zinc-400 text-sm">
+                            <p className="text-zinc-400 text-sm leading-relaxed">
                                 Representa la <span className="text-white">fuerza con control</span>.
                                 Determinación absoluta y protección del territorio.
                             </p>
                         </motion.div>
 
-                        {/* 3. THE NAME (Bottom) */}
+                        {/* 3. THE NAME (Bottom on Desktop, Bottom 2 on Mobile) */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="absolute bottom-0 w-full text-center flex justify-center pb-8" // Added padding bottom
+                            className="order-4 md:order-none relative md:absolute md:bottom-0 md:w-full md:text-center flex justify-center pb-8"
                         >
-                            <div className="max-w-[300px]">
+                            <div className="max-w-[300px] text-center">
                                 <h4 className="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">El Nombre</h4>
-                                <p className="text-zinc-400 text-sm">
+                                <p className="text-zinc-400 text-sm leading-relaxed">
                                     <span className="text-white font-bold">KUMA DOJO</span>.
                                     Nuestra identidad. Un refugio para quienes buscan fortalecer cuerpo y espíritu.
                                 </p>
