@@ -19,7 +19,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
 
     const navItems = [
         { name: "Inicio", href: "/" },
-        { name: "Filosofía", href: "/#filosofia" }, // Keep philosophy as anchor or move? User didn't specify.
+        { name: "Filosofía", href: "/filosofia" },
         { name: "Entrenamiento", href: "/entrenamiento" },
         { name: "Calendario de Eventos", href: "/calendario" },
         { name: "Noticias", href: "/noticias" },
