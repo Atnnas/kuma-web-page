@@ -15,11 +15,11 @@ export function Hero() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="relative flex flex-col items-center justify-center px-4 text-center z-10"
+                className="relative flex flex-col items-center justify-center px-4 text-center z-10 -mt-24 md:mt-0 lg:mt-12"
             >
                 {/* DOJO LOGO CONTAINER */}
                 <motion.div
-                    className="relative mb-12"
+                    className="relative mb-6"
                     initial={{ scale: 0, rotate: -360, opacity: 0 }}
                     animate={{
                         scale: 1,
@@ -52,13 +52,13 @@ export function Hero() {
                         }}
                         className="relative"
                     >
-                        <div className="h-40 w-40 xs:h-48 xs:w-48 sm:h-64 sm:w-64 md:h-80 md:w-80 lg:h-96 lg:w-96 xl:h-[32rem] xl:w-[32rem] 2xl:h-[42rem] 2xl:w-[42rem] rounded-full overflow-hidden border-2 md:border-4 border-[#6F4E37] relative bg-black/50 backdrop-blur-sm z-20 transition-all duration-500">
+                        <div className="h-64 w-64 xs:h-72 xs:w-72 sm:h-80 sm:w-80 md:h-96 md:w-96 lg:h-96 lg:w-96 xl:h-[28rem] xl:w-[28rem] 2xl:h-[32rem] 2xl:w-[32rem] rounded-full overflow-hidden border-2 md:border-4 border-[#6F4E37] relative bg-black/50 backdrop-blur-sm z-20 transition-all duration-500">
                             <Image
                                 src="/images/kuma-logo.jpg"
                                 alt="Kuma Dojo Logo"
                                 fill
                                 className="object-cover"
-                                sizes="(max-width: 480px) 160px, (max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                sizes="(max-width: 480px) 256px, (max-width: 768px) 300px, (max-width: 1200px) 50vw, 33vw"
                             />
 
                             {/* Inner Shine Effect */}
@@ -73,43 +73,23 @@ export function Hero() {
 
                 {/* ELEGANT TEXT - THE VOID SCALE */}
                 <motion.div
-                    className="relative z-20 mt-8 perspective-1000"
+                    className="relative z-20 mt-12 perspective-1000"
                     initial="hidden"
                     animate={animationStep >= 1 ? "visible" : "hidden"}
                 >
-                    {/* TITLE - VOID IMPACT (No Wrapper to allow overflow) */}
-                    <div className="relative inline-block px-4 py-2">
-                        <motion.h1
-                            variants={{
-                                hidden: { opacity: 0, scale: 0, filter: "blur(20px)" },
-                                visible: {
-                                    opacity: 1,
-                                    scale: [0, 1.5, 1], /* Zoom in PAST the camera then snap back */
-                                    filter: "blur(0px)",
-                                    transition: {
-                                        duration: 0.8,
-                                        times: [0, 0.6, 1],
-                                        ease: "easeInOut"
-                                    }
-                                }
-                            }}
-                            className="text-4xl xs:text-5xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl 2xl:text-[10rem] font-black font-serif text-kuma-gold tracking-[0.15em] xs:tracking-widest uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] leading-tight relative z-10"
-                        >
-                            KUMA <span className="text-red-600 drop-shadow-[0_0_30px_rgba(220,38,38,0.6)] whitespace-nowrap">DOJO</span>
-                        </motion.h1>
-                    </div>
+
 
                     {/* SEPARATOR LINE - EXPLOSIVE GROWTH */}
                     <motion.div
                         variants={{
                             hidden: { width: 0, opacity: 0 },
                             visible: {
-                                width: "12rem",
+                                width: "8rem",
                                 opacity: 1,
                                 transition: { delay: 0.6, duration: 0.4, type: "spring", stiffness: 300 }
                             }
                         }}
-                        className="h-1 bg-red-600 mx-auto mb-4 md:mb-6 shadow-[0_0_20px_rgba(220,38,38,1)] mt-4"
+                        className="h-1 bg-red-600 mx-auto mb-6 md:mb-6 shadow-[0_0_20px_rgba(220,38,38,1)]"
                     />
 
                     {/* SUBTITLE - RISE UP */}
