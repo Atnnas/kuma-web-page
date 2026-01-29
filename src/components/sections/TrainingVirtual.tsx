@@ -36,7 +36,7 @@ export const TrainingVirtual = ({ user }: TrainingVirtualProps) => {
                     >
                         <div className={`
                             backdrop-blur-md rounded-xl border transition-colors duration-500 shadow-2xl group relative overflow-hidden
-                            ${!user
+                            ${!user || !user.isActive
                                 ? "bg-zinc-900/60 border-zinc-800 hover:border-zinc-700"
                                 : "bg-zinc-950/80 border-white/10 hover:border-kuma-gold/50"
                             }
@@ -58,11 +58,11 @@ export const TrainingVirtual = ({ user }: TrainingVirtualProps) => {
                                 {/* Center: Title */}
                                 <div className="flex-1 text-center md:text-left flex items-center justify-center md:justify-start gap-4">
                                     <h2 className={`text-4xl md:text-6xl font-black uppercase tracking-tighter drop-shadow-2xl transition-colors
-                                        ${!user ? "text-zinc-600" : "text-white"}
+                                        ${!user || !user.isActive ? "text-zinc-600" : "text-white"}
                                     `}>
                                         DOJO VIRTUAL
                                     </h2>
-                                    {!user && <Lock className="w-8 h-8 md:w-12 md:h-12 text-zinc-600" />}
+                                    {(!user || !user.isActive) && <Lock className={`w-8 h-8 md:w-12 md:h-12 ${user ? "text-amber-500" : "text-zinc-600"}`} />}
                                 </div>
 
                                 {/* Right: Icon */}
@@ -112,29 +112,38 @@ export const TrainingVirtual = ({ user }: TrainingVirtualProps) => {
 
                         {/* Content Container */}
                         <div className="px-4 md:px-8 max-w-7xl mx-auto">
-                            {!user ? (
+                            {!user || !user.isActive ? (
                                 /* LOCKED STATE */
                                 <div className="p-12 md:p-24 bg-zinc-950/40 border border-white/5 rounded-3xl backdrop-blur-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
                                     {/* Background Icon */}
                                     <Lock className="absolute opacity-5 w-96 h-96 text-white rotate-12 -bottom-20 -right-20 pointer-events-none" />
 
-                                    <div className="w-24 h-24 bg-zinc-900 rounded-full flex items-center justify-center border border-white/10 mb-8 shadow-2xl relative z-10">
-                                        <Lock className="w-10 h-10 text-zinc-500" />
+                                    <div className={`w-24 h-24 rounded-full flex items-center justify-center border border-white/10 mb-8 shadow-2xl relative z-10 ${user ? "bg-amber-900/20" : "bg-zinc-900"}`}>
+                                        <Lock className={`w-10 h-10 ${user ? "text-amber-500" : "text-zinc-500"}`} />
                                     </div>
 
-                                    <h3 className="text-3xl md:text-5xl font-black uppercase text-zinc-300 mb-6 relative z-10">
-                                        Acceso Restringido
+                                    <h3 className={`text-3xl md:text-5xl font-black uppercase mb-6 relative z-10 ${user ? "text-amber-500" : "text-zinc-300"}`}>
+                                        {user ? "Activación Pendiente" : "Acceso Restringido"}
                                     </h3>
                                     <p className="max-w-xl text-zinc-400 text-lg mb-10 leading-relaxed relative z-10">
-                                        El Dojo Virtual contiene rutinas exclusivas, videos técnicos detallados y herramientas de seguimiento personalizadas para nuestros miembros activos.
+                                        {user
+                                            ? "Tu cuenta ha sido creada correctamente pero requiere activación manual por un administrador. Por favor contacta al Sensei para activar tu acceso al Dojo Virtual."
+                                            : "El Dojo Virtual contiene rutinas exclusivas, videos técnicos detallados y herramientas de seguimiento personalizadas para nuestros miembros activos."
+                                        }
                                     </p>
 
                                     <div className="relative z-10 grid gap-4 w-full max-w-xs">
-                                        <Link href="/login" className="w-full py-4 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold uppercase tracking-widest text-center transition-all shadow-lg hover:shadow-red-900/40">
-                                            Iniciar Sesión
-                                        </Link>
+                                        {!user ? (
+                                            <Link href="/login" className="w-full py-4 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold uppercase tracking-widest text-center transition-all shadow-lg hover:shadow-red-900/40">
+                                                Iniciar Sesión
+                                            </Link>
+                                        ) : (
+                                            <div className="w-full py-4 bg-zinc-800 text-zinc-500 rounded-xl font-bold uppercase tracking-widest text-center border border-white/5 cursor-not-allowed">
+                                                Esperando Aprobación...
+                                            </div>
+                                        )}
                                         <div className="text-zinc-600 text-xs font-mono uppercase tracking-widest">
-                                            Solo miembros activos
+                                            {user ? "ID: " + user.id : "Solo miembros activos"}
                                         </div>
                                     </div>
                                 </div>

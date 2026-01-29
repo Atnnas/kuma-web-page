@@ -1,4 +1,6 @@
 import { auth } from "@/auth";
+
+export const dynamic = "force-dynamic";
 import { TrainingSchedules } from "@/components/sections/TrainingSchedules";
 import { TrainingPrices } from "@/components/sections/TrainingPrices";
 import { TrainingVirtual } from "@/components/sections/TrainingVirtual";
