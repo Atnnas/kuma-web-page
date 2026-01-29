@@ -147,7 +147,7 @@ export const TrainingSchedules = () => {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
-                                className="bg-zinc-950/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative min-h-[300px]"
+                                className="bg-zinc-950/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative min-h-[300px]"
                             >
                                 {/* Texture/Noise overlay */}
                                 <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />

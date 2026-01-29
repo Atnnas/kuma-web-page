@@ -114,7 +114,7 @@ export const TrainingVirtual = ({ user }: TrainingVirtualProps) => {
                         <div className="px-4 md:px-8 max-w-7xl mx-auto">
                             {!user || !user.isActive ? (
                                 /* LOCKED STATE */
-                                <div className="p-12 md:p-24 bg-zinc-950/40 border border-white/5 rounded-3xl backdrop-blur-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
+                                <div className="p-12 md:p-24 bg-zinc-950/60 border border-white/5 rounded-3xl backdrop-blur-xl flex flex-col items-center justify-center text-center relative overflow-hidden">
                                     {/* Background Icon */}
                                     <Lock className="absolute opacity-5 w-96 h-96 text-white rotate-12 -bottom-20 -right-20 pointer-events-none" />
 
@@ -149,9 +149,9 @@ export const TrainingVirtual = ({ user }: TrainingVirtualProps) => {
                                 </div>
                             ) : (
                                 /* UNLOCKED STATE */
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                                     {/* Card 1: Rutinas */}
-                                    <div className="group p-8 bg-zinc-900/60 border border-white/10 rounded-3xl hover:bg-zinc-900/90 hover:border-blue-500/50 transition-all duration-300 flex flex-col items-center text-center">
+                                    <div className="group p-8 bg-zinc-950/60 border border-white/10 rounded-3xl hover:bg-zinc-900/60 hover:border-blue-500/50 transition-all duration-300 flex flex-col items-center text-center backdrop-blur-xl">
                                         <div className="w-16 h-16 bg-blue-900/20 rounded-2xl flex items-center justify-center mb-6 text-blue-400 group-hover:scale-110 transition-transform">
                                             <Activity className="w-8 h-8" />
                                         </div>
@@ -163,7 +163,7 @@ export const TrainingVirtual = ({ user }: TrainingVirtualProps) => {
                                     </div>
 
                                     {/* Card 2: Videos Técnicos */}
-                                    <div className="group p-8 bg-zinc-900/60 border border-white/10 rounded-3xl hover:bg-zinc-900/90 hover:border-blue-500/50 transition-all duration-300 flex flex-col items-center text-center">
+                                    <div className="group p-8 bg-zinc-950/60 border border-white/10 rounded-3xl hover:bg-zinc-900/60 hover:border-blue-500/50 transition-all duration-300 flex flex-col items-center text-center backdrop-blur-xl">
                                         <div className="w-16 h-16 bg-blue-900/20 rounded-2xl flex items-center justify-center mb-6 text-blue-400 group-hover:scale-110 transition-transform">
                                             <Video className="w-8 h-8" />
                                         </div>
@@ -171,18 +171,6 @@ export const TrainingVirtual = ({ user }: TrainingVirtualProps) => {
                                         <p className="text-zinc-400 text-sm mb-6">Analiza Katas, Kihon y Kumite con explicaciones detalladas cuadro por cuadro.</p>
                                         <button className="mt-auto text-blue-400 font-bold uppercase text-xs tracking-widest hover:text-white transition-colors">
                                             Explorar Videos &rarr;
-                                        </button>
-                                    </div>
-
-                                    {/* Card 3: Comunidad */}
-                                    <div className="group p-8 bg-zinc-900/60 border border-white/10 rounded-3xl hover:bg-zinc-900/90 hover:border-blue-500/50 transition-all duration-300 flex flex-col items-center text-center">
-                                        <div className="w-16 h-16 bg-blue-900/20 rounded-2xl flex items-center justify-center mb-6 text-blue-400 group-hover:scale-110 transition-transform">
-                                            <Users className="w-8 h-8" />
-                                        </div>
-                                        <h3 className="text-xl font-black uppercase text-white mb-2">Comunidad</h3>
-                                        <p className="text-zinc-400 text-sm mb-6">Conecta con tus compañeros, comparte progresos y recibe feedback de los sensei.</p>
-                                        <button className="mt-auto text-blue-400 font-bold uppercase text-xs tracking-widest hover:text-white transition-colors">
-                                            Ir al Foro &rarr;
                                         </button>
                                     </div>
                                 </div>

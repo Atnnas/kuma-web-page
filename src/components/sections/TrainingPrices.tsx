@@ -141,10 +141,10 @@ export const TrainingPrices = ({ user }: { user?: any }) => {
                                                 transition={{ delay: index * 0.1 }}
                                                 className={`relative group rounded-3xl p-8 border backdrop-blur-xl flex flex-col items-center text-center overflow-hidden transition-all duration-300
                                                     ${isLocked
-                                                        ? "bg-zinc-950/40 border-white/5 grayscale opacity-80 cursor-not-allowed hover:bg-zinc-950/60" // Locked Style
+                                                        ? "bg-zinc-950/60 border-white/5 grayscale opacity-80 cursor-not-allowed hover:bg-zinc-950/70" // Locked Style
                                                         : plan.recommended
-                                                            ? "bg-zinc-900/80 border-kuma-gold/50 shadow-2xl shadow-yellow-900/10 scale-105 z-10"
-                                                            : "bg-zinc-950/60 border-white/10 hover:border-white/20 hover:bg-zinc-900/80"
+                                                            ? "bg-zinc-900/60 border-kuma-gold/50 shadow-2xl shadow-yellow-900/10 scale-105 z-10"
+                                                            : "bg-zinc-950/60 border-white/10 hover:border-white/20 hover:bg-zinc-900/60"
                                                     }
                                                 `}
                                             >
