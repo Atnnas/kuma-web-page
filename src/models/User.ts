@@ -40,7 +40,7 @@ const UserSchema = new Schema<IUser>(
         },
         isActive: {
             type: Boolean,
-            default: true,
+            default: false,
         },
         emailVerified: {
             type: Date,

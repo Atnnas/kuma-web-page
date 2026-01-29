@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { Cinzel, Montserrat } from "next/font/google";
 import { Navbar } from "@/components/layout/Navbar";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
+import { FloatingNavigation } from "@/components/ui/FloatingNavigation";
 
 import "./globals.css";
 
@@ -61,6 +62,7 @@ export default async function RootLayout({
         <div className="fixed inset-0 bg-black/40 z-[-1] pointer-events-none" />
         <AnalyticsTracker />
         <Navbar user={session?.user} />
+        <FloatingNavigation />
         {children}
       </body>
     </html>

@@ -41,9 +41,7 @@ export const {
                     }
 
                     // 5. Verificar si el usuario está activo (Bloqueo de Admin)
-                    if (user.isActive === false) {
-                        return null; // O lanzar error si se prefiere
-                    }
+                    // if (user.isActive === false) return null; -> REMOVED: Allow login to see pending status
 
                     // 6. Comparar Hash (Seguridad)
                     const passwordsMatch = await bcrypt.compare(
@@ -83,13 +81,11 @@ export const {
                             email: user.email as string,
                             image: user.image || "",
                             role: "user",
-                            isActive: true, // Por defecto activo
+                            isActive: false, // Por defecto inactivo
                         });
                     } else {
-                        // Si existe, verificar que esté activo
-                        if (existingUser.isActive === false) {
-                            return false; // Bloquear acceso
-                        }
+                        // Si existe, permitir acceso aunque esté inactivo (para mostrar estado pendiente)
+                        // No bloqueamos aquí, controlamos acceso en componentes
                     }
                     return true;
                 } catch (error) {
@@ -111,6 +107,7 @@ export const {
                 if (dbUser) {
                     token.id = dbUser._id.toString();
                     token.role = dbUser.role;
+                    token.isActive = dbUser.isActive;
                 }
             } catch (error) {
                 console.error("Error fetching user data for JWT:", error);
@@ -122,6 +119,8 @@ export const {
             if (token && session.user) {
                 session.user.id = token.id as string;
                 session.user.role = token.role as string;
+                // @ts-ignore - Extending default session type on the fly or need to update types
+                session.user.isActive = token.isActive as boolean;
             }
             return session;
         },
