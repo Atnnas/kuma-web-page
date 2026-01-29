@@ -229,11 +229,11 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                         {user ? (
                             <div className="flex items-center gap-3 pl-4 border-l border-white/10">
                                 <div className="text-right hidden sm:block">
-                                    <p className="text-xs text-zinc-400 uppercase tracking-wider font-serif">
-                                        {user.isActive === false ? "PENDIENTE" : "Kuma"}
+                                    <p className="text-sm font-bold text-white leading-none">
+                                        {user.name?.split(" ")[0]}
                                     </p>
-                                    <p className={`text-sm font-bold leading-none ${user.isActive === false ? "text-amber-500" : "text-white"}`}>
-                                        {user.isActive === false ? "Contactar Admin" : user.name?.split(" ")[0]}
+                                    <p className={`text-[10px] uppercase tracking-wider font-serif font-bold ${user.isActive === false ? "text-amber-500" : "text-zinc-400"}`}>
+                                        {user.isActive === false ? "PENDIENTE DE CONTACTAR A ADMIN" : "KUMA"}
                                     </p>
                                 </div>
                                 <div className="relative h-10 w-10 rounded-full border-2 border-red-500/50 overflow-hidden shadow-[0_0_10px_rgba(220,38,38,0.3)]">
