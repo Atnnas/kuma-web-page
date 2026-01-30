@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+// Force Deploy: 2026-01-29 17:22
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
