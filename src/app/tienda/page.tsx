@@ -28,10 +28,11 @@ export default async function StorePage() {
                     <span className="block text-xs md:text-sm font-bold tracking-[0.5em] text-kuma-gold uppercase mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
                         Equipamiento Oficial
                     </span>
-                    <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-[#6F4E37] drop-shadow-md mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100">
-                        Kuma Store
+                    <h1 className="text-5xl md:text-8xl font-serif font-black uppercase tracking-tighter mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                        <span className="text-kuma-gold">KUMA</span>{" "}
+                        <span className="text-red-600 drop-shadow-[0_0_25px_rgba(220,38,38,0.6)]">STORE</span>
                     </h1>
-                    <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#6F4E37] to-transparent mx-auto" />
+                    <div className="w-32 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent mx-auto opacity-80" />
                 </div>
             </div>
 
