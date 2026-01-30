@@ -28,27 +28,15 @@ export default async function StorePage() {
                     <span className="block text-xs md:text-sm font-bold tracking-[0.5em] text-kuma-gold uppercase mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
                         Equipamiento Oficial
                     </span>
-                    <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-white drop-shadow-2xl mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100">
+                    <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-[#6F4E37] drop-shadow-md mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100">
                         Kuma Store
                     </h1>
-                    <div className="w-24 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent mx-auto" />
+                    <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#6F4E37] to-transparent mx-auto" />
                 </div>
             </div>
 
             {/* CATALOG SECTION */}
             <div className="max-w-7xl mx-auto px-4 -mt-20 relative z-20">
-                {/* Info functionality banner */}
-                <div className="mb-12 bg-zinc-950/60 backdrop-blur-xl border border-white/10 p-6 rounded-2xl flex items-start md:items-center gap-4 max-w-2xl mx-auto text-center md:text-left shadow-2xl">
-                    <div className="p-3 bg-blue-900/20 rounded-full shrink-0 hidden md:block">
-                        <Info className="w-6 h-6 text-blue-400" />
-                    </div>
-                    <div>
-                        <h3 className="font-bold text-white uppercase text-sm tracking-wider mb-1">Modo Catálogo</h3>
-                        <p className="text-zinc-400 text-sm leading-relaxed">
-                            Actualmente las compras en línea están deshabilitadas. Para adquirir estos productos, por favor consulta disponibilidad en el Dojo o contacta al Sensei.
-                        </p>
-                    </div>
-                </div>
 
                 {products.length === 0 ? (
                     <div className="text-center py-20 bg-zinc-900/40 border border-white/5 rounded-3xl backdrop-blur">
