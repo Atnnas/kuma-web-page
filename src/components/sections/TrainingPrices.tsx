@@ -148,7 +148,6 @@ export const TrainingPrices = ({ user, mode = "default" }: TrainingPricesProps) 
                                     <div className={`absolute inset-0 bg-kuma-gold/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${isLocked ? "hidden" : ""}`} />
                                     <span className={`${isCarousel ? "text-4xl" : "text-6xl"} font-black tracking-tighter block relative z-10 ${isLocked ? "text-zinc-600" : "text-white"}`}>
                                         {plan.price}
-                                        <span className="text-2xl align-top ml-1 text-kuma-gold">₡</span>
                                     </span>
                                     <span className="text-xs font-black text-zinc-500 uppercase tracking-[0.4em] relative z-10 mt-3 block">
                                         {plan.frequency}
