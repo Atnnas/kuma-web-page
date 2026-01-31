@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-// Force Deploy: 2026-01-30 16:47
+// Force Deploy: 2026-01-30 19:39
 
 const nextConfig: NextConfig = {
   images: {
