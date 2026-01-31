@@ -30,7 +30,22 @@ export async function getProducts(filter: "all" | "active" = "active") {
 export async function getProductById(id: string) {
     try {
         await connectDB();
-        const product = await Product.findById(id).lean();
+        console.log(`[DEBUG] getProductById called with ID: ${id}`);
+        console.log(`[DEBUG] Targeting Collection: ${Product.collection.name}`);
+
+        // Try standard findById
+        let product = await Product.findById(id).lean();
+
+        // Backup: Try creating ObjectId explicit
+        if (!product) {
+            console.log("[DEBUG] First attempt failed. Trying explicit ObjectId cast.");
+            if (mongoose.Types.ObjectId.isValid(id)) {
+                product = await Product.findOne({ _id: new mongoose.Types.ObjectId(id) }).lean();
+            }
+        }
+
+        console.log(`[DEBUG] Search Result:`, product ? "FOUND" : "NOT FOUND");
+
         if (!product) return null;
 
         return {
@@ -40,7 +55,7 @@ export async function getProductById(id: string) {
             updatedAt: product.updatedAt?.toISOString(),
         };
     } catch (error) {
-        console.error("Failed to fetch product:", error);
+        console.error("[DEBUG] Failed to fetch product:", error);
         return null;
     }
 }

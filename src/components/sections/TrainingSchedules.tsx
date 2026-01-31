@@ -28,7 +28,12 @@ const IconMap: { [key: string]: LucideIcon } = {
     "Calendar": Calendar
 };
 
-export const TrainingSchedules = () => {
+// Add props interface
+interface TrainingSchedulesProps {
+    mode?: "default" | "dashboard";
+}
+
+export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [horarios, setHorarios] = useState<IHorario[]>([]);
     const [loading, setLoading] = useState(true);
@@ -57,200 +62,119 @@ export const TrainingSchedules = () => {
         return Icon;
     };
 
+    const isDashboard = mode === "dashboard";
+
     return (
-        <section id="horarios" className="relative z-10 w-full">
-            <AnimatePresence mode="wait">
-                {!isOpen ? (
-                    /* collapsed CARD View - PRIMAL MONOLITH BAR */
+        <section id="horarios" className={`relative z-10 w-full ${isDashboard ? "h-full flex flex-col" : "px-4 md:px-8 max-w-[1920px] mx-auto py-12"}`}>
+            {/* Header - Hidden in dashboard mode or simplified */}
+            {!isDashboard && (
+                <div className="relative mb-16 text-center">
                     <motion.div
-                        key="bar"
                         initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => setIsOpen(true)}
-                        className="cursor-pointer max-w-5xl mx-auto px-4"
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="relative z-10"
                     >
-                        <div className="bg-zinc-950/80 backdrop-blur-md rounded-xl border border-white/10 hover:border-kuma-gold/50 transition-colors duration-500 shadow-2xl group relative overflow-hidden">
-                            {/* Texture/Noise overlay */}
-                            <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
 
-                            {/* Hover Shine Effect - Primal Gold */}
-                            <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-yellow-600/10 to-transparent group-hover:left-[100%] transition-all duration-1000 ease-in-out" />
-
-                            <div className="p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-12">
-                                {/* Left: Minimal Label */}
-                                <div className="text-center md:text-left">
-                                    <span className="block text-[10px] md:text-xs font-black tracking-[0.4em] text-zinc-500 uppercase group-hover:text-kuma-gold transition-colors duration-500">
-                                        AGENDA SEMANAL
-                                    </span>
-                                </div>
-
-                                {/* Center: Massive Title */}
-                                <div className="flex-1 text-center md:text-left">
-                                    <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white drop-shadow-2xl">
-                                        HORARIOS
-                                    </h2>
-                                </div>
-
-                                {/* Right: Action Prompt */}
-                                <div className="flex items-center gap-4 text-zinc-500 group-hover:text-white transition-colors">
-                                    <span className="hidden md:block text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        Ver Detalles
-                                    </span>
-                                    <div className="flex items-center justify-center w-12 h-12 rounded-full border border-white/10 group-hover:bg-white/5 transition-all">
-                                        <ChevronDown className="w-6 h-6 transition-transform duration-300 group-hover:translate-y-1" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <h2 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter text-white drop-shadow-2xl">
+                            <span className="text-kuma-gold">Horarios</span>
+                        </h2>
                     </motion.div>
-                ) : (
-                    /* EXPANDED CONTENT VIEW - UNIFIED TABLE */
-                    <motion.div
-                        key="content"
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
-                    >
-                        {/* Static Header */}
-                        <div className="relative mb-8 pt-4">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: "100%" }}
-                                transition={{ duration: 1.5, ease: "circOut" }}
-                                className="absolute top-1/2 left-0 h-[1px] bg-gradient-to-r from-transparent via-yellow-700/50 to-transparent w-full"
-                            />
+                    {/* Background Glow */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-red-900/20 blur-[100px] rounded-full pointer-events-none" />
+                </div>
+            )}
 
-                            <div className="relative text-center">
-                                <span className="block text-xs md:text-sm font-bold tracking-[0.5em] text-zinc-500 uppercase mb-2">
-                                    Planificación Semanal
+            {isDashboard && (
+                <div className="mb-6 flex items-center gap-4 px-2">
+                    <Calendar className="w-8 h-8 text-kuma-gold" />
+                    <h2 className="text-4xl font-black uppercase tracking-tighter text-white">
+                        Horarios
+                    </h2>
+                </div>
+            )}
+
+            {loading ? (
+                <div className="flex items-center justify-center h-64">
+                    <div className="w-10 h-10 border-2 border-kuma-gold border-t-transparent rounded-full animate-spin" />
+                </div>
+            ) : (
+                <div className={
+                    isDashboard
+                        ? "grid grid-cols-1 gap-6 overflow-y-auto pr-2 pb-20 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-scrollbar"
+                        : "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6"
+                }>
+                    {horarios.map((daySchedule, idx) => (
+                        <motion.div
+                            key={daySchedule._id}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            viewport={{ once: true }}
+                            className={`bg-zinc-950/60 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden hover:border-kuma-gold/30 hover:bg-zinc-900/60 transition-all duration-500 group flex flex-col hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)] ${isDashboard ? "shrink-0" : ""}`}
+                        >
+                            {/* Card Header */}
+                            <div className="p-8 border-b border-white/5 bg-white/5 relative overflow-hidden group-hover:bg-white/10 transition-colors duration-500">
+                                <div className="absolute inset-0 bg-gradient-to-br from-kuma-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                <h3 className="text-4xl font-black uppercase text-white tracking-widest relative z-10 flex items-center gap-4">
+                                    <Calendar className="w-8 h-8 text-kuma-gold" />
+                                    {daySchedule.day}
+                                </h3>
+                            </div>
+
+                            {/* Sessions List */}
+                            <div className="p-8 flex-1 flex flex-col gap-8">
+                                {daySchedule.sessions.map((session, sIdx) => {
+                                    const SessionIcon = getIcon(session.icon);
+                                    return (
+                                        <div key={sIdx} className="flex items-start gap-6 pb-6 border-b border-white/5 last:border-0 last:pb-0">
+                                            {/* Epic Time Box */}
+                                            <div className="flex flex-col items-center justify-center bg-zinc-950 rounded-2xl p-4 min-w-[110px] border border-white/10 relative overflow-hidden group/time">
+                                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-kuma-gold to-transparent opacity-50" />
+
+                                                {/* Start Time */}
+                                                <span className="text-3xl font-black text-white tracking-tighter leading-none mb-1">
+                                                    {session.time.includes("-") ? session.time.split("-")[0].trim() : session.time}
+                                                </span>
+
+                                                {/* Visual Flow Connector */}
+                                                <div className="h-5 w-[2px] bg-gradient-to-b from-kuma-gold to-zinc-800 my-1 relative">
+                                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-kuma-gold" />
+                                                </div>
+
+                                                {/* End Time */}
+                                                <span className="text-base font-bold text-zinc-400 tracking-tight leading-none">
+                                                    {session.time.includes("-") ? session.time.split("-")[1].trim() : ""}
+                                                </span>
+                                            </div>
+
+                                            {/* Info */}
+                                            <div className="flex-1 pt-2">
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <SessionIcon className={`w-6 h-6 ${session.group.includes("Disruptivo") ? "text-fuchsia-500" : "text-zinc-400"}`} />
+                                                    <span className={`text-base font-black uppercase tracking-widest px-3 py-1 rounded text-white ${session.group.includes("Disruptivo") ? "bg-fuchsia-900/40 text-fuchsia-200" : "bg-zinc-800 text-zinc-200"}`}>
+                                                        {session.group}
+                                                    </span>
+                                                </div>
+                                                <p className="text-lg text-zinc-300 leading-relaxed font-medium">
+                                                    {session.description}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Footer Action */}
+                            <div className="p-6 bg-zinc-950/30 text-center border-t border-white/5">
+                                <span className="text-sm font-black uppercase tracking-[0.3em] text-zinc-500 group-hover:text-kuma-gold transition-colors decoration-kuma-gold/50 group-hover:underline underline-offset-4">
+                                    Ver Detalle
                                 </span>
-                                <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-white drop-shadow-2xl mb-6">
-                                    <span className="text-kuma-gold">Horarios</span>
-                                </h2>
-
-                                {/* Top Close Button */}
-                                <button
-                                    onClick={() => setIsOpen(false)}
-                                    className="px-8 py-3 bg-blue-600/80 hover:bg-blue-500 text-white rounded-full font-bold tracking-wider uppercase transition-colors border border-blue-400/30 hover:border-blue-400/60 backdrop-blur-md inline-flex items-center gap-2 shadow-lg shadow-blue-900/20"
-                                >
-                                    <ChevronDown className="w-5 h-5 rotate-180" />
-                                    Cerrar Horarios
-                                </button>
                             </div>
-                        </div>
-
-                        <div className="px-4 md:px-8 max-w-7xl mx-auto">
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                className="bg-zinc-950/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative min-h-[300px]"
-                            >
-                                {/* Texture/Noise overlay */}
-                                <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
-
-                                {/* Table Background FX */}
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-600/10 blur-[80px] rounded-full pointer-events-none" />
-                                <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-900/10 blur-[80px] rounded-full pointer-events-none" />
-
-                                {loading ? (
-                                    <div className="flex items-center justify-center h-64 relative z-10">
-                                        <div className="w-8 h-8 border-2 border-kuma-gold border-t-transparent rounded-full animate-spin" />
-                                    </div>
-                                ) : (
-                                    <div className="overflow-x-auto relative z-10">
-                                        <table className="w-full text-left border-collapse">
-                                            <thead>
-                                                <tr className="border-b border-white/10 bg-white/5">
-                                                    <th className="p-4 md:p-6 text-kuma-gold font-black uppercase tracking-wider text-xs md:text-sm min-w-[100px] md:min-w-[120px]">Día</th>
-                                                    <th className="p-4 md:p-6 text-white font-bold uppercase tracking-wider text-xs md:text-sm w-full md:w-auto">Grupo</th>
-                                                    <th className="p-4 md:p-6 text-white font-bold uppercase tracking-wider text-xs md:text-sm whitespace-nowrap hidden md:table-cell">Horario</th>
-                                                    <th className="p-4 md:p-6 text-zinc-400 font-bold uppercase tracking-wider text-xs md:text-sm hidden lg:table-cell">Detalles</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-white/5">
-                                                {horarios.flatMap((daySchedule, dayIndex) =>
-                                                    daySchedule.sessions.map((session, sessionIndex) => {
-                                                        const SessionIcon = getIcon(session.icon);
-                                                        return (
-                                                            <tr
-                                                                key={`${dayIndex}-${sessionIndex}`}
-                                                                className="group hover:bg-white/5 transition-colors"
-                                                            >
-                                                                {/* Day Column */}
-                                                                <td className="p-4 md:p-6 align-top">
-                                                                    {sessionIndex === 0 && (
-                                                                        <div className="flex items-center gap-2">
-                                                                            <Calendar className="w-4 h-4 text-yellow-500 shrink-0" />
-                                                                            <span className="font-bold text-white uppercase text-[10px] md:text-sm leading-tight">
-                                                                                {daySchedule.day.replace("Lunes, Miércoles y Viernes", "L-M-V").replace("Martes y Jueves", "Ma - Ju")}
-                                                                            </span>
-                                                                        </div>
-                                                                    )}
-                                                                </td>
-
-                                                                {/* Group Column (+ Time on Mobile) */}
-                                                                <td className="p-4 md:p-6 align-top">
-                                                                    <div className="flex flex-col gap-2">
-                                                                        <div className="flex items-center gap-2">
-                                                                            <SessionIcon className={`w-4 h-4 shrink-0 ${session.group.includes("Disruptivo") ? "text-fuchsia-500" : "text-zinc-500"}`} />
-                                                                            <span className={`inline-block px-3 py-1 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest bg-gradient-to-r ${session.color} text-white shadow-sm`}>
-                                                                                {session.group}
-                                                                            </span>
-                                                                        </div>
-
-                                                                        {/* Mobile: Time Display */}
-                                                                        <div className="md:hidden flex items-center gap-2 text-zinc-400 mt-1">
-                                                                            <Clock className="w-3 h-3 text-zinc-600" />
-                                                                            <span className="text-[11px] font-bold uppercase">{session.time}</span>
-                                                                        </div>
-
-                                                                        {/* Mobile: Description */}
-                                                                        <p className="lg:hidden text-[10px] md:text-xs text-zinc-500 mt-1 line-clamp-2">{session.description}</p>
-                                                                    </div>
-                                                                </td>
-
-                                                                {/* Time Column (Desktop Only) */}
-                                                                <td className="p-4 md:p-6 align-top hidden md:table-cell">
-                                                                    <div className="flex items-center gap-2 font-black text-white whitespace-nowrap text-sm md:text-base">
-                                                                        <Clock className="w-4 h-4 text-zinc-600" />
-                                                                        {session.time}
-                                                                    </div>
-                                                                </td>
-
-                                                                {/* Description Column (Large Desktop Only) */}
-                                                                <td className="p-4 md:p-6 align-top hidden lg:table-cell">
-                                                                    <p className="text-zinc-400 text-sm leading-relaxed">
-                                                                        {session.description}
-                                                                    </p>
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                )}
-                            </motion.div>
-
-                            {/* EXPLICIT CLOSE BUTTON */}
-                            <div className="flex justify-center mt-8">
-                                <button
-                                    onClick={() => setIsOpen(false)}
-                                    className="px-8 py-3 bg-blue-600/80 hover:bg-blue-500 text-white rounded-full font-bold tracking-wider uppercase transition-colors border border-blue-400/30 hover:border-blue-400/60 backdrop-blur-md flex items-center gap-2 shadow-lg shadow-blue-900/20"
-                                >
-                                    <ChevronDown className="w-5 h-5 rotate-180" />
-                                    Cerrar Horarios
-                                </button>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </motion.div>
+                    ))}
+                </div>
+            )}
         </section>
     );
 };

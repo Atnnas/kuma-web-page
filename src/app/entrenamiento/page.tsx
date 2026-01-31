@@ -29,14 +29,24 @@ export default async function TrainingPage() {
                 <div className="absolute inset-0 bg-transparent" />
             </div>
 
-            {/* Scrollable Content */}
-            <div className="relative z-10 pt-20 pb-20 flex flex-col gap-6">
-                <TrainingSchedules />
-                <TrainingPrices user={session?.user} />
-                <TrainingVirtual user={session?.user} />
+            {/* MAIN CONTENT - EPIC VERTICAL STACK */}
+            <div className="relative z-10 pt-24 pb-32 flex flex-col gap-24 md:gap-32 max-w-[1920px] mx-auto">
 
-                {/* Future Sections Placeholder */}
-                {/* <TrainingMethodology /> */}
+                {/* 1. HORARIOS (Full Width Epicness) */}
+                <div className="w-full">
+                    <TrainingSchedules />
+                </div>
+
+                {/* 2. PLANES (Full Grid) */}
+                <div className="w-full">
+                    <TrainingPrices user={session?.user} />
+                </div>
+
+                {/* 3. VIRTUAL (Grand Finale) */}
+                <div className="w-full">
+                    <TrainingVirtual user={session?.user} />
+                </div>
+
             </div>
         </main>
     );

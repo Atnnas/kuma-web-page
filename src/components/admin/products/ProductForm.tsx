@@ -2,9 +2,9 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { createProduct, updateProduct } from "@/lib/actions/products"; // Adjust imports
+import { createProduct, updateProduct, deleteProduct } from "@/lib/actions/products"; // Adjust imports
 import { compressImage } from "@/lib/image-utils";
-import { Upload, X, Save, Loader2, ArrowLeft } from "lucide-react";
+import { Upload, X, Save, Loader2, ArrowLeft, Trash2, Minus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -32,8 +32,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
             category: formData.get("category"),
             stock: Number(formData.get("stock")),
             images: images,
-            isActive: isEdit ? initialData.isActive : true, // Default active on create? Or strict? Plan said isActive false default.
-            // Let's keep it consistent with plan: isActive false default in model, but here we can let user decide later.
+            isActive: isEdit ? initialData.isActive : true,
         };
 
         try {
@@ -48,6 +47,21 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
             console.error(error);
             alert("Error al guardar producto");
         } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!confirm("¿Estás seguro de que quieres eliminar este producto PERMANENTEMENTE? Esta acción no se puede deshacer.")) return;
+
+        setLoading(true);
+        try {
+            await deleteProduct(initialData._id);
+            router.push("/admin/tienda");
+            router.refresh();
+        } catch (error) {
+            console.error(error);
+            alert("Error al eliminar producto");
             setLoading(false);
         }
     };
@@ -78,7 +92,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-8">
+        <form id="product-form" onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-8 pb-32">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link
@@ -91,14 +105,6 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
                         {isEdit ? "Editar Producto" : "Nuevo Producto"}
                     </h1>
                 </div>
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="flex items-center gap-2 bg-kuma-gold hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-50"
-                >
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    Guardar
-                </button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -188,9 +194,10 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
                                     <button
                                         type="button"
                                         onClick={() => removeImage(idx)}
-                                        className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-full shadow-xl hover:scale-110 transition-transform z-10 border-2 border-zinc-900"
+                                        title="Eliminar imagen"
                                     >
-                                        <X className="w-4 h-4" />
+                                        <Minus className="w-4 h-4 font-bold" />
                                     </button>
                                 </div>
                             ))}
@@ -216,6 +223,30 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
                         </p>
                     </div>
                 </div>
+            </div>
+            {/* Floating Action Buttons */}
+            <div className="fixed bottom-6 right-6 flex flex-col gap-4 z-50">
+                {isEdit && (
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={loading}
+                        className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-zinc-800 text-red-500 border border-red-500/50 shadow-lg hover:bg-red-950 hover:border-red-500 flex items-center justify-center transition-all hover:scale-105"
+                        title="Eliminar Producto"
+                    >
+                        <Trash2 className="w-6 h-6 md:w-8 md:h-8" />
+                    </button>
+                )}
+
+                <button
+                    type="submit"
+                    form="product-form"
+                    disabled={loading}
+                    className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.5)] hover:bg-red-500 hover:scale-110 transition-all flex items-center justify-center"
+                    title="Guardar Cambios"
+                >
+                    {loading ? <Loader2 className="w-8 h-8 animate-spin" /> : <Save className="w-8 h-8" />}
+                </button>
             </div>
         </form>
     );

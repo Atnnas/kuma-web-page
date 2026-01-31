@@ -144,30 +144,71 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                 initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className="hidden md:flex fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl items-center justify-center"
+                className="hidden md:flex fixed top-0 inset-x-0 z-50 w-full items-center justify-center border-b border-white/5 bg-zinc-950/80 backdrop-blur-2xl"
             >
-                <div className="relative px-6 py-3 md:py-4 lg:py-3 rounded-full border border-white/10 bg-zinc-950/60 backdrop-blur-xl shadow-2xl flex items-center justify-between overflow-hidden w-full">
-                    {/* Glow Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-transparent to-red-500/5 pointer-events-none" />
+                <div className="relative px-8 py-4 w-full max-w-[1920px] flex items-center justify-between">
+                    {/* Obsidian Blade Edge (Golden Bottom Border) */}
+                    <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-kuma-gold/60 to-transparent shadow-[0_1px_15px_rgba(234,179,8,0.3)]" />
 
-                    {/* Logo Primal */}
-                    <Link href="/" className="group flex items-center gap-4 relative z-10 mr-8">
-                        <div className="relative">
-                            <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-[#6F4E37] shadow-[0_0_15px_rgba(111,78,55,0.6)] group-hover:shadow-[0_0_25px_rgba(111,78,55,0.8)] transition-all duration-500 transform group-hover:scale-110 relative z-10 bg-black">
-                                <Image
-                                    src="/images/kuma-logo.jpg"
-                                    alt="Kuma Logo"
-                                    fill
-                                    className="object-cover"
-                                />
+
+                    {/* Logo Primal OR User Area (Left) */}
+                    {user ? (
+                        <div className="flex items-center gap-4 relative z-10 mr-8 pl-2">
+                            {/* User Info Group */}
+                            <div className="flex items-center gap-3 group/user">
+                                {/* Avatar */}
+                                <div className="relative h-10 w-10 rounded-full overflow-hidden border border-white/10 shadow-sm group-hover/user:border-kuma-gold/50 transition-colors duration-300">
+                                    {user.image ? (
+                                        <Image src={user.image} alt="User" fill className="object-cover" />
+                                    ) : (
+                                        <div className="h-full w-full bg-zinc-800 flex items-center justify-center text-zinc-400 font-bold text-sm">
+                                            {user.name?.[0]?.toUpperCase()}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Info */}
+                                <div className="flex flex-col items-start pt-0.5">
+                                    <span className="text-xs font-bold text-white leading-none tracking-wide">
+                                        {user.name?.split(" ")[0]}
+                                    </span>
+                                    <span className={`text-[9px] font-serif font-black uppercase tracking-[0.15em] mt-1 ${user.isActive === false ? "text-amber-500" : "text-kuma-gold"}`}>
+                                        {user.isActive === false ? "Pendiente" : "KUMA MEMBER"}
+                                    </span>
+                                </div>
                             </div>
-                            {/* Spinning Glow Effect behind logo */}
-                            <div className="absolute -inset-2 bg-gradient-to-r from-red-600 to-transparent rounded-full blur opacity-0 group-hover:opacity-75 transition-opacity duration-500 animate-spin-slow" />
+
+                            {/* Separator */}
+                            <div className="h-6 w-px bg-white/10 mx-1" />
+
+                            {/* Logout Action (Subtle) */}
+                            <button
+                                onClick={onLogout}
+                                className="text-zinc-500 hover:text-red-500 transition-colors p-1.5 hover:bg-white/5 rounded-full"
+                                title="Cerrar Sesión"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
+                            </button>
                         </div>
-                        <span className="hidden lg:block text-2xl font-serif font-black tracking-widest text-kuma-gold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                            KUMA DOJO
-                        </span>
-                    </Link>
+                    ) : (
+                        <Link href="/" className="group flex items-center gap-4 relative z-10 mr-8">
+                            <div className="relative">
+                                <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-[#6F4E37] shadow-[0_0_15px_rgba(111,78,55,0.6)] group-hover:shadow-[0_0_25px_rgba(111,78,55,0.8)] transition-all duration-500 transform group-hover:scale-110 relative z-10 bg-black">
+                                    <Image
+                                        src="/images/kuma-logo.jpg"
+                                        alt="Kuma Logo"
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                {/* Spinning Glow Effect behind logo */}
+                                <div className="absolute -inset-2 bg-gradient-to-r from-red-600 to-transparent rounded-full blur opacity-0 group-hover:opacity-75 transition-opacity duration-500 animate-spin-slow" />
+                            </div>
+                            <span className="hidden lg:block text-2xl font-serif font-black tracking-widest text-kuma-gold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                                KUMA DOJO
+                            </span>
+                        </Link>
+                    )}
 
                     {/* Navigation Items - Desktop */}
                     <div className="flex items-center gap-2 relative z-10 flex-1 justify-center">
@@ -224,37 +265,9 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                         })}
                     </div>
 
-                    {/* Action / User Area */}
+                    {/* Action / User Area (Right - Only Login/Register now) */}
                     <div className="flex items-center gap-4 relative z-10 pl-8">
-                        {user ? (
-                            <div className="flex items-center gap-3 pl-4 border-l border-white/10">
-                                <div className="text-right hidden sm:block">
-                                    <p className="text-sm font-bold text-white leading-none">
-                                        {user.name?.split(" ")[0]}
-                                    </p>
-                                    <p className={`text-[10px] uppercase tracking-wider font-serif font-bold ${user.isActive === false ? "text-amber-500" : "text-zinc-400"}`}>
-                                        {user.isActive === false ? "PENDIENTE DE CONTACTAR A ADMIN" : "KUMA"}
-                                    </p>
-                                </div>
-                                <div className="relative h-10 w-10 rounded-full border-2 border-red-500/50 overflow-hidden shadow-[0_0_10px_rgba(220,38,38,0.3)]">
-                                    {user.image ? (
-                                        <Image src={user.image} alt="Avatar" fill className="object-cover" />
-                                    ) : (
-                                        <div className={`h-full w-full flex items-center justify-center text-zinc-400 font-bold ${user.isActive === false ? "bg-amber-900/50 text-amber-500" : "bg-zinc-800"}`}>
-                                            {user.isActive === false ? "!" : user.name?.[0]?.toUpperCase()}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <button
-                                    onClick={onLogout}
-                                    className="ml-2 h-10 w-10 flex items-center justify-center rounded-full bg-zinc-900 border border-zinc-800 text-red-500 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300"
-                                    title="Cerrar Sesión"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
-                                </button>
-                            </div>
-                        ) : (
+                        {!user && (
                             <div className="flex items-center gap-3">
                                 <Link
                                     href="/login"
