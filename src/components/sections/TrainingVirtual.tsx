@@ -173,12 +173,12 @@ export const TrainingVirtual = ({ user, mode = "default" }: TrainingVirtualProps
                     viewport={{ once: true }}
                 >
 
-                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter text-white drop-shadow-2xl">
-                        <span className="text-blue-500">Virtual</span> Dojo
+                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-white drop-shadow-2xl">
+                        <span className="text-kuma-gold">Virtual</span> Dojo
                     </h2>
                 </motion.div>
                 {/* Background Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-blue-900/10 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-yellow-900/10 blur-[100px] rounded-full pointer-events-none" />
             </div>
 
             {content}

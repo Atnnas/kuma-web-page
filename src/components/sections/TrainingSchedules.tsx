@@ -76,7 +76,7 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
                         className="relative z-10"
                     >
 
-                        <h2 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter text-white drop-shadow-2xl">
+                        <h2 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-white drop-shadow-2xl">
                             <span className="text-kuma-gold">Horarios</span>
                         </h2>
                     </motion.div>
