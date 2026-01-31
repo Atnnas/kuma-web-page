@@ -166,11 +166,7 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
                             </div>
 
                             {/* Footer Action */}
-                            <div className="p-6 bg-zinc-950/30 text-center border-t border-white/5">
-                                <span className="text-sm font-black uppercase tracking-[0.3em] text-zinc-500 group-hover:text-kuma-gold transition-colors decoration-kuma-gold/50 group-hover:underline underline-offset-4">
-                                    Ver Detalle
-                                </span>
-                            </div>
+
                         </motion.div>
                     ))}
                 </div>
