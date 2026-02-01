@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
+import { motion, useReducedMotion, AnimatePresence, Variants } from "framer-motion";
 import { useTheme } from "next-themes";
 import { Download, ChevronDown } from "lucide-react";
 import { Resizable } from "react-resizable";
@@ -164,7 +164,7 @@ export function ResizableTable({
 
     const shouldAnimate = enableAnimations && !shouldReduceMotion;
 
-    const containerVariants = {
+    const containerVariants: Variants = {
         visible: {
             transition: {
                 staggerChildren: 0.04,
@@ -173,7 +173,7 @@ export function ResizableTable({
         }
     };
 
-    const rowVariants = {
+    const rowVariants: Variants = {
         hidden: {
             opacity: 0,
             y: 20,
@@ -289,12 +289,12 @@ export function ResizableTable({
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={`page-${currentPage}`}
-                                variants={shouldAnimate ? containerVariants : {}}
+                                variants={shouldAnimate ? containerVariants : undefined}
                                 initial={shouldAnimate ? "hidden" : "visible"}
                                 animate="visible"
                             >
                                 {paginatedData.map((item, index) => (
-                                    <motion.div key={`${item.id}-${index}`} variants={shouldAnimate ? rowVariants : {}}>
+                                    <motion.div key={`${item.id}-${index}`} variants={shouldAnimate ? rowVariants : undefined}>
                                         <div
                                             className={`py-4 group relative transition-all duration-150 border-b border-zinc-800/50 flex hover:bg-zinc-800/30`}
                                         >
