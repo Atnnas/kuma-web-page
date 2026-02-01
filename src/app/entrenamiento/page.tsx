@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { TrainingSchedules } from "@/components/sections/TrainingSchedules";
 import { TrainingPrices } from "@/components/sections/TrainingPrices";
 import { TrainingVirtual } from "@/components/sections/TrainingVirtual";
+import { AnimatedTabs } from "@/components/ui/animated-tabs";
 
 export const metadata = {
     title: "Horarios y Entrenamiento | Kuma Dojo",
@@ -12,6 +13,24 @@ export const metadata = {
 
 export default async function TrainingPage() {
     const session = await auth();
+
+    const tabs = [
+        {
+            id: "horarios",
+            label: "Horarios",
+            content: <TrainingSchedules />
+        },
+        {
+            id: "planes",
+            label: "Planes Mensuales",
+            content: <TrainingPrices user={session?.user} />
+        },
+        {
+            id: "virtual",
+            label: "Dojo Virtual",
+            content: <TrainingVirtual user={session?.user} />
+        }
+    ];
 
     return (
         <main className="min-h-screen relative overflow-hidden bg-zinc-950">
@@ -29,24 +48,14 @@ export default async function TrainingPage() {
                 <div className="absolute inset-0 bg-transparent" />
             </div>
 
-            {/* MAIN CONTENT - EPIC VERTICAL STACK */}
-            <div className="relative z-10 pt-24 pb-32 flex flex-col gap-24 md:gap-32 max-w-[1920px] mx-auto">
-
-                {/* 1. HORARIOS (Full Width Epicness) */}
-                <div className="w-full">
-                    <TrainingSchedules />
-                </div>
-
-                {/* 2. PLANES (Full Grid) */}
-                <div className="w-full">
-                    <TrainingPrices user={session?.user} />
-                </div>
-
-                {/* 3. VIRTUAL (Grand Finale) */}
-                <div className="w-full">
-                    <TrainingVirtual user={session?.user} />
-                </div>
-
+            {/* MAIN CONTENT - ANIMATED TABS */}
+            <div className="relative z-10 pt-24 pb-32 max-w-[1920px] mx-auto">
+                <AnimatedTabs
+                    tabs={tabs}
+                    defaultTab="horarios"
+                    className="w-full"
+                    tabListClassName="mb-8"
+                />
             </div>
         </main>
     );

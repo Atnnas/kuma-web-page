@@ -2,10 +2,40 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Horario from "@/models/Horario";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     try {
         await connectDB();
-        const horarios = await Horario.find({}).sort({ order: 1 });
+        let horarios = await Horario.find({}).sort({ order: 1 }).lean();
+
+        // INGENIOUS INJECTION: Add KUMA KIDS if not present
+        const targetDays = ["Lunes", "Miércoles", "Miercoles", "Viernes"];
+        const kidsSession = {
+            group: "KUMA KIDS",
+            time: "6:00 PM - 7:00 PM",
+            description: "Entrenamiento para niños hasta 12 años",
+            icon: "Zap", // Energetic icon
+            color: "from-kuma-gold to-orange-600"
+        };
+
+        horarios = horarios.map((day: any) => {
+            if (targetDays.includes(day.day)) {
+                // Check if already exists to avoid duplicates if DB updated later
+                const hasKids = day.sessions.some((s: any) => s.group === "KUMA KIDS");
+                if (!hasKids) {
+                    day.sessions.push(kidsSession);
+                    // Sort sessions by time again just in case
+                    day.sessions.sort((a: any, b: any) => {
+                        const timeA = parseInt(a.time.replace(":", ""));
+                        const timeB = parseInt(b.time.replace(":", ""));
+                        return timeA - timeB;
+                    });
+                }
+            }
+            return day;
+        });
+
         return NextResponse.json(horarios);
     } catch (error) {
         return NextResponse.json({ error: "Failed to fetch horarios" }, { status: 500 });

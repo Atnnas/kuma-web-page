@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Lock, Play, Video, Users, Activity } from "lucide-react";
 import Link from "next/link";
@@ -12,7 +12,6 @@ interface TrainingVirtualProps {
 }
 
 export const TrainingVirtual = ({ user, mode = "default" }: TrainingVirtualProps) => {
-    const [isOpen, setIsOpen] = useState(false);
     const isWidget = mode === "widget";
 
     // If user is NOT logged in, we might want to default to closed or handle click differently.
@@ -166,14 +165,15 @@ export const TrainingVirtual = ({ user, mode = "default" }: TrainingVirtualProps
     return (
         <section id="dojo-virtual" className="relative z-10 w-full px-4 md:px-8 max-w-[1920px] mx-auto py-12 pb-32">
             {/* Header */}
-            <div className="relative mb-16 text-center">
+            <div className="relative text-center mb-8 md:mb-16">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
+                    className="flex flex-col items-center justify-center gap-4"
                 >
 
-                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-white drop-shadow-2xl">
+                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-white drop-shadow-2xl flex items-center gap-4">
                         <span className="text-kuma-gold">Virtual</span> Dojo
                     </h2>
                 </motion.div>
@@ -181,7 +181,16 @@ export const TrainingVirtual = ({ user, mode = "default" }: TrainingVirtualProps
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-yellow-900/10 blur-[100px] rounded-full pointer-events-none" />
             </div>
 
-            {content}
+            <AnimatePresence>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                >
+                    {content}
+                </motion.div>
+            </AnimatePresence>
         </section>
     );
 }
