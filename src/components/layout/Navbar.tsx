@@ -7,19 +7,34 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { ChevronDown, ChevronRight } from "lucide-react";
+
+interface NavItem {
+    name: string;
+    href: string;
+    subItems?: NavItem[];
+}
 
 export function Navbar({ user }: { user?: { name?: string | null; image?: string | null; role?: string | null; isActive?: boolean } }) {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isLoggingOut, setIsLoggingOut] = useState(false); // Nuevo estado para feedback de salida
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [mobileExpandedIndex, setMobileExpandedIndex] = useState<number | null>(null); // State for mobile accordion
     const pathname = usePathname();
 
     // Hide Navbar on Admin pages (dedicated layout)
     if (pathname?.startsWith("/admin")) return null;
 
-    const navItems = [
+    const navItems: NavItem[] = [
         { name: "Inicio", href: "/" },
         { name: "Filosofía", href: "/filosofia" },
+        {
+            name: "Recursos",
+            href: "/recursos",
+            subItems: [
+                { name: "Didáctica", href: "/recursos/didactica" }
+            ]
+        },
         { name: "Entrenamiento", href: "/entrenamiento" },
         { name: "Calendario de Eventos", href: "/calendario" },
         { name: "Noticias", href: "/noticias" },
@@ -29,7 +44,6 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
 
     const onLogout = async () => {
         setIsLoggingOut(true);
-        // Esperamos un momento para que el usuario vea el mensaje
         await new Promise(resolve => setTimeout(resolve, 800));
 
         try {
@@ -37,7 +51,6 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
         } catch (error) {
             console.error("Error signing out:", error);
         } finally {
-            // Forzar redirección limpia al home
             window.location.href = "/";
         }
     };
@@ -172,7 +185,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                                     <span className="text-xs font-bold text-white leading-none tracking-wide">
                                         {user.name?.split(" ")[0]}
                                     </span>
-                                    <span className={`text-[9px] font-serif font-black uppercase tracking-[0.15em] mt-1 ${user.isActive === false ? "text-amber-500" : "text-kuma-gold"}`}>
+                                    <span className={`text-[9px] font-bold uppercase tracking-[0.15em] mt-1 ${user.isActive === false ? "text-amber-500" : "text-kuma-gold"}`}>
                                         {user.isActive === false ? "Pendiente" : "KUMA MEMBER"}
                                     </span>
                                 </div>
@@ -213,54 +226,88 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                     {/* Navigation Items - Desktop */}
                     <div className="flex items-center gap-2 relative z-10 flex-1 justify-center">
                         {navItems.map((item, index) => {
-                            const isActive = pathname === item.href;
+                            const isActive = pathname === item.href || (item.subItems && pathname?.startsWith(item.href));
+                            const hasSubItems = item.subItems && item.subItems.length > 0;
 
                             return (
-                                <Link
+                                <div
                                     key={item.name}
-                                    href={item.href}
+                                    className="relative group"
                                     onMouseEnter={() => setHoveredIndex(index)}
                                     onMouseLeave={() => setHoveredIndex(null)}
-                                    className={cn(
-                                        "relative px-4 py-2 text-sm md:text-base lg:text-sm font-medium transition-colors duration-300",
-                                        isActive ? "text-white" : "text-zinc-400 hover:text-white"
-                                    )}
                                 >
-                                    {/* Hover Effect */}
-                                    {hoveredIndex === index && (
-                                        <motion.div
-                                            layoutId="navbar-hover"
-                                            className="absolute inset-0 bg-white/10 rounded-full"
-                                            initial={false}
-                                            transition={{
-                                                type: "spring",
-                                                stiffness: 400,
-                                                damping: 30,
-                                            }}
-                                        />
-                                    )}
+                                    <Link
+                                        href={item.href}
+                                        className={cn(
+                                            "relative px-4 py-2 text-sm md:text-base lg:text-sm font-medium transition-colors duration-300 flex items-center gap-1",
+                                            isActive ? "text-white" : "text-zinc-400 hover:text-white"
+                                        )}
+                                    >
+                                        {/* Hover Effect */}
+                                        {hoveredIndex === index && (
+                                            <motion.div
+                                                layoutId="navbar-hover"
+                                                className="absolute inset-0 bg-white/10 rounded-full"
+                                                initial={false}
+                                                transition={{
+                                                    type: "spring",
+                                                    stiffness: 400,
+                                                    damping: 30,
+                                                }}
+                                            />
+                                        )}
 
-                                    {/* Active State - Ingenious Shaded Border */}
-                                    {isActive && (
-                                        <motion.div
-                                            layoutId="navbar-active"
-                                            className="absolute inset-0 rounded-full bg-white/5 border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)]"
-                                            initial={false}
-                                            transition={{
-                                                type: "spring",
-                                                stiffness: 300,
-                                                damping: 30,
-                                            }}
-                                        />
-                                    )}
+                                        {/* Active State */}
+                                        {isActive && (
+                                            <motion.div
+                                                layoutId="navbar-active"
+                                                className="absolute inset-0 rounded-full bg-white/5 border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+                                                initial={false}
+                                                transition={{
+                                                    type: "spring",
+                                                    stiffness: 300,
+                                                    damping: 30,
+                                                }}
+                                            />
+                                        )}
 
-                                    <span className={cn(
-                                        "relative z-10 uppercase tracking-wide text-xs md:text-sm lg:text-xs",
-                                        isActive ? "font-bold text-white shadow-black drop-shadow-md" : ""
-                                    )}>
-                                        {item.name}
-                                    </span>
-                                </Link>
+                                        <span className={cn(
+                                            "relative z-10 uppercase tracking-wide text-xs md:text-sm lg:text-xs font-bold",
+                                            isActive ? "text-white shadow-black drop-shadow-md" : ""
+                                        )}>
+                                            {item.name}
+                                        </span>
+                                        {hasSubItems && (
+                                            <ChevronDown className={cn("w-3 h-3 relative z-10 transition-transform duration-300", hoveredIndex === index ? "rotate-180" : "")} />
+                                        )}
+                                    </Link>
+
+                                    {/* Dropdown Menu */}
+                                    <AnimatePresence>
+                                        {hasSubItems && hoveredIndex === index && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 5 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-48 z-50"
+                                            >
+                                                <div className="bg-zinc-950 border border-white/10 rounded-xl overflow-hidden shadow-2xl backdrop-blur-3xl">
+                                                    {item.subItems!.map((sub) => (
+                                                        <Link
+                                                            key={sub.name}
+                                                            href={sub.href}
+                                                            className="block px-6 py-3 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 transition-colors uppercase tracking-[0.1em] relative group/sub"
+                                                        >
+                                                            <span className="relative z-10">{sub.name}</span>
+                                                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-kuma-gold opacity-0 group-hover/sub:opacity-100 transition-opacity" />
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             );
                         })}
                     </div>
@@ -308,7 +355,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                             animate={{ x: 0 }}
                             exit={{ x: "-100%" }}
                             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            className="fixed top-0 left-0 h-full w-[85%] max-w-sm bg-zinc-950 border-r border-[#6F4E37]/30 shadow-2xl z-[70] p-6 flex flex-col"
+                            className="fixed top-0 left-0 h-full w-[85%] max-w-sm bg-zinc-950 border-r border-[#6F4E37]/30 shadow-2xl z-[70] p-6 flex flex-col overflow-y-auto"
                         >
                             <div className="flex items-center justify-between mb-8">
                                 <h2 className="text-2xl font-serif font-black text-kuma-gold uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">KUMA <span className="text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]">MENU</span></h2>
@@ -317,17 +364,72 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                                 </button>
                             </div>
 
-                            <div className="flex flex-col gap-4">
-                                {navItems.map((item) => (
-                                    <Link
-                                        key={item.name}
-                                        href={item.href}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className="text-base font-medium text-zinc-300 hover:text-red-500 transition-colors uppercase tracking-[0.15em] py-3 border-b border-white/5"
-                                    >
-                                        {item.name}
-                                    </Link>
-                                ))}
+                            <div className="flex flex-col gap-2">
+                                {navItems.map((item, index) => {
+                                    const hasSubItems = item.subItems && item.subItems.length > 0;
+                                    const isExpanded = mobileExpandedIndex === index;
+
+                                    return (
+                                        <div key={item.name} className="border-b border-white/5 last:border-0">
+                                            {/* Main Item Link or Toggle */}
+                                            <div className="flex items-center justify-between">
+                                                <Link
+                                                    href={item.href}
+                                                    onClick={(e) => {
+                                                        if (hasSubItems) {
+                                                            // Prevent navigation if it has subitems, toggle instead?
+                                                            // Usually better to allow clicking parent if it's a page.
+                                                            // Let's allow nav, but maybe add a separate toggle button on right?
+                                                            setIsMobileMenuOpen(false);
+                                                        } else {
+                                                            setIsMobileMenuOpen(false);
+                                                        }
+                                                    }}
+                                                    className="flex-1 text-base font-bold text-zinc-300 hover:text-red-500 transition-colors uppercase tracking-[0.1em] py-3"
+                                                >
+                                                    {item.name}
+                                                </Link>
+                                                {hasSubItems && (
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            setMobileExpandedIndex(isExpanded ? null : index);
+                                                        }}
+                                                        className="p-3 text-zinc-500 hover:text-white"
+                                                    >
+                                                        <ChevronDown className={cn("w-4 h-4 transition-transform duration-300", isExpanded ? "rotate-180" : "")} />
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            {/* Sub Items Accordion */}
+                                            <AnimatePresence>
+                                                {hasSubItems && isExpanded && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{ opacity: 1, height: "auto" }}
+                                                        exit={{ opacity: 0, height: 0 }}
+                                                        className="overflow-hidden bg-white/5 rounded-lg mb-2"
+                                                    >
+                                                        {item.subItems!.map((sub) => (
+                                                            <Link
+                                                                key={sub.name}
+                                                                href={sub.href}
+                                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                                className="flex items-center gap-2 pl-6 pr-4 py-3 text-xs font-bold text-zinc-400 hover:text-white transition-colors uppercase tracking-[0.1em] border-t border-white/5 first:border-0"
+                                                            >
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-kuma-gold" />
+                                                                {sub.name}
+                                                            </Link>
+                                                        ))}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    );
+                                })}
+
                                 {!user && (
                                     <>
                                         <Link
