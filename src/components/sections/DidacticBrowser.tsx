@@ -6,8 +6,38 @@ import Link from "next/link";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
+// Define the Resource interface
+interface Resource {
+    id: string;
+    letter: string; // The categorization letter
+    title: string;
+    tag: string;
+    description: string;
+    link: string;
+    image?: string; // Optional thumbnail
+}
+
+// Data Source
+const RESOURCES: Resource[] = [
+    {
+        id: "human-body",
+        letter: "C",
+        title: "Cuerpo Humano en Japonés",
+        tag: "Anatomía Kuma",
+        description: "Estudio del cuerpo humano en japonés. Puntos vitales (Kyusho) y terminología esencial.",
+        link: "/recursos/didactica/cuerpo-humano",
+        image: "/images/kuma-partes-cuerpo.jpg"
+    },
+    // Future resources can be added here
+];
+
 export function DidacticBrowser() {
     const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+
+    // Filtering & Sorting Logic
+    const filteredResources = RESOURCES
+        .filter(resource => selectedLetter === null || resource.letter === selectedLetter)
+        .sort((a, b) => a.title.localeCompare(b.title));
 
     return (
         <div className="w-full animate-in fade-in zoom-in duration-700 slide-in-from-bottom-4">
@@ -60,48 +90,70 @@ export function DidacticBrowser() {
             </div>
 
             {/* --- CONTENT AREA --- */}
-            <div className="relative min-h-[400px] flex flex-col items-center justify-center">
+            <div className="relative min-h-[400px] flex flex-col items-center">
 
-                {/* CASE "C": SHOW HUMAN BODY CARD */}
-                {selectedLetter === "C" && (
-                    <div className="w-full max-w-4xl grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-bottom-4">
-                        <Link href="/recursos/didactica/cuerpo-humano" className="group relative bg-zinc-900 border border-white/10 rounded-3xl p-8 hover:border-kuma-gold/50 transition-all duration-300 overflow-hidden text-left block">
-                            <div className="absolute inset-0 bg-gradient-to-br from-kuma-gold/5 to-transparent group-hover:from-kuma-gold/10 transition-colors" />
-                            <div className="relative z-10 flex flex-col items-start">
-                                <span className="inline-block px-3 py-1 bg-kuma-gold/10 text-kuma-gold text-xs font-bold uppercase tracking-widest rounded-full mb-4 border border-kuma-gold/20">Anatomía Kuma</span>
-                                <h3 className="text-3xl font-serif font-black text-white mb-2">Cuerpo Humano en Japonés</h3>
-                                <p className="text-zinc-400 mb-6 max-w-md">Estudia los puntos vitales (Kyusho) y partes del cuerpo sobre nuestro guardián del Dojo.</p>
-                                <span className="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs border-b border-kuma-gold pb-1 group-hover:text-kuma-gold transition-colors">
-                                    Iniciar Estudio <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                                </span>
-                            </div>
+                {filteredResources.length > 0 ? (
+                    <div className="w-full max-w-4xl grid grid-cols-1 gap-6">
+                        {filteredResources.map((resource) => (
+                            <Link
+                                key={resource.id}
+                                href={resource.link}
+                                className="group relative bg-zinc-900 border border-white/10 rounded-3xl p-6 md:p-8 hover:border-kuma-gold/50 transition-all duration-300 overflow-hidden text-left block animate-in fade-in slide-in-from-bottom-4"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-br from-kuma-gold/5 to-transparent group-hover:from-kuma-gold/10 transition-colors" />
 
-                            {/* Graphic Decor - Bear Paw or similar */}
-                            <div className="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity transform translate-x-1/4 translate-y-1/4">
-                                <svg width="300" height="300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 22h20L12 2zm0 3.8L18.4 19H5.6L12 5.8z" /></svg>
-                            </div>
-                        </Link>
+                                <div className="relative z-10 flex flex-col md:flex-row gap-6 items-start md:items-center">
+                                    {/* THUMBNAIL (Optional) */}
+                                    {resource.image && (
+                                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl overflow-hidden border border-white/10 shrink-0 shadow-lg group-hover:scale-105 transition-transform duration-500">
+                                            {/* We use standard img for simplicity inside map, or could use Next Image if imported */}
+                                            <img
+                                                src={resource.image}
+                                                alt={resource.title}
+                                                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                            />
+                                        </div>
+                                    )}
+
+                                    <div className="flex-1">
+                                        <span className="inline-block px-3 py-1 bg-kuma-gold/10 text-kuma-gold text-xs font-bold uppercase tracking-widest rounded-full mb-3 border border-kuma-gold/20">
+                                            {resource.tag}
+                                        </span>
+                                        <h3 className="text-2xl md:text-3xl font-serif font-black text-white mb-2">
+                                            {resource.title}
+                                        </h3>
+                                        <p className="text-zinc-400 mb-4 text-sm md:text-base leading-relaxed">
+                                            {resource.description}
+                                        </p>
+                                        <span className="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs border-b border-kuma-gold pb-1 group-hover:text-kuma-gold transition-colors">
+                                            Iniciar Estudio
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Graphic Decor */}
+                                <div className="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity transform translate-x-1/4 translate-y-1/4 pointer-events-none">
+                                    <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 22h20L12 2zm0 3.8L18.4 19H5.6L12 5.8z" /></svg>
+                                </div>
+                            </Link>
+                        ))}
                     </div>
-                )}
-
-                {/* GENERIC CONTENT DISPLAY (Show if NOT C) */}
-                {selectedLetter !== "C" && (
-                    <div className="w-full flex flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 bg-white/5 hover:bg-white/[0.07] transition-colors p-12 group min-h-[400px]">
+                ) : (
+                    // GENERIC EMPTY STATE (If no resources for selected letter)
+                    <div className="w-full flex flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 bg-white/5 p-12 min-h-[400px]">
                         <div className="text-center space-y-4">
-                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black/50 border border-white/10 mb-4 group-hover:scale-110 transition-transform duration-500 group-hover:border-kuma-gold/50 shadow-inner">
-                                <span className="text-2xl font-serif font-black text-white/20 group-hover:text-kuma-gold transition-colors duration-500">
-                                    {selectedLetter || "ALL"}
+                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black/50 border border-white/10 mb-4 shadow-inner">
+                                <span className="text-2xl font-serif font-black text-zinc-700">
+                                    {selectedLetter}
                                 </span>
                             </div>
 
-                            <h3 className="text-zinc-400 font-serif text-xl tracking-wider">
-                                {selectedLetter
-                                    ? `Recursos Iniciados en "${selectedLetter}"`
-                                    : "Explorando Todos los Recursos"
-                                }
+                            <h3 className="text-zinc-500 font-serif text-xl tracking-wider">
+                                Sin Recursos Disponibles
                             </h3>
                             <p className="text-zinc-600 text-sm max-w-sm mx-auto">
-                                Proximamente más contenido didáctico.
+                                No hay contenido didáctico bajo la letra "{selectedLetter}" todavía.
                             </p>
                         </div>
                     </div>

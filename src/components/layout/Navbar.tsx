@@ -30,7 +30,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
         { name: "Filosofía", href: "/filosofia" },
         {
             name: "Recursos",
-            href: "/recursos",
+            href: "#",
             subItems: [
                 { name: "Didáctica", href: "/recursos/didactica" }
             ]
@@ -228,6 +228,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                         {navItems.map((item, index) => {
                             const isActive = pathname === item.href || (item.subItems && pathname?.startsWith(item.href));
                             const hasSubItems = item.subItems && item.subItems.length > 0;
+                            const isClickable = item.href && item.href !== "#";
 
                             return (
                                 <div
@@ -236,51 +237,84 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                                     onMouseEnter={() => setHoveredIndex(index)}
                                     onMouseLeave={() => setHoveredIndex(null)}
                                 >
-                                    <Link
-                                        href={item.href}
-                                        className={cn(
-                                            "relative px-4 py-2 text-sm md:text-base lg:text-sm font-medium transition-colors duration-300 flex items-center gap-1",
-                                            isActive ? "text-white" : "text-zinc-400 hover:text-white"
-                                        )}
-                                    >
-                                        {/* Hover Effect */}
-                                        {hoveredIndex === index && (
-                                            <motion.div
-                                                layoutId="navbar-hover"
-                                                className="absolute inset-0 bg-white/10 rounded-full"
-                                                initial={false}
-                                                transition={{
-                                                    type: "spring",
-                                                    stiffness: 400,
-                                                    damping: 30,
-                                                }}
-                                            />
-                                        )}
+                                    {isClickable ? (
+                                        <Link
+                                            href={item.href}
+                                            className={cn(
+                                                "relative px-4 py-2 text-sm md:text-base lg:text-sm font-medium transition-colors duration-300 flex items-center gap-1",
+                                                isActive ? "text-white" : "text-zinc-400 hover:text-white"
+                                            )}
+                                        >
+                                            {/* Hover Effect */}
+                                            {hoveredIndex === index && (
+                                                <motion.div
+                                                    layoutId="navbar-hover"
+                                                    className="absolute inset-0 bg-white/10 rounded-full"
+                                                    initial={false}
+                                                    transition={{
+                                                        type: "spring",
+                                                        stiffness: 400,
+                                                        damping: 30,
+                                                    }}
+                                                />
+                                            )}
 
-                                        {/* Active State */}
-                                        {isActive && (
-                                            <motion.div
-                                                layoutId="navbar-active"
-                                                className="absolute inset-0 rounded-full bg-white/5 border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)]"
-                                                initial={false}
-                                                transition={{
-                                                    type: "spring",
-                                                    stiffness: 300,
-                                                    damping: 30,
-                                                }}
-                                            />
-                                        )}
+                                            {/* Active State */}
+                                            {isActive && (
+                                                <motion.div
+                                                    layoutId="navbar-active"
+                                                    className="absolute inset-0 rounded-full bg-white/5 border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+                                                    initial={false}
+                                                    transition={{
+                                                        type: "spring",
+                                                        stiffness: 300,
+                                                        damping: 30,
+                                                    }}
+                                                />
+                                            )}
 
-                                        <span className={cn(
-                                            "relative z-10 uppercase tracking-wide text-xs md:text-sm lg:text-xs font-bold",
-                                            isActive ? "text-white shadow-black drop-shadow-md" : ""
-                                        )}>
-                                            {item.name}
-                                        </span>
-                                        {hasSubItems && (
-                                            <ChevronDown className={cn("w-3 h-3 relative z-10 transition-transform duration-300", hoveredIndex === index ? "rotate-180" : "")} />
-                                        )}
-                                    </Link>
+                                            <span className={cn(
+                                                "relative z-10 uppercase tracking-wide text-xs md:text-sm lg:text-xs font-bold",
+                                                isActive ? "text-white shadow-black drop-shadow-md" : ""
+                                            )}>
+                                                {item.name}
+                                            </span>
+                                            {hasSubItems && (
+                                                <ChevronDown className={cn("w-3 h-3 relative z-10 transition-transform duration-300", hoveredIndex === index ? "rotate-180" : "")} />
+                                            )}
+                                        </Link>
+                                    ) : (
+                                        <div
+                                            className={cn(
+                                                "relative px-4 py-2 text-sm md:text-base lg:text-sm font-medium transition-colors duration-300 flex items-center gap-1 cursor-default",
+                                                isActive ? "text-white" : "text-zinc-400 hover:text-white"
+                                            )}
+                                        >
+                                            {/* Hover Effect (Still show hover for consistent feel) */}
+                                            {hoveredIndex === index && (
+                                                <motion.div
+                                                    layoutId="navbar-hover"
+                                                    className="absolute inset-0 bg-white/10 rounded-full"
+                                                    initial={false}
+                                                    transition={{
+                                                        type: "spring",
+                                                        stiffness: 400,
+                                                        damping: 30,
+                                                    }}
+                                                />
+                                            )}
+
+                                            <span className={cn(
+                                                "relative z-10 uppercase tracking-wide text-xs md:text-sm lg:text-xs font-bold",
+                                                isActive ? "text-white shadow-black drop-shadow-md" : ""
+                                            )}>
+                                                {item.name}
+                                            </span>
+                                            {hasSubItems && (
+                                                <ChevronDown className={cn("w-3 h-3 relative z-10 transition-transform duration-300", hoveredIndex === index ? "rotate-180" : "")} />
+                                            )}
+                                        </div>
+                                    )}
 
                                     {/* Dropdown Menu */}
                                     <AnimatePresence>

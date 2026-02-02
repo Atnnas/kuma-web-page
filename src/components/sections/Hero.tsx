@@ -52,7 +52,7 @@ export function Hero() {
                         }}
                         className="relative"
                     >
-                        <div className="h-64 w-64 xs:h-72 xs:w-72 sm:h-80 sm:w-80 md:h-96 md:w-96 lg:h-96 lg:w-96 xl:h-[28rem] xl:w-[28rem] 2xl:h-[32rem] 2xl:w-[32rem] rounded-full overflow-hidden border-2 md:border-4 border-[#6F4E37] relative bg-black/50 backdrop-blur-sm z-20 transition-all duration-500">
+                        <div className="h-64 w-64 xs:h-72 xs:w-72 sm:h-80 sm:w-80 md:h-80 md:w-80 lg:h-80 lg:w-80 xl:h-[24rem] xl:w-[24rem] 2xl:h-[28rem] 2xl:w-[28rem] rounded-full overflow-hidden border-2 md:border-4 border-[#6F4E37] relative bg-black/50 backdrop-blur-sm z-20 transition-all duration-500">
                             <Image
                                 src="/images/kuma-logo.jpg"
                                 alt="Kuma Dojo Logo"
@@ -102,8 +102,9 @@ export function Hero() {
                                 transition: { delay: 0.7, duration: 0.5, ease: "easeOut" }
                             }
                         }}
-                        className="text-zinc-200 text-sm sm:text-xl md:text-2xl font-light font-sans tracking-[0.2em] italic drop-shadow-md px-4"
+                        className="text-zinc-200 text-sm sm:text-xl md:text-xl font-light font-sans tracking-[0.2em] italic drop-shadow-md px-4"
                     >
+
                         Un camino integral
                     </motion.p>
 
