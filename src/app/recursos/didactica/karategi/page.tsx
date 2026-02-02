@@ -2,8 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function KarategiPage() {
     return (
@@ -44,13 +43,7 @@ export default function KarategiPage() {
                 </div>
 
                 {/* Return Button */}
-                <Link
-                    href="/recursos/didactica"
-                    className="absolute top-24 left-4 md:left-12 z-20 flex items-center gap-2 text-zinc-500 hover:text-kuma-gold transition-colors font-bold uppercase tracking-widest text-xs group"
-                >
-                    <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                    Volver
-                </Link>
+                <BackButton href="/recursos/didactica" />
             </header>
 
             {/* --- CONTENT --- */}
