@@ -28,6 +28,15 @@ const RESOURCES: Resource[] = [
         link: "/recursos/didactica/cuerpo-humano",
         image: "/images/kuma-partes-cuerpo.jpg"
     },
+    {
+        id: "karategi",
+        letter: "K",
+        title: "Historia del Karategi",
+        tag: "Historia & Tradición",
+        description: "Origen, evolución y significado del uniforme blanco en el Camino del Guerrero.",
+        link: "/recursos/didactica/karategi",
+        image: "/images/kuma-karategui-partes.jpg"
+    },
     // Future resources can be added here
 ];
 
