@@ -37,6 +37,15 @@ const RESOURCES: Resource[] = [
         link: "/recursos/didactica/karategi",
         image: "/images/kuma-karategui-partes.jpg"
     },
+    {
+        id: "kumite",
+        letter: "K",
+        title: "Kumite (WKF & Tradicional)",
+        tag: "Combate & Estrategia",
+        description: "Evolución histórica del combate: del Tegumi al Jiyu Kumite deportivo.",
+        link: "/recursos/didactica/kumite",
+        image: "/images/kuma-reglamento-kumite.jpg"
+    },
     // Future resources can be added here
 ];
 
