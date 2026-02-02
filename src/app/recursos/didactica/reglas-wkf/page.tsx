@@ -134,8 +134,8 @@ export default function ReglasWKFPage() {
                                 {
                                     title: "2. Actitud Deportiva",
                                     desc: "Comportamiento marcial y respeto hacia el oponente durante toda la acción.",
-                                    img: null, // Placeholder
-                                    alt: "Actitud Deportiva"
+                                    img: "/images/kuma-actitud-deportiva.jpg",
+                                    alt: "Actitud Deportiva - Kuma Dojo"
                                 },
                                 {
                                     title: "3. Aplicación Vigorosa",
