@@ -74,29 +74,6 @@ export default function KumitePage() {
                                 Fig 1. Encuentro Dinámico
                             </p>
                         </motion.div>
-
-                        {/* FIGURA 2 */}
-                        <motion.div
-                            initial={{ opacity: 0, x: -50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="relative"
-                        >
-                            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                                <Image
-                                    src="/images/kuma-intro-puntos.jpg"
-                                    alt="Puntuación en Kumite"
-                                    width={800}
-                                    height={800}
-                                    className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-                            </div>
-                            <p className="mt-4 text-center text-xs text-zinc-500 uppercase tracking-widest font-bold">
-                                Fig 2. ¿Cómo dan los puntos?
-                            </p>
-                        </motion.div>
                     </div>
 
                     {/* TEXT (Right Column) */}

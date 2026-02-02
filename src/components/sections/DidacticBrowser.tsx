@@ -46,6 +46,15 @@ const RESOURCES: Resource[] = [
         link: "/recursos/didactica/kumite",
         image: "/images/kuma-reglamento-kumite.jpg"
     },
+    {
+        id: "reglas-wkf",
+        letter: "K",
+        title: "Reglas del Kumite WKF",
+        tag: "Reglamento Deportivo",
+        description: "Historia de la WKF y sistema de puntuación oficial.",
+        link: "/recursos/didactica/reglas-wkf",
+        image: "/images/kuma-intro-puntos.jpg"
+    },
     // Future resources can be added here
 ];
 
