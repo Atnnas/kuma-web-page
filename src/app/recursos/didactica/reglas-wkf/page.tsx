@@ -158,8 +158,8 @@ export default function ReglasWKFPage() {
                                 {
                                     title: "6. Distancia Correcta",
                                     desc: "Alcanzar el objetivo o 'skin touch' en el rango apropiado para la técnica.",
-                                    img: null,
-                                    alt: "Distancia"
+                                    img: "/images/kuma-distancia-correcta.jpg",
+                                    alt: "Distancia Correcta - Kuma Dojo"
                                 }
                             ].map((item, index) => (
                                 <motion.div
