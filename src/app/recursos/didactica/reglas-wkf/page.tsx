@@ -62,15 +62,45 @@ export default function ReglasWKFPage() {
                             <p className="font-serif italic text-xl text-kuma-gold mb-2">
                                 World Karate Federation
                             </p>
+                            El Consenso: De Shobu Ippon al Reglamento WKF
                         </motion.div>
                         <motion.p
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
+                            transition={{ duration: 0.6, delay: 0.3 }}
                         >
-                            La Federación Mundial de Karate (WKF) es la máxima autoridad del karate deportivo a nivel global, reconocida por el Comité Olímpico Internacional. Fundada originalmente como WUKO en 1970, su objetivo principal ha sido unificar las diversas escuelas y estilos bajo un reglamento común que garantice la integridad física de los competidores y promueva el espíritu del Budo en el ámbito competitivo moderno. A través de sus normativas, busca el equilibrio entre la tradición marcial y el espectáculo deportivo de alto nivel.
+                            La evolución del reglamento de kumite representa uno de los cambios más significativos en la historia moderna del Karate. Originalmente, bajo el sistema tradicional de <em>Shobu Ippon</em> ("un punto definitivo"), los combates buscaban emular un enfrentamiento real donde un solo golpe perfecto (Kime) decidiría el resultado. Este enfoque, aunque filosóficamente profundo, presentaba desafíos para la estandarización global y la seguridad de los atletas, con un énfasis en el control absoluto que a veces limitaba la dinámica deportiva (Abernethy, 2013).
                         </motion.p>
+                        <motion.p
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.4 }}
+                        >
+                            Con la formación de la WUKO (predecesora de la WKF) en 1970, comenzó un esfuerzo monumental para unificar las diversas escuelas y estilos bajo un marco común. El objetivo era transformar el arte marcial en un deporte internacional viable y seguro, aspirando al reconocimiento olímpico. Esto llevó a la transición hacia un sistema de múltiples puntos (Sanbon Shobu y posteriormente el sistema actual de 8 puntos), introduciendo categorías de peso y protecciones obligatorias. Este cambio no solo redujo drásticamente las lesiones, sino que también hizo el combate más comprensible para los espectadores y redujo la subjetividad arbitral al establecer criterios técnicos claros como los que utilizamos hoy en día (WKF, 2023).
+                        </motion.p>
+
+                        {/* REFERENCES */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                            className="pt-4 border-t border-white/5 text-xs text-zinc-500 font-mono"
+                        >
+                            <p className="font-bold text-zinc-400 mb-2 uppercase tracking-widest">Referencias</p>
+                            <ul className="space-y-1 pl-4 marker:text-kuma-gold list-disc">
+                                <li>
+                                    Abernethy, I. (2013). <em>Traditional Karate vs Sport Karate: One Point vs Multiple Points</em>. Iain Abernethy Applied Karate.
+                                </li>
+                                <li>
+                                    World Karate Federation. (2023). <em>WKF Karate Competition Rules</em>. World Karate Federation. https://www.wkf.net/pdf/WKF_Competition_Rules_2023.pdf
+                                </li>
+                                <li>
+                                    WUKO/WKF Archive. (n.d.). <em>History of World Karate Federation</em>. Retrieved from https://www.wkf.net/structure-history
+                                </li>
+                            </ul>
+                        </motion.div>
                     </div>
 
                     {/* SCORING SECTION (The requested visual) */}
@@ -127,37 +157,37 @@ export default function ReglasWKFPage() {
                             {[
                                 {
                                     title: "1. Buena Forma",
-                                    desc: "La técnica debe ejecutarse con la mecánica corporal tradicional y pureza de movimiento.",
+                                    desc: "Técnica con características de eficacia probable dentro de los conceptos tradicionales del Karate. Debe mostrar pureza de movimiento y mecánica corporal correcta.",
                                     img: "/images/kuma-buena-forma.jpg",
                                     alt: "Buena Forma - Kuma Dojo"
                                 },
                                 {
                                     title: "2. Actitud Deportiva",
-                                    desc: "Comportamiento marcial y respeto hacia el oponente durante toda la acción.",
+                                    desc: "Refleja una actitud no maliciosa y de gran concentración durante la ejecución. El competidor debe mostrar respeto y compostura durante toda la acción.",
                                     img: "/images/kuma-actitud-deportiva.jpg",
                                     alt: "Actitud Deportiva - Kuma Dojo"
                                 },
                                 {
                                     title: "3. Aplicación Vigorosa",
-                                    desc: "Potencia y velocidad demostrables en la ejecución de la técnica ofensiva.",
+                                    desc: "Demuestra potencia y velocidad en la técnica con una clara voluntad de éxito. El golpe debe ser contundente pero controlado, mostrando eficacia real.",
                                     img: "/images/kuma-aplicacion-vigorosa.jpg",
                                     alt: "Aplicación Vigorosa - Kuma Dojo"
                                 },
                                 {
                                     title: "4. Zanshin (Alerta)",
-                                    desc: "Estado de alerta mental y físico continuado, manteniendo la mirada fija en el objetivo tras el ataque.",
+                                    desc: "Estado de compromiso mental y físico continuado tras el ataque (Awareness). Se mantiene total atención en el oponente, listo para continuar la acción.",
                                     img: "/images/kuma-zanshing-v2.jpg",
                                     alt: "Zanshin - Kuma Dojo"
                                 },
                                 {
                                     title: "5. Buen Timing",
-                                    desc: "Ejecución de la técnica en el momento preciso de máxima efectividad.",
-                                    img: null,
-                                    alt: "Timing"
+                                    desc: "Ejecución de la técnica en el momento preciso de máxima efectividad. Se busca sorprender al oponente en un instante de vulnerabilidad.",
+                                    img: "/images/kuma-buen-timing.jpg",
+                                    alt: "Buen Timing - Kuma Dojo"
                                 },
                                 {
                                     title: "6. Distancia Correcta",
-                                    desc: "Alcanzar el objetivo o 'skin touch' en el rango apropiado para la técnica.",
+                                    desc: "El golpe llega al punto de impacto con precisión (skin touch o hasta 5-10cm). Es la distancia donde la técnica alcanza su mayor potencial sin causar lesiones.",
                                     img: "/images/kuma-distancia-correcta.jpg",
                                     alt: "Distancia Correcta - Kuma Dojo"
                                 }
@@ -205,6 +235,6 @@ export default function ReglasWKFPage() {
 
                 </div>
             </section>
-        </main>
+        </main >
     );
 }
