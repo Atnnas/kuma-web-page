@@ -146,8 +146,8 @@ export default function ReglasWKFPage() {
                                 {
                                     title: "4. Zanshin (Alerta)",
                                     desc: "Estado de alerta mental y físico continuado, manteniendo la mirada fija en el objetivo tras el ataque.",
-                                    img: null,
-                                    alt: "Zanshin"
+                                    img: "/images/kuma-zanshing.jpg",
+                                    alt: "Zanshin - Kuma Dojo"
                                 },
                                 {
                                     title: "5. Buen Timing",
