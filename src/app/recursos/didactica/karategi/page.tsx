@@ -4,6 +4,8 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { BackButton } from "@/components/ui/BackButton";
 
+import { PrimalTitle } from "@/components/ui/PrimalTitle";
+
 export default function KarategiPage() {
     return (
         <main className="min-h-screen bg-zinc-950 text-white selection:bg-kuma-gold/30">
@@ -24,14 +26,9 @@ export default function KarategiPage() {
                     >
                         Historia & Tradición
                     </motion.span>
-                    <motion.h1
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.8, ease: "circOut" }}
-                        className="text-4xl md:text-6xl lg:text-7xl font-serif font-black text-white tracking-wide mb-6 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]"
-                    >
+                    <PrimalTitle className="text-4xl md:text-6xl lg:text-7xl mb-6">
                         El Karategi
-                    </motion.h1>
+                    </PrimalTitle>
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}

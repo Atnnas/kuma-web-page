@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { BackButton } from "@/components/ui/BackButton";
+import { PrimalTitle } from "@/components/ui/PrimalTitle";
 
 export default function ReglasWKFPage() {
     return (
@@ -24,14 +25,9 @@ export default function ReglasWKFPage() {
                     >
                         Reglamento Deportivo
                     </motion.span>
-                    <motion.h1
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.8, ease: "circOut" }}
-                        className="text-4xl md:text-6xl lg:text-7xl font-serif font-black text-white tracking-wide mb-6 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]"
-                    >
-                        Reglas WKF
-                    </motion.h1>
+                    <PrimalTitle className="text-4xl md:text-6xl lg:text-7xl mb-6">
+                        Reglas KUMITE WKF
+                    </PrimalTitle>
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -59,10 +55,9 @@ export default function ReglasWKFPage() {
                             transition={{ duration: 0.6 }}
                             className="bg-white/5 border-l-2 border-kuma-gold p-6 rounded-r-xl"
                         >
-                            <p className="font-serif italic text-xl text-kuma-gold mb-2">
-                                World Karate Federation
-                            </p>
-                            El Consenso: De Shobu Ippon al Reglamento WKF
+                            <h2 className="text-2xl md:text-3xl font-serif font-black text-kuma-gold mb-4">
+                                El Consenso: De Shobu Ippon al Reglamento WKF
+                            </h2>
                         </motion.div>
                         <motion.p
                             initial={{ opacity: 0, y: 30 }}
@@ -109,7 +104,7 @@ export default function ReglasWKFPage() {
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="text-2xl md:text-3xl font-serif font-bold text-white mb-8 text-center"
+                            className="text-2xl md:text-3xl font-serif font-black text-kuma-gold mb-8 text-center"
                         >
                             ¿Cómo dan los puntos?
                         </motion.h2>
@@ -148,7 +143,7 @@ export default function ReglasWKFPage() {
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="text-2xl md:text-3xl font-serif font-bold text-white mb-12 text-center"
+                            className="text-2xl md:text-3xl font-serif font-black text-kuma-gold mb-12 text-center"
                         >
                             Los 6 Criterios Técnicos
                         </motion.h2>
@@ -235,6 +230,6 @@ export default function ReglasWKFPage() {
 
                 </div>
             </section>
-        </main >
+        </main>
     );
 }

@@ -55,6 +55,15 @@ const RESOURCES: Resource[] = [
         link: "/recursos/didactica/reglas-wkf",
         image: "/images/kuma-intro-puntos.jpg"
     },
+    {
+        id: "penalizaciones",
+        letter: "K",
+        title: "Penalizaciones, Kumite WKF",
+        tag: "Reglamento & Sanciones",
+        description: "Riesgos y consecuencias. El precio de infringir las reglas.",
+        link: "/recursos/didactica/penalizaciones",
+        image: "/images/kuma-arbitro.jpg"
+    },
     // Future resources can be added here
 ];
 
