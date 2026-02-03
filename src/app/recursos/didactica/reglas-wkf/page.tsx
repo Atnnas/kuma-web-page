@@ -140,14 +140,14 @@ export default function ReglasWKFPage() {
                                 {
                                     title: "3. Aplicación Vigorosa",
                                     desc: "Potencia y velocidad demostrables en la ejecución de la técnica ofensiva.",
-                                    img: null,
-                                    alt: "Aplicación Vigorosa"
+                                    img: "/images/kuma-aplicacion-vigorosa.jpg",
+                                    alt: "Aplicación Vigorosa - Kuma Dojo"
                                 },
                                 {
                                     title: "4. Zanshin (Alerta)",
-                                    desc: "Estado de alerta mental y físico continuado después de completar el ataque.",
-                                    img: null,
-                                    alt: "Zanshin"
+                                    desc: "Estado de alerta mental y físico continuado, manteniendo la mirada fija en el objetivo tras el ataque.",
+                                    img: "/images/kuma-zanshing.jpg",
+                                    alt: "Zanshin - Kuma Dojo"
                                 },
                                 {
                                     title: "5. Buen Timing",
