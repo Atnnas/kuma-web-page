@@ -20,7 +20,24 @@ const PENALTY_EXPLANATIONS: Record<string, string> = {
     "S": "Shikkaku • Expulsión del torneo. Acto malicioso o falta de honor.",
 };
 
+const REFEREE_IMAGES = [
+    "/images/kuma-arbitro.jpg",
+    "/images/kuma-arbitro-chui.jpg",
+    "/images/kuma-arbitro-chui-2.jpg",
+    "/images/kuma-arbitro-chui-3.jpg",
+    "/images/kuma-arbitro-hc.jpg",
+    "/images/kuma-arbitro-Hansoku.jpg",
+    "/images/kuma-arbitro-shikakku.jpg",
+];
+
 export function WKFScoreboard() {
+    // --- PRELOADING ---
+    React.useEffect(() => {
+        REFEREE_IMAGES.forEach((src) => {
+            const img = new Image();
+            img.src = src;
+        });
+    }, []);
     // --- STATE ---
     const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -260,7 +277,7 @@ export function WKFScoreboard() {
                                     <img
                                         src={ao.showExplanation ? getRefereeImage(ao) : getRefereeImage(aka)}
                                         alt="Referee Active"
-                                        className="w-full h-full object-cover opacity-90 scale-105"
+                                        className={`w-full h-full opacity-90 ${(ao.showExplanation ? ao : aka).finalPenalty === 'S' ? "object-contain scale-100" : "object-cover scale-105"}`}
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none z-20"></div>
                                 </div>

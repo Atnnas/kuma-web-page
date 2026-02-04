@@ -64,6 +64,15 @@ const RESOURCES: Resource[] = [
         link: "/recursos/didactica/penalizaciones",
         image: "/images/kuma-arbitro.jpg"
     },
+    {
+        id: "puntos-kumite",
+        letter: "K",
+        title: "Sistema de Puntos",
+        tag: "Reglamento & Puntuación",
+        description: "Valoración técnica. Yuko, Waza-ari e Ippon.",
+        link: "/recursos/didactica/puntos-kumite",
+        image: "/images/kuma-arbitro-puntos.jpg"
+    },
     // Future resources can be added here
 ];
 
