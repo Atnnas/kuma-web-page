@@ -92,10 +92,14 @@ export function WKFScoreboard() {
     // --- RENDER HELPERS ---
     const getRefereeImage = (state: CompetitorState) => {
         // Specific images for specific penalties
+        if (state.finalPenalty === 'H') return "/images/kuma-arbitro-Hansoku.jpg"; // Hansoku
+        if (state.finalPenalty === 'S') return "/images/kuma-arbitro-shikakku.jpg"; // Shikkaku
+
         if (state.penaltyLevel === 2) return "/images/kuma-arbitro-chui-2.jpg"; // Chui 2
         if (state.penaltyLevel === 3) return "/images/kuma-arbitro-chui-3.jpg"; // Chui 3
+        if (state.penaltyLevel === 4) return "/images/kuma-arbitro-hc.jpg"; // HC (Hansoku-Chui)
 
-        // Default for others (CH1, HC, H, S) - can be expanded later
+        // Default for others (CH1)
         return "/images/kuma-arbitro-chui.jpg";
     };
 
