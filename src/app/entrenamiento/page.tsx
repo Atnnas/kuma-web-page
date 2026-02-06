@@ -30,11 +30,6 @@ export default async function TrainingPage() {
             id: "virtual",
             label: "Dojo Virtual",
             content: <TrainingVirtual user={session?.user} />
-        },
-        {
-            id: "rutinas",
-            label: "Rutinas",
-            content: <TrainingRoutines user={session?.user} />
         }
     ];
 
