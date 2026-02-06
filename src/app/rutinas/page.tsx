@@ -30,18 +30,10 @@ export default function RutinasPage() {
                 </div>
 
                 <div className="relative z-10 text-center px-4 max-w-5xl mx-auto mt-16">
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex justify-center mb-4"
-                    >
-                        <span className="px-3 py-1 text-xs font-bold tracking-[0.2em] text-kuma-gold uppercase bg-kuma-gold/10 border border-kuma-gold/20 rounded-full flex items-center gap-2">
-                            <Lock className="w-3 h-3" /> MEMBERS ONLY
-                        </span>
-                    </motion.div>
+
 
                     <PrimalTitle className="text-4xl md:text-6xl lg:text-7xl mb-6">
-                        Rutinas <br className="hidden md:block" /> de Dojo
+                        Rutinas
                     </PrimalTitle>
 
                     <motion.p
