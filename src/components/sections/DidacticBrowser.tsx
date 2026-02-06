@@ -73,6 +73,15 @@ const RESOURCES: Resource[] = [
         link: "/recursos/didactica/puntos-kumite",
         image: "/images/kuma-arbitro-puntos.jpg"
     },
+    {
+        id: "reglamento-general",
+        letter: "K",
+        title: "Reglamento General (2026)",
+        tag: "Guía de Estudio",
+        description: "Resumen visual del reglamento WKF actualizado. Cambios 2026, duración y diagrama de flujo.",
+        link: "/recursos/didactica/reglamento-general-kumite",
+        image: "/images/kuma-reglamento-kumite.jpg"
+    },
     // Future resources can be added here
 ];
 
