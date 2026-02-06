@@ -37,7 +37,15 @@ export async function POST(req: Request) {
 
         // 2.5 Verificar Captcha (Cloudflare Turnstile)
         const captchaVerifyUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-        const secretKey = process.env.TURNSTILE_SECRET_KEY || "1x0000000000000000000000000000000AA"; // Test Secret
+        const secretKey = process.env.TURNSTILE_SECRET_KEY;
+
+        if (!secretKey) {
+            console.error("CRITICAL: TURNSTILE_SECRET_KEY is not defined in environment variables.");
+            return NextResponse.json(
+                { success: false, message: "Error interno de configuración del servidor." },
+                { status: 500 }
+            );
+        }
 
         const captchaRes = await fetch(captchaVerifyUrl, {
             method: "POST",

@@ -4,6 +4,7 @@ import { Cinzel, Montserrat } from "next/font/google";
 import { Navbar } from "@/components/layout/Navbar";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { FloatingNavigation } from "@/components/ui/FloatingNavigation";
+import { CookieConsent } from "@/components/ui/CookieConsent";
 
 import "./globals.css";
 
@@ -63,6 +64,7 @@ export default async function RootLayout({
         <AnalyticsTracker />
         <Navbar user={session?.user} />
         <FloatingNavigation />
+        <CookieConsent />
         {children}
       </body>
     </html>
