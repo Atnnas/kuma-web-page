@@ -14,7 +14,12 @@ import {
 
 export default function RutinasPage() {
     return (
-        <main className="min-h-screen bg-zinc-950 text-white selection:bg-kuma-gold/30 pb-32">
+        <main className="min-h-screen bg-zinc-950 text-white selection:bg-kuma-gold/30 pb-32 relative">
+            {/* Global Background Depth */}
+            <div className="fixed inset-0 z-0">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-black" />
+                <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-[0.03]" />
+            </div>
 
             {/* --- HERO SECTION --- */}
             <header className="relative w-full h-[40vh] md:h-[50vh] flex flex-col items-center justify-center overflow-hidden border-b border-kuma-gold/20">
@@ -50,15 +55,26 @@ export default function RutinasPage() {
             </header>
 
             {/* --- CONTENT GRID --- */}
+            {/* --- CONTENT GRID --- */}
             <section className="relative -mt-20 z-20 px-4 max-w-7xl mx-auto">
-                {/* --- CONTENT GRID --- */}
-                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                   Cards removed per user request
-                </div> */}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {/* Routine 1: Rutina Diaria */}
+                    <RoutineCard
+                        title="Rutina Diaria"
+                        subtitle="Mantenimiento & Movilidad"
+                        icon={<Timer className="w-8 h-8" />}
+                        color="text-kuma-gold"
+                        bg="bg-kuma-gold/10"
+                        delay={0.1}
+                    />
+
+                    {/* Placeholder for future routines (Optional: can keep hidden or show 'Coming Soon' card) */}
+                </div>
 
                 {/* --- COMING SOON --- */}
                 <div className="mt-20 text-center">
-                    <p className="text-zinc-600 italic">Más rutinas serán agregadas semanalmente.</p>
+                    <p className="text-zinc-600 italic">Más rutinas serán agregadas próximamente.</p>
                 </div>
             </section>
 
