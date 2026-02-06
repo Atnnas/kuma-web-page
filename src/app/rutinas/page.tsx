@@ -17,10 +17,10 @@ export default function RutinasPage() {
         <main className="min-h-screen bg-zinc-950 text-white selection:bg-kuma-gold/30 pb-32">
 
             {/* --- HERO SECTION --- */}
-            <header className="relative w-full h-[50vh] flex flex-col items-center justify-center overflow-hidden border-b border-white/5">
+            <header className="relative w-full h-[40vh] md:h-[50vh] flex flex-col items-center justify-center overflow-hidden border-b border-kuma-gold/20">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-20" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-zinc-900/80 to-zinc-950" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-zinc-950" />
                     {/* Animated Glow */}
                     <motion.div
                         animate={{ opacity: [0.3, 0.5, 0.3] }}
@@ -33,14 +33,14 @@ export default function RutinasPage() {
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex justify-center gap-3 mb-6"
+                        className="flex justify-center mb-4"
                     >
-                        <span className="px-3 py-1 text-[10px] font-bold tracking-widest text-zinc-950 bg-white border border-white rounded-full flex items-center gap-2">
+                        <span className="px-3 py-1 text-xs font-bold tracking-[0.2em] text-kuma-gold uppercase bg-kuma-gold/10 border border-kuma-gold/20 rounded-full flex items-center gap-2">
                             <Lock className="w-3 h-3" /> MEMBERS ONLY
                         </span>
                     </motion.div>
 
-                    <PrimalTitle className="text-5xl md:text-7xl lg:text-8xl mb-6">
+                    <PrimalTitle className="text-4xl md:text-6xl lg:text-7xl mb-6">
                         Rutinas <br className="hidden md:block" /> de Dojo
                     </PrimalTitle>
 
@@ -48,9 +48,9 @@ export default function RutinasPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-zinc-400 font-serif text-lg md:text-2xl max-w-2xl mx-auto leading-relaxed"
+                        className="text-zinc-400 font-serif italic text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
                     >
-                        Entrenamiento complementario diseñado para potenciar tu Karate fuera del tatami.
+                        "Entrenamiento complementario diseñado para potenciar tu Karate fuera del tatami."
                     </motion.p>
                 </div>
 
@@ -59,32 +59,10 @@ export default function RutinasPage() {
 
             {/* --- CONTENT GRID --- */}
             <section className="relative -mt-20 z-20 px-4 max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <RoutineCard
-                        title="Fuerza Explosiva"
-                        subtitle="Pliometría & Potencia"
-                        icon={<Dumbbell className="w-8 h-8" />}
-                        color="text-red-500"
-                        bg="bg-red-500/10"
-                        delay={0.1}
-                    />
-                    <RoutineCard
-                        title="HIIT Karate"
-                        subtitle="Resistencia Específica"
-                        icon={<Flame className="w-8 h-8" />}
-                        color="text-orange-500"
-                        bg="bg-orange-500/10"
-                        delay={0.2}
-                    />
-                    <RoutineCard
-                        title="Flexibilidad"
-                        subtitle="Rango de Movimiento"
-                        icon={<Users className="w-8 h-8" />}
-                        color="text-blue-500"
-                        bg="bg-blue-500/10"
-                        delay={0.3}
-                    />
-                </div>
+                {/* --- CONTENT GRID --- */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                   Cards removed per user request
+                </div> */}
 
                 {/* --- COMING SOON --- */}
                 <div className="mt-20 text-center">
