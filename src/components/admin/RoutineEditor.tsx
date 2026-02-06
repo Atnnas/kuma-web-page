@@ -14,7 +14,7 @@ export interface IBlock {
     rest_seconds: number;
     measure_type: "reps" | "time";
     notes?: string;
-    media_url?: string;
+
 }
 
 export interface IRoutineData {
@@ -326,6 +326,7 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                                 className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-sm text-white focus:border-kuma-gold/50 focus:outline-none"
                                             />
                                         </div>
+
                                     </div>
                                 </div>
                             ))}

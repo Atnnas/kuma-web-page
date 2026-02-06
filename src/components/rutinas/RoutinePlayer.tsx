@@ -18,6 +18,7 @@ import confetti from "canvas-confetti";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { audioTrainer } from "@/lib/audio-trainer";
+import { getExerciseGif } from "@/lib/exercise-assets";
 
 // --- INTERFACES ---
 interface IBlock {
@@ -386,8 +387,12 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                     <div className="absolute -bottom-20 left-10 right-10 h-10 bg-black/80 blur-2xl rounded-[100%] transition-all duration-[6s] ease-in-out"
                                         style={{ transform: impact ? "scale(0.8)" : "scale(1)" }} />
 
-                                    <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-kuma-gold/10 to-transparent opacity-50" />
-                                    <div className="hidden lg:block absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] z-0" />
+                                    {/* --- DYNAMIC GIF BACKGROUND --- */}
+                                    {/* --- DYNAMIC GIF BACKGROUND --- */}
+                                    {/* Removed as per user request */}
+
+                                    <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-kuma-gold/10 to-transparent opacity-50 pointer-events-none" />
+                                    <div className="hidden lg:block absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] z-0 pointer-events-none" />
 
                                     <div className="flex flex-col items-center text-center space-y-2 relative z-10 w-full lg:items-start lg:text-left">
                                         <div className="bg-black/30 backdrop-blur px-4 py-1.5 rounded-full border border-white/5 mb-4 inline-flex shadow-lg">

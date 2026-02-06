@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 import { TrainingSchedules } from "@/components/sections/TrainingSchedules";
 import { TrainingPrices } from "@/components/sections/TrainingPrices";
 import { TrainingVirtual } from "@/components/sections/TrainingVirtual";
-import { TrainingRoutines } from "@/components/sections/TrainingRoutines";
+
 import { AnimatedTabs } from "@/components/ui/animated-tabs";
 
 export const metadata = {

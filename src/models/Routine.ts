@@ -7,7 +7,7 @@ export interface IBlock {
     rest_seconds: number;
     measure_type: "reps" | "time";
     notes?: string;
-    media_url?: string;
+
 }
 
 export interface IRoutine extends Document {
@@ -34,8 +34,7 @@ const BlockSchema = new Schema<IBlock>({
         enum: ["reps", "time"],
         default: "reps"
     },
-    notes: { type: String, required: false },
-    media_url: { type: String, required: false }
+    notes: { type: String, required: false }
 });
 
 const RoutineSchema = new Schema<IRoutine>(

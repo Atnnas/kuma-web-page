@@ -15,11 +15,12 @@ interface Option {
 interface StrictComboboxProps {
     value: string;
     onChange: (value: string) => void;
+    onSelectFull?: (option: Option) => void;
     placeholder?: string;
     className?: string;
 }
 
-export function StrictCombobox({ value, onChange, placeholder = "Seleccionar ejercicio...", className }: StrictComboboxProps) {
+export function StrictCombobox({ value, onChange, onSelectFull, placeholder = "Seleccionar ejercicio...", className }: StrictComboboxProps) {
     const [open, setOpen] = React.useState(false);
     const [search, setSearch] = React.useState("");
     const [options, setOptions] = React.useState<Option[]>([]);
@@ -75,8 +76,11 @@ export function StrictCombobox({ value, onChange, placeholder = "Seleccionar eje
     }, [open]);
 
     // Handle selection
-    const handleSelect = (optionValue: string) => {
-        onChange(optionValue);
+    const handleSelect = (option: Option) => {
+        onChange(option.value);
+        if (onSelectFull) {
+            onSelectFull(option);
+        }
         setOpen(false);
         setSearch("");
     };
@@ -130,7 +134,7 @@ export function StrictCombobox({ value, onChange, placeholder = "Seleccionar eje
                                     <button
                                         key={option.value}
                                         type="button"
-                                        onClick={() => handleSelect(option.value)}
+                                        onClick={() => handleSelect(option)}
                                         className={cn(
                                             "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors text-left mb-0.5",
                                             value === option.value
