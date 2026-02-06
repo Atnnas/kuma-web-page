@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, Users, Calendar, Trophy, Zap, ChevronDown, LucideIcon } from "lucide-react";
+import { Clock, Users, CalendarCheck, Trophy, Lightning, CaretDown } from "@phosphor-icons/react/dist/ssr";
+import { Icon, IconProps } from "@phosphor-icons/react";
 import { WeeklyScheduleTable } from "@/components/ui/weekly-schedule-table";
 
 // Define the interface for the data we expect from the API
@@ -21,12 +22,12 @@ interface IHorario {
 }
 
 // Map string names to actual Lucide components
-const IconMap: { [key: string]: LucideIcon } = {
+const IconMap: { [key: string]: Icon } = {
     "Users": Users,
     "Trophy": Trophy,
-    "Zap": Zap,
+    "Zap": Lightning,
     "Clock": Clock,
-    "Calendar": Calendar
+    "Calendar": CalendarCheck
 };
 
 // Add props interface
@@ -96,7 +97,7 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
 
             {isDashboard && (
                 <div className="mb-6 flex items-center gap-4 px-2">
-                    <Calendar className="w-8 h-8 text-kuma-gold" />
+                    <CalendarCheck className="w-8 h-8 text-kuma-gold" weight="duotone" />
                     <h2 className="text-4xl font-black uppercase tracking-tighter text-white">
                         Horarios
                     </h2>
@@ -131,7 +132,7 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
                                             <div className="p-6 border-b border-white/5 bg-white/5 relative overflow-hidden">
                                                 <div className="absolute inset-0 bg-gradient-to-br from-kuma-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                                 <h3 className="text-3xl font-black uppercase text-white tracking-widest relative z-10 flex items-center gap-3">
-                                                    <Calendar className="w-6 h-6 text-kuma-gold" />
+                                                    <CalendarCheck className="w-6 h-6 text-kuma-gold" weight="duotone" />
                                                     {daySchedule.day}
                                                 </h3>
                                             </div>
@@ -145,7 +146,7 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
                                                             {/* Time & Group */}
                                                             <div className="flex justify-between items-start">
                                                                 <div className="flex items-center gap-2 text-kuma-gold font-bold">
-                                                                    <Clock className="w-4 h-4" />
+                                                                    <Clock className="w-4 h-4" weight="duotone" />
                                                                     <span className="text-lg font-mono tracking-tighter">{session.time}</span>
                                                                 </div>
                                                                 <span className={`text-xs font-black uppercase tracking-widest px-2 py-1 rounded text-white ${session.group.includes("Disruptivo") ? "bg-fuchsia-900/40 text-fuchsia-200" : "bg-zinc-800 text-zinc-200"}`}>
@@ -155,7 +156,7 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
 
                                                             {/* Description */}
                                                             <div className="flex gap-3">
-                                                                <SessionIcon className={`w-5 h-5 mt-0.5 ${session.group.includes("Disruptivo") ? "text-fuchsia-500" : "text-zinc-400"}`} />
+                                                                <SessionIcon className={`w-5 h-5 mt-0.5 ${session.group.includes("Disruptivo") ? "text-fuchsia-500" : "text-zinc-400"}`} weight="duotone" />
                                                                 <p className="text-sm text-zinc-300 leading-relaxed font-medium">
                                                                     {session.description}
                                                                 </p>

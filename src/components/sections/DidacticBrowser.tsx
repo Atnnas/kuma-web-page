@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { ArrowRight, BookOpen } from "@phosphor-icons/react/dist/ssr";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -181,14 +182,14 @@ export function DidacticBrowser() {
                                         </p>
                                         <span className="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs border-b border-kuma-gold pb-1 group-hover:text-kuma-gold transition-colors">
                                             Iniciar Estudio
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                            <ArrowRight className="w-4 h-4" weight="bold" />
                                         </span>
                                     </div>
                                 </div>
 
                                 {/* Graphic Decor */}
                                 <div className="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity transform translate-x-1/4 translate-y-1/4 pointer-events-none">
-                                    <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 22h20L12 2zm0 3.8L18.4 19H5.6L12 5.8z" /></svg>
+                                    <BookOpen className="w-48 h-48 text-white" weight="duotone" />
                                 </div>
                             </Link>
                         ))}

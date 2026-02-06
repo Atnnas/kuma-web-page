@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
-import { Dumbbell, Swords, Brain } from "lucide-react";
+import { Barbell, Sword, Brain } from "@phosphor-icons/react/dist/ssr";
 
 export function Training() {
     const programs = [
-        { title: "Karate Tradicional", icon: <Swords className="w-8 h-8" />, desc: "Técnica pura y kata." },
-        { title: "Acondicionamiento", icon: <Dumbbell className="w-8 h-8" />, desc: "Fuerza y resistencia física." },
-        { title: "Mentalidad", icon: <Brain className="w-8 h-8" />, desc: "Disciplina y enfoque zen." },
+        { title: "Karate Tradicional", icon: <Sword className="w-8 h-8" weight="duotone" />, desc: "Técnica pura y kata." },
+        { title: "Acondicionamiento", icon: <Barbell className="w-8 h-8" weight="duotone" />, desc: "Fuerza y resistencia física." },
+        { title: "Mentalidad", icon: <Brain className="w-8 h-8" weight="duotone" />, desc: "Disciplina y enfoque zen." },
     ];
 
     return (

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Check, Star, Lock } from "lucide-react";
+import { CaretDown, Check, Star, LockKey } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
 interface IMembership {
@@ -115,7 +115,7 @@ export const TrainingPrices = ({ user, mode = "default" }: TrainingPricesProps) 
                                         {isLocked && (
                                             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm z-20">
                                                 <div className={`rounded-full flex items-center justify-center border border-white/10 shadow-xl ${isCarousel ? "w-12 h-12 mb-3" : "w-20 h-20 mb-6"} ${user ? "bg-amber-900/20" : "bg-zinc-900"}`}>
-                                                    <Lock className={`${isCarousel ? "w-6 h-6" : "w-10 h-10"} ${user ? "text-amber-500" : "text-zinc-500"}`} />
+                                                    <LockKey className={`${isCarousel ? "w-6 h-6" : "w-10 h-10"} ${user ? "text-amber-500" : "text-zinc-500"}`} weight="duotone" />
                                                 </div>
                                                 <span className={`font-black uppercase tracking-widest text-base mb-6 ${user ? "text-amber-500" : "text-zinc-400"} ${isCarousel ? "text-xs mb-3" : ""}`}>
                                                     {user ? "Pendiente" : "Exclusivo"}
@@ -133,7 +133,7 @@ export const TrainingPrices = ({ user, mode = "default" }: TrainingPricesProps) 
                                             <>
                                                 <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-yellow-500 via-amber-300 to-yellow-600" />
                                                 <div className="absolute top-6 right-6 text-yellow-500 animate-pulse">
-                                                    <Star className="w-6 h-6 fill-yellow-500" />
+                                                    <Star className="w-6 h-6 fill-yellow-500" weight="fill" />
                                                 </div>
                                             </>
                                         )}
@@ -163,7 +163,7 @@ export const TrainingPrices = ({ user, mode = "default" }: TrainingPricesProps) 
                                         <ul className={`space-y-4 mb-10 w-full flex-1 text-left px-2 ${isCarousel ? "text-sm" : ""}`}>
                                             {plan.features.slice(0, isCarousel ? 3 : 10).map((feature, idx) => (
                                                 <li key={idx} className={`flex items-start gap-3 font-medium ${isLocked ? "text-zinc-600" : "text-zinc-300"}`}>
-                                                    <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isLocked ? "text-zinc-700" : "text-kuma-gold"}`} />
+                                                    <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isLocked ? "text-zinc-700" : "text-kuma-gold"}`} weight="bold" />
                                                     <span className="leading-snug line-clamp-2">{feature}</span>
                                                 </li>
                                             ))}

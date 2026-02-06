@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { CaretLeft } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 
 interface BackButtonProps {
@@ -19,7 +19,7 @@ export function BackButton({ href, label = "Volver", className }: BackButtonProp
                 className
             )}
         >
-            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <CaretLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" weight="bold" />
             {label}
         </Link>
     );

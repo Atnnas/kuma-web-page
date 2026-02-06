@@ -15,7 +15,8 @@ import {
     LogOut,
     Calendar,
     Briefcase,
-    ShoppingBag
+    ShoppingBag,
+    Dumbbell
 } from "lucide-react";
 import { handleSignOut } from "@/lib/actions";
 import Image from "next/image"; // Added for Avatar
@@ -31,6 +32,7 @@ const menuItems = [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { label: "Noticias", href: "/admin/news", icon: Newspaper },
     { label: "Calendario", href: "/admin/events", icon: Calendar },
+    { label: "Rutinas", href: "/admin/rutinas", icon: Dumbbell },
     { label: "Organizadores", href: "/admin/organizers", icon: Briefcase },
     { label: "Tienda", href: "/admin/tienda", icon: ShoppingBag },
     { label: "Usuarios", href: "/admin/users", icon: Users },

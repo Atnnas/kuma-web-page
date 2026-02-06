@@ -1,18 +1,50 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { BackButton } from "@/components/ui/BackButton";
 import { PrimalTitle } from "@/components/ui/PrimalTitle";
-import {
-    Dumbbell,
-    Flame,
-    Timer,
-    PlayCircle,
-    Lock,
-    Users
-} from "lucide-react";
+import Link from "next/link";
+import { Loader2 } from "lucide-react";
+import { RutinasTable } from "@/components/rutinas/RutinasTable";
+
+interface IRoutine {
+    _id: string;
+    title: string;
+    description: string;
+    difficulty: string;
+    thumbnail?: string;
+    estimated_duration: number;
+    equipment_types: string[];
+}
 
 export default function RutinasPage() {
+    const [routines, setRoutines] = useState<IRoutine[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchRoutines() {
+            try {
+                const res = await fetch(`/api/routines`, {
+                    cache: "no-store",
+                });
+
+                if (!res.ok) {
+                    console.error("Failed to fetch routines:", res.status, res.statusText);
+                    throw new Error("Failed to fetch");
+                }
+
+                const data = await res.json();
+                setRoutines(data);
+                console.log("Routines fetched:", data.length); // DEBUG
+            } catch (error) {
+                console.error("Error loading routines", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchRoutines();
+    }, []);
+
     return (
         <main className="min-h-screen bg-zinc-950 text-white selection:bg-kuma-gold/30 pb-32 relative">
             {/* Global Background Depth */}
@@ -35,8 +67,6 @@ export default function RutinasPage() {
                 </div>
 
                 <div className="relative z-10 text-center px-4 max-w-5xl mx-auto mt-16">
-
-
                     <PrimalTitle className="text-4xl md:text-6xl lg:text-7xl mb-6">
                         Rutinas
                     </PrimalTitle>
@@ -55,22 +85,17 @@ export default function RutinasPage() {
             </header>
 
             {/* --- CONTENT GRID --- */}
-            {/* --- CONTENT GRID --- */}
             <section className="relative -mt-20 z-20 px-4 max-w-7xl mx-auto">
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {/* Routine 1: Rutina Diaria */}
-                    <RoutineCard
-                        title="Rutina Diaria"
-                        subtitle="Mantenimiento & Movilidad"
-                        icon={<Timer className="w-8 h-8" />}
-                        color="text-kuma-gold"
-                        bg="bg-kuma-gold/10"
-                        delay={0.1}
-                    />
-
-                    {/* Placeholder for future routines (Optional: can keep hidden or show 'Coming Soon' card) */}
-                </div>
+                {loading ? (
+                    <div className="flex justify-center py-20">
+                        <Loader2 className="w-10 h-10 text-kuma-gold animate-spin" />
+                    </div>
+                ) : (
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <RutinasTable data={routines as any} />
+                    </div>
+                )}
 
                 {/* --- COMING SOON --- */}
                 <div className="mt-20 text-center">
@@ -82,29 +107,4 @@ export default function RutinasPage() {
     );
 }
 
-function RoutineCard({ title, subtitle, icon, color, bg, delay }: any) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay }}
-            className="group relative bg-zinc-900 border border-white/10 p-8 rounded-3xl overflow-hidden hover:border-white/20 transition-colors cursor-pointer"
-        >
-            <div className={`w-16 h-16 rounded-2xl ${bg} ${color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>
-                {icon}
-            </div>
 
-            <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-kuma-gold transition-colors">{title}</h3>
-            <p className="text-zinc-500 text-sm mb-8">{subtitle}</p>
-
-            <div className="flex items-center gap-2 text-white/50 text-sm font-bold group-hover:text-white transition-colors">
-                <PlayCircle className="w-5 h-5" />
-                <span>INICIAR</span>
-            </div>
-
-            {/* Hover Glow */}
-            <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-colors" />
-        </motion.div>
-    );
-}
