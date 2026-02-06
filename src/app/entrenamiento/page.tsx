@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { TrainingSchedules } from "@/components/sections/TrainingSchedules";
 import { TrainingPrices } from "@/components/sections/TrainingPrices";
 import { TrainingVirtual } from "@/components/sections/TrainingVirtual";
+import { TrainingRoutines } from "@/components/sections/TrainingRoutines";
 import { AnimatedTabs } from "@/components/ui/animated-tabs";
 
 export const metadata = {
@@ -29,6 +30,11 @@ export default async function TrainingPage() {
             id: "virtual",
             label: "Dojo Virtual",
             content: <TrainingVirtual user={session?.user} />
+        },
+        {
+            id: "rutinas",
+            label: "Rutinas",
+            content: <TrainingRoutines user={session?.user} />
         }
     ];
 

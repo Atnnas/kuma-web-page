@@ -21,6 +21,13 @@ export default auth((req) => {
         }
     }
 
+    // 2. Proteger Rutinas (Solo usuarios registrados)
+    if (nextUrl.pathname.startsWith("/rutinas")) {
+        if (!isLoggedIn) {
+            return NextResponse.redirect(new URL("/login", nextUrl));
+        }
+    }
+
     return NextResponse.next();
 });
 
