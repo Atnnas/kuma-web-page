@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import { Fire } from "@phosphor-icons/react/dist/ssr";
@@ -18,19 +19,27 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
         // Audio removed as per user request
     }, [show]);
 
-    if (!show) return null;
+    // Use Portal to escape parent styling (like display: none in Navbar)
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
 
-    return (
+    if (!show || !mounted) return null;
+
+    return createPortal(
         <AnimatePresence>
             {show && (
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, transition: { duration: 1 } }}
-                    onClick={onClose}
+                    onClick={onClose} // Close on click/tap
                     className="fixed inset-0 z-[100] flex items-center justify-center bg-black/98 cursor-pointer"
                 >
-                    {/* Radiant Background Effects - Orange/Red Theme for Fire */}
+                    {/* ... content ... */}
+                    {/* Radiant Background Effects */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] bg-gradient-radial from-orange-500/20 via-transparent to-transparent animate-spin-slow opacity-50" />
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] bg-gradient-radial from-red-600/30 via-transparent to-transparent animate-reverse-spin opacity-50" />
@@ -83,6 +92,7 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                     </div>
                 </motion.div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }
