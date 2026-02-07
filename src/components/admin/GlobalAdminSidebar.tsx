@@ -10,7 +10,8 @@ import {
     Users,
     Settings,
     Calendar,
-    X
+    X,
+    Trophy
 } from "lucide-react";
 
 
@@ -18,6 +19,7 @@ const menuItems = [
     { type: "section", label: "GENERAL" },
     { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
     { icon: Users, label: "Usuarios", href: "/admin/users" },
+    { icon: Trophy, label: "Recompensas", href: "/admin/recompensas" },
     { icon: Settings, label: "Configuración", href: "/admin/settings" },
 
     { type: "section", label: "HERRAMIENTAS" },

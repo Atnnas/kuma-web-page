@@ -7,6 +7,10 @@ export interface IUser extends Document {
     image?: string;
     role: "super_admin" | "editor" | "user";
     isActive?: boolean;
+    workoutCount?: number;
+    streakDays?: number;
+    lastWorkoutDate?: Date | null;
+    lastStreakShownDate?: Date | null;
     emailVerified?: Date | null;
     verificationToken?: string;
     verificationTokenExpires?: Date;
@@ -43,6 +47,22 @@ const UserSchema = new Schema<IUser>(
             default: false,
         },
         emailVerified: {
+            type: Date,
+            default: null,
+        },
+        workoutCount: {
+            type: Number,
+            default: 0,
+        },
+        streakDays: {
+            type: Number,
+            default: 0,
+        },
+        lastWorkoutDate: {
+            type: Date,
+            default: null,
+        },
+        lastStreakShownDate: {
             type: Date,
             default: null,
         },

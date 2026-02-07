@@ -19,6 +19,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { audioTrainer } from "@/lib/audio-trainer";
 import { getExerciseGif } from "@/lib/exercise-assets";
+import { AchievementOverlay } from "../gamification/AchievementOverlay";
 
 // --- INTERFACES ---
 interface IBlock {
@@ -55,6 +56,10 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const [isResting, setIsResting] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
     const [impact, setImpact] = useState(false); // FOR SHAKE EFFECT
+
+    // Gamification State
+    const [showTrophy, setShowTrophy] = useState(false);
+    // const [earnedBelt, setEarnedBelt] = useState<string>(""); // REVERTED
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const activeBlock = routine.blocks[currentBlockIndex];
@@ -135,10 +140,39 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         }
     };
 
-    const completeRoutine = () => {
-        setStatus("completed");
-        audioTrainer.playWin();
-        audioTrainer.speak("¡Rutina completada! Excelente trabajo.");
+
+
+    // ...
+
+    const completeRoutine = async () => {
+        try {
+            // 1. Call Progress API (New Logic: Simple First Workout Check)
+            const res = await fetch("/api/workouts/complete", {
+                method: "POST",
+            });
+
+            const data = await res.json();
+
+            if (data.firstWorkout) {
+                // 2. Trigger First Workout Trophy Event
+                setShowTrophy(true);
+                audioTrainer.playWin(); // Play sound immediately
+            } else {
+                // 3. Standard Completion
+                setStatus("completed");
+                audioTrainer.playWin();
+                audioTrainer.speak("¡Rutina completada! Excelente trabajo.");
+                triggerConfetti();
+            }
+        } catch (error) {
+            console.error("Error saving progress:", error);
+            // Fallback to standard completion
+            setStatus("completed");
+            triggerConfetti();
+        }
+    };
+
+    const triggerConfetti = () => {
         const duration = 3 * 1000;
         const animationEnd = Date.now() + duration;
         const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -296,6 +330,23 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             <div className={cn("absolute inset-0 transition-opacity duration-1000", isResting ? "opacity-100" : "opacity-0")}>
                 <div className="absolute inset-0 bg-gradient-to-t from-teal-900/20 to-transparent" />
             </div>
+
+            {/* --- OVERLAYS --- */}
+            <AchievementOverlay
+                show={showTrophy}
+                trophy={{
+                    name: "Primer Entrenamiento",
+                    description: "El primer paso de un viaje de mil millas. ¡Has comenzado tu legado!",
+                    icon: "Fire",
+                    color: "#fbbf24",
+                    rarity: "Legendario"
+                }}
+                onClose={() => {
+                    setShowTrophy(false);
+                    setStatus("completed");
+                    triggerConfetti(); // Celebration continues on completion screen
+                }}
+            />
 
             {/* --- HEADER --- */}
             <div className="relative z-20 px-6 pt-6 pb-2 flex items-center justify-between lg:px-12 lg:pt-8 w-full max-w-[1600px] mx-auto">

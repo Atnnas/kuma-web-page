@@ -3,11 +3,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
 import { handleSignOut } from "@/lib/actions";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { CaretDown, CaretRight, List, X, SignOut } from "@phosphor-icons/react/dist/ssr";
+import { CaretDown, CaretRight, List, X, SignOut, Fire } from "@phosphor-icons/react/dist/ssr";
+import { StreakFlame } from "./StreakFlame";
 
 interface NavItem {
     name: string;
@@ -22,8 +23,8 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
     const [mobileExpandedIndex, setMobileExpandedIndex] = useState<number | null>(null); // State for mobile accordion
     const pathname = usePathname();
 
-    // Hide Navbar on Admin pages (dedicated layout)
-    if (pathname?.startsWith("/admin")) return null;
+    // Hide Navbar on Admin pages check moved to bottom
+
 
     const navItems: NavItem[] = [
         { name: "Inicio", href: "/" },
@@ -54,6 +55,10 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
             window.location.href = "/";
         }
     };
+
+    // Hide Navbar on Admin pages (dedicated layout)
+    // MOVED: Must be after all hooks to avoid React Error #300
+    if (pathname?.startsWith("/admin")) return null;
 
     return (
         <>
@@ -149,12 +154,14 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
 
                                 {/* Info */}
                                 <div className="flex flex-col items-start pt-0.5">
-                                    <span className="text-xs font-bold text-white leading-none tracking-wide">
-                                        {user.name?.split(" ")[0]}
-                                    </span>
-                                    <span className={`text-[9px] font-bold uppercase tracking-[0.15em] mt-1 ${user.isActive === false ? "text-amber-500" : "text-kuma-gold"}`}>
-                                        {user.isActive === false ? "Pendiente" : "KUMA MEMBER"}
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs font-bold text-white leading-none tracking-wide">
+                                            {user.name?.split(" ")[0]}
+                                        </span>
+                                    </div>
+                                    <div suppressHydrationWarning>
+                                        <StreakFlame />
+                                    </div>
                                 </div>
                             </div>
 
