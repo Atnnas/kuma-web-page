@@ -41,7 +41,8 @@ export default function RecompensasPage() {
             </div>
 
             <div className="bg-zinc-900 border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
-                <div className="overflow-x-auto">
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-zinc-950/50 border-b border-white/5 text-xs uppercase text-zinc-500 font-bold tracking-wider">
@@ -55,24 +56,18 @@ export default function RecompensasPage() {
                         <tbody className="divide-y divide-white/5">
                             {DEMO_TROPHIES.map((trophy) => (
                                 <tr key={trophy._id} className="group hover:bg-white/5 transition-colors">
-                                    {/* ICON */}
                                     <td className="p-4 text-center">
                                         <div
                                             className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto border border-white/10 shadow-sm"
                                             style={{ backgroundColor: `${trophy.color}15`, color: trophy.color }}
                                         >
                                             <Trophy weight="duotone" className="w-6 h-6" />
-                                            {/* Note: In a real dynamic setup we'd map string -> component, but for demo Trophy icon is fine or we can map a few manually if strictly needed */}
                                         </div>
                                     </td>
-
-                                    {/* NAME */}
                                     <td className="p-4">
                                         <h4 className="font-bold text-white text-sm mb-1">{trophy.name}</h4>
                                         <p className="text-xs text-zinc-500">{trophy.description}</p>
                                     </td>
-
-                                    {/* RARITY */}
                                     <td className="p-4">
                                         <span className={`
                                             px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border
@@ -84,26 +79,74 @@ export default function RecompensasPage() {
                                             {trophy.rarity}
                                         </span>
                                     </td>
-
-                                    {/* STATUS */}
                                     <td className="p-4 text-center text-xs text-zinc-500 font-mono">
                                         {trophy.hidden ? "OCULTO" : "VISIBLE"}
                                     </td>
-
-                                    {/* ACTIONS */}
                                     <td className="p-4 text-right">
                                         <button
                                             onClick={() => handleTest(trophy)}
-                                            className="ml-auto h-12 px-8 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 text-white font-black text-xs uppercase tracking-widest flex items-center gap-3 shadow-[0_0_20px_rgba(234,179,8,0.5)] hover:shadow-[0_0_40px_rgba(234,179,8,0.8)] hover:scale-105 active:scale-95 transition-all duration-300 group-hover/btn:animate-pulse"
+                                            className="ml-auto h-10 px-4 rounded-full bg-white/5 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-wider transition-colors border border-white/10 hover:border-white/30"
                                         >
-                                            <Play weight="fill" className="w-5 h-5 animate-pulse" />
-                                            <span>¡PROBAR AHORA!</span>
+                                            Probar
                                         </button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden flex flex-col divide-y divide-white/5">
+                    {DEMO_TROPHIES.map((trophy) => (
+                        <div key={trophy._id} className="p-5 flex flex-col gap-4 relative overflow-hidden">
+                            {/* Background Glow */}
+                            <div
+                                className="absolute top-0 right-0 w-32 h-32 blur-3xl opacity-10 pointer-events-none"
+                                style={{ backgroundColor: trophy.color }}
+                            />
+
+                            <div className="flex items-start justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div
+                                        className="w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 shadow-lg"
+                                        style={{ backgroundColor: `${trophy.color}15`, color: trophy.color }}
+                                    >
+                                        <Trophy weight="duotone" className="w-8 h-8" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-white text-lg leading-tight">{trophy.name}</h4>
+                                        <span className={`
+                                            inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border
+                                            ${trophy.rarity === 'Legendario' ? 'bg-yellow-900/10 text-yellow-500 border-yellow-500/20' :
+                                                trophy.rarity === 'Épico' ? 'bg-purple-900/10 text-purple-500 border-purple-500/20' :
+                                                    trophy.rarity === 'Raro' ? 'bg-blue-900/10 text-blue-500 border-blue-500/20' :
+                                                        'bg-zinc-800/50 text-zinc-400 border-zinc-700/50'}
+                                        `}>
+                                            {trophy.rarity}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p className="text-zinc-400 text-sm leading-relaxed">
+                                {trophy.description}
+                            </p>
+
+                            <div className="flex items-center justify-between pt-2">
+                                <span className="text-xs text-zinc-600 font-mono font-bold uppercase">
+                                    {trophy.hidden ? "Estado: Oculto" : "Estado: Visible"}
+                                </span>
+                                <button
+                                    onClick={() => handleTest(trophy)}
+                                    className="h-10 px-6 rounded-full bg-gradient-to-r from-yellow-400 to-orange-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-orange-500/20 active:scale-95 transition-transform flex items-center gap-2"
+                                >
+                                    <Play weight="fill" className="w-3 h-3" />
+                                    Probar
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
