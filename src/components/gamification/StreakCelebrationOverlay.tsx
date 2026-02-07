@@ -14,23 +14,9 @@ interface StreakCelebrationOverlayProps {
 
 export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebrationOverlayProps) {
     const { width, height } = useWindowSize();
-    const [audio] = useState(() => typeof Audio !== "undefined" ? new Audio("/sounds/achievement.mp3") : null);
-
     useEffect(() => {
-        if (show) {
-            const playAudio = async () => {
-                try {
-                    if (audio) {
-                        audio.volume = 0.5;
-                        await audio.play();
-                    }
-                } catch (e) {
-                    // Autoplay might be blocked
-                }
-            };
-            playAudio();
-        }
-    }, [show, audio]);
+        // Audio removed as per user request
+    }, [show]);
 
     if (!show) return null;
 

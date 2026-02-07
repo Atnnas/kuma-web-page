@@ -20,10 +20,8 @@ interface AchievementOverlayProps {
 
 export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlayProps) {
     const { width, height } = useWindowSize();
-    const [audio] = useState(() => typeof Audio !== "undefined" ? new Audio("/sounds/achievement.mp3") : null);
-
-    // Removed auto-close timer as per user request
-    // useEffect(() => { ... }, [show, onClose]);
+    // Audio removed as per user request
+    // const [audio] = useState(() => typeof Audio !== "undefined" ? new Audio("/sounds/achievement.mp3") : null);
 
     if (!trophy) return null;
 
