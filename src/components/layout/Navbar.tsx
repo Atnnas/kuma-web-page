@@ -467,7 +467,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                                             <div>
                                                 <p className="text-white font-bold">{user.name}</p>
                                                 <div className="mt-1" suppressHydrationWarning>
-                                                    <StreakFlame />
+                                                    <StreakFlame variant="mobile" />
                                                 </div>
                                             </div>
                                         </div>
