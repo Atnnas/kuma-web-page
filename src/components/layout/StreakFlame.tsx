@@ -32,9 +32,9 @@ export function StreakFlame() {
         fetchStreak();
     }, []);
 
-    // Effect to trigger overlay ONLY when on / (Home) OR /rutinas (or subpages) AND server requested it
+    // Effect to trigger overlay ONLY when on /rutinas (or subpages) AND server requested it
     useEffect(() => {
-        if (serverCelebrationRequest && (pathname === "/" || pathname?.startsWith("/rutinas"))) {
+        if (serverCelebrationRequest && pathname?.startsWith("/rutinas")) {
             setShowOverlay(true);
         }
     }, [pathname, serverCelebrationRequest]);
