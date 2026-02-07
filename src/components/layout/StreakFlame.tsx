@@ -3,11 +3,14 @@
 import { Fire } from "@phosphor-icons/react/dist/ssr";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { StreakCelebrationOverlay } from "../gamification/StreakCelebrationOverlay";
 
 export function StreakFlame() {
     const [streak, setStreak] = useState<number | null>(null);
-    const [showCelebration, setShowCelebration] = useState(false);
+    const [serverCelebrationRequest, setServerCelebrationRequest] = useState(false); // Can we show it?
+    const [showOverlay, setShowOverlay] = useState(false); // Do we show it now?
+    const pathname = usePathname();
 
     useEffect(() => {
         const fetchStreak = async () => {
@@ -18,7 +21,7 @@ export function StreakFlame() {
                     console.log("Streak data:", data);
                     setStreak(data.streak);
                     if (data.showCelebration) {
-                        setShowCelebration(true);
+                        setServerCelebrationRequest(true);
                     }
                 }
             } catch (error) {
@@ -29,8 +32,16 @@ export function StreakFlame() {
         fetchStreak();
     }, []);
 
+    // Effect to trigger overlay ONLY when on / (Home) OR /rutinas (or subpages) AND server requested it
+    useEffect(() => {
+        if (serverCelebrationRequest && (pathname === "/" || pathname?.startsWith("/rutinas"))) {
+            setShowOverlay(true);
+        }
+    }, [pathname, serverCelebrationRequest]);
+
     const handleCloseCelebration = async () => {
-        setShowCelebration(false);
+        setShowOverlay(false);
+        setServerCelebrationRequest(false); // Don't show again this session
         try {
             await fetch("/api/user/streak/mark-seen", { method: "POST" });
         } catch (error) {
@@ -44,7 +55,7 @@ export function StreakFlame() {
     return (
         <>
             <StreakCelebrationOverlay
-                show={showCelebration}
+                show={showOverlay}
                 streak={displayStreak}
                 onClose={handleCloseCelebration}
             />
