@@ -336,22 +336,32 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
             </div>
 
             {/* --- FLOATING ACTIONS FOOTER --- */}
-            <div className="fixed md:sticky bottom-0 inset-x-0 p-4 bg-zinc-900/90 backdrop-blur-xl border-t border-white/10 flex justify-end gap-4 z-50 rounded-b-xl">
-                <button
+            <div className="fixed md:sticky bottom-0 inset-x-0 p-4 bg-zinc-900/90 backdrop-blur-xl border-t border-white/10 flex justify-between items-center gap-4 z-50 rounded-b-xl">
+                <Button
                     type="button"
-                    onClick={onCancel}
-                    className="px-6 py-3 rounded-xl bg-gradient-to-b from-zinc-700 to-zinc-800 text-white font-bold border-b-4 border-zinc-950 hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all"
+                    onClick={addBlock}
+                    className="bg-zinc-800 hover:bg-zinc-700 text-white text-xs h-12 px-4 shadow-lg border border-white/5"
                 >
-                    Cancelar
-                </button>
-                <button
-                    onClick={(e: React.MouseEvent) => handleSubmit(e as any)}
-                    disabled={isLoading}
-                    className="px-8 py-3 rounded-xl bg-gradient-to-b from-kuma-gold to-amber-500 text-black font-black uppercase tracking-wider border-b-4 border-amber-700 shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
-                >
-                    {isLoading ? <Spinner className="mr-2 h-5 w-5 animate-spin" weight="bold" /> : <FloppyDisk className="mr-2 h-5 w-5" weight="duotone" />}
-                    {initialData?._id ? "Guardar Cambios" : "Crear Rutina"}
-                </button>
+                    <Plus className="w-4 h-4 mr-2" weight="bold" /> Agregar Ejercicio
+                </Button>
+
+                <div className="flex gap-4">
+                    <button
+                        type="button"
+                        onClick={onCancel}
+                        className="px-6 py-3 rounded-xl bg-gradient-to-b from-zinc-700 to-zinc-800 text-white font-bold border-b-4 border-zinc-950 hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        onClick={(e: React.MouseEvent) => handleSubmit(e as any)}
+                        disabled={isLoading}
+                        className="px-8 py-3 rounded-xl bg-gradient-to-b from-kuma-gold to-amber-500 text-black font-black uppercase tracking-wider border-b-4 border-amber-700 shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
+                    >
+                        {isLoading ? <Spinner className="mr-2 h-5 w-5 animate-spin" weight="bold" /> : <FloppyDisk className="mr-2 h-5 w-5" weight="duotone" />}
+                        {initialData?._id ? "Guardar Cambios" : "Crear Rutina"}
+                    </button>
+                </div>
             </div>
         </motion.div>
     );

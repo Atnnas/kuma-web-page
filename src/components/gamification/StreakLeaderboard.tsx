@@ -42,7 +42,7 @@ export function StreakLeaderboard() {
         <div className="w-full max-w-md mx-auto mb-8">
             <div className="flex items-center gap-2 mb-4 px-2">
                 <Trophy className="text-kuma-gold" weight="duotone" size={20} />
-                <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest">Top Guerreros (Racha Activa)</h3>
+                <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest">Top Kumas Mejor Racha</h3>
             </div>
 
             <div className="bg-zinc-900/50 backdrop-blur-sm border border-white/5 rounded-2xl overflow-hidden">

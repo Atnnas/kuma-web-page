@@ -52,10 +52,12 @@ export default async function TrainingPage() {
 
             {/* MAIN CONTENT - ANIMATED TABS */}
             <div className="relative z-10 pt-24 pb-32 max-w-[1920px] mx-auto">
-                {/* GLOBAL LEADERBOARD - Shown to all users to encourage competition */}
-                <div className="mb-8 px-4">
-                    <StreakLeaderboard />
-                </div>
+                {/* GLOBAL LEADERBOARD - Shown only to logged-in users */}
+                {session?.user && (
+                    <div className="mb-8 px-4">
+                        <StreakLeaderboard />
+                    </div>
+                )}
 
                 <AnimatedTabs
                     tabs={tabs}

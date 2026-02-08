@@ -24,9 +24,14 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // 2. Fetch Routine (if provided) to get duration
+        // 2. Fetch Routine (if provided) and Duration
         let routineDuration = 0;
-        if (routineId) {
+
+        // Prioritize actual duration sent from frontend
+        if (body.duration && typeof body.duration === 'number') {
+            routineDuration = body.duration;
+        } else if (routineId) {
+            // Fallback to estimated
             const routine = await Routine.findById(routineId);
             if (routine) {
                 routineDuration = routine.estimated_duration || 0;

@@ -57,6 +57,8 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const [timeLeft, setTimeLeft] = useState(0);
     const [impact, setImpact] = useState(false); // FOR SHAKE EFFECT
 
+    const [startTime, setStartTime] = useState<number | null>(null);
+
     // Gamification State
     const [showTrophy, setShowTrophy] = useState(false);
     // const [earnedBelt, setEarnedBelt] = useState<string>(""); // REVERTED
@@ -92,6 +94,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         setCurrentBlockIndex(0);
         setCurrentSet(1);
         setIsResting(false);
+        setStartTime(Date.now());
     };
 
     const triggerImpact = () => {
@@ -158,11 +161,18 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
 
     const completeRoutine = async () => {
         try {
-            // 1. Call Progress API with routineId
+            const endTime = Date.now();
+            const durationMs = startTime ? (endTime - startTime) : 0;
+            const durationMinutes = Math.max(1, Math.round(durationMs / 60000)); // Min 1 minute
+
+            // 1. Call Progress API with routineId and actual duration
             const res = await fetch("/api/workouts/complete", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ routineId: routine._id })
+                body: JSON.stringify({
+                    routineId: routine._id,
+                    duration: durationMinutes
+                })
             });
 
             const data = await res.json();
@@ -323,7 +333,12 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                         <Trophy className="w-16 h-16 text-black fill-black" weight="duotone" />
                     </div>
                     <h2 className="text-5xl font-black text-white italic tracking-tighter mb-4">¡VICTORIA!</h2>
-                    <p className="text-zinc-400 text-lg mb-12">Rutina completada con éxito.</p>
+                    <p className="text-zinc-400 text-lg mb-2">Rutina completada con éxito.</p>
+                    {startTime && (
+                        <div className="text-kuma-gold font-mono font-bold text-xl mb-12">
+                            Tiempo Total: {Math.max(1, Math.round((Date.now() - startTime) / 60000))} min
+                        </div>
+                    )}
                     <Link href="/rutinas" className="block w-full">
                         <button className="w-full h-16 bg-zinc-800 text-white rounded-[2rem] font-bold text-lg tracking-wider hover:bg-zinc-700 transition-colors">Volver al Dojo</button>
                     </Link>
