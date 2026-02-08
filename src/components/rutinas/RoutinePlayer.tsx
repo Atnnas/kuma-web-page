@@ -89,12 +89,26 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     }, [status]);
 
     // --- ACTIONS ---
-    const startRoutine = () => {
+    const [currentLogId, setCurrentLogId] = useState<string | null>(null);
+
+    // --- ACTIONS ---
+    const startRoutine = async () => {
         setStatus("active");
         setCurrentBlockIndex(0);
         setCurrentSet(1);
         setIsResting(false);
         setStartTime(Date.now());
+
+        // START LOGGING
+        try {
+            const { startRoutineLog } = await import("@/lib/actions/routine-logs");
+            const res = await startRoutineLog(routine._id, routine.title, routine.estimated_duration);
+            if (res.success && res.logId) {
+                setCurrentLogId(res.logId);
+            }
+        } catch (error) {
+            console.error("Failed to start routine log", error);
+        }
     };
 
     const triggerImpact = () => {
@@ -164,6 +178,13 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             const endTime = Date.now();
             const durationMs = startTime ? (endTime - startTime) : 0;
             const durationMinutes = Math.max(1, Math.round(durationMs / 60000)); // Min 1 minute
+            const durationSeconds = Math.round(durationMs / 1000);
+
+            // 0. COMPLETE LOG IF EXISTS
+            if (currentLogId) {
+                const { completeRoutineLog } = await import("@/lib/actions/routine-logs");
+                await completeRoutineLog(currentLogId, durationSeconds);
+            }
 
             // 1. Call Progress API with routineId and actual duration
             const res = await fetch("/api/workouts/complete", {

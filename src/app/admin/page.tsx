@@ -92,16 +92,6 @@ export default async function AdminDashboard() {
                         ACCIONES DE MANDO
                     </h3>
                     <div className="space-y-4">
-                        <Link href="/admin/news" className="block w-full bg-zinc-900/80 hover:bg-red-950/30 border border-zinc-800 hover:border-red-900/50 p-4 rounded-lg text-center transition-all hover:scale-[1.02] group">
-                            <span className="font-bold text-zinc-300 group-hover:text-red-400 uppercase tracking-widest text-sm flex items-center justify-center gap-2">
-                                <Newspaper className="w-4 h-4" /> Noticias
-                            </span>
-                        </Link>
-                        <Link href="/admin/users" className="block w-full bg-zinc-900/80 hover:bg-red-950/30 border border-zinc-800 hover:border-red-900/50 p-4 rounded-lg text-center transition-all hover:scale-[1.02] group">
-                            <span className="font-bold text-zinc-300 group-hover:text-red-400 uppercase tracking-widest text-sm flex items-center justify-center gap-2">
-                                <Users className="w-4 h-4" /> Usuarios
-                            </span>
-                        </Link>
                         <Link href="/admin/reports" className="block w-full bg-zinc-900/80 hover:bg-red-950/30 border border-zinc-800 hover:border-red-900/50 p-4 rounded-lg text-center transition-all hover:scale-[1.02] group">
                             <span className="font-bold text-zinc-300 group-hover:text-red-400 uppercase tracking-widest text-sm flex items-center justify-center gap-2">
                                 <TrendingUp className="w-4 h-4" /> Reportes

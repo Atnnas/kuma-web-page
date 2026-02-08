@@ -3,7 +3,7 @@ import { getDetailedAnalytics } from "@/lib/actions/analytics";
 import ReportsClient from "./ReportsClient";
 import { subDays } from "date-fns";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { CaretLeft, TrendUp } from "@phosphor-icons/react/dist/ssr";
 
 export const dynamic = 'force-dynamic';
 
@@ -25,15 +25,24 @@ export default async function ReportsPage({
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center gap-4">
-                <Link href="/admin/reports" className="p-3 hover:bg-zinc-800 rounded-xl transition-all hover:scale-105 text-zinc-400 hover:text-white group">
-                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                </Link>
-                <div>
-                    <h1 className="text-3xl font-serif font-black uppercase tracking-widest text-kuma-gold drop-shadow-md">
-                        Reporte de <span className="text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.4)]">Visitas</span>
-                    </h1>
-                    <p className="text-zinc-400 font-medium">Análisis detallado de tráfico web.</p>
+            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 border-b border-zinc-800 pb-6">
+                <div className="flex items-center gap-4">
+                    <Link href="/admin/reports" className="group p-3 bg-zinc-900 border border-white/5 rounded-xl hover:bg-white hover:text-black transition-all hover:scale-105 text-zinc-400">
+                        <CaretLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" weight="bold" />
+                    </Link>
+                    <div>
+                        <div className="flex items-center gap-3 mb-1">
+                            <div className="p-2 bg-red-900/10 rounded-lg text-red-500">
+                                <TrendUp className="w-6 h-6" weight="duotone" />
+                            </div>
+                            <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-white">
+                                Reporte de <span className="text-red-500">Visitas</span>
+                            </h1>
+                        </div>
+                        <p className="text-zinc-500 font-medium pl-14">
+                            Análisis detallado de tráfico y audiencia.
+                        </p>
+                    </div>
                 </div>
             </div>
 
