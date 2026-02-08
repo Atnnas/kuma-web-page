@@ -9,7 +9,7 @@ import { getRecentImages } from "@/lib/actions/news"; // Reuse this action
 import { getOrganizers } from "@/lib/actions/organizers";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, MapPin, Type, Image as ImageIcon, Globe, User, Link as LinkIcon, Info, Loader2, Clock, Check, Upload, Minus } from "lucide-react";
-import { NeonDatePicker } from "@/components/ui/NeonDatePicker";
+import { NeonDatePicker as NeonDP } from "@/components/ui/NeonDatePicker";
 import { format } from "date-fns";
 import { createPortal } from "react-dom";
 
@@ -171,7 +171,7 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                             <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                                 <Calendar className="w-3 h-3" /> Rango de Fechas
                             </label>
-                            <NeonDatePicker
+                            <NeonDP
                                 date={{
                                     from: formData.startDate ? new Date(formData.startDate) : undefined,
                                     to: formData.endDate ? new Date(formData.endDate) : undefined
