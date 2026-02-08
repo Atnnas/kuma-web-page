@@ -166,8 +166,8 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                 >
                                     {/* KUMA TROPHY IMAGE */}
                                     <img
-                                        src="/images/kuma-hora-trofeo.jpg"
-                                        alt="Espíritu del Oso"
+                                        src="/images/kuma-logro-hora-entreno.jpg"
+                                        alt="Espíritu Kuma"
                                         className="w-full h-full object-cover opacity-90 mix-blend-hard-light"
                                     />
 
