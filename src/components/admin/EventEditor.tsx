@@ -10,6 +10,7 @@ import { getOrganizers } from "@/lib/actions/organizers";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, MapPin, Type, Image as ImageIcon, Globe, User, Link as LinkIcon, Info, Loader2, Clock, Check, Upload, Minus } from "lucide-react";
 import { NeonDatePicker as NeonDP } from "@/components/ui/NeonDatePicker";
+import { DatePicker } from "@/components/ui/DatePicker";
 import { format } from "date-fns";
 import { createPortal } from "react-dom";
 
@@ -167,7 +168,7 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Date Range Picker - Spans full width on mobile, sharing space on desktop if needed, or full row */}
-                        <div className="md:col-span-2 space-y-2">
+                        <div className="hidden md:block md:col-span-2 space-y-2">
                             <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                                 <Calendar className="w-3 h-3" /> Rango de Fechas
                             </label>
@@ -198,6 +199,42 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                                     }));
                                 }}
                             />
+                        </div>
+
+                        {/* Mobile Individual Pickers */}
+                        <div className="md:hidden space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                                    <Calendar className="w-3 h-3" /> Fecha Inicio
+                                </label>
+                                <DatePicker
+                                    date={formData.startDate as Date}
+                                    setDate={(date) => {
+                                        if (!date) return;
+                                        const newDate = new Date(formData.startDate as Date);
+                                        newDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+                                        setFormData(prev => ({ ...prev, startDate: newDate }));
+                                    }}
+                                    placeholder="Fecha Inicio"
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                                    <Calendar className="w-3 h-3" /> Fecha Fin
+                                </label>
+                                <DatePicker
+                                    date={formData.endDate as Date}
+                                    setDate={(date) => {
+                                        if (!date) return;
+                                        const newDate = new Date(formData.endDate as Date);
+                                        newDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+                                        setFormData(prev => ({ ...prev, endDate: newDate }));
+                                    }}
+                                    placeholder="Fecha Fin"
+                                    className="w-full"
+                                />
+                            </div>
                         </div>
 
                         {/* Start Time */}
