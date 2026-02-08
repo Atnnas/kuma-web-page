@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PrimalTitle } from "@/components/ui/PrimalTitle";
-import { Play, Trophy, Medal, Fire, X, Crown, Lightning } from "@phosphor-icons/react/dist/ssr";
+import { Play, Trophy, Medal, Fire, X, Crown, Lightning, PawPrint } from "@phosphor-icons/react/dist/ssr";
 import { AchievementOverlay } from "@/components/gamification/AchievementOverlay";
 import { StreakFlame } from "@/components/layout/StreakFlame";
 import { StreakCelebrationOverlay } from "@/components/gamification/StreakCelebrationOverlay";
@@ -17,6 +17,16 @@ const DEMO_TROPHIES = [
         icon: "Fire", // Using Fire icon for maximum impact
         color: "#fbbf24", // Kuma Gold
         rarity: "Legendario", // To trigger max effects if we had rarity logic
+        hidden: false
+    },
+    {
+        _id: "trophy-kuma-revenant",
+        slug: "kuma-revenant",
+        name: "Espíritu del Oso",
+        description: "Has entrenado más de 1 hora en una sola sesión. Tu resistencia es legendaria.",
+        icon: "PawPrint",
+        color: "#dc2626", // Red 600
+        rarity: "Mítico",
         hidden: false
     }
 ];

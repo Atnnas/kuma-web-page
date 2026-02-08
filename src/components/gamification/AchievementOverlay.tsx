@@ -9,6 +9,7 @@ import * as PhosphorIcons from "@phosphor-icons/react";
 interface AchievementOverlayProps {
     show: boolean;
     trophy: {
+        slug?: string;
         name: string;
         description: string;
         icon: string;
@@ -27,6 +28,98 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
 
     // Dynamic Icon
     const IconComponent = (PhosphorIcons as any)[trophy.icon] || PhosphorIcons.Trophy;
+
+    // Custom Animation for "Spirit of the Bear" (Kuma Revenant)
+    if (trophy.slug === "kuma-revenant") {
+        return (
+            <AnimatePresence>
+                {show && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, transition: { duration: 1 } }}
+                        onClick={onClose}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/98 cursor-pointer overflow-hidden"
+                    >
+                        {/* RED/BLACK THEME BACKGROUND */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] bg-gradient-radial from-red-900/40 via-black to-black animate-pulse opacity-80" />
+                            <motion.div
+                                animate={{ opacity: [0.2, 0.5, 0.2] }}
+                                transition={{ duration: 3, repeat: Infinity }}
+                                className="absolute inset-0 bg-[url('/images/noise.png')] opacity-20 mix-blend-overlay"
+                            />
+                        </div>
+
+                        {/* CLAW MARKS (Simulated) */}
+                        <motion.div
+                            initial={{ scaleX: 0, opacity: 0 }}
+                            animate={{ scaleX: 1, opacity: [0, 1, 0] }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="absolute top-1/4 left-0 w-full h-[2px] bg-red-600 rotate-12 blur-sm origin-left"
+                        />
+                        <motion.div
+                            initial={{ scaleX: 0, opacity: 0 }}
+                            animate={{ scaleX: 1, opacity: [0, 1, 0] }}
+                            transition={{ duration: 0.5, delay: 0.3 }}
+                            className="absolute top-2/4 left-0 w-full h-[3px] bg-red-500 -rotate-6 blur-md origin-right"
+                        />
+                        <motion.div
+                            initial={{ scaleX: 0, opacity: 0 }}
+                            animate={{ scaleX: 1, opacity: [0, 1, 0] }}
+                            transition={{ duration: 0.5, delay: 0.4 }}
+                            className="absolute top-3/4 left-0 w-full h-[2px] bg-red-700 rotate-3 blur-sm origin-left"
+                        />
+
+                        <Confetti width={width} height={height} numberOfPieces={300} recycle={true} gravity={0.3} colors={['#dc2626', '#b91c1c', '#000000']} />
+
+                        <div className="relative text-center p-8 max-w-5xl w-full z-20">
+                            <motion.div
+                                initial={{ scale: 3, opacity: 0, filter: "blur(20px)" }}
+                                animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                className="relative z-10"
+                            >
+                                <h1 className="text-6xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-red-500 to-black mb-4 uppercase italic tracking-tighter drop-shadow-[0_0_50px_rgba(220,38,38,1)] stroke-white stroke-2">
+                                    ¡ESPÍRITU DEL OSO!
+                                </h1>
+
+                                <motion.div
+                                    animate={{
+                                        scale: [1, 1.05, 1],
+                                        filter: ["drop-shadow(0 0 30px rgba(220,38,38,0.5))", "drop-shadow(0 0 80px rgba(220,38,38,1))", "drop-shadow(0 0 30px rgba(220,38,38,0.5))"]
+                                    }}
+                                    transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+                                    className="w-full h-64 md:h-80 my-8 relative flex items-center justify-center p-10 bg-black/50 rounded-full border border-red-900/50 backdrop-blur-md mx-auto aspect-square max-w-[320px]"
+                                >
+                                    <IconComponent
+                                        className="w-full h-full text-red-600 drop-shadow-[0_0_30px_rgba(0,0,0,1)]"
+                                        weight="duotone"
+                                    />
+                                    {/* Eyes glowing effect */}
+                                    <div className="absolute top-1/2 left-1/3 w-4 h-4 bg-red-500 rounded-full blur-md animate-pulse" />
+                                    <div className="absolute top-1/2 right-1/3 w-4 h-4 bg-red-500 rounded-full blur-md animate-pulse" />
+                                </motion.div>
+
+                                <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-widest uppercase drop-shadow-2xl font-mono">
+                                    RESISTENCIA LEGENDARIA
+                                </h2>
+
+                                <motion.p
+                                    initial={{ opacity: 0, y: 50 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 1 }}
+                                    className="text-2xl md:text-3xl text-red-100 max-w-3xl mx-auto font-bold italics"
+                                >
+                                    {trophy.description}
+                                </motion.p>
+                            </motion.div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        );
+    }
 
     return (
         <AnimatePresence>
