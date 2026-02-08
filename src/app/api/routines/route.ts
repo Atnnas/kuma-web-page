@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Routine from "@/models/Routine";
+import Exercise from "@/models/Exercise";
 import { auth } from "@/auth";
 
 // GET /api/routines
@@ -56,6 +57,35 @@ export async function POST(req: NextRequest) {
             ...data,
             slug: data.slug || slug
         });
+
+        // --- AUTO-SAVE NEW EXERCISES ---
+        if (data.blocks && Array.isArray(data.blocks)) {
+            const exerciseNames = new Set<string>();
+            data.blocks.forEach((b: any) => {
+                if (b.exercise_name && b.exercise_name.trim()) {
+                    exerciseNames.add(b.exercise_name.trim());
+                }
+            });
+
+            if (exerciseNames.size > 0) {
+                const bulkOps = Array.from(exerciseNames).map(name => ({
+                    updateOne: {
+                        filter: { name: name },
+                        update: {
+                            $setOnInsert: {
+                                name: name,
+                                category: "Fuerza",
+                                equipment: ["Ninguno"],
+                                difficulty: "Intermedio"
+                            }
+                        },
+                        upsert: true
+                    }
+                }));
+
+                await Exercise.bulkWrite(bulkOps as any);
+            }
+        }
 
         return NextResponse.json(routine, { status: 201 });
     } catch (error) {

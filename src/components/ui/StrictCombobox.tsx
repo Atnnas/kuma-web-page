@@ -116,7 +116,12 @@ export function StrictCombobox({ value, onChange, onSelectFull, placeholder = "S
                                 className="flex-1 bg-transparent py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none"
                                 placeholder="Buscar en la base de datos..."
                                 value={search}
-                                onChange={(e) => setSearch(e.target.value)}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setSearch(val);
+                                    // Make it behave like a free text input if no option is selected yet
+                                    onChange(val);
+                                }}
                             />
                             {loading && <Loader2 className="w-4 h-4 text-kuma-gold animate-spin ml-2" />}
                         </div>
