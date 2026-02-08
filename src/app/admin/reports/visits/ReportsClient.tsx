@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { DateRange } from "react-day-picker";
 import { format, subDays, parseISO } from "date-fns";
-import { DateRangePicker } from "@/components/ui/DateRangePicker";
+import { NeonDatePicker } from "@/components/ui/NeonDatePicker";
 import { es } from "date-fns/locale";
 import {
     Globe,
@@ -158,7 +158,7 @@ export default function ReportsClient({ initialData, initialStats, from, to }: R
                         <Trash className="w-5 h-5" weight="duotone" />
                     </button>
                     <div className="h-8 w-[1px] bg-white/10 mx-1" />
-                    <DateRangePicker date={date} setDate={setDate} />
+                    <NeonDatePicker date={date} setDate={setDate} />
                     {isLoading && <CircleNotch className="w-5 h-5 animate-spin text-kuma-gold ml-2" weight="bold" />}
                 </div>
             </div>
