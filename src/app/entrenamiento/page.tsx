@@ -6,6 +6,7 @@ import { TrainingPrices } from "@/components/sections/TrainingPrices";
 import { TrainingVirtual } from "@/components/sections/TrainingVirtual";
 
 import { AnimatedTabs } from "@/components/ui/animated-tabs";
+import { StreakLeaderboard } from "@/components/gamification/StreakLeaderboard";
 
 export const metadata = {
     title: "Horarios y Entrenamiento | Kuma Dojo",
@@ -51,6 +52,11 @@ export default async function TrainingPage() {
 
             {/* MAIN CONTENT - ANIMATED TABS */}
             <div className="relative z-10 pt-24 pb-32 max-w-[1920px] mx-auto">
+                {/* GLOBAL LEADERBOARD - Shown to all users to encourage competition */}
+                <div className="mb-8 px-4">
+                    <StreakLeaderboard />
+                </div>
+
                 <AnimatedTabs
                     tabs={tabs}
                     defaultTab="horarios"

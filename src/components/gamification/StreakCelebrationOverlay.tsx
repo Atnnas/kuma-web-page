@@ -28,6 +28,34 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
 
     if (!show || !mounted) return null;
 
+    // Celebration Configuration
+    let title = "¡RACHA IMPARABLE!";
+    let subtitle = `¡${streak} DÍAS CONSECUTIVOS!`;
+    let message = `Te felicito llevas ${streak} días de racha. ¡Sigue así!`;
+    let confettiColors = ['#fb923c', '#ea580c', '#ffffff'];
+    let gradientText = "from-orange-400 via-red-500 to-yellow-400";
+    let glowColor = "rgba(234,88,12,0.8)";
+    let fireColor = "text-orange-500";
+
+    if (streak === 22) {
+        title = "¡HÁBITO DE ACERO!";
+        subtitle = "¡BARRERA ROTA!";
+        message = "Has superado los 21 días. Tu disciplina es ahora inquebrantable.";
+        gradientText = "from-yellow-300 via-orange-500 to-red-600";
+    } else if (streak === 60) {
+        title = "¡MAESTRÍA SUPREMA!";
+        subtitle = "¡60 DÍAS DE PODER!";
+        message = "Eres una leyenda del Dojo. Tu llama arde con fuego cósmico.";
+        confettiColors = ['#22d3ee', '#3b82f6', '#ffffff']; // Cyan/Blue
+        gradientText = "from-cyan-400 via-blue-500 to-purple-600";
+        glowColor = "rgba(34,211,238,0.8)";
+        fireColor = "text-cyan-400";
+    } else if (streak > 0 && streak % 30 === 0) {
+        title = "¡FUEGO ETERNO!";
+        subtitle = "¡TU LLAMA CRECE!";
+        message = "30 días más de gloria. Tu constancia es imparable.";
+    }
+
     return createPortal(
         <AnimatePresence>
             {show && (
@@ -41,11 +69,11 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                     {/* ... content ... */}
                     {/* Radiant Background Effects */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] bg-gradient-radial from-orange-500/20 via-transparent to-transparent animate-spin-slow opacity-50" />
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] bg-gradient-radial from-red-600/30 via-transparent to-transparent animate-reverse-spin opacity-50" />
+                        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] bg-gradient-radial ${streak === 60 ? "from-cyan-500/20" : "from-orange-500/20"} via-transparent to-transparent animate-spin-slow opacity-50`} />
+                        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] bg-gradient-radial ${streak === 60 ? "from-blue-600/30" : "from-red-600/30"} via-transparent to-transparent animate-reverse-spin opacity-50`} />
                     </div>
 
-                    <Confetti width={width} height={height} numberOfPieces={500} recycle={true} gravity={0.2} colors={['#fb923c', '#ea580c', '#ffffff']} />
+                    <Confetti width={width} height={height} numberOfPieces={500} recycle={true} gravity={0.2} colors={confettiColors} />
 
                     <div className="relative text-center p-8 max-w-4xl w-full">
                         <motion.div
@@ -54,21 +82,21 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                             transition={{ type: "spring", stiffness: 200, damping: 20 }}
                             className="relative z-10"
                         >
-                            <h1 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-500 to-yellow-400 mb-8 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(234,88,12,0.8)] animate-pulse">
-                                ¡RACHA IMPARABLE!
+                            <h1 className={`text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r ${gradientText} mb-8 uppercase italic tracking-tighter shadow-current animate-pulse`} style={{ textShadow: `0 0 30px ${glowColor}` }}>
+                                {title}
                             </h1>
 
                             <motion.div
                                 animate={{
                                     scale: [1, 1.2, 1],
                                     rotate: [0, 5, -5, 0],
-                                    filter: ["drop-shadow(0 0 20px rgba(234,88,12,0.5))", "drop-shadow(0 0 60px rgba(234,88,12,1))", "drop-shadow(0 0 20px rgba(234,88,12,0.5))"]
+                                    filter: [`drop-shadow(0 0 20px ${glowColor})`, `drop-shadow(0 0 60px ${glowColor})`, `drop-shadow(0 0 20px ${glowColor})`]
                                 }}
                                 transition={{ duration: 2, repeat: Infinity }}
                                 className="w-full h-48 md:h-64 my-8 relative flex items-center justify-center"
                             >
                                 <Fire
-                                    className="w-48 h-48 md:w-64 md:h-64 drop-shadow-[0_0_50px_rgba(255,255,255,0.8)] text-orange-500"
+                                    className={`w-48 h-48 md:w-64 md:h-64 drop-shadow-[0_0_50px_rgba(255,255,255,0.8)] ${fireColor}`}
                                     weight="fill"
                                 />
                                 <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-8 text-6xl md:text-8xl font-black text-white drop-shadow-md">
@@ -77,7 +105,7 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                             </motion.div>
 
                             <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-widest uppercase drop-shadow-2xl">
-                                ¡{streak} DÍAS CONSECUTIVOS!
+                                {subtitle}
                             </h2>
 
                             <motion.p
@@ -86,7 +114,7 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                                 transition={{ delay: 1 }}
                                 className="text-2xl text-zinc-200 max-w-2xl mx-auto font-bold"
                             >
-                                Te felicito llevas {streak} días de racha. ¡Sigue así!
+                                {message}
                             </motion.p>
                         </motion.div>
                     </div>

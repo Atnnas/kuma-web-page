@@ -4,6 +4,8 @@ import { useState } from "react";
 import { PrimalTitle } from "@/components/ui/PrimalTitle";
 import { Play, Trophy, Medal, Fire, X, Crown, Lightning } from "@phosphor-icons/react/dist/ssr";
 import { AchievementOverlay } from "@/components/gamification/AchievementOverlay";
+import { StreakFlame } from "@/components/layout/StreakFlame";
+import { StreakCelebrationOverlay } from "@/components/gamification/StreakCelebrationOverlay";
 
 // Static Definitions for Visual Testing
 const DEMO_TROPHIES = [
@@ -23,9 +25,18 @@ export default function RecompensasPage() {
     const [previewTrophy, setPreviewTrophy] = useState<any | null>(null);
     const [showPreview, setShowPreview] = useState(false);
 
+    // Streak Testing State
+    const [previewStreak, setPreviewStreak] = useState(0);
+    const [showStreakPreview, setShowStreakPreview] = useState(false);
+
     const handleTest = (trophy: any) => {
         setPreviewTrophy(trophy);
         setShowPreview(true);
+    };
+
+    const handleTestStreak = (days: number) => {
+        setPreviewStreak(days);
+        setShowStreakPreview(true);
     };
 
     return (
@@ -36,8 +47,45 @@ export default function RecompensasPage() {
                 onClose={() => setShowPreview(false)}
             />
 
+            <StreakCelebrationOverlay
+                show={showStreakPreview}
+                streak={previewStreak}
+                onClose={() => setShowStreakPreview(false)}
+            />
+
+            {/* STREAK TESTING SECTION */}
+            <div className="mb-12">
+                <PrimalTitle title="Sistema de Rachas" subtitle="Evolución de la Llama y Celebraciones (Previews)" size="lg" className="md:text-left text-center mb-6" />
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {[
+                        { days: 0, label: "Inactivo (0 Días)" },
+                        { days: 10, label: "Fase 1 (10 Días)" },
+                        { days: 22, label: "Hito (22 Días)" },
+                        { days: 30, label: "Fase 2 (30 Días)" },
+                        { days: 60, label: "Fase 3 (60 Días)" },
+                    ].map((item) => (
+                        <div key={item.days} className="bg-zinc-900/50 border border-white/5 rounded-xl p-6 flex flex-col items-center gap-4 hover:bg-white/5 transition-colors group">
+                            <span className="text-xs uppercase tracking-widest text-zinc-500 font-bold">{item.label}</span>
+
+                            {/* Visual Preview */}
+                            <div className="scale-150 transform p-4">
+                                <StreakFlame overrideStreak={item.days} />
+                            </div>
+
+                            <button
+                                onClick={() => handleTestStreak(item.days)}
+                                className="mt-2 text-xs font-bold text-orange-500 uppercase tracking-wider hover:text-orange-400 flex items-center gap-2"
+                            >
+                                <Play weight="fill" /> Probar Animación
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <PrimalTitle title="Prueba de Animaciones" subtitle="Visualizador de Recompensas (Modo Demo)" size="lg" className="md:text-left text-center" />
+                <PrimalTitle title="Prueba de Logros" subtitle="Visualizador de Recompensas (Modo Demo)" size="lg" className="md:text-left text-center" />
             </div>
 
             <div className="bg-zinc-900 border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
