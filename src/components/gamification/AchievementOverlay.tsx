@@ -81,7 +81,7 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                 className="relative z-10"
                             >
                                 <h1 className="text-6xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-red-500 to-black mb-4 uppercase italic tracking-tighter drop-shadow-[0_0_50px_rgba(220,38,38,1)] stroke-white stroke-2">
-                                    ¡ESPÍRITU DEL OSO!
+                                    ¡ESPÍRITU KUMA!
                                 </h1>
 
                                 <motion.div

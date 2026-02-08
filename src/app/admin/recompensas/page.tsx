@@ -22,7 +22,7 @@ const DEMO_TROPHIES = [
     {
         _id: "trophy-kuma-revenant",
         slug: "kuma-revenant",
-        name: "Espíritu del Oso",
+        name: "Espíritu Kuma",
         description: "Has entrenado más de 1 hora en una sola sesión. Tu resistencia es legendaria.",
         icon: "PawPrint",
         color: "#dc2626", // Red 600
