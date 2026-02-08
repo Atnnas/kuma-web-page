@@ -144,21 +144,35 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
 
     // ...
 
+    const [achievementQueue, setAchievementQueue] = useState<any[]>([]);
+    const [currentAchievement, setCurrentAchievement] = useState<any | null>(null);
+
+    // Watch queue to show achievements one by one
+    useEffect(() => {
+        if (achievementQueue.length > 0 && !showTrophy) {
+            setCurrentAchievement(achievementQueue[0]);
+            setShowTrophy(true);
+            audioTrainer.playWin();
+        }
+    }, [achievementQueue, showTrophy]);
+
     const completeRoutine = async () => {
         try {
-            // 1. Call Progress API (New Logic: Simple First Workout Check)
+            // 1. Call Progress API with routineId
             const res = await fetch("/api/workouts/complete", {
                 method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ routineId: routine._id })
             });
 
             const data = await res.json();
 
-            if (data.firstWorkout) {
-                // 2. Trigger First Workout Trophy Event
-                setShowTrophy(true);
-                audioTrainer.playWin(); // Play sound immediately
+            if (data.newAchievements && data.newAchievements.length > 0) {
+                // 2. Queue Achievements
+                const achievements = data.newAchievements.map((item: any) => item.trophy);
+                setAchievementQueue(achievements);
             } else {
-                // 3. Standard Completion
+                // 3. No achievements, just Standard Completion
                 setStatus("completed");
                 audioTrainer.playWin();
                 audioTrainer.speak("¡Rutina completada! Excelente trabajo.");
@@ -334,17 +348,17 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             {/* --- OVERLAYS --- */}
             <AchievementOverlay
                 show={showTrophy}
-                trophy={{
-                    name: "Primer Entrenamiento",
-                    description: "El primer paso de un viaje de mil millas. ¡Has comenzado tu legado!",
-                    icon: "Fire",
-                    color: "#fbbf24",
-                    rarity: "Legendario"
-                }}
+                trophy={currentAchievement}
                 onClose={() => {
                     setShowTrophy(false);
-                    setStatus("completed");
-                    triggerConfetti(); // Celebration continues on completion screen
+                    // Remove current from queue
+                    setAchievementQueue(prev => prev.slice(1));
+
+                    // If no more achievements, go to completed screen
+                    if (achievementQueue.length <= 1) {
+                        setStatus("completed");
+                        triggerConfetti();
+                    }
                 }}
             />
 
