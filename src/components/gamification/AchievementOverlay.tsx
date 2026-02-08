@@ -90,15 +90,17 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                         filter: ["drop-shadow(0 0 30px rgba(220,38,38,0.5))", "drop-shadow(0 0 80px rgba(220,38,38,1))", "drop-shadow(0 0 30px rgba(220,38,38,0.5))"]
                                     }}
                                     transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-                                    className="w-full h-64 md:h-80 my-8 relative flex items-center justify-center p-10 bg-black/50 rounded-full border border-red-900/50 backdrop-blur-md mx-auto aspect-square max-w-[320px]"
+                                    className="w-full h-64 md:h-80 my-8 relative flex items-center justify-center bg-black/50 rounded-2xl border border-red-900/50 backdrop-blur-md mx-auto aspect-square max-w-[320px] overflow-hidden"
                                 >
-                                    <IconComponent
-                                        className="w-full h-full text-red-600 drop-shadow-[0_0_30px_rgba(0,0,0,1)]"
-                                        weight="duotone"
+                                    {/* KUMA TROPHY IMAGE */}
+                                    <img
+                                        src="/images/kuma-hora-trofeo.jpg"
+                                        alt="Espíritu del Oso"
+                                        className="w-full h-full object-cover opacity-90 mix-blend-hard-light"
                                     />
-                                    {/* Eyes glowing effect */}
-                                    <div className="absolute top-1/2 left-1/3 w-4 h-4 bg-red-500 rounded-full blur-md animate-pulse" />
-                                    <div className="absolute top-1/2 right-1/3 w-4 h-4 bg-red-500 rounded-full blur-md animate-pulse" />
+
+                                    {/* Overlay Gradient for drama */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-red-900/60 via-transparent to-transparent" />
                                 </motion.div>
 
                                 <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-widest uppercase drop-shadow-2xl font-mono">
