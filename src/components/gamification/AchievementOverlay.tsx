@@ -29,6 +29,78 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
     // Dynamic Icon
     const IconComponent = (PhosphorIcons as any)[trophy.icon] || PhosphorIcons.Trophy;
 
+    // Custom Animation for "Primer Entrenamiento"
+    if (trophy.slug === "primer-entrenamiento") {
+        return (
+            <AnimatePresence>
+                {show && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, transition: { duration: 1 } }}
+                        onClick={onClose}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/98 cursor-pointer overflow-hidden"
+                    >
+                        {/* GOLD/BLUE THEME BACKGROUND */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] bg-gradient-radial from-yellow-600/20 via-blue-950 to-black animate-spin-slow opacity-60" />
+                            <motion.div
+                                animate={{ opacity: [0.1, 0.3, 0.1] }}
+                                transition={{ duration: 4, repeat: Infinity }}
+                                className="absolute inset-0 bg-[url('/images/noise.png')] opacity-10 mix-blend-overlay"
+                            />
+                        </div>
+
+                        <Confetti width={width} height={height} numberOfPieces={300} recycle={true} gravity={0.2} colors={['#fbbf24', '#2563eb', '#ffffff']} />
+
+                        <div className="relative text-center p-8 max-w-5xl w-full z-20">
+                            <motion.div
+                                initial={{ scale: 3, opacity: 0, filter: "blur(20px)" }}
+                                animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                className="relative z-10"
+                            >
+                                <h1 className="text-5xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-yellow-300 mb-6 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(234,179,8,0.8)]">
+                                    ¡EL CAMINO COMIENZA!
+                                </h1>
+
+                                <motion.div
+                                    animate={{
+                                        scale: [1, 1.05, 1],
+                                        filter: ["drop-shadow(0 0 30px rgba(251,191,36,0.3))", "drop-shadow(0 0 60px rgba(251,191,36,0.6))", "drop-shadow(0 0 30px rgba(251,191,36,0.3))"]
+                                    }}
+                                    transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+                                    className="w-full h-64 md:h-80 my-8 relative flex items-center justify-center bg-black/50 rounded-2xl border border-yellow-500/30 backdrop-blur-md mx-auto aspect-square max-w-[320px] overflow-hidden shadow-2xl"
+                                >
+                                    {/* KUMA TROPHY IMAGE */}
+                                    <img
+                                        src="/images/kuma-logro-primer-entreno.jpg"
+                                        alt="Primer Entrenamiento"
+                                        className="w-full h-full object-cover opacity-90"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
+                                </motion.div>
+
+                                <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-widest uppercase drop-shadow-2xl font-mono">
+                                    {trophy.name}
+                                </h2>
+
+                                <motion.p
+                                    initial={{ opacity: 0, y: 50 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 1 }}
+                                    className="text-xl md:text-2xl text-yellow-100 max-w-2xl mx-auto font-bold italics leading-relaxed"
+                                >
+                                    {trophy.description}
+                                </motion.p>
+                            </motion.div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        );
+    }
+
     // Custom Animation for "Spirit of the Bear" (Kuma Revenant)
     if (trophy.slug === "kuma-revenant") {
         return (
