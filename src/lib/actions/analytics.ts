@@ -128,3 +128,16 @@ export async function getDetailedAnalytics(from?: Date, to?: Date) {
         return { success: false, data: [], stats: { total: 0, unique: 0 } };
     }
 }
+
+export async function deleteAllVisits() {
+    try {
+        await connectDB();
+        await Visit.deleteMany({});
+        revalidatePath("/admin/reports");
+        revalidatePath("/admin/reports/visits");
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting all visits:", error);
+        return { success: false, error: "Failed to delete visits" };
+    }
+}

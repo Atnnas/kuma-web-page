@@ -9,6 +9,7 @@ import { getRecentImages } from "@/lib/actions/news"; // Reuse this action
 import { getOrganizers } from "@/lib/actions/organizers";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, MapPin, Type, Image as ImageIcon, Globe, User, Link as LinkIcon, Info, Loader2, Clock, Check, Upload, Minus } from "lucide-react";
+import { NeonDatePicker as NeonDP } from "@/components/ui/NeonDatePicker";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { format } from "date-fns";
 import { createPortal } from "react-dom";
@@ -161,78 +162,122 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
                     </div>
                 </div>
 
-                {/* Dates */}
+                {/* Dates & Times */}
                 <div className="space-y-4">
-                    <h3 className="text-sm font-bold text-red-500 uppercase tracking-widest border-b border-zinc-800 pb-2 mb-4">Fechas</h3>
+                    <h3 className="text-sm font-bold text-red-500 uppercase tracking-widest border-b border-zinc-800 pb-2 mb-4">Horario del Evento</h3>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
+                        {/* Date Range Picker - Spans full width on mobile, sharing space on desktop if needed, or full row */}
+                        <div className="hidden md:block md:col-span-2 space-y-2">
                             <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                <Calendar className="w-3 h-3" /> Inicio
+                                <Calendar className="w-3 h-3" /> Rango de Fechas
                             </label>
-                            <div className="flex flex-col md:flex-row gap-3">
-                                <div className="flex-1">
-                                    <DatePicker
-                                        date={formData.startDate as Date}
-                                        setDate={(date) => {
-                                            if (!date) return;
-                                            const newDate = new Date(formData.startDate as Date);
-                                            newDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
-                                            setFormData(prev => ({ ...prev, startDate: newDate }));
-                                        }}
-                                        placeholder="Fecha Inicio"
-                                        className="w-full"
-                                    />
-                                </div>
-                                <div className="w-full md:w-32 relative">
-                                    <input
-                                        type="time"
-                                        value={formData.startDate && !isNaN(new Date(formData.startDate).getTime()) ? format(new Date(formData.startDate), 'HH:mm') : "00:00"}
-                                        onChange={(e) => {
-                                            const [hours, minutes] = e.target.value.split(':').map(Number);
-                                            const newDate = new Date(formData.startDate as Date);
-                                            newDate.setHours(hours);
-                                            newDate.setMinutes(minutes);
-                                            setFormData(prev => ({ ...prev, startDate: newDate }));
-                                        }}
-                                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-red-500 focus:outline-none transition-colors text-center"
-                                    />
-                                    <Clock className="w-4 h-4 text-zinc-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                                </div>
+                            <NeonDP
+                                date={{
+                                    from: formData.startDate ? new Date(formData.startDate) : undefined,
+                                    to: formData.endDate ? new Date(formData.endDate) : undefined
+                                }}
+                                setDate={(range: { from: Date | undefined; to?: Date | undefined } | undefined) => {
+                                    if (!range?.from) return;
+
+                                    const newStart = new Date(formData.startDate as Date);
+                                    newStart.setFullYear(range.from.getFullYear(), range.from.getMonth(), range.from.getDate());
+
+                                    // If range is selected use 'to', otherwise use 'from' as end date (single day event)
+                                    // If 'to' is undefined in range, it means only start date selected so far.
+                                    // We can keep 'endDate' as is, or sync it. 
+                                    // Let's rely on range.to if valid, else keep current endDate day aligned with start if logical?
+                                    // Actually, standard behavior: if range.to is defined, use it. If not, use range.from.
+                                    const targetEndDate = range.to || range.from;
+                                    const newEnd = new Date(formData.endDate as Date);
+                                    newEnd.setFullYear(targetEndDate.getFullYear(), targetEndDate.getMonth(), targetEndDate.getDate());
+
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        startDate: newStart,
+                                        endDate: newEnd
+                                    }));
+                                }}
+                            />
+                        </div>
+
+                        {/* Mobile Individual Pickers */}
+                        <div className="md:hidden space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                                    <Calendar className="w-3 h-3" /> Fecha Inicio
+                                </label>
+                                <DatePicker
+                                    date={formData.startDate as Date}
+                                    setDate={(date) => {
+                                        if (!date) return;
+                                        const newDate = new Date(formData.startDate as Date);
+                                        newDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+                                        setFormData(prev => ({ ...prev, startDate: newDate }));
+                                    }}
+                                    placeholder="Fecha Inicio"
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                                    <Calendar className="w-3 h-3" /> Fecha Fin
+                                </label>
+                                <DatePicker
+                                    date={formData.endDate as Date}
+                                    setDate={(date) => {
+                                        if (!date) return;
+                                        const newDate = new Date(formData.endDate as Date);
+                                        newDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+                                        setFormData(prev => ({ ...prev, endDate: newDate }));
+                                    }}
+                                    placeholder="Fecha Fin"
+                                    className="w-full"
+                                />
                             </div>
                         </div>
+
+                        {/* Start Time */}
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                <Calendar className="w-3 h-3" /> Fin
+                                <Clock className="w-3 h-3" /> Hora Inicio
                             </label>
-                            <div className="flex flex-col md:flex-row gap-3">
-                                <div className="flex-1">
-                                    <DatePicker
-                                        date={formData.endDate as Date}
-                                        setDate={(date) => {
-                                            if (!date) return;
-                                            const newDate = new Date(formData.endDate as Date);
-                                            newDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
-                                            setFormData(prev => ({ ...prev, endDate: newDate }));
-                                        }}
-                                        placeholder="Fecha Fin"
-                                        className="w-full"
-                                    />
-                                </div>
-                                <div className="w-full md:w-32 relative">
-                                    <input
-                                        type="time"
-                                        value={formData.endDate && !isNaN(new Date(formData.endDate).getTime()) ? format(new Date(formData.endDate), 'HH:mm') : "00:00"}
-                                        onChange={(e) => {
-                                            const [hours, minutes] = e.target.value.split(':').map(Number);
-                                            const newDate = new Date(formData.endDate as Date);
-                                            newDate.setHours(hours);
-                                            newDate.setMinutes(minutes);
-                                            setFormData(prev => ({ ...prev, endDate: newDate }));
-                                        }}
-                                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-red-500 focus:outline-none transition-colors text-center"
-                                    />
-                                    <Clock className="w-4 h-4 text-zinc-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                                </div>
+                            <div className="relative">
+                                <input
+                                    type="time"
+                                    value={formData.startDate && !isNaN(new Date(formData.startDate).getTime()) ? format(new Date(formData.startDate), 'HH:mm') : "00:00"}
+                                    onChange={(e) => {
+                                        const [hours, minutes] = e.target.value.split(':').map(Number);
+                                        const newDate = new Date(formData.startDate as Date);
+                                        newDate.setHours(hours);
+                                        newDate.setMinutes(minutes);
+                                        setFormData(prev => ({ ...prev, startDate: newDate }));
+                                    }}
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-red-500 focus:outline-none transition-colors text-center font-mono text-lg"
+                                />
+                                <Clock className="w-4 h-4 text-zinc-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            </div>
+                        </div>
+
+                        {/* End Time */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                                <Clock className="w-3 h-3" /> Hora Fin
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="time"
+                                    value={formData.endDate && !isNaN(new Date(formData.endDate).getTime()) ? format(new Date(formData.endDate), 'HH:mm') : "00:00"}
+                                    onChange={(e) => {
+                                        const [hours, minutes] = e.target.value.split(':').map(Number);
+                                        const newDate = new Date(formData.endDate as Date);
+                                        newDate.setHours(hours);
+                                        newDate.setMinutes(minutes);
+                                        setFormData(prev => ({ ...prev, endDate: newDate }));
+                                    }}
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-red-500 focus:outline-none transition-colors text-center font-mono text-lg"
+                                />
+                                <Clock className="w-4 h-4 text-zinc-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                             </div>
                         </div>
                     </div>
