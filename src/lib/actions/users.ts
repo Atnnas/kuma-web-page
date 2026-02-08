@@ -59,3 +59,18 @@ export async function updateUser(userId: string, data: { name: string; email: st
         return { success: false, error: "Failed to update user" };
     }
 }
+
+export async function deleteUser(userId: string) {
+    try {
+        await requireSuperAdmin();
+        await connectDB();
+
+        await User.findByIdAndDelete(userId);
+        revalidatePath("/admin/users");
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        return { success: false, error: "Failed to delete user" };
+    }
+}

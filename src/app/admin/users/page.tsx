@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getAllUsers, updateUser } from "@/lib/actions/users";
+import { getAllUsers, updateUser, deleteUser } from "@/lib/actions/users";
 import { SwipeBackWrapper } from "@/components/admin/AdminNavigation";
 import { UserEditModal } from "@/components/admin/UserEditModal";
 import { Button } from "@/components/ui/Button";
-import { Loader2, Shield, ShieldAlert, BadgeCheck, Search, Pencil, UserCog } from "lucide-react";
+import { Loader2, Shield, ShieldAlert, BadgeCheck, Search, Pencil, UserCog, Trash2 } from "lucide-react";
 import Image from "next/image";
 
 export default function AdminUsersPage() {
@@ -34,6 +34,19 @@ export default function AdminUsersPage() {
         await updateUser(userId, data);
         setEditingUser(null);
         fetchData(); // Sync to be safe
+    };
+
+    const handleDeleteUser = async (userId: string, userName: string) => {
+        if (window.confirm(`¿Estás SEGURO de que quieres eliminar a ${userName}? Esta acción no se puede deshacer.`)) {
+            // Optimistic update
+            setUsers(prev => prev.filter(u => u._id !== userId));
+
+            const res = await deleteUser(userId);
+            if (!res.success) {
+                alert("Error al eliminar usuario");
+                fetchData(); // Revert on error
+            }
+        }
     };
 
     const filteredUsers = users.filter(user =>
@@ -115,13 +128,24 @@ export default function AdminUsersPage() {
                                                     </div>
                                                 </td>
                                                 <td className="p-4 text-right">
-                                                    <Button
-                                                        onClick={() => setEditingUser(user)}
-                                                        size="sm"
-                                                        className="bg-zinc-800 hover:bg-white hover:text-black text-white text-xs font-bold uppercase tracking-wider"
-                                                    >
-                                                        <Pencil className="w-3 h-3 mr-2" /> Editar
-                                                    </Button>
+                                                    <div className="flex justify-end gap-2">
+                                                        <Button
+                                                            onClick={() => setEditingUser(user)}
+                                                            size="sm"
+                                                            className="h-8 w-8 p-0 bg-zinc-800 hover:bg-white hover:text-black text-white rounded-lg flex items-center justify-center transition-colors shadow-lg shadow-zinc-900/50"
+                                                            title="Editar"
+                                                        >
+                                                            <Pencil className="w-4 h-4" />
+                                                        </Button>
+                                                        <Button
+                                                            onClick={() => handleDeleteUser(user._id, user.name)}
+                                                            size="sm"
+                                                            className="h-8 w-8 p-0 bg-red-900/20 hover:bg-red-600 text-red-500 hover:text-white border border-red-900/50 rounded-lg flex items-center justify-center transition-colors shadow-lg shadow-red-900/20"
+                                                            title="Eliminar"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
@@ -175,12 +199,20 @@ export default function AdminUsersPage() {
                                             <span className="text-zinc-300 truncate max-w-[200px]">{user.email}</span>
                                         </div>
 
-                                        <Button
-                                            onClick={() => setEditingUser(user)}
-                                            className="w-full bg-zinc-800 hover:bg-white hover:text-black text-white py-6 text-xs font-bold uppercase tracking-wider rounded-lg"
-                                        >
-                                            <Pencil className="w-4 h-4 mr-2" /> Editar Perfil
-                                        </Button>
+                                        <div className="flex gap-3">
+                                            <Button
+                                                onClick={() => setEditingUser(user)}
+                                                className="flex-1 bg-zinc-800 hover:bg-white hover:text-black text-white py-6 px-4 rounded-lg flex items-center justify-center transition-colors"
+                                            >
+                                                <Pencil className="w-5 h-5" />
+                                            </Button>
+                                            <Button
+                                                onClick={() => handleDeleteUser(user._id, user.name)}
+                                                className="flex-1 bg-red-900/20 hover:bg-red-600 text-red-500 hover:text-white py-6 px-4 rounded-lg border border-red-900/50 flex items-center justify-center transition-colors"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -199,6 +231,6 @@ export default function AdminUsersPage() {
                 )}
 
             </div>
-        </SwipeBackWrapper>
+        </SwipeBackWrapper >
     );
 }
