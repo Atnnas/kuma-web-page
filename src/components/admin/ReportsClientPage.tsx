@@ -158,11 +158,11 @@ export function ReportsClientPage() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 20 }}
-                        className="rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl overflow-hidden shadow-2xl"
+                        className="rounded-3xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl overflow-hidden shadow-xl"
                     >
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left text-base text-zinc-200 border-collapse">
                             <thead>
-                                <tr className="border-b border-white/10 bg-white/5 text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-black">
+                                <tr className="border-b border-white/10 bg-zinc-900/80 text-xs uppercase tracking-widest text-zinc-300 font-black">
                                     <th className="p-6">Reporte</th>
                                     <th className="p-6 hidden md:table-cell">Descripción</th>
                                     <th className="p-6 text-right">Acción</th>
@@ -175,23 +175,23 @@ export function ReportsClientPage() {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.05 }}
-                                        className="group hover:bg-white/[0.03] transition-colors"
+                                        className="group hover:bg-zinc-900/80 transition-colors border-b border-white/5 last:border-none"
                                     >
                                         <td className="p-6">
                                             <div className="flex items-center gap-4">
-                                                <div className={`w-10 h-10 rounded-lg ${report.bgClass} flex items-center justify-center ${report.colorClass}`}>
-                                                    <report.icon className="w-5 h-5" weight="duotone" />
+                                                <div className={`w-12 h-12 rounded-xl ${report.bgClass} flex items-center justify-center ${report.colorClass} border border-white/5 group-hover:scale-110 transition-transform`}>
+                                                    <report.icon className="w-6 h-6" weight="duotone" />
                                                 </div>
-                                                <span className="font-bold text-white uppercase tracking-tight">{report.title}</span>
+                                                <span className="font-bold text-white uppercase tracking-tight text-lg group-hover:text-cyan-400 transition-colors">{report.title}</span>
                                             </div>
                                         </td>
-                                        <td className="p-6 hidden md:table-cell text-sm text-zinc-500">
+                                        <td className="p-6 hidden md:table-cell text-sm text-zinc-400 font-medium">
                                             {report.description}
                                         </td>
                                         <td className="p-6 text-right">
                                             <Link href={report.href}>
-                                                <button className="bg-zinc-800 hover:bg-white text-white hover:text-black border border-white/10 hover:border-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 ml-auto">
-                                                    Ver
+                                                <button className="bg-zinc-900 hover:bg-white text-zinc-300 hover:text-black border border-white/10 hover:border-white px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ml-auto shadow-lg shadow-black/20 group-hover:shadow-cyan-500/20">
+                                                    Ver Reporte
                                                     <CaretRight className="w-4 h-4" weight="bold" />
                                                 </button>
                                             </Link>
