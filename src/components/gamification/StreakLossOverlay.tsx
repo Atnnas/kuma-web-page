@@ -55,17 +55,16 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                         ))}
                     </div>
 
-                    <div className="relative text-center p-4 md:p-12 max-w-5xl w-full flex flex-col items-center justify-center min-h-[80vh]">
+                    <div className="relative text-center max-w-5xl w-full flex flex-col items-center justify-center">
                         <motion.div
                             initial={{ scale: 1.5, opacity: 0, filter: "blur(10px)" }}
                             animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
                             transition={{ duration: 1, ease: "easeOut" }}
                             className="relative z-10 flex flex-col items-center justify-center w-full"
                         >
-                            <h1 className="text-6xl md:text-9xl font-black text-zinc-600 mb-4 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,1)]">
+                            <h1 className="text-6xl md:text-9xl font-black text-zinc-600 mb-6 md:mb-10 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,1)]">
                                 RACHA PERDIDA
                             </h1>
-
                             <motion.div
                                 animate={{
                                     y: [0, 5, 0],
@@ -108,7 +107,7 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.5 }}
-                                className="text-3xl md:text-6xl font-black text-zinc-400 mb-8 tracking-widest uppercase"
+                                className="text-3xl md:text-6xl font-black text-zinc-400 mb-10 md:mb-14 tracking-widest uppercase"
                             >
                                 EL FUEGO SE HA EXTINGUIDO
                             </motion.h2>
@@ -117,7 +116,7 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 1 }}
-                                className="text-xl md:text-3xl text-zinc-500 max-w-3xl mx-auto font-bold italics leading-relaxed border-t border-zinc-900 pt-10"
+                                className="text-xl md:text-3xl text-zinc-500 max-w-3xl mx-auto font-bold italics leading-relaxed border-t border-zinc-900 pt-10 px-4"
                             >
                                 Ayer no hubo Dojo. Tu constancia ha fallado y la racha ha vuelto a cero.
                                 <span className="block mt-6 text-zinc-300">¿Dejarás que tu legado muera aquí o volverás a encender la llama hoy?</span>
