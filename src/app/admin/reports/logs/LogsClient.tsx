@@ -15,7 +15,9 @@ import {
     Funnel,
     Trash,
     CheckSquare,
-    Square
+    Square,
+    WarningOctagon,
+    X
 } from "@phosphor-icons/react/dist/ssr";
 import { NeonDatePicker } from "@/components/ui/NeonDatePicker";
 import { useState, useEffect } from "react";
@@ -47,6 +49,7 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
     const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     const handleImageError = (logId: string) => {
         setImageErrors(prev => ({ ...prev, [logId]: true }));
@@ -66,22 +69,18 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
         );
     };
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
         if (selectedIds.length === 0) return;
+        setShowDeleteConfirm(true);
+    };
 
-        const confirmMessage = selectedIds.length === 1
-            ? "¿Estás seguro de que deseas eliminar este registro?"
-            : `¿Estás seguro de que deseas eliminar ${selectedIds.length} registros?`;
-
-        if (!window.confirm(confirmMessage)) return;
-
+    const confirmDelete = async () => {
         setIsDeleting(true);
+        setShowDeleteConfirm(false);
         try {
             const result = await deleteRoutineLogs(selectedIds);
             if (result.success) {
                 setSelectedIds([]);
-                // No need to manual refresh as revalidatePath handles it, 
-                // but router.refresh() can force client update if needed in some setups
                 router.refresh();
             } else {
                 alert("Error al eliminar: " + result.error);
@@ -329,6 +328,65 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
                             <span>{isDeleting ? "Eliminando..." : "Eliminar Registros"}</span>
                         </button>
                     </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Custom Delete Confirmation Modal */}
+            <AnimatePresence>
+                {showDeleteConfirm && (
+                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowDeleteConfirm(false)}
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="relative w-full max-w-md bg-zinc-900 border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden p-8"
+                        >
+                            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-500/0 via-red-500 to-red-500/0 opacity-50" />
+
+                            <div className="flex flex-col items-center text-center space-y-6">
+                                <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20 shadow-[0_0_30px_rgba(239,68,68,0.1)]">
+                                    <WarningOctagon className="w-10 h-10 text-red-500" weight="duotone" />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <h3 className="text-2xl font-black text-white uppercase tracking-tight">¿Confirmar Eliminación?</h3>
+                                    <p className="text-zinc-400 font-medium">
+                                        Estas a punto de eliminar <span className="text-white font-bold">{selectedIds.length}</span> {selectedIds.length === 1 ? "registro" : "registros"}. Esta acción no se puede deshacer.
+                                    </p>
+                                </div>
+
+                                <div className="flex gap-4 w-full pt-4">
+                                    <button
+                                        onClick={() => setShowDeleteConfirm(false)}
+                                        className="flex-1 px-6 py-4 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold tracking-widest uppercase text-xs transition-colors border border-white/5"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        onClick={confirmDelete}
+                                        disabled={isDeleting}
+                                        className="flex-1 px-6 py-4 rounded-2xl bg-red-600 text-white font-black tracking-widest uppercase text-xs shadow-[0_6px_0_0_#991b1b] active:shadow-none active:translate-y-[6px] transition-all"
+                                    >
+                                        {isDeleting ? "Eliminando..." : "Eliminar"}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => setShowDeleteConfirm(false)}
+                                className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-colors"
+                            >
+                                <X className="w-5 h-5" weight="bold" />
+                            </button>
+                        </motion.div>
+                    </div>
                 )}
             </AnimatePresence>
         </div>
