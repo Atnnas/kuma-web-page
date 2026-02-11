@@ -99,17 +99,20 @@ export default function RecompensasPage() {
                         </div>
                     ))}
 
-                    {/* STREAK LOSS TEST CASE */}
-                    <div className="bg-zinc-950 border-2 border-dashed border-red-900/30 rounded-xl p-6 flex flex-col items-center gap-4 hover:bg-red-950/20 transition-colors group text-center">
-                        <span className="text-xs uppercase tracking-widest text-red-500 font-black italic">CASO DE DOLOR</span>
-                        <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center border border-red-950 shadow-inner group-hover:bg-red-900/10 transition-colors">
-                            <Skull className="text-zinc-600 group-hover:text-red-600 transition-colors" size={32} weight="fill" />
+                    {/* STREAK LOSS TEST CASE - Standardized to match above */}
+                    <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6 flex flex-col items-center gap-4 hover:bg-white/5 transition-colors group">
+                        <span className="text-xs uppercase tracking-widest text-red-500 font-bold">CASO DE DOLOR</span>
+
+                        {/* Visual Preview for Loss (Grey flame) */}
+                        <div className="scale-150 transform p-4 grayscale">
+                            <StreakFlame overrideStreak={0} />
                         </div>
+
                         <button
                             onClick={() => setShowLossPreview(true)}
-                            className="mt-2 px-4 py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-red-600/30 transition-all active:scale-95"
+                            className="mt-2 text-xs font-bold text-red-500 uppercase tracking-wider hover:text-red-400 flex items-center gap-2"
                         >
-                            PROBAR PÉRDIDA
+                            <Play weight="fill" /> Probar
                         </button>
                     </div>
                 </div>

@@ -64,9 +64,8 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, transition: { duration: 1 } }}
                     onClick={onClose} // Close on click/tap
-                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/98 cursor-pointer"
+                    className="fixed inset-0 z-[110] flex flex-col items-center justify-center bg-zinc-950/98 cursor-pointer overflow-hidden safe-area-inset"
                 >
-                    {/* ... content ... */}
                     {/* Radiant Background Effects */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] bg-gradient-radial ${streak === 60 ? "from-cyan-500/20" : "from-orange-500/20"} via-transparent to-transparent animate-spin-slow opacity-50`} />
@@ -75,14 +74,14 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
 
                     <Confetti width={width} height={height} numberOfPieces={500} recycle={true} gravity={0.2} colors={confettiColors} />
 
-                    <div className="relative text-center p-8 max-w-4xl w-full">
+                    <div className="relative text-center max-w-5xl w-full flex flex-col items-center justify-center">
                         <motion.div
                             initial={{ scale: 0.2, rotate: -720, opacity: 0 }}
                             animate={{ scale: 1, rotate: 0, opacity: 1 }}
                             transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                            className="relative z-10"
+                            className="relative z-10 flex flex-col items-center justify-center w-full"
                         >
-                            <h1 className={`text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r ${gradientText} mb-8 uppercase italic tracking-tighter shadow-current animate-pulse`} style={{ textShadow: `0 0 30px ${glowColor}` }}>
+                            <h1 className={`text-6xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r ${gradientText} mb-6 md:mb-10 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(255,165,0,0.3)] animate-pulse`} style={{ textShadow: `0 0 30px ${glowColor}` }}>
                                 {title}
                             </h1>
 
@@ -93,18 +92,18 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                                     filter: [`drop-shadow(0 0 20px ${glowColor})`, `drop-shadow(0 0 60px ${glowColor})`, `drop-shadow(0 0 20px ${glowColor})`]
                                 }}
                                 transition={{ duration: 2, repeat: Infinity }}
-                                className="w-full h-48 md:h-64 my-8 relative flex items-center justify-center"
+                                className="w-full h-64 md:h-80 mb-12 relative flex items-center justify-center"
                             >
                                 <Fire
                                     className={`w-48 h-48 md:w-64 md:h-64 drop-shadow-[0_0_50px_rgba(255,255,255,0.8)] ${fireColor}`}
                                     weight="fill"
                                 />
-                                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-8 text-6xl md:text-8xl font-black text-white drop-shadow-md">
+                                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-8 text-7xl md:text-9xl font-black text-white drop-shadow-2xl">
                                     {streak}
                                 </span>
                             </motion.div>
 
-                            <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-widest uppercase drop-shadow-2xl">
+                            <h2 className="text-3xl md:text-6xl font-black text-white mb-10 md:mb-14 tracking-widest uppercase drop-shadow-2xl">
                                 {subtitle}
                             </h2>
 
@@ -112,10 +111,24 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 1 }}
-                                className="text-2xl text-zinc-200 max-w-2xl mx-auto font-bold"
+                                className="text-xl md:text-3xl text-zinc-200 max-w-3xl mx-auto font-bold italics leading-relaxed border-t border-white/10 pt-10 px-4"
                             >
                                 {message}
                             </motion.p>
+
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 2 }}
+                                className="mt-16"
+                            >
+                                <button
+                                    onClick={onClose}
+                                    className="px-16 py-5 rounded-full bg-white text-black font-black uppercase tracking-widest hover:bg-zinc-200 transition-all active:scale-95 text-lg shadow-[0_0_30px_rgba(255,255,255,0.3)]"
+                                >
+                                    ¡CONTINUAR!
+                                </button>
+                            </motion.div>
                         </motion.div>
                     </div>
                 </motion.div>
