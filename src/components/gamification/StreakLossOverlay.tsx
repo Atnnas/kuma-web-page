@@ -26,7 +26,7 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, transition: { duration: 1.5 } }}
-                    className="fixed inset-0 z-[110] flex flex-col items-center justify-center bg-zinc-950/98 cursor-pointer overflow-hidden safe-area-inset"
+                    className="fixed inset-0 z-[110] flex flex-col items-center justify-center bg-zinc-950/98 cursor-pointer overflow-hidden p-6 md:p-12"
                     onClick={onClose}
                 >
                     {/* ASH / SMOKE BACKGROUND EFFECTS */}
@@ -62,9 +62,10 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                             transition={{ duration: 1, ease: "easeOut" }}
                             className="relative z-10 flex flex-col items-center justify-center w-full"
                         >
-                            <h1 className="text-6xl md:text-9xl font-black text-zinc-600 mb-6 md:mb-10 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,1)]">
+                            <h1 className="text-6xl md:text-9xl font-black text-zinc-600 mb-6 md:mb-10 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,1)] pr-2 md:pr-4">
                                 RACHA PERDIDA
                             </h1>
+
                             <motion.div
                                 animate={{
                                     y: [0, 5, 0],
@@ -130,7 +131,7 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                             >
                                 <button
                                     onClick={onClose}
-                                    className="px-12 py-4 rounded-full bg-zinc-800 text-zinc-200 font-black uppercase tracking-widest hover:bg-zinc-700 transition-all border border-zinc-700 active:scale-95"
+                                    className="px-16 py-5 rounded-full bg-zinc-800 text-zinc-200 font-black uppercase tracking-widest hover:bg-zinc-700 transition-all border border-zinc-700 active:scale-95 text-lg"
                                 >
                                     VOLVER A EMPEZAR
                                 </button>

@@ -15,11 +15,8 @@ interface StreakCelebrationOverlayProps {
 
 export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebrationOverlayProps) {
     const { width, height } = useWindowSize();
-    useEffect(() => {
-        // Audio removed as per user request
-    }, [show]);
 
-    // Use Portal to escape parent styling (like display: none in Navbar)
+    // Use Portal to escape parent styling 
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
         setMounted(true);
@@ -64,7 +61,7 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, transition: { duration: 1 } }}
                     onClick={onClose} // Close on click/tap
-                    className="fixed inset-0 z-[110] flex flex-col items-center justify-center bg-zinc-950/98 cursor-pointer overflow-hidden safe-area-inset"
+                    className="fixed inset-0 z-[110] flex flex-col items-center justify-center bg-zinc-950/98 cursor-pointer overflow-hidden p-6 md:p-12"
                 >
                     {/* Radiant Background Effects */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -81,7 +78,7 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                             transition={{ type: "spring", stiffness: 200, damping: 20 }}
                             className="relative z-10 flex flex-col items-center justify-center w-full"
                         >
-                            <h1 className={`text-6xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r ${gradientText} mb-6 md:mb-10 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(255,165,0,0.3)] animate-pulse`} style={{ textShadow: `0 0 30px ${glowColor}` }}>
+                            <h1 className={`text-6xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r ${gradientText} mb-6 md:mb-10 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(255,165,0,0.3)] animate-pulse pr-2 md:pr-4`} style={{ textShadow: `0 0 30px ${glowColor}` }}>
                                 {title}
                             </h1>
 
