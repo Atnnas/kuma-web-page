@@ -108,34 +108,10 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.5 }}
-                                className="text-3xl md:text-6xl font-black text-zinc-400 mb-10 md:mb-14 tracking-widest uppercase"
+                                className="text-3xl md:text-6xl font-black text-zinc-400 tracking-widest uppercase"
                             >
                                 EL FUEGO SE HA EXTINGUIDO
                             </motion.h2>
-
-                            <motion.p
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 1 }}
-                                className="text-xl md:text-3xl text-zinc-500 max-w-3xl mx-auto font-bold italics leading-relaxed border-t border-zinc-900 pt-10 px-4"
-                            >
-                                Ayer no hubo Dojo. Tu constancia ha fallado y la racha ha vuelto a cero.
-                                <span className="block mt-6 text-zinc-300">¿Dejarás que tu legado muera aquí o volverás a encender la llama hoy?</span>
-                            </motion.p>
-
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 2 }}
-                                className="mt-16"
-                            >
-                                <button
-                                    onClick={onClose}
-                                    className="px-16 py-5 rounded-full bg-zinc-800 text-zinc-200 font-black uppercase tracking-widest hover:bg-zinc-700 transition-all border border-zinc-700 active:scale-95 text-lg"
-                                >
-                                    VOLVER A EMPEZAR
-                                </button>
-                            </motion.div>
                         </motion.div>
                     </div>
                 </motion.div>
