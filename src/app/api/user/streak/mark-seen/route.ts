@@ -20,7 +20,15 @@ export async function POST(req: NextRequest) {
         }
 
         // Mark as shown today
-        user.lastStreakShownDate = new Date();
+        const body = await req.json().catch(() => ({}));
+        const isLoss = body.type === "loss" || body.isLoss === true;
+
+        if (isLoss) {
+            user.lastStreakLossShownDate = new Date();
+        } else {
+            user.lastStreakShownDate = new Date();
+        }
+
         await user.save();
 
         return NextResponse.json({ success: true });

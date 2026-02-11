@@ -3,6 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { motion, AnimatePresence } from "framer-motion";
 import {
     CalendarBlank,
     User as UserIcon,
@@ -11,10 +12,14 @@ import {
     Timer,
     TrendUp,
     CaretDown,
-    Funnel
+    Funnel,
+    Trash,
+    CheckSquare,
+    Square
 } from "@phosphor-icons/react/dist/ssr";
 import { NeonDatePicker } from "@/components/ui/NeonDatePicker";
 import { useState, useEffect } from "react";
+import { deleteRoutineLogs } from "@/lib/actions/routine-logs";
 
 interface LogsClientProps {
     initialLogs: any[];
@@ -39,6 +44,55 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
     });
 
     const [selectedUser, setSelectedUser] = useState(searchParams.get("userId") || "");
+    const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleImageError = (logId: string) => {
+        setImageErrors(prev => ({ ...prev, [logId]: true }));
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.length === initialLogs.length) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(initialLogs.map(log => log._id));
+        }
+    };
+
+    const toggleSelect = (id: string) => {
+        setSelectedIds(prev =>
+            prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+        );
+    };
+
+    const handleDelete = async () => {
+        if (selectedIds.length === 0) return;
+
+        const confirmMessage = selectedIds.length === 1
+            ? "¿Estás seguro de que deseas eliminar este registro?"
+            : `¿Estás seguro de que deseas eliminar ${selectedIds.length} registros?`;
+
+        if (!window.confirm(confirmMessage)) return;
+
+        setIsDeleting(true);
+        try {
+            const result = await deleteRoutineLogs(selectedIds);
+            if (result.success) {
+                setSelectedIds([]);
+                // No need to manual refresh as revalidatePath handles it, 
+                // but router.refresh() can force client update if needed in some setups
+                router.refresh();
+            } else {
+                alert("Error al eliminar: " + result.error);
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error inesperado al eliminar.");
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     // Update URL when filters change
     useEffect(() => {
@@ -120,6 +174,18 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
                     <table className="w-full text-left text-base text-zinc-200 border-collapse">
                         <thead>
                             <tr className="border-b border-white/10 bg-zinc-900/80 text-xs uppercase tracking-widest text-zinc-300 font-black">
+                                <th className="p-6 w-10">
+                                    <button
+                                        onClick={toggleSelectAll}
+                                        className="p-1 hover:text-cyan-400 transition-colors"
+                                    >
+                                        {selectedIds.length === initialLogs.length && initialLogs.length > 0 ? (
+                                            <CheckSquare weight="fill" className="w-5 h-5 text-cyan-500" />
+                                        ) : (
+                                            <Square weight="bold" className="w-5 h-5" />
+                                        )}
+                                    </button>
+                                </th>
                                 <th className="p-6">Usuario</th>
                                 <th className="p-6">Rutina</th>
                                 <th className="p-6">Fecha y Hora</th>
@@ -144,14 +210,33 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
 
                                 // Color logic based on completion
                                 const isCompleted = log.completed;
+                                const isSelected = selectedIds.includes(log._id);
 
                                 return (
-                                    <tr key={log._id.toString()} className="group hover:bg-zinc-900/80 transition-colors border-b border-white/5 last:border-none">
+                                    <tr key={log._id.toString()} className={`group hover:bg-zinc-900/80 transition-colors border-b border-white/5 last:border-none ${isSelected ? 'bg-cyan-500/5' : ''}`}>
+                                        <td className="p-6">
+                                            <button
+                                                onClick={() => toggleSelect(log._id)}
+                                                className="p-1 hover:text-cyan-400 transition-colors"
+                                            >
+                                                {isSelected ? (
+                                                    <CheckSquare weight="fill" className="w-5 h-5 text-cyan-500" />
+                                                ) : (
+                                                    <Square weight="bold" className="w-5 h-5 text-zinc-700" />
+                                                )}
+                                            </button>
+                                        </td>
                                         <td className="p-6">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 font-bold overflow-hidden border border-white/10 group-hover:border-white/30 transition-colors">
-                                                    {user.image ? (
-                                                        <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                                                    {user.image && !imageErrors[log._id.toString()] ? (
+                                                        <img
+                                                            src={user.image}
+                                                            alt={user.name}
+                                                            className="w-full h-full object-cover"
+                                                            referrerPolicy="no-referrer"
+                                                            onError={() => handleImageError(log._id.toString())}
+                                                        />
                                                     ) : (
                                                         <UserIcon className="w-6 h-6" weight="duotone" />
                                                     )}
@@ -210,7 +295,7 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
                             })}
                             {initialLogs.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="p-20 text-center">
+                                    <td colSpan={7} className="p-20 text-center">
                                         <div className="flex flex-col items-center justify-center opacity-50">
                                             <TrendUp className="w-16 h-16 text-zinc-700 mb-4" weight="duotone" />
                                             <p className="text-zinc-500 font-medium text-lg">No se encontraron registros con estos filtros.</p>
@@ -222,6 +307,30 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
                     </table>
                 </div>
             </div>
+
+            {/* Floating Action Button (FAB) for Deletion */}
+            <AnimatePresence>
+                {selectedIds.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                        className="fixed bottom-8 right-8 z-[100] flex flex-col items-end gap-3"
+                    >
+                        <div className="bg-zinc-900/90 backdrop-blur-md border border-white/10 px-4 py-2 rounded-2xl shadow-2xl text-sm font-bold text-white flex items-center gap-2">
+                            <span className="text-cyan-400">{selectedIds.length}</span> seleccionados
+                        </div>
+                        <button
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                            className="group flex items-center gap-3 px-6 py-4 bg-red-600 hover:bg-red-500 text-white rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all hover:scale-110 active:scale-95 disabled:opacity-50 disabled:scale-100 font-black uppercase tracking-widest text-sm"
+                        >
+                            <Trash weight="bold" className="w-6 h-6" />
+                            <span>{isDeleting ? "Eliminando..." : "Eliminar Registros"}</span>
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

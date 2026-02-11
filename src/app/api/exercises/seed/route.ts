@@ -16,7 +16,7 @@ export async function POST() {
             },
         }));
 
-        await Exercise.bulkWrite(operations);
+        await Exercise.bulkWrite(operations as any[]);
 
         return NextResponse.json({
             success: true,

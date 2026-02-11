@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { PrimalTitle } from "@/components/ui/PrimalTitle";
-import { Play, Trophy, Medal, Fire, X, Crown, Lightning, PawPrint } from "@phosphor-icons/react/dist/ssr";
+import { Play, Trophy, Medal, Fire, X, Crown, Lightning, PawPrint, Skull } from "@phosphor-icons/react/dist/ssr";
 import { AchievementOverlay } from "@/components/gamification/AchievementOverlay";
 import { StreakFlame } from "@/components/layout/StreakFlame";
 import { StreakCelebrationOverlay } from "@/components/gamification/StreakCelebrationOverlay";
+import { StreakLossOverlay } from "@/components/gamification/StreakLossOverlay";
 
 // Static Definitions for Visual Testing
 const DEMO_TROPHIES = [
@@ -38,6 +39,7 @@ export default function RecompensasPage() {
     // Streak Testing State
     const [previewStreak, setPreviewStreak] = useState(0);
     const [showStreakPreview, setShowStreakPreview] = useState(false);
+    const [showLossPreview, setShowLossPreview] = useState(false);
 
     const handleTest = (trophy: any) => {
         setPreviewTrophy(trophy);
@@ -63,11 +65,16 @@ export default function RecompensasPage() {
                 onClose={() => setShowStreakPreview(false)}
             />
 
+            <StreakLossOverlay
+                show={showLossPreview}
+                onClose={() => setShowLossPreview(false)}
+            />
+
             {/* STREAK TESTING SECTION */}
             <div className="mb-12">
                 <PrimalTitle title="Sistema de Rachas" subtitle="Evolución de la Llama y Celebraciones (Previews)" size="lg" className="md:text-left text-center mb-6" />
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                     {[
                         { days: 0, label: "Inactivo (0 Días)" },
                         { days: 10, label: "Fase 1 (10 Días)" },
@@ -87,10 +94,24 @@ export default function RecompensasPage() {
                                 onClick={() => handleTestStreak(item.days)}
                                 className="mt-2 text-xs font-bold text-orange-500 uppercase tracking-wider hover:text-orange-400 flex items-center gap-2"
                             >
-                                <Play weight="fill" /> Probar Animación
+                                <Play weight="fill" /> Probar
                             </button>
                         </div>
                     ))}
+
+                    {/* STREAK LOSS TEST CASE */}
+                    <div className="bg-zinc-950 border-2 border-dashed border-red-900/30 rounded-xl p-6 flex flex-col items-center gap-4 hover:bg-red-950/20 transition-colors group text-center">
+                        <span className="text-xs uppercase tracking-widest text-red-500 font-black italic">CASO DE DOLOR</span>
+                        <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center border border-red-950 shadow-inner group-hover:bg-red-900/10 transition-colors">
+                            <Skull className="text-zinc-600 group-hover:text-red-600 transition-colors" size={32} weight="fill" />
+                        </div>
+                        <button
+                            onClick={() => setShowLossPreview(true)}
+                            className="mt-2 px-4 py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-red-600/30 transition-all active:scale-95"
+                        >
+                            PROBAR PÉRDIDA
+                        </button>
+                    </div>
                 </div>
             </div>
 

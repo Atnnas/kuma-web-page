@@ -24,36 +24,35 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // 2. Fetch Routine (if provided) and Duration
-        let routineDuration = 0;
+        // --- TIMEZONE LOGIC (Costa Rica: UTC-6) ---
+        const getKumaToday = () => {
+            const now = new Date();
+            // Offset to Costa Rica (UTC-6)
+            const kumaDate = new Date(now.getTime() + (-6 * 60 * 60 * 1000));
+            return new Date(kumaDate.getUTCFullYear(), kumaDate.getUTCMonth(), kumaDate.getUTCDate());
+        };
 
-        // Prioritize actual duration sent from frontend
-        if (body.duration && typeof body.duration === 'number') {
-            routineDuration = body.duration;
-        } else if (routineId) {
-            // Fallback to estimated
-            const routine = await Routine.findById(routineId);
-            if (routine) {
-                routineDuration = routine.estimated_duration || 0;
-            }
-        }
+        const today = getKumaToday();
+        const now = new Date();
+
+        // 2. Fetch Duration (Strictly use body.duration)
+        const routineDuration = (body.duration && typeof body.duration === 'number') ? body.duration : 0;
 
         // --- STREAK LOGIC ---
-        const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Midnight today
-
         let lastWorkoutDate = user.lastWorkoutDate ? new Date(user.lastWorkoutDate) : null;
-        // Normalize last workout to midnight for comparison
+        let lastWorkoutKuma = null;
+
         if (lastWorkoutDate) {
-            lastWorkoutDate = new Date(lastWorkoutDate.getFullYear(), lastWorkoutDate.getMonth(), lastWorkoutDate.getDate());
+            const lDate = new Date(lastWorkoutDate.getTime() + (-6 * 60 * 60 * 1000));
+            lastWorkoutKuma = new Date(lDate.getUTCFullYear(), lDate.getUTCMonth(), lDate.getUTCDate());
         }
 
         // If never trained, streak = 1
-        if (!lastWorkoutDate) {
+        if (!lastWorkoutKuma) {
             user.streakDays = 1;
         } else {
-            const diffTime = Math.abs(today.getTime() - lastWorkoutDate.getTime());
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffTime = today.getTime() - lastWorkoutKuma.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays === 1) {
                 // Trained yesterday, increment streak
@@ -67,61 +66,67 @@ export async function POST(req: NextRequest) {
 
         user.lastWorkoutDate = now;
 
-        // --- DAILY TRAINING TIME LOGIC ---
-        // Reset if it's a new day
+        // --- TRAINING TIME LOGIC (Strictly Real-Time) ---
+        // 1. Total lifetime accumulation
+        user.totalTrainingMinutes = (user.totalTrainingMinutes || 0) + routineDuration;
+
+        // 2. Daily accumulation (Reset if it's a new day)
         let lastResetDate = user.lastTrainingResetDate ? new Date(user.lastTrainingResetDate) : null;
+        let lastResetKuma = null;
         if (lastResetDate) {
-            lastResetDate = new Date(lastResetDate.getFullYear(), lastResetDate.getMonth(), lastResetDate.getDate());
+            const rDate = new Date(lastResetDate.getTime() + (-6 * 60 * 60 * 1000));
+            lastResetKuma = new Date(rDate.getUTCFullYear(), rDate.getUTCMonth(), rDate.getUTCDate());
         }
 
-        if (!lastResetDate || lastResetDate.getTime() !== today.getTime()) {
-            // New day, reset time but add current routine
+        if (!lastResetKuma || lastResetKuma.getTime() !== today.getTime()) {
+            // New day, reset daily time
             user.dailyTrainingMinutes = routineDuration;
-            user.lastTrainingResetDate = today;
+            user.lastTrainingResetDate = now; // Store the actual timestamp
         } else {
             // Same day, accumulate
             user.dailyTrainingMinutes = (user.dailyTrainingMinutes || 0) + routineDuration;
         }
 
-        // --- ACHIEVEMENTS CHECK ---
-        const newAchievements = [];
+        // --- ACHIEVEMENTS CHECK & PERSISTENCE ---
+        const earnedAchievements: any[] = [];
+        const existingSlugs = new Set((user.achievements || []).map(a => a.slug));
+
+        // Helper to award a trophy
+        const awardTrophy = (slug: string, name: string, description: string, icon: string, color: string, rarity: string) => {
+            if (!existingSlugs.has(slug)) {
+                const achievement = {
+                    slug,
+                    earnedAt: new Date(),
+                    metadata: { name, description, icon, color, rarity }
+                };
+                // @ts-ignore - Achievements array exists but Mongoose might complain about push if not typed perfectly here
+                user.achievements.push(achievement);
+                earnedAchievements.push({ trophy: achievement.metadata });
+            }
+        };
 
         // 1. First Workout
         if ((user.workoutCount || 0) === 0) {
-            newAchievements.push({
-                type: "FIRST_WORKOUT",
-                trophy: {
-                    slug: "primer-entrenamiento",
-                    name: "Primer Entrenamiento",
-                    description: "El primer paso de un viaje de mil millas. ¡Has comenzado tu legado!",
-                    icon: "Fire",
-                    color: "#fbbf24",
-                    rarity: "Legendario"
-                }
-            });
+            awardTrophy(
+                "primer-entrenamiento",
+                "Primer Entrenamiento",
+                "El primer paso de un viaje de mil millas. ¡Has comenzado tu legado!",
+                "Fire",
+                "#fbbf24",
+                "Legendario"
+            );
         }
 
-        // 2. Spirit Kuma (Time Attack > 60 mins)
-        // Check if we just crossed the threshold
-        if (user.dailyTrainingMinutes >= 60) {
-            // We can check if they already have it if we stored earned trophies, 
-            // but for now we trigger it every time they cross 60m in a day to celebrate the effort.
-            // Or better: ensure we only trigger it once per session context in frontend, 
-            // but here we just report eligibility.
-
-            // To avoid spamming, realistically we should have an 'achievements' array in User model.
-            // For this MVP, we will send it. User requested "activara luego de terminar".
-            newAchievements.push({
-                type: "KUMA_REVENANT",
-                trophy: {
-                    slug: "kuma-revenant",
-                    name: "Espíritu Kuma",
-                    description: "Has entrenado más de 1 hora hoy. Tu resistencia es legendaria.",
-                    icon: "PawPrint",
-                    color: "#dc2626",
-                    rarity: "Mítico"
-                }
-            });
+        // 2. Spirit Kuma (Time Attack > 60 mins in a day)
+        if ((user.dailyTrainingMinutes || 0) >= 60) {
+            awardTrophy(
+                "kuma-revenant",
+                "Espíritu Kuma",
+                "Has entrenado más de 1 hora acumulada hoy. Tu resistencia es legendaria.",
+                "PawPrint",
+                "#dc2626",
+                "Mítico"
+            );
         }
 
         // Increment total workout count
@@ -134,7 +139,8 @@ export async function POST(req: NextRequest) {
             workoutCount: user.workoutCount,
             streakDays: user.streakDays,
             dailyMinutes: user.dailyTrainingMinutes,
-            newAchievements: newAchievements
+            totalMinutes: user.totalTrainingMinutes,
+            newAchievements: earnedAchievements
         });
 
     } catch (error: any) {
