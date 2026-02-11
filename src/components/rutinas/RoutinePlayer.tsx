@@ -568,30 +568,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                                     )}>
                                                         {activeBlock.measure_type === "time" ? formatTime(exerciseTimeLeft) : activeBlock.reps}
                                                     </span>
-
-                                                    {activeBlock.measure_type === "time" && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0, scale: 0.5 }}
-                                                            animate={{ opacity: 1, scale: 1 }}
-                                                            className="absolute -top-6 -right-6 lg:-top-10 lg:-right-10"
-                                                        >
-                                                            <div className={cn(
-                                                                "w-12 h-12 lg:w-16 lg:h-16 rounded-full flex items-center justify-center shadow-lg border-2 transition-all",
-                                                                isTimerRunning
-                                                                    ? "bg-black/50 border-white/20 text-white"
-                                                                    : "bg-kuma-gold border-black/10 text-black animate-bounce"
-                                                            )}>
-                                                                {isTimerRunning ? (
-                                                                    <div className="flex gap-1">
-                                                                        <div className="w-1.5 h-4 lg:w-2 lg:h-6 bg-current rounded-full" />
-                                                                        <div className="w-1.5 h-4 lg:w-2 lg:h-6 bg-current rounded-full" />
-                                                                    </div>
-                                                                ) : (
-                                                                    <PlayCircle className="w-8 h-8 lg:w-10 lg:h-10" weight="fill" />
-                                                                )}
-                                                            </div>
-                                                        </motion.div>
-                                                    )}
                                                 </div>
                                                 <span className="block text-2xl font-medium text-zinc-500 uppercase tracking-widest mt-2 lg:mt-6">
                                                     {activeBlock.measure_type === "time" ? "Tiempo" : "Reps"}
@@ -600,9 +576,30 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                         </div>
                                     </div>
 
-                                    <div className="w-full flex justify-between items-center text-sm font-bold text-zinc-400 px-4 lg:px-6">
-                                        <span className="lg:text-xl">Set {currentSet} / {activeBlock.sets}</span>
-                                        {activeBlock.notes && <span className="text-kuma-gold lg:bg-kuma-gold/10 lg:px-4 lg:py-2 lg:rounded-xl cursor-help">ℹ️ Ver Notas</span>}
+                                    <div className="w-full flex justify-between items-center px-4 lg:px-6">
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-zinc-400 font-bold lg:text-3xl shrink-0 uppercase tracking-tighter italic">Set {currentSet} / {activeBlock.sets}</span>
+
+                                            {activeBlock.measure_type === "time" && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setIsTimerRunning(!isTimerRunning);
+                                                    }}
+                                                    className={cn(
+                                                        "group relative px-6 py-3 rounded-2xl font-black uppercase tracking-tighter transition-all duration-75 text-sm lg:text-xl",
+                                                        "bg-kuma-gold text-black shadow-[0_6px_0_0_#a85507] active:shadow-none active:translate-y-[6px]",
+                                                        isTimerRunning ? "bg-zinc-800 text-zinc-400 shadow-[0_6px_0_0_#18181b] border border-white/5" : "animate-bounce"
+                                                    )}
+                                                >
+                                                    <span className="flex items-center gap-3">
+                                                        {isTimerRunning ? <Timer className="w-6 h-6 lg:w-8 lg:h-8" weight="fill" /> : <PlayCircle className="w-6 h-6 lg:w-8 lg:h-8" weight="fill" />}
+                                                        {isTimerRunning ? "Pausar" : "Iniciar"}
+                                                    </span>
+                                                </button>
+                                            )}
+                                        </div>
+                                        {activeBlock.notes && <span className="text-kuma-gold font-bold lg:bg-kuma-gold/10 lg:px-4 lg:py-2 lg:rounded-xl cursor-help text-sm">ℹ️ Ver Notas</span>}
                                     </div>
                                 </motion.div>
                             </motion.div>
@@ -712,6 +709,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                     </AnimatePresence>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
