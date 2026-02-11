@@ -169,7 +169,7 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
                                     ))}
                                 </div>
                             ) : ( // Desktop: New Weekly Grid
-                                <WeeklyScheduleTable />
+                                <WeeklyScheduleTable data={horarios} />
                             )}
                         </div>
                     )}

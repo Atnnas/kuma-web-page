@@ -24,22 +24,25 @@ import LogsClient from "./LogsClient";
 // Force dynamic rendering to ensure fresh data
 export const dynamic = "force-dynamic";
 
-export default async function RoutineLogsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+export default async function RoutineLogsPage({
+    searchParams
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
     const session = await auth();
     if (!session?.user || session.user.role !== "super_admin") {
         redirect("/admin");
     }
 
-    await dbConnect();
+    const { userId, from, to } = await searchParams;
 
-    // Parse Search Params
-    const { userId, from, to } = searchParams;
+    await dbConnect();
 
     // Build Query
     const query: any = {};
 
     if (userId) {
-        query.user = userId;
+        query.user = userId as string;
     }
 
     if (from || to) {

@@ -13,58 +13,61 @@ export async function GET(req: NextRequest) {
 
         await dbConnect();
 
-        const user = await User.findOne({ email: session.user.email }).select("streakDays lastWorkoutDate");
+        const user = await User.findOne({ email: session.user.email }).select("streakDays lastWorkoutDate lastStreakShownDate lastStreakLossShownDate");
 
         if (!user) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // Calculate if streak is still valid (did they miss yesterday?)
-        // If they missed yesterday and didn't train today, streak is effectively 0 (or will be reset on next train).
-        // For display purposes, if they missed yesterday, we might want to show 0 or the broken streak.
-        // Simple logic: If last workout was > 1 day ago (not today, not yesterday), streak is effectively 0.
+        // --- TIMEZONE LOGIC (Costa Rica: UTC-6) ---
+        const kumaOffset = -6 * 60 * 60 * 1000;
+        const getKumaDate = (date: Date) => {
+            const d = new Date(date.getTime() + kumaOffset);
+            return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        };
+
+        const now = new Date();
+        const today = getKumaDate(now);
 
         let displayStreak = user.streakDays || 0;
 
         if (user.lastWorkoutDate) {
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            let last = new Date(user.lastWorkoutDate);
-            last = new Date(last.getFullYear(), last.getMonth(), last.getDate());
-
-            const diffTime = Math.abs(today.getTime() - last.getTime());
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const lastWorkout = getKumaDate(new Date(user.lastWorkoutDate));
+            const diffTime = today.getTime() - lastWorkout.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays > 1) {
                 displayStreak = 0;
-                // We don't save this reset here to avoid side effects on GET, 
-                // but we display 0 to reflect reality.
             }
         }
 
-        // Logic for "Dezopilante" Streak Celebration
-        // Show if:
-        // 1. Streak > 0 (active streak)
-        // 2. Haven't shown it today yet
+        // --- CELEBRATION LOGIC (Once a Day) ---
         let showCelebration = false;
+        let showLossCelebration = false;
+
+        // A. Conditions for Positive Celebration (Maintenance/Gain):
         if (displayStreak > 0) {
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            let lastShown = user.lastStreakShownDate ? getKumaDate(new Date(user.lastStreakShownDate)) : null;
 
-            let lastShown = user.lastStreakShownDate ? new Date(user.lastStreakShownDate) : null;
-            if (lastShown) {
-                lastShown = new Date(lastShown.getFullYear(), lastShown.getMonth(), lastShown.getDate());
-            }
-
-            // If never shown OR shown before today
             if (!lastShown || lastShown.getTime() < today.getTime()) {
-                showCelebration = true;
+                const lastWorkout = user.lastWorkoutDate ? getKumaDate(new Date(user.lastWorkoutDate)) : null;
+                if (lastWorkout && (today.getTime() - lastWorkout.getTime()) <= (1000 * 60 * 60 * 24)) {
+                    showCelebration = true;
+                }
+            }
+        }
+        // B. Conditions for Loss Celebration (Sorrow):
+        else if (displayStreak === 0 && user.lastWorkoutDate) {
+            let lastLossShown = user.lastStreakLossShownDate ? getKumaDate(new Date(user.lastStreakLossShownDate)) : null;
+            if (!lastLossShown || lastLossShown.getTime() < today.getTime()) {
+                showLossCelebration = true;
             }
         }
 
         return NextResponse.json({
             streak: displayStreak,
-            showCelebration: showCelebration
+            showCelebration: showCelebration,
+            showLossCelebration: showLossCelebration
         });
 
     } catch (error: any) {

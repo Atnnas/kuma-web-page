@@ -11,11 +11,24 @@ export interface IUser extends Document {
     streakDays?: number;
     lastWorkoutDate?: Date | null;
     lastStreakShownDate?: Date | null;
+    lastStreakLossShownDate?: Date | null;
     dailyTrainingMinutes?: number;
+    totalTrainingMinutes?: number;
     lastTrainingResetDate?: Date | null;
     emailVerified?: Date | null;
     verificationToken?: string;
     verificationTokenExpires?: Date;
+    achievements?: {
+        slug: string;
+        earnedAt: Date;
+        metadata: {
+            name: string;
+            description: string;
+            icon: string;
+            color: string;
+            rarity?: string;
+        };
+    }[];
     createdAt: Date;
     updatedAt: Date;
 }
@@ -68,7 +81,15 @@ const UserSchema = new Schema<IUser>(
             type: Date,
             default: null,
         },
+        lastStreakLossShownDate: {
+            type: Date,
+            default: null,
+        },
         dailyTrainingMinutes: {
+            type: Number,
+            default: 0,
+        },
+        totalTrainingMinutes: {
             type: Number,
             default: 0,
         },
@@ -83,6 +104,22 @@ const UserSchema = new Schema<IUser>(
         verificationTokenExpires: {
             type: Date,
             select: false,
+        },
+        achievements: {
+            type: [
+                {
+                    slug: String,
+                    earnedAt: { type: Date, default: Date.now },
+                    metadata: {
+                        name: String,
+                        description: String,
+                        icon: String,
+                        color: String,
+                        rarity: String,
+                    },
+                },
+            ],
+            default: [],
         },
     },
     {

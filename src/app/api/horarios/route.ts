@@ -9,26 +9,27 @@ export async function GET() {
         await connectDB();
         let horarios = await Horario.find({}).sort({ order: 1 }).lean();
 
-        // INGENIOUS INJECTION: Add KUMA KIDS if not present
+        // INJECTION: Add KUMA KIDS for L, M, V at 6 PM
         const targetDays = ["Lunes", "Miércoles", "Miercoles", "Viernes"];
         const kidsSession = {
             group: "KUMA KIDS",
             time: "6:00 PM - 7:00 PM",
-            description: "Entrenamiento para niños hasta 12 años",
-            icon: "Zap", // Energetic icon
-            color: "from-kuma-gold to-orange-600"
+            description: "Entrenamiento para niños hasta los 12 años",
+            icon: "Zap",
+            color: "gold"
         };
 
         horarios = horarios.map((day: any) => {
-            if (targetDays.includes(day.day)) {
-                // Check if already exists to avoid duplicates if DB updated later
-                const hasKids = day.sessions.some((s: any) => s.group === "KUMA KIDS");
+            const isTargetDay = targetDays.some(td => day.day.includes(td));
+            if (isTargetDay) {
+                const hasKids = day.sessions.some((s: any) => s.group.toUpperCase().includes("KIDS"));
                 if (!hasKids) {
                     day.sessions.push(kidsSession);
-                    // Sort sessions by time again just in case
                     day.sessions.sort((a: any, b: any) => {
-                        const timeA = parseInt(a.time.replace(":", ""));
-                        const timeB = parseInt(b.time.replace(":", ""));
+                        const timeArrA = a.time.split(" ");
+                        const timeArrB = b.time.split(" ");
+                        const timeA = parseInt(timeArrA[0].replace(":", ""));
+                        const timeB = parseInt(timeArrB[0].replace(":", ""));
                         return timeA - timeB;
                     });
                 }

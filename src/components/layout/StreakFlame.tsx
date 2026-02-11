@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { StreakCelebrationOverlay } from "../gamification/StreakCelebrationOverlay";
+import { StreakLossOverlay } from "../gamification/StreakLossOverlay";
 
 interface StreakFlameProps {
     variant?: "default" | "mobile";
@@ -14,7 +15,9 @@ interface StreakFlameProps {
 export function StreakFlame({ variant = "default", overrideStreak }: StreakFlameProps) {
     const [streak, setStreak] = useState<number | null>(null);
     const [serverCelebrationRequest, setServerCelebrationRequest] = useState(false); // Can we show it?
+    const [serverLossRequest, setServerLossRequest] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false); // Do we show it now?
+    const [showLossOverlay, setShowLossOverlay] = useState(false);
     const pathname = usePathname();
     const isMobile = variant === "mobile";
 
@@ -29,6 +32,9 @@ export function StreakFlame({ variant = "default", overrideStreak }: StreakFlame
                     if (data.showCelebration) {
                         setServerCelebrationRequest(true);
                     }
+                    if (data.showLossCelebration) {
+                        setServerLossRequest(true);
+                    }
                 }
             } catch (error) {
                 console.error("Failed to fetch streak", error);
@@ -38,20 +44,39 @@ export function StreakFlame({ variant = "default", overrideStreak }: StreakFlame
         fetchStreak();
     }, []);
 
-    // Effect to trigger overlay ONLY when on /rutinas (or subpages) AND server requested it
+    // Effect to trigger overlays ONLY when on /rutinas (or subpages) AND server requested it
     useEffect(() => {
         if (serverCelebrationRequest && pathname?.startsWith("/rutinas")) {
             setShowOverlay(true);
         }
-    }, [pathname, serverCelebrationRequest]);
+        if (serverLossRequest && pathname?.startsWith("/rutinas")) {
+            setShowLossOverlay(true);
+        }
+    }, [pathname, serverCelebrationRequest, serverLossRequest]);
 
     const handleCloseCelebration = async () => {
         setShowOverlay(false);
         setServerCelebrationRequest(false); // Don't show again this session
         try {
-            await fetch("/api/user/streak/mark-seen", { method: "POST" });
+            await fetch("/api/user/streak/mark-seen", {
+                method: "POST",
+                body: JSON.stringify({ type: "gain" })
+            });
         } catch (error) {
             console.error("Failed to mark streak seen", error);
+        }
+    };
+
+    const handleCloseLoss = async () => {
+        setShowLossOverlay(false);
+        setServerLossRequest(false);
+        try {
+            await fetch("/api/user/streak/mark-seen", {
+                method: "POST",
+                body: JSON.stringify({ type: "loss" })
+            });
+        } catch (error) {
+            console.error("Failed to mark streak loss seen", error);
         }
     };
 
@@ -98,6 +123,11 @@ export function StreakFlame({ variant = "default", overrideStreak }: StreakFlame
 
     return (
         <>
+            <StreakLossOverlay
+                show={showLossOverlay}
+                onClose={handleCloseLoss}
+            />
+
             <StreakCelebrationOverlay
                 show={showOverlay}
                 streak={displayStreak}

@@ -1,94 +1,122 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Fire, CloudRain } from "@phosphor-icons/react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { Fire, Warning, HeartBreak, Skull } from "@phosphor-icons/react/dist/ssr";
 
 interface StreakLossOverlayProps {
     show: boolean;
-    onAccept: () => void;
+    onClose: () => void;
 }
 
-export function StreakLossOverlay({ show, onAccept }: StreakLossOverlayProps) {
-    // Only mount if shown to avoid audio loading?
-    // Actually we want to pre-load potentially.
-    // Let's rely on show.
+export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
 
-    return (
+    if (!show || !mounted) return null;
+
+    return createPortal(
         <AnimatePresence>
             {show && (
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95 backdrop-blur-3xl text-center p-6"
+                    exit={{ opacity: 0, transition: { duration: 1.5 } }}
+                    className="fixed inset-0 z-[110] flex flex-col items-center justify-center bg-zinc-950/98 cursor-pointer overflow-hidden pt-20 pb-10 px-6 md:pt-32 md:pb-16 md:px-12"
+                    onClick={onClose}
                 >
-                    {/* Background Rain Effect - Conceptual */}
-                    <div className="absolute inset-0 bg-blue-900/10 pointer-events-none" />
+                    {/* ASH / SMOKE BACKGROUND EFFECTS */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] bg-gradient-radial from-zinc-800/20 via-black to-black opacity-80" />
 
-                    <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.2, duration: 0.8 }}
-                        className="relative z-10 max-w-lg w-full"
-                    >
-                        <div className="relative mx-auto w-40 h-40 mb-8 flex items-center justify-center">
-                            {/* Dying Flame Animation */}
+                        {/* FALLING ASH (Particles) */}
+                        {[...Array(20)].map((_, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ y: -100, x: Math.random() * 100 + "%", opacity: 0 }}
+                                animate={{
+                                    y: "110vh",
+                                    x: (Math.random() * 100 - 10) + "%",
+                                    opacity: [0, 0.3, 0],
+                                    rotate: 360
+                                }}
+                                transition={{
+                                    duration: Math.random() * 5 + 5,
+                                    repeat: Infinity,
+                                    ease: "linear",
+                                    delay: Math.random() * 5
+                                }}
+                                className="absolute w-1 h-1 bg-zinc-500 rounded-full blur-[1px]"
+                            />
+                        ))}
+                    </div>
+
+                    <div className="relative text-center max-w-5xl w-full flex flex-col items-center justify-center">
+                        <motion.div
+                            initial={{ scale: 1.5, opacity: 0, filter: "blur(10px)" }}
+                            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            className="relative z-10 flex flex-col items-center justify-center w-full"
+                        >
+                            <h1 className="text-6xl md:text-9xl font-black text-zinc-600 mb-6 md:mb-10 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,1)] pr-2 md:pr-4">
+                                RACHA PERDIDA
+                            </h1>
+
                             <motion.div
                                 animate={{
-                                    scale: [1, 0.5, 0],
-                                    opacity: [1, 0.5, 0],
-                                    filter: ["grayscale(0%)", "grayscale(50%)", "grayscale(100%)"]
+                                    y: [0, 5, 0],
+                                    rotate: [0, -1, 1, 0],
+                                    filter: ["grayscale(1)", "grayscale(1) brightness(0.8)", "grayscale(1)"]
                                 }}
-                                transition={{ duration: 3, times: [0, 0.5, 1] }}
-                                className="absolute inset-0 flex items-center justify-center"
+                                transition={{ duration: 4, repeat: Infinity }}
+                                className="w-full h-64 md:h-80 mb-12 relative flex items-center justify-center"
                             >
-                                <Fire weight="fill" className="w-40 h-40 text-orange-500 drop-shadow-[0_0_30px_rgba(249,115,22,0.6)]" />
+                                {/* EXTINGUISHED FLAME */}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <Fire
+                                        className="w-64 h-64 md:w-80 md:h-80 text-zinc-900 scale-110 blur-xl opacity-50"
+                                        weight="fill"
+                                    />
+                                </div>
+
+                                <Fire
+                                    className="w-48 h-48 md:w-64 md:h-64 text-zinc-700 drop-shadow-[0_0_20px_rgba(0,0,0,0.8)]"
+                                    weight="fill"
+                                />
+
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="absolute inset-0 flex items-center justify-center"
+                                >
+                                    <HeartBreak className="w-24 h-24 text-zinc-500 translate-y-4" weight="duotone" />
+                                </motion.div>
+
+                                {/* SMOKE WHISPS */}
+                                <motion.div
+                                    animate={{ y: -100, opacity: 0, x: [0, 20, -20, 0] }}
+                                    transition={{ duration: 3, repeat: Infinity, ease: "easeOut" }}
+                                    className="absolute top-1/2 w-16 h-16 bg-zinc-500/20 rounded-full blur-2xl"
+                                />
                             </motion.div>
 
-                            {/* Rain taking over */}
-                            <motion.div
+                            <motion.h2
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                transition={{ delay: 2, duration: 1 }}
-                                className="absolute inset-0 flex items-center justify-center text-blue-400"
+                                transition={{ delay: 0.5 }}
+                                className="text-3xl md:text-6xl font-black text-zinc-400 tracking-widest uppercase"
                             >
-                                <CloudRain weight="duotone" className="w-32 h-32" />
-                            </motion.div>
-                        </div>
-
-                        <motion.h2
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 2.5 }}
-                            className="text-4xl md:text-5xl font-black text-white mb-4 italic"
-                        >
-                            LA LLAMA SE HA EXTINGUIDO...
-                        </motion.h2>
-
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 3 }}
-                            className="text-zinc-400 text-lg mb-12"
-                        >
-                            Han pasado más de 2 días sin entrenamiento. Tu racha vuelve al origen. Pero un verdadero guerrero siempre se levanta.
-                        </motion.p>
-
-                        <motion.button
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 4 }}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={onAccept}
-                            className="bg-white text-black font-black text-xl px-12 py-4 rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_50px_rgba(255,255,255,0.4)] transition-all uppercase"
-                        >
-                            REENCENDER EL ESPÍRITU
-                        </motion.button>
-                    </motion.div>
+                                EL FUEGO SE HA EXTINGUIDO
+                            </motion.h2>
+                        </motion.div>
+                    </div>
                 </motion.div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }

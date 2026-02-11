@@ -51,13 +51,28 @@ export async function completeRoutineLog(logId: string, durationSeconds: number)
             completed: true
         });
 
-        // Revalidate admin reports to show new data immediately if admin is watching
         revalidatePath("/admin/reports/logs");
-
         return { success: true };
-
     } catch (error) {
         console.error("Error completing routine log:", error);
         return { success: false, error: "Failed to update log" };
+    }
+}
+
+export async function deleteRoutineLogs(logIds: string[]) {
+    try {
+        const session = await auth();
+        if (!session?.user || session.user.role !== "super_admin") {
+            return { success: false, error: "Unauthorized" };
+        }
+
+        await connectDB();
+        await RoutineLog.deleteMany({ _id: { $in: logIds } });
+
+        revalidatePath("/admin/reports/logs");
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting routine logs:", error);
+        return { success: false, error: "Failed to delete logs" };
     }
 }

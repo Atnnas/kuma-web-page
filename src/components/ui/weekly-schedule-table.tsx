@@ -18,13 +18,14 @@ interface IHorario {
     sessions: ISession[];
 }
 
-// --- Constants ---
+interface WeeklyScheduleTableProps {
+    data?: IHorario[];
+}
+
 const TIME_SLOTS = ["5:00 PM", "6:00 PM", "7:00 PM", "8:00 PM", "8:30 PM"];
 const DAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
-// --- STATIC DATA (EDIT HERE DIRECTLY) ---
-// --- STATIC DATA (EDIT HERE DIRECTLY) ---
-const STATIC_SCHEDULE: IHorario[] = [
+const DEFAULT_SCHEDULE: IHorario[] = [
     {
         _id: "1", day: "Lunes",
         sessions: [
@@ -57,14 +58,11 @@ const STATIC_SCHEDULE: IHorario[] = [
             { group: "KUMA KIDS", time: "6:00 PM - 7:00 PM", description: "Entrenamiento para niños hasta los 12 años", icon: "Zap", color: "gold" },
             { group: "KUMA SENIORS", time: "7:00 PM - 8:30 PM", description: "Entrenamiento para adultos y mayores", icon: "Activity", color: "blue" }
         ]
-    },
-    {
-        _id: "6", day: "Sábado",
-        sessions: []
     }
 ];
 
-export function WeeklyScheduleTable() {
+export function WeeklyScheduleTable({ data = [] }: WeeklyScheduleTableProps) {
+    const scheduleData = data.length > 0 ? data : DEFAULT_SCHEDULE;
 
     // --- Helper Functions ---
 
@@ -84,27 +82,28 @@ export function WeeklyScheduleTable() {
 
     const getCellSessions = (targetDay: string, targetTimeSlot: string) => {
         const normalizedTargetDay = normalize(targetDay);
-        const dayData = STATIC_SCHEDULE.find(d => normalize(d.day) === normalizedTargetDay);
+        // Find day that matches or includes the target day (for grouped days like "Lunes, Miércoles y Viernes")
+        const dayData = scheduleData.find(d => {
+            const normalizedDay = normalize(d.day);
+            return normalizedDay === normalizedTargetDay || normalizedDay.includes(normalizedTargetDay);
+        });
 
         if (!dayData) return [];
 
         return dayData.sessions.filter(session => {
             const { hours, minutes } = parseTime(session.time);
-            const isAltoRendimiento = session.group.includes("ALTO RENDIMIENTO");
-            const isKumaSeniors = session.group.includes("KUMA SENIORS");
+            const groupToUpper = session.group.toUpperCase();
+            const isAltoRendimiento = groupToUpper.includes("ALTO RENDIMIENTO");
+            const isKumaSeniors = groupToUpper.includes("KUMA SENIORS");
 
-            // Custom logic to repeat Alto Rendimiento in 5pm, 6pm, and 7pm slots
-            if (isAltoRendimiento) {
-                if (targetTimeSlot === "5:00 PM" && hours === 17) return true;
-                if (targetTimeSlot === "6:00 PM" && hours === 17) return true; // Show in 6pm slot too
-                if (targetTimeSlot === "7:00 PM" && hours === 17) return true; // Show in 7pm slot too
+            // Alto Rendimiento: 5:00 PM - 7:00 PM (Spans 5pm and 6pm slots)
+            if (isAltoRendimiento && hours === 17) {
+                return targetTimeSlot === "5:00 PM" || targetTimeSlot === "6:00 PM";
             }
 
-            // Custom logic to repeat Kuma Seniors in 7pm, 8pm, and 8:30pm slots
-            if (isKumaSeniors) {
-                if (targetTimeSlot === "7:00 PM" && hours === 19) return true;
-                if (targetTimeSlot === "8:00 PM" && hours === 19) return true; // Show in 8pm slot too
-                if (targetTimeSlot === "8:30 PM" && hours === 19) return true; // Show in 8:30pm slot too
+            // Kuma Seniors: 7:00 PM - 8:30 PM (Spans 7pm, 8pm, and 8:30pm slots)
+            if (isKumaSeniors && hours === 19) {
+                return targetTimeSlot === "7:00 PM" || targetTimeSlot === "8:00 PM" || targetTimeSlot === "8:30 PM";
             }
 
             if (targetTimeSlot === "5:00 PM") return hours === 17;
@@ -119,22 +118,32 @@ export function WeeklyScheduleTable() {
 
     return (
         <div className="w-full flex justify-center">
-            <div className="w-full overflow-hidden rounded-[2rem] border border-white/20 bg-zinc-950/50 backdrop-blur-xl shadow-2xl">
-                <table className="w-full text-left border-collapse table-fixed">
+            <div className="w-full overflow-hidden rounded-[2rem] border border-white/20 bg-zinc-950/40 backdrop-blur-md shadow-2xl relative">
+                {/* Background Image Layer */}
+                <div className="absolute inset-0 z-0 opacity-40">
+                    <img
+                        src="/images/fondoEntrenamiento.jpg"
+                        alt="Dojo Background"
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/60" />
+                </div>
+
+                <table className="w-full text-left border-collapse table-fixed relative z-10">
                     <thead>
                         <tr>
-                            <th className="w-[150px] p-6 border-b border-white/20 bg-zinc-900/80 backdrop-blur-md sticky left-0 z-20">
+                            <th className="w-[150px] p-6 border-b border-white/20 bg-black/80 backdrop-blur-md sticky left-0 z-20">
                                 <div className="flex flex-col gap-1">
                                     <span className="text-zinc-500 text-[10px] uppercase tracking-widest font-mono">Horario</span>
                                     <span className="text-kuma-gold font-black uppercase text-xs">PM / Noche</span>
                                 </div>
                             </th>
                             {DAYS.map((day) => (
-                                <th key={day} className="p-4 border-b border-l border-white/20 bg-black/20 text-center first:border-l-0">
-                                    <span className="block text-sm md:text-xl font-black uppercase text-white tracking-tighter mb-2">
+                                <th key={day} className="p-4 border-b border-l border-white/20 bg-black/40 text-center first:border-l-0">
+                                    <span className="block text-lg md:text-2xl font-black uppercase text-white tracking-tighter mb-1">
                                         {day}
                                     </span>
-                                    <div className="w-8 h-1 bg-kuma-gold/50 mx-auto rounded-full" />
+                                    <div className="w-10 h-1 bg-kuma-gold mx-auto rounded-full" />
                                 </th>
                             ))}
                         </tr>
@@ -142,10 +151,10 @@ export function WeeklyScheduleTable() {
                     <tbody>
                         {TIME_SLOTS.map((timeSlot) => (
                             <tr key={timeSlot} className="group/row bg-transparent hover:bg-white/5 transition-colors duration-300">
-                                <td className="p-6 border-r border-b border-white/20 bg-zinc-900/50 backdrop-blur-sm font-mono text-zinc-400 font-bold sticky left-0 z-10 group-hover/row:bg-zinc-800/80 transition-colors">
+                                <td className="p-6 border-r border-b border-white/20 bg-black/60 backdrop-blur-sm font-mono text-zinc-400 font-bold sticky left-0 z-10 group-hover/row:bg-zinc-900/80 transition-colors">
                                     <div className="flex items-center gap-3">
                                         <Clock className="w-5 h-5 text-kuma-gold" />
-                                        <span className="text-xl tracking-tight">{timeSlot.replace(" PM", "")}<span className="text-xs ml-1 align-top">PM</span></span>
+                                        <span className="text-xl tracking-tight font-black text-white">{timeSlot.replace(" PM", "")}<span className="text-[10px] ml-1 align-top text-zinc-500">PM</span></span>
                                     </div>
                                 </td>
                                 {DAYS.map((day) => {
@@ -154,12 +163,12 @@ export function WeeklyScheduleTable() {
                                     return (
                                         <td key={`${day}-${timeSlot}`} className="p-2 border-r border-b border-white/20 align-top h-[160px] relative">
                                             {sessions.length > 0 ? (
-                                                <div className="flex flex-col gap-3 h-full justify-center">
-                                                    {sessions.map((session, idx) => {
-                                                        const isKumaKids = session.group.includes("KUMA KIDS");
-                                                        const isDisruptivo = session.group.includes("Disruptivo");
-                                                        const isAltoRendimiento = session.group.includes("ALTO RENDIMIENTO");
-                                                        const isKumaSeniors = session.group.includes("KUMA SENIORS");
+                                                <div className="flex flex-col gap-3 h-full justify-center px-1">
+                                                    {sessions.map((session: ISession, idx: number) => {
+                                                        const groupUpper = session.group.toUpperCase();
+                                                        const isKumaKids = groupUpper.includes("KUMA KIDS");
+                                                        const isAltoRendimiento = groupUpper.includes("ALTO RENDIMIENTO");
+                                                        const isKumaSeniors = groupUpper.includes("KUMA SENIORS");
 
                                                         return (
                                                             <motion.div
@@ -169,57 +178,43 @@ export function WeeklyScheduleTable() {
                                                                 viewport={{ once: true }}
 
                                                                 className={`
-                                                                    relative w-full rounded-xl p-4 border flex flex-col justify-center overflow-hidden transition-all duration-300
-                                                                    ${isDisruptivo
-                                                                        ? "bg-fuchsia-950/40 border-fuchsia-500/40 hover:bg-fuchsia-900/60 hover:shadow-fuchsia-500/20"
-                                                                        : isKumaKids
-                                                                            ? "bg-gradient-to-br from-amber-950/80 via-black to-orange-950/80 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
-                                                                            : isAltoRendimiento
-                                                                                ? "bg-gradient-to-br from-zinc-900 via-stone-950 to-black border-stone-200 shadow-[0_0_15px_rgba(231,229,228,0.25)] hover:shadow-[0_0_25px_rgba(231,229,228,0.4)]"
-                                                                                : isKumaSeniors
-                                                                                    ? "bg-gradient-to-br from-emerald-950/80 via-teal-950 to-green-950/80 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)]"
-                                                                                    : "bg-zinc-800/40 border-white/5 hover:bg-zinc-800/60 hover:border-kuma-gold/30"}
+                                                                    relative w-full rounded-xl p-4 border-2 flex flex-col justify-center overflow-hidden transition-all duration-300
+                                                                    ${isKumaKids
+                                                                        ? "bg-black/60 border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                                                                        : isAltoRendimiento
+                                                                            ? "bg-black/60 border-zinc-200 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                                                                            : isKumaSeniors
+                                                                                ? "bg-black/60 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                                                                                : "bg-zinc-950/60 border-white/10"}
                                                                 `}
                                                             >
                                                                 <div className="relative z-10 text-center flex flex-col items-center">
-
-                                                                    {/* TITLE - GOLDEN GLOW */}
-                                                                    <h4 className={`text-sm lg:text-base font-black uppercase mb-1 tracking-wide
-                                                                        ${isDisruptivo ? "text-fuchsia-300"
-                                                                            : isKumaKids ? "text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]"
-                                                                                : isAltoRendimiento ? "text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.4)]"
-                                                                                    : isKumaSeniors ? "text-emerald-300 drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]"
-                                                                                        : "text-white"}
+                                                                    <h4 className={`text-xs md:text-sm lg:text-[15px] font-black uppercase mb-1 tracking-wider
+                                                                        ${isKumaKids ? "text-amber-400"
+                                                                            : isAltoRendimiento ? "text-white"
+                                                                                : isKumaSeniors ? "text-emerald-400"
+                                                                                    : "text-white"}
                                                                     `}>
                                                                         {session.group}
                                                                     </h4>
-
-                                                                    {/* DESCRIPTION */}
-                                                                    <p className={`text-[10px] leading-snug line-clamp-2
-                                                                        ${isKumaKids ? "text-amber-100/80"
-                                                                            : isAltoRendimiento ? "text-stone-300"
-                                                                                : isKumaSeniors ? "text-emerald-100/80"
-                                                                                    : "text-zinc-500 group-hover/row:text-zinc-400"}
-                                                                    `}>
+                                                                    <p className="text-[9px] leading-tight text-zinc-400 font-medium">
                                                                         {session.description}
                                                                     </p>
                                                                 </div>
 
-                                                                {/* ACCENT LINE */}
-                                                                <div className={`mt-3 h-1 w-12 rounded-full mx-auto
-                                                                    ${isDisruptivo ? "bg-fuchsia-500"
-                                                                        : isKumaKids ? "bg-amber-500 shadow-[0_0_10px_orange]"
-                                                                            : isAltoRendimiento ? "bg-amber-800 shadow-[0_0_5px_rgba(146,64,14,0.5)]"
-                                                                                : isKumaSeniors ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"
-                                                                                    : "bg-kuma-gold/50"}
+                                                                <div className={`mt-3 h-1 w-10 rounded-full mx-auto
+                                                                    ${isKumaKids ? "bg-amber-500"
+                                                                        : isAltoRendimiento ? "bg-orange-700"
+                                                                            : isKumaSeniors ? "bg-emerald-500"
+                                                                                : "bg-kuma-gold/50"}
                                                                 `} />
                                                             </motion.div>
                                                         );
                                                     })}
                                                 </div>
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-300">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover/row:bg-white/20" />
+                                                <div className="w-full h-full flex items-center justify-center opacity-20 hover:opacity-100 transition-opacity duration-300">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
                                                 </div>
                                             )}
                                         </td>

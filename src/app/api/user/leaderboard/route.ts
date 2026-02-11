@@ -9,19 +9,24 @@ export async function GET() {
     try {
         await connectDB();
 
-        // Calculate the date 48 hours ago to filter active streaks
-        // Actually, let's keep it simple for now: valid streak is if lastWorkoutDate is recent enough.
-        // But the user requested "active streak".
-        // A streak is active if lastWorkoutDate is today or yesterday (or maybe 48 hours).
-        // Let's use a 2-day window.
+        // --- TIMEZONE LOGIC (Costa Rica: UTC-6) ---
+        const kumaOffset = -6 * 60 * 60 * 1000;
+        const now = new Date();
+        const kumaNow = new Date(now.getTime() + kumaOffset);
 
-        const twoDaysAgo = new Date();
-        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-        twoDaysAgo.setHours(0, 0, 0, 0); // Start of the day 2 days ago
+        // A streak is active if they trained today or yesterday in Kuma time.
+        // Yesterday starts at midnight of the day before today.
+        const kumaToday = new Date(kumaNow.getUTCFullYear(), kumaNow.getUTCMonth(), kumaNow.getUTCDate());
+        const yesterdayKuma = new Date(kumaToday.getTime() - (24 * 60 * 60 * 1000));
+
+        // We need the UTC timestamp that corresponds to yesterday 00:00:00 in UTC-6.
+        // If kumaToday is 2026-02-11 00:00:00 (UTC-6), it is 2026-02-11 06:00:00 (UTC).
+        // yesterdayKuma is 2026-02-10 00:00:00 (UTC-6), which is 2026-02-10 06:00:00 (UTC).
+        const activeThreshold = new Date(yesterdayKuma.getTime() - kumaOffset);
 
         const topStreaks = await User.find({
             streakDays: { $gt: 0 },
-            lastWorkoutDate: { $gte: twoDaysAgo }
+            lastWorkoutDate: { $gte: activeThreshold }
         })
             .sort({ streakDays: -1 }) // Descending order
             .limit(5)
