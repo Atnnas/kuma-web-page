@@ -3,10 +3,22 @@ import connectDB from "@/lib/db";
 import Routine from "@/models/Routine";
 import { notFound } from "next/navigation";
 
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+
 // Force dynamic since we fetch data
 export const dynamic = "force-dynamic";
 
 export default async function RoutinePlayerPage({ params }: { params: Promise<{ id: string }> }) {
+    const session = await auth();
+    const user = session?.user;
+
+    // Redirigir si no está activo (Respaldo del middleware)
+    // @ts-ignore
+    if (!user || user.isActive === false) {
+        redirect("/?error=inactive");
+    }
+
     await connectDB();
 
     // Validate params

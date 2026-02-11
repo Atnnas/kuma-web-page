@@ -5,6 +5,8 @@ import { Navbar } from "@/components/layout/Navbar";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 
 import { CookieConsent } from "@/components/ui/CookieConsent";
+import { AuthStatusHandler } from "@/components/auth/AuthStatusHandler";
+import { Suspense } from "react";
 
 import "./globals.css";
 
@@ -65,6 +67,9 @@ export default async function RootLayout({
         <Navbar key="navbar-key-fix" user={session?.user} />
 
         <CookieConsent />
+        <Suspense fallback={null}>
+          <AuthStatusHandler />
+        </Suspense>
         {children}
       </body>
     </html>

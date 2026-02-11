@@ -10,8 +10,15 @@ export const metadata = {
 
 export default async function RutinasPage() {
     const session = await auth();
+    const user = session?.user;
+
+    // Redirigir si no está activo (Respaldo del middleware)
+    // @ts-ignore
+    if (!user || user.isActive === false) {
+        redirect("/?error=inactive");
+    }
 
     return (
-        <RutinasClientPage user={session?.user} />
+        <RutinasClientPage user={user} />
     );
 }

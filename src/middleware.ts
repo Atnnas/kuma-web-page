@@ -7,7 +7,10 @@ const { auth } = NextAuth(authConfig);
 export default auth((req) => {
     const { nextUrl } = req;
     const isLoggedIn = !!req.auth;
-    const userRole = req.auth?.user?.role;
+    const user = req.auth?.user;
+    const userRole = user?.role;
+    // @ts-ignore - isActive is added in auth.ts callback
+    const isActive = user?.isActive;
 
     // 1. Proteger rutas de admin
     if (nextUrl.pathname.startsWith("/admin")) {
@@ -21,10 +24,16 @@ export default auth((req) => {
         }
     }
 
-    // 2. Proteger Rutinas (Solo usuarios registrados)
+    // 2. Proteger Rutinas (Solo usuarios registrados y ACTIVOS)
     if (nextUrl.pathname.startsWith("/rutinas")) {
         if (!isLoggedIn) {
             return NextResponse.redirect(new URL("/login", nextUrl));
+        }
+
+        // Si no está activo, redirigir al home (o podrías crear una página de /pending-activation)
+        // Por ahora redirigimos al home con un parámetro de error para mostrar un mensaje
+        if (isActive === false) {
+            return NextResponse.redirect(new URL("/?error=inactive", nextUrl));
         }
     }
 

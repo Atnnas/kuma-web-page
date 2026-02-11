@@ -17,9 +17,14 @@ export async function startRoutineLog(routineId: string, title: string, estimate
 
         // Resolving User ID from email since session might not have _id populated depending on auth config
         // or just to be safe and ensure consistent typing
-        const user = await User.findOne({ email: session.user.email }).select("_id");
+        const user = await User.findOne({ email: session.user.email }).select("_id isActive");
         if (!user) {
             return { success: false, error: "User not found" };
+        }
+
+        // Bloquear si el usuario no ha sido activado
+        if (user.isActive === false) {
+            return { success: false, error: "Account not active. Access denied." };
         }
 
         const newLog = await RoutineLog.create({
