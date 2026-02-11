@@ -28,7 +28,6 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
     // Celebration Configuration
     let title = "¡RACHA IMPARABLE!";
     let subtitle = `¡${streak} DÍAS CONSECUTIVOS!`;
-    let message = `Te felicito llevas ${streak} días de racha. ¡Sigue así!`;
     let confettiColors = ['#fb923c', '#ea580c', '#ffffff'];
     let gradientText = "from-orange-400 via-red-500 to-yellow-400";
     let glowColor = "rgba(234,88,12,0.8)";
@@ -37,12 +36,10 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
     if (streak === 22) {
         title = "¡HÁBITO DE ACERO!";
         subtitle = "¡BARRERA ROTA!";
-        message = "Has superado los 21 días. Tu disciplina es ahora inquebrantable.";
         gradientText = "from-yellow-300 via-orange-500 to-red-600";
     } else if (streak === 60) {
         title = "¡MAESTRÍA SUPREMA!";
         subtitle = "¡60 DÍAS DE PODER!";
-        message = "Eres una leyenda del Dojo. Tu llama arde con fuego cósmico.";
         confettiColors = ['#22d3ee', '#3b82f6', '#ffffff']; // Cyan/Blue
         gradientText = "from-cyan-400 via-blue-500 to-purple-600";
         glowColor = "rgba(34,211,238,0.8)";
@@ -50,7 +47,6 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
     } else if (streak > 0 && streak % 30 === 0) {
         title = "¡FUEGO ETERNO!";
         subtitle = "¡TU LLAMA CRECE!";
-        message = "30 días más de gloria. Tu constancia es imparable.";
     }
 
     return createPortal(
@@ -100,32 +96,9 @@ export function StreakCelebrationOverlay({ show, streak, onClose }: StreakCelebr
                                 </span>
                             </motion.div>
 
-                            <h2 className="text-3xl md:text-6xl font-black text-white mb-10 md:mb-14 tracking-widest uppercase drop-shadow-2xl">
+                            <h2 className="text-3xl md:text-6xl font-black text-white tracking-widest uppercase drop-shadow-2xl">
                                 {subtitle}
                             </h2>
-
-                            <motion.p
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 1 }}
-                                className="text-xl md:text-3xl text-zinc-200 max-w-3xl mx-auto font-bold italics leading-relaxed border-t border-white/10 pt-10 px-4"
-                            >
-                                {message}
-                            </motion.p>
-
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 2 }}
-                                className="mt-16"
-                            >
-                                <button
-                                    onClick={onClose}
-                                    className="px-16 py-5 rounded-full bg-white text-black font-black uppercase tracking-widest hover:bg-zinc-200 transition-all active:scale-95 text-lg shadow-[0_0_30px_rgba(255,255,255,0.3)]"
-                                >
-                                    ¡CONTINUAR!
-                                </button>
-                            </motion.div>
                         </motion.div>
                     </div>
                 </motion.div>
