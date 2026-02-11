@@ -58,6 +58,8 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const [impact, setImpact] = useState(false); // FOR SHAKE EFFECT
 
     const [startTime, setStartTime] = useState<number | null>(null);
+    const [isTimerRunning, setIsTimerRunning] = useState(false);
+    const [exerciseTimeLeft, setExerciseTimeLeft] = useState(0);
 
     // Gamification State
     const [showTrophy, setShowTrophy] = useState(false);
@@ -81,6 +83,34 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         return () => clearTimeout(timerRef.current!);
     }, [isResting, timeLeft]);
 
+    // --- EXERCISE TIMER LOGIC ---
+    useEffect(() => {
+        // Reset timer when block or set changes
+        if (activeBlock.measure_type === "time") {
+            setExerciseTimeLeft(activeBlock.reps);
+            setIsTimerRunning(false);
+        }
+    }, [currentBlockIndex, currentSet]);
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (isTimerRunning && exerciseTimeLeft > 0 && !isResting && status === "active") {
+            interval = setInterval(() => {
+                setExerciseTimeLeft((prev) => {
+                    const next = prev - 1;
+                    if (next <= 5 && next > 0) {
+                        audioTrainer.playCountdown();
+                    }
+                    if (next === 0) {
+                        audioTrainer.playStart();
+                        setIsTimerRunning(false);
+                    }
+                    return next;
+                });
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [isTimerRunning, exerciseTimeLeft, isResting, status]);
     // Initial Coach Voice
     useEffect(() => {
         if (status === "active" && currentBlockIndex === 0 && currentSet === 1 && !isResting) {
@@ -117,6 +147,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     };
 
     const finishSet = () => {
+        setIsTimerRunning(false); // Stop exercise timer if running
         audioTrainer.playBeep();
         triggerImpact(); // TRIGGER VISUAL IMPACT
 
@@ -507,16 +538,61 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                     </div>
 
                                     <div className="flex-1 flex items-center justify-center py-8 lg:w-full">
-                                        <div className="relative group cursor-default">
+                                        <div
+                                            className={cn(
+                                                "relative group transition-all duration-300",
+                                                activeBlock.measure_type === "time" ? "cursor-pointer active:scale-95" : "cursor-default"
+                                            )}
+                                            onClick={() => {
+                                                if (activeBlock.measure_type === "time") {
+                                                    setIsTimerRunning(!isTimerRunning);
+                                                }
+                                            }}
+                                        >
                                             <motion.div
-                                                animate={{ scale: [1, 1.15, 1], opacity: [0.1, 0.3, 0.1] }}
-                                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                                                className="absolute inset-0 bg-kuma-gold rounded-full blur-2xl lg:blur-3xl"
+                                                animate={{
+                                                    scale: exerciseTimeLeft <= 5 && isTimerRunning ? [1, 1.3, 1] : [1, 1.15, 1],
+                                                    opacity: exerciseTimeLeft <= 5 && isTimerRunning ? [0.2, 0.5, 0.2] : [0.1, 0.3, 0.1]
+                                                }}
+                                                transition={{ duration: exerciseTimeLeft <= 5 && isTimerRunning ? 0.5 : 3, repeat: Infinity, ease: "easeInOut" }}
+                                                className={cn(
+                                                    "absolute inset-0 rounded-full blur-2xl lg:blur-3xl",
+                                                    exerciseTimeLeft <= 5 && isTimerRunning ? "bg-red-600" : "bg-kuma-gold"
+                                                )}
                                             />
-                                            <div className="text-center relative z-10 lg:scale-150 transition-transform duration-700">
-                                                <span className="text-[6rem] lg:text-[10rem] font-bold text-white leading-none tracking-tighter tabular-nums drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
-                                                    {activeBlock.measure_type === "time" ? formatTime(activeBlock.reps) : activeBlock.reps}
-                                                </span>
+                                            <div className="text-center relative z-10 lg:scale-150 transition-all duration-700">
+                                                <div className="relative">
+                                                    <span className={cn(
+                                                        "text-[6rem] lg:text-[10rem] font-bold leading-none tracking-tighter tabular-nums drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-colors duration-300",
+                                                        exerciseTimeLeft <= 5 && isTimerRunning ? "text-red-500 animate-pulse" : "text-white"
+                                                    )}>
+                                                        {activeBlock.measure_type === "time" ? formatTime(exerciseTimeLeft) : activeBlock.reps}
+                                                    </span>
+
+                                                    {activeBlock.measure_type === "time" && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, scale: 0.5 }}
+                                                            animate={{ opacity: 1, scale: 1 }}
+                                                            className="absolute -top-6 -right-6 lg:-top-10 lg:-right-10"
+                                                        >
+                                                            <div className={cn(
+                                                                "w-12 h-12 lg:w-16 lg:h-16 rounded-full flex items-center justify-center shadow-lg border-2 transition-all",
+                                                                isTimerRunning
+                                                                    ? "bg-black/50 border-white/20 text-white"
+                                                                    : "bg-kuma-gold border-black/10 text-black animate-bounce"
+                                                            )}>
+                                                                {isTimerRunning ? (
+                                                                    <div className="flex gap-1">
+                                                                        <div className="w-1.5 h-4 lg:w-2 lg:h-6 bg-current rounded-full" />
+                                                                        <div className="w-1.5 h-4 lg:w-2 lg:h-6 bg-current rounded-full" />
+                                                                    </div>
+                                                                ) : (
+                                                                    <PlayCircle className="w-8 h-8 lg:w-10 lg:h-10" weight="fill" />
+                                                                )}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </div>
                                                 <span className="block text-2xl font-medium text-zinc-500 uppercase tracking-widest mt-2 lg:mt-6">
                                                     {activeBlock.measure_type === "time" ? "Tiempo" : "Reps"}
                                                 </span>
