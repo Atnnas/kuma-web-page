@@ -588,8 +588,8 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                                     }}
                                                     className={cn(
                                                         "group relative px-6 py-3 rounded-2xl font-black uppercase tracking-tighter transition-all duration-75 text-sm lg:text-xl",
-                                                        "bg-kuma-gold text-black shadow-[0_6px_0_0_#a85507] active:shadow-none active:translate-y-[6px]",
-                                                        isTimerRunning ? "bg-zinc-800 text-zinc-400 shadow-[0_6px_0_0_#18181b] border border-white/5" : "animate-bounce"
+                                                        "bg-red-600 text-white shadow-[0_6px_0_0_#991b1b] active:shadow-none active:translate-y-[6px]",
+                                                        isTimerRunning ? "bg-zinc-800 text-zinc-400 shadow-[0_6px_0_0_#18181b] border border-white/5" : "animate-bounce shadow-[0_6px_0_0_#991b1b]"
                                                     )}
                                                 >
                                                     <span className="flex items-center gap-3">
