@@ -26,7 +26,7 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, transition: { duration: 1.5 } }}
-                    className="fixed inset-0 z-[110] flex flex-col items-center justify-center bg-zinc-950/98 cursor-pointer overflow-hidden p-6 md:p-12"
+                    className="fixed inset-0 z-[110] flex flex-col items-center justify-center bg-zinc-950/98 cursor-pointer overflow-hidden pt-20 pb-10 px-6 md:pt-32 md:pb-16 md:px-12"
                     onClick={onClose}
                 >
                     {/* ASH / SMOKE BACKGROUND EFFECTS */}
