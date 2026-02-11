@@ -26,7 +26,7 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, transition: { duration: 1.5 } }}
-                    className="fixed inset-0 z-[110] flex items-center justify-center bg-zinc-950/98 cursor-pointer overflow-hidden"
+                    className="fixed inset-0 z-[110] flex flex-col items-center justify-center bg-zinc-950/98 cursor-pointer overflow-hidden safe-area-inset"
                     onClick={onClose}
                 >
                     {/* ASH / SMOKE BACKGROUND EFFECTS */}
@@ -55,12 +55,12 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                         ))}
                     </div>
 
-                    <div className="relative text-center p-8 max-w-4xl w-full">
+                    <div className="relative text-center p-4 md:p-12 max-w-5xl w-full flex flex-col items-center justify-center min-h-[80vh]">
                         <motion.div
                             initial={{ scale: 1.5, opacity: 0, filter: "blur(10px)" }}
                             animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
                             transition={{ duration: 1, ease: "easeOut" }}
-                            className="relative z-10"
+                            className="relative z-10 flex flex-col items-center justify-center w-full"
                         >
                             <h1 className="text-6xl md:text-9xl font-black text-zinc-600 mb-4 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,1)]">
                                 RACHA PERDIDA
@@ -73,7 +73,7 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                                     filter: ["grayscale(1)", "grayscale(1) brightness(0.8)", "grayscale(1)"]
                                 }}
                                 transition={{ duration: 4, repeat: Infinity }}
-                                className="w-full h-64 md:h-80 my-12 relative flex items-center justify-center"
+                                className="w-full h-64 md:h-80 mb-12 relative flex items-center justify-center"
                             >
                                 {/* EXTINGUISHED FLAME */}
                                 <div className="absolute inset-0 flex items-center justify-center">
@@ -108,7 +108,7 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.5 }}
-                                className="text-3xl md:text-5xl font-black text-zinc-400 mb-6 tracking-widest uppercase"
+                                className="text-3xl md:text-6xl font-black text-zinc-400 mb-8 tracking-widest uppercase"
                             >
                                 EL FUEGO SE HA EXTINGUIDO
                             </motion.h2>
@@ -117,17 +117,17 @@ export function StreakLossOverlay({ show, onClose }: StreakLossOverlayProps) {
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 1 }}
-                                className="text-xl md:text-2xl text-zinc-500 max-w-2xl mx-auto font-bold italics leading-relaxed border-t border-zinc-800 pt-8"
+                                className="text-xl md:text-3xl text-zinc-500 max-w-3xl mx-auto font-bold italics leading-relaxed border-t border-zinc-900 pt-10"
                             >
                                 Ayer no hubo Dojo. Tu constancia ha fallado y la racha ha vuelto a cero.
-                                <span className="block mt-4 text-zinc-300">¿Dejarás que tu legado muera aquí o volverás a encender la llama hoy?</span>
+                                <span className="block mt-6 text-zinc-300">¿Dejarás que tu legado muera aquí o volverás a encender la llama hoy?</span>
                             </motion.p>
 
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 2 }}
-                                className="mt-12"
+                                className="mt-16"
                             >
                                 <button
                                     onClick={onClose}
