@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { RutinasClientPage } from "@/components/rutinas/RutinasClientPage";
 
 export const dynamic = "force-dynamic";
