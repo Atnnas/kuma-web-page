@@ -168,8 +168,8 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
             </div>
 
             {/* Premium Table */}
-            <div className="rounded-3xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl overflow-hidden shadow-xl">
-                <div className="overflow-x-auto">
+            <div className="rounded-3xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl shadow-xl overflow-hidden">
+                <div className="overflow-x-auto horizontal-scroll-container w-full max-w-full pb-4">
                     <table className="w-full text-left text-base text-zinc-200 border-collapse min-w-[1000px]">
                         <thead>
                             <tr className="border-b border-white/10 bg-zinc-900/80 text-xs uppercase tracking-widest text-zinc-300 font-black">

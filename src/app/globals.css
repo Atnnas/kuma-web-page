@@ -54,6 +54,33 @@
   background: #ef4444;
 }
 
+/* Custom Horizontal Scroll for Tables */
+.horizontal-scroll-container {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 transparent;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar {
+  height: 8px;
+  display: block !important;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 4px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
 /* Feral Glows */
 .text-feral-glow {
   text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
@@ -92,11 +119,10 @@ body {
   background-color: #000;
   color: #e4e4e7;
   /* Zinc-200 generally better for reading on dark */
-  overflow-x: hidden;
-  /* Fix for horizontal scroll issues */
+  /* overflow-x: hidden; */ /* REMOVED TO ALLOW INNER SCROLLERS */
   width: 100%;
 }
 
 html {
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
