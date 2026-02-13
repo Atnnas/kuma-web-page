@@ -170,7 +170,7 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
             {/* Premium Table */}
             <div className="rounded-3xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl overflow-hidden shadow-xl">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-base text-zinc-200 border-collapse">
+                    <table className="w-full text-left text-base text-zinc-200 border-collapse min-w-[1000px]">
                         <thead>
                             <tr className="border-b border-white/10 bg-zinc-900/80 text-xs uppercase tracking-widest text-zinc-300 font-black">
                                 <th className="p-6 w-10">
