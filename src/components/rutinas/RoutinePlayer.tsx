@@ -146,10 +146,27 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         setTimeout(() => setImpact(false), 300); // 300ms shake
     };
 
+    const [hasShownOneHourReward, setHasShownOneHourReward] = useState(false);
+
     const finishSet = () => {
         setIsTimerRunning(false); // Stop exercise timer if running
         audioTrainer.playBeep();
         triggerImpact(); // TRIGGER VISUAL IMPACT
+
+        // Real-time Reward Check (> 1 hour in session)
+        if (!hasShownOneHourReward && startTime) {
+            const elapsedMs = Date.now() - startTime;
+            if (elapsedMs >= 3600000) { // 60 minutes
+                setHasShownOneHourReward(true);
+                setAchievementQueue(prev => [...prev, {
+                    name: "Espíritu Kuma",
+                    description: "Has entrenado más de 1 hora en esta sesión. ¡Tu resistencia es legendaria!",
+                    icon: "PawPrint",
+                    color: "#dc2626",
+                    rarity: "Mítico"
+                }]);
+            }
+        }
 
         if (activeBlock.rest_seconds > 0 && currentSet < activeBlock.sets) {
             audioTrainer.speak("Descansa.");
@@ -208,7 +225,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         try {
             const endTime = Date.now();
             const durationMs = startTime ? (endTime - startTime) : 0;
-            const durationMinutes = Math.max(1, Math.round(durationMs / 60000)); // Min 1 minute
+            const durationMinutes = Math.max(1, Math.floor(durationMs / 60000)); // Min 1 minute
             const durationSeconds = Math.round(durationMs / 1000);
 
             // 0. COMPLETE LOG IF EXISTS
@@ -230,9 +247,17 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             const data = await res.json();
 
             if (data.newAchievements && data.newAchievements.length > 0) {
-                // 2. Queue Achievements
-                const achievements = data.newAchievements.map((item: any) => item.trophy);
-                setAchievementQueue(achievements);
+                // 2. Queue Achievements (Filter out Spirit Kuma if it was already shown during the session)
+                const achievements = data.newAchievements
+                    .map((item: any) => item.trophy)
+                    .filter((t: any) => !(t.name === "Espíritu Kuma" && hasShownOneHourReward));
+
+                if (achievements.length > 0) {
+                    setAchievementQueue(prev => [...prev, ...achievements]);
+                } else if (!showTrophy && achievementQueue.length === 0) {
+                    // If everything was filtered but we need to finish
+                    setStatus("completed");
+                }
             } else {
                 // 3. No achievements, just Standard Completion
                 setStatus("completed");

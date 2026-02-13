@@ -117,16 +117,30 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // 2. Spirit Kuma (Time Attack > 60 mins in a day)
-        if ((user.dailyTrainingMinutes || 0) >= 60) {
-            awardTrophy(
-                "kuma-revenant",
-                "Espíritu Kuma",
-                "Has entrenado más de 1 hora acumulada hoy. Tu resistencia es legendaria.",
-                "PawPrint",
-                "#dc2626",
-                "Mítico"
-            );
+        // 2. Spirit Kuma (Time Attack > 60 mins in SINGLE SESSION)
+        if (routineDuration >= 60) {
+            const rewardMetadata = {
+                name: "Espíritu Kuma",
+                description: "Has entrenado más de 1 hora acumulada hoy. Tu resistencia es legendaria.",
+                icon: "PawPrint",
+                color: "#dc2626",
+                rarity: "Mítico"
+            };
+
+            // Award trophy if not already owned (back-end persistence)
+            if (!existingSlugs.has("kuma-revenant")) {
+                const achievement = {
+                    slug: "kuma-revenant",
+                    earnedAt: new Date(),
+                    metadata: rewardMetadata
+                };
+                // @ts-ignore
+                user.achievements.push(achievement);
+            }
+
+            // ALWAYS add to earnedAchievements for the frontend response to "motivate them"
+            // specifically when they finish a routine and have met the 1-hour goal.
+            earnedAchievements.push({ trophy: rewardMetadata });
         }
 
         // Increment total workout count

@@ -58,8 +58,12 @@ export async function GET(req: NextRequest) {
         }
         // B. Conditions for Loss Celebration (Sorrow):
         else if (displayStreak === 0 && user.lastWorkoutDate) {
+            const lastWorkout = getKumaDate(new Date(user.lastWorkoutDate));
             let lastLossShown = user.lastStreakLossShownDate ? getKumaDate(new Date(user.lastStreakLossShownDate)) : null;
-            if (!lastLossShown || lastLossShown.getTime() < today.getTime()) {
+
+            // Only show if we haven't shown the loss since the last time they trained
+            // (meaning this is a "new" loss event for the person)
+            if (!lastLossShown || lastLossShown.getTime() < lastWorkout.getTime()) {
                 showLossCelebration = true;
             }
         }
