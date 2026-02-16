@@ -33,7 +33,8 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
             name: "Recursos",
             href: "#",
             subItems: [
-                { name: "Didáctica", href: "/recursos/didactica" }
+                { name: "Didáctica", href: "/recursos/didactica" },
+                { name: "Aplicaciones", href: "/recursos/aplicaciones" }
             ]
         },
         { name: "Entrenamiento", href: "/entrenamiento" },

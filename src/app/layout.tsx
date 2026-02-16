@@ -51,6 +51,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Providers } from "@/components/Providers";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -64,13 +66,15 @@ export default async function RootLayout({
       >
         <div className="fixed inset-0 bg-black/40 z-[-1] pointer-events-none" />
         <AnalyticsTracker />
-        <Navbar key="navbar-key-fix" user={session?.user} />
+        <Providers>
+          <Navbar key="navbar-key-fix" user={session?.user} />
 
-        <CookieConsent />
-        <Suspense fallback={null}>
-          <AuthStatusHandler />
-        </Suspense>
-        {children}
+          <CookieConsent />
+          <Suspense fallback={null}>
+            <AuthStatusHandler />
+          </Suspense>
+          {children}
+        </Providers>
       </body>
     </html>
   );
