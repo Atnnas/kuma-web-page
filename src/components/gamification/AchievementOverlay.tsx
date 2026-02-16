@@ -195,6 +195,68 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
         );
     }
 
+    // Custom Animation for "Oso Oso Mentiroso" (Cheat Achievement)
+    if (trophy.slug === "oso-oso-mentiroso") {
+        const WarningIcon = (PhosphorIcons as any)["WarningCircle"] || PhosphorIcons.Trophy;
+        const ResetIcon = (PhosphorIcons as any)["ArrowCounterClockwise"] || PhosphorIcons.Trophy;
+
+        return (
+            <AnimatePresence>
+                {show && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, transition: { duration: 1 } }}
+                        onClick={onClose}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/98 cursor-pointer overflow-hidden"
+                    >
+                        {/* RED/BLACK THEME BACKGROUND */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.2),transparent,transparent)] opacity-80" />
+                            <motion.div
+                                animate={{ opacity: [0.1, 0.3, 0.1] }}
+                                transition={{ duration: 4, repeat: Infinity }}
+                                className="absolute inset-0 bg-[url('/images/noise.png')] opacity-10 mix-blend-overlay"
+                            />
+                        </div>
+
+                        <div className="relative text-center p-8 max-w-lg w-full z-20">
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                className="relative z-10 bg-zinc-950 border border-red-500/20 p-8 rounded-[2rem] shadow-2xl"
+                            >
+                                <div className="w-full aspect-square max-w-[320px] mx-auto mb-8 relative">
+                                    <img
+                                        src="/images/kuma-logro-primer-trampa.jpg"
+                                        alt="Logro Trampa"
+                                        className="w-full h-full object-cover rounded-2xl border-4 border-red-600 shadow-[0_0_50px_rgba(220,38,38,0.5)]"
+                                    />
+                                    <div className="absolute -top-6 -right-6 bg-red-600 text-white p-4 rounded-full shadow-lg border-4 border-zinc-950">
+                                        <WarningIcon size={40} weight="fill" />
+                                    </div>
+                                </div>
+
+                                <h2 className="text-4xl md:text-5xl font-black text-red-500 uppercase tracking-tighter mb-4 italic leading-none drop-shadow-lg">¡TE CACHAMOS!</h2>
+                                <p className="text-zinc-200 text-xl md:text-2xl font-bold mb-8 leading-tight">
+                                    "Tu saltaste esta rutina, tienes la oportunidad de entrenar realmente durante el día. Si a las 12 media noche no has hecho entreno, perderás la racha. Oso oso mentiroso"
+                                </p>
+
+                                <button
+                                    className="w-full h-16 bg-white text-black rounded-[2rem] font-bold text-lg tracking-wider hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <ResetIcon size={24} weight="bold" />
+                                    Reintentar Honestamente
+                                </button>
+                            </motion.div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        );
+    }
+
     return (
         <AnimatePresence>
             {show && (

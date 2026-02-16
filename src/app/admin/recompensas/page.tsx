@@ -29,6 +29,16 @@ const DEMO_TROPHIES = [
         color: "#dc2626", // Red 600
         rarity: "Mítico",
         hidden: false
+    },
+    {
+        _id: "trophy-cheat",
+        slug: "oso-oso-mentiroso",
+        name: "Oso Oso Mentiroso",
+        description: "Tu saltaste esta rutina, tienes la oportunidad de entrenar realmente durante el día. Si a las 12 media noche no has hecho entreno, perderás la racha. Oso oso mentiroso.",
+        icon: "Skull",
+        color: "#ef4444", // Red 500
+        rarity: "Raro",
+        hidden: false
     }
 ];
 
@@ -140,10 +150,14 @@ export default function RecompensasPage() {
                                 <tr key={trophy._id} className="group hover:bg-white/5 transition-colors">
                                     <td className="p-4 text-center">
                                         <div
-                                            className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto border border-white/10 shadow-sm"
+                                            className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto border border-white/10 shadow-sm overflow-hidden"
                                             style={{ backgroundColor: `${trophy.color}15`, color: trophy.color }}
                                         >
-                                            <Trophy weight="duotone" className="w-6 h-6" />
+                                            {trophy.slug === 'oso-oso-mentiroso' ? (
+                                                <img src="/images/kuma-logro-primer-trampa.jpg" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <Trophy weight="duotone" className="w-6 h-6" />
+                                            )}
                                         </div>
                                     </td>
                                     <td className="p-4">
@@ -191,10 +205,14 @@ export default function RecompensasPage() {
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center gap-4">
                                     <div
-                                        className="w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 shadow-lg"
+                                        className="w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 shadow-lg overflow-hidden"
                                         style={{ backgroundColor: `${trophy.color}15`, color: trophy.color }}
                                     >
-                                        <Trophy weight="duotone" className="w-8 h-8" />
+                                        {trophy.slug === 'oso-oso-mentiroso' ? (
+                                            <img src="/images/kuma-logro-primer-trampa.jpg" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <Trophy weight="duotone" className="w-8 h-8" />
+                                        )}
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-white text-lg leading-tight">{trophy.name}</h4>

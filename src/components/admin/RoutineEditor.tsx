@@ -2,19 +2,21 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Spinner, Plus, Trash, FloppyDisk, X, Barbell, Clock, TextAlignLeft, ChartBar, DotsSixVertical, WarningCircle } from "@phosphor-icons/react/dist/ssr";
+import { Spinner, Plus, Trash, FloppyDisk, X, Barbell, Clock, TextAlignLeft, ChartBar, DotsSixVertical, WarningCircle, ArrowCounterClockwise } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/Button";
 import { StrictCombobox } from "@/components/ui/StrictCombobox";
+import { cn } from "@/lib/utils";
 
 // Local interfaces to avoid importing server-side Mongoose types
 export interface IBlock {
+    type?: "exercise" | "loop_start" | "loop_end";
     exercise_name: string;
     sets: number;
     reps: number;
     rest_seconds: number;
     measure_type: "reps" | "time";
     notes?: string;
-
+    loop_count?: number;
 }
 
 export interface IRoutineData {
@@ -60,10 +62,29 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
         // Validate blocks
         for (let i = 0; i < formData.blocks.length; i++) {
             const block = formData.blocks[i];
-            if (!block.exercise_name.trim()) {
+            if ((block.type === "exercise" || !block.type) && !block.exercise_name.trim()) {
                 alert(`El ejercicio #${i + 1} no tiene nombre. Selecciónalo o elimínalo.`);
                 return;
             }
+            if (block.type === "loop_start" && (!block.loop_count || block.loop_count < 2)) {
+                alert(`El inicio de loop #${i + 1} debe tener al menos 2 repeticiones.`);
+                return;
+            }
+        }
+
+        // Validate loop nesting (simple check)
+        let loopDepth = 0;
+        for (const block of formData.blocks) {
+            if (block.type === "loop_start") loopDepth++;
+            if (block.type === "loop_end") loopDepth--;
+            if (loopDepth < 0) {
+                alert("Hay un cierre de loop sin su inicio correspondiente.");
+                return;
+            }
+        }
+        if (loopDepth !== 0) {
+            alert("Hay un inicio de loop sin su cierre correspondiente.");
+            return;
         }
 
         setIsLoading(true);
@@ -104,7 +125,21 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
     const addBlock = () => {
         setFormData(prev => ({
             ...prev,
-            blocks: [...prev.blocks, { exercise_name: "", sets: 3, reps: 10, rest_seconds: 60, measure_type: "reps" }]
+            blocks: [...prev.blocks, { type: "exercise", exercise_name: "", sets: 3, reps: 10, rest_seconds: 60, measure_type: "reps" }]
+        }));
+    };
+
+    const addLoopStart = () => {
+        setFormData(prev => ({
+            ...prev,
+            blocks: [...prev.blocks, { type: "loop_start", exercise_name: "INICIO LOOP", loop_count: 2, sets: 0, reps: 0, rest_seconds: 0, measure_type: "reps" }]
+        }));
+    };
+
+    const addLoopEnd = () => {
+        setFormData(prev => ({
+            ...prev,
+            blocks: [...prev.blocks, { type: "loop_end", exercise_name: "FIN LOOP", sets: 0, reps: 0, rest_seconds: 0, measure_type: "reps" }]
         }));
     };
 
@@ -250,9 +285,17 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                     <div className="space-y-4 pt-4 border-t border-white/5">
                         <div className="flex justify-between items-center sticky top-0 bg-zinc-900/95 backdrop-blur z-10 py-4 border-b border-white/5">
                             <h3 className="text-sm font-bold text-kuma-gold uppercase tracking-widest">Bloques de Ejercicio</h3>
-                            <Button type="button" onClick={addBlock} className="bg-zinc-800 hover:bg-zinc-700 text-white text-xs h-8">
-                                <Plus className="w-3 h-3 mr-1" weight="bold" /> Agregar Ejercicio
-                            </Button>
+                            <div className="flex gap-2">
+                                <Button type="button" onClick={addLoopStart} className="bg-amber-600/20 hover:bg-amber-600/40 text-amber-500 text-[10px] h-8 border border-amber-600/30">
+                                    <Plus className="w-3 h-3 mr-1" weight="bold" /> Iniciar Loop
+                                </Button>
+                                <Button type="button" onClick={addLoopEnd} className="bg-amber-900/20 hover:bg-amber-900/40 text-amber-700 text-[10px] h-8 border border-amber-900/30">
+                                    <Plus className="w-3 h-3 mr-1" weight="bold" /> Fin Loop
+                                </Button>
+                                <Button type="button" onClick={addBlock} className="bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] h-8">
+                                    <Plus className="w-3 h-3 mr-1" weight="bold" /> Agregar Ejercicio
+                                </Button>
+                            </div>
                         </div>
 
                         <div className="space-y-4">
@@ -264,7 +307,14 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                             )}
 
                             {formData.blocks.map((block, idx) => (
-                                <div key={idx} className="bg-black/40 border border-white/5 p-4 rounded-lg flex flex-col gap-4 relative group hover:border-white/10 transition-colors hover:z-[60] focus-within:z-[60]">
+                                <div key={idx} className={cn(
+                                    "p-4 rounded-lg flex flex-col gap-4 relative group transition-colors hover:z-[60] focus-within:z-[60] border",
+                                    block.type === "loop_start"
+                                        ? "bg-amber-500/5 border-amber-500/30"
+                                        : block.type === "loop_end"
+                                            ? "bg-amber-950/20 border-amber-900/40"
+                                            : "bg-black/40 border-white/5 hover:border-white/10"
+                                )}>
                                     <div className="absolute right-2 top-2">
                                         <button
                                             type="button"
@@ -275,59 +325,87 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                         </button>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pr-8">
-                                        <div className="md:col-span-2">
-                                            <label className="text-[10px] text-zinc-500 uppercase block mb-1">Nombre Ejercicio</label>
-                                            <StrictCombobox
-                                                value={block.exercise_name}
-                                                onChange={(val) => updateBlock(idx, "exercise_name", val)}
-                                                placeholder="Buscar en BD..."
-                                                className="z-50"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-[10px] text-zinc-500 uppercase block mb-1">Series (Sets)</label>
-                                            <input
-                                                type="number"
-                                                value={block.sets}
-                                                onChange={e => updateBlock(idx, "sets", Number(e.target.value))}
-                                                className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-sm text-white focus:border-kuma-gold/50 focus:outline-none"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-[10px] text-zinc-500 uppercase block mb-1">
-                                                {block.measure_type === "time" ? "Duración (seg)" : "Repeticiones"}
-                                            </label>
-                                            <div className="flex gap-2">
+                                    {block.type === "loop_start" ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end pr-8">
+                                            <div className="md:col-span-2">
+                                                <div className="flex items-center gap-2 text-amber-500 mb-2">
+                                                    <ArrowCounterClockwise className="w-4 h-4" weight="bold" />
+                                                    <span className="text-xs font-black uppercase tracking-widest">Inicio de Loop</span>
+                                                </div>
+                                                <p className="text-[10px] text-zinc-500">Los ejercicios después de este bloque se repetirán.</p>
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] text-amber-500/70 uppercase block mb-1 font-bold">REPETICIONES (Series del Loop)</label>
                                                 <input
                                                     type="number"
-                                                    value={block.reps}
-                                                    onChange={e => updateBlock(idx, "reps", Number(e.target.value))}
-                                                    className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-sm text-white focus:border-kuma-gold/50 focus:outline-none"
+                                                    value={block.loop_count}
+                                                    onChange={e => updateBlock(idx, "loop_count", Number(e.target.value))}
+                                                    className="w-full bg-zinc-900 border border-amber-500/30 rounded p-2 text-sm text-white focus:border-amber-500 focus:outline-none"
+                                                    min={2}
                                                 />
-                                                <select
-                                                    value={block.measure_type || "reps"}
-                                                    onChange={e => updateBlock(idx, "measure_type", e.target.value as any)}
-                                                    className="w-24 bg-zinc-900 border border-zinc-800 rounded p-2 text-xs text-white uppercase focus:border-kuma-gold/50 focus:outline-none"
-                                                >
-                                                    <option value="reps">Reps</option>
-                                                    <option value="time">Tiempo</option>
-                                                </select>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                        <div>
-                                            <label className="text-[10px] text-zinc-500 uppercase block mb-1">Descanso (seg)</label>
-                                            <input
-                                                type="number"
-                                                value={block.rest_seconds}
-                                                onChange={e => updateBlock(idx, "rest_seconds", Number(e.target.value))}
-                                                className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-sm text-white focus:border-kuma-gold/50 focus:outline-none"
-                                            />
+                                    ) : block.type === "loop_end" ? (
+                                        <div className="flex items-center gap-2 text-amber-700">
+                                            <ArrowCounterClockwise className="w-4 h-4" weight="bold" />
+                                            <span className="text-xs font-black uppercase tracking-widest">Fin de Loop</span>
                                         </div>
-
-                                    </div>
+                                    ) : (
+                                        <>
+                                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pr-8">
+                                                <div className="md:col-span-2">
+                                                    <label className="text-[10px] text-zinc-500 uppercase block mb-1">Nombre Ejercicio</label>
+                                                    <StrictCombobox
+                                                        value={block.exercise_name}
+                                                        onChange={(val) => updateBlock(idx, "exercise_name", val)}
+                                                        placeholder="Buscar en BD..."
+                                                        className="z-50"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="text-[10px] text-zinc-500 uppercase block mb-1">Series (Sets)</label>
+                                                    <input
+                                                        type="number"
+                                                        value={block.sets}
+                                                        onChange={e => updateBlock(idx, "sets", Number(e.target.value))}
+                                                        className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-sm text-white focus:border-kuma-gold/50 focus:outline-none"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="text-[10px] text-zinc-500 uppercase block mb-1">
+                                                        {block.measure_type === "time" ? "Duración (seg)" : "Repeticiones"}
+                                                    </label>
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            type="number"
+                                                            value={block.reps}
+                                                            onChange={e => updateBlock(idx, "reps", Number(e.target.value))}
+                                                            className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-sm text-white focus:border-kuma-gold/50 focus:outline-none"
+                                                        />
+                                                        <select
+                                                            value={block.measure_type || "reps"}
+                                                            onChange={e => updateBlock(idx, "measure_type", e.target.value as any)}
+                                                            className="w-24 bg-zinc-900 border border-zinc-800 rounded p-2 text-xs text-white uppercase focus:border-kuma-gold/50 focus:outline-none"
+                                                        >
+                                                            <option value="reps">Reps</option>
+                                                            <option value="time">Tiempo</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                                <div>
+                                                    <label className="text-[10px] text-zinc-500 uppercase block mb-1">Descanso (seg)</label>
+                                                    <input
+                                                        type="number"
+                                                        value={block.rest_seconds}
+                                                        onChange={e => updateBlock(idx, "rest_seconds", Number(e.target.value))}
+                                                        className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-sm text-white focus:border-kuma-gold/50 focus:outline-none"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -336,27 +414,43 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
             </div>
 
             {/* --- FLOATING ACTIONS FOOTER --- */}
-            <div className="fixed md:sticky bottom-0 inset-x-0 p-4 bg-zinc-900/90 backdrop-blur-xl border-t border-white/10 flex justify-between items-center gap-4 z-50 rounded-b-xl">
-                <Button
-                    type="button"
-                    onClick={addBlock}
-                    className="bg-zinc-800 hover:bg-zinc-700 text-white text-xs h-12 px-4 shadow-lg border border-white/5"
-                >
-                    <Plus className="w-4 h-4 mr-2" weight="bold" /> Agregar Ejercicio
-                </Button>
+            <div className="fixed md:sticky bottom-0 inset-x-0 p-4 bg-zinc-900/90 backdrop-blur-xl border-t border-white/10 flex flex-wrap justify-between items-center gap-4 z-50 rounded-b-xl">
+                <div className="flex flex-wrap gap-2">
+                    <Button
+                        type="button"
+                        onClick={addLoopStart}
+                        className="bg-amber-600/20 hover:bg-amber-600/40 text-amber-500 text-[10px] h-10 border border-amber-600/30"
+                    >
+                        <Plus className="w-3 h-3 mr-1" weight="bold" /> Iniciar Loop
+                    </Button>
+                    <Button
+                        type="button"
+                        onClick={addLoopEnd}
+                        className="bg-amber-900/20 hover:bg-amber-900/40 text-amber-700 text-[10px] h-10 border border-amber-900/30"
+                    >
+                        <Plus className="w-3 h-3 mr-1" weight="bold" /> Fin Loop
+                    </Button>
+                    <Button
+                        type="button"
+                        onClick={addBlock}
+                        className="bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] h-10 px-4 shadow-lg border border-white/5"
+                    >
+                        <Plus className="w-4 h-4 mr-2" weight="bold" /> Agregar Ejercicio
+                    </Button>
+                </div>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 ml-auto">
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="px-6 py-3 rounded-xl bg-gradient-to-b from-zinc-700 to-zinc-800 text-white font-bold border-b-4 border-zinc-950 hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all"
+                        className="px-6 py-3 rounded-xl bg-gradient-to-b from-zinc-700 to-zinc-800 text-white font-bold border-b-4 border-zinc-950 hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all text-sm"
                     >
                         Cancelar
                     </button>
                     <button
                         onClick={(e: React.MouseEvent) => handleSubmit(e as any)}
                         disabled={isLoading}
-                        className="px-8 py-3 rounded-xl bg-gradient-to-b from-kuma-gold to-amber-500 text-black font-black uppercase tracking-wider border-b-4 border-amber-700 shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
+                        className="px-8 py-3 rounded-xl bg-gradient-to-b from-kuma-gold to-amber-500 text-black font-black uppercase tracking-wider border-b-4 border-amber-700 shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2 text-sm"
                     >
                         {isLoading ? <Spinner className="mr-2 h-5 w-5 animate-spin" weight="bold" /> : <FloppyDisk className="mr-2 h-5 w-5" weight="duotone" />}
                         {initialData?._id ? "Guardar Cambios" : "Crear Rutina"}

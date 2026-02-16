@@ -12,7 +12,8 @@ import {
     Timer,
     ArrowCounterClockwise,
     Heartbeat,
-    Trophy
+    Trophy,
+    WarningCircle
 } from "@phosphor-icons/react/dist/ssr";
 import confetti from "canvas-confetti";
 import Link from "next/link";
@@ -23,6 +24,7 @@ import { AchievementOverlay } from "../gamification/AchievementOverlay";
 
 // --- INTERFACES ---
 interface IBlock {
+    type?: "exercise" | "loop_start" | "loop_end";
     exercise_name: string;
     sets: number;
     reps: number;
@@ -30,6 +32,7 @@ interface IBlock {
     measure_type?: "reps" | "time";
     notes?: string;
     media_url?: string;
+    loop_count?: number;
 }
 
 interface IRoutineData {
@@ -61,6 +64,12 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [exerciseTimeLeft, setExerciseTimeLeft] = useState(0);
 
+    // Loop State
+    const [loopRepetitions, setLoopRepetitions] = useState<{ [blockIndex: number]: number }>({});
+    const [cheatDetected, setCheatDetected] = useState(false);
+    const [fastSetCount, setFastSetCount] = useState(0);
+    const setStartTimeRef = useRef<number | null>(null);
+
     // Gamification State
     const [showTrophy, setShowTrophy] = useState(false);
     // const [earnedBelt, setEarnedBelt] = useState<string>(""); // REVERTED
@@ -86,9 +95,14 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     // --- EXERCISE TIMER LOGIC ---
     useEffect(() => {
         // Reset timer when block or set changes
-        if (activeBlock.measure_type === "time") {
+        if (activeBlock && activeBlock.measure_type === "time") {
             setExerciseTimeLeft(activeBlock.reps);
             setIsTimerRunning(false);
+        }
+
+        // Auto-skip loop markers
+        if (activeBlock && (activeBlock.type === "loop_start" || activeBlock.type === "loop_end")) {
+            nextStep();
         }
     }, [currentBlockIndex, currentSet]);
 
@@ -128,6 +142,10 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         setCurrentSet(1);
         setIsResting(false);
         setStartTime(Date.now());
+        setStartTimeRef.current = Date.now();
+        setFastSetCount(0);
+        setCheatDetected(false);
+        setLoopRepetitions({});
 
         // START LOGGING
         try {
@@ -153,6 +171,15 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         audioTrainer.playBeep();
         triggerImpact(); // TRIGGER VISUAL IMPACT
 
+        // Fast Interaction Detection
+        if (setStartTimeRef.current) {
+            const setDuration = Date.now() - setStartTimeRef.current;
+            if (setDuration < 2000) { // Less than 2 seconds
+                setFastSetCount(prev => prev + 1);
+            }
+        }
+        setStartTimeRef.current = Date.now();
+
         // Real-time Reward Check (> 1 hour in session)
         if (!hasShownOneHourReward && startTime) {
             const elapsedMs = Date.now() - startTime;
@@ -172,6 +199,8 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             audioTrainer.speak("Descansa.");
             startRest();
         } else if (activeBlock.rest_seconds > 0 && currentSet === activeBlock.sets && currentBlockIndex < totalBlocks - 1) {
+            // Check if NEXT block is a loop_end and current repetitions remain.
+            // If so, we might need a rest before jumping back.
             audioTrainer.speak("Descansa. Siguiente ejercicio pronto.");
             startRest();
         } else {
@@ -190,15 +219,63 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     };
 
     const nextStep = () => {
+        if (!activeBlock) return;
+
+        // Reset set timer
+        setStartTimeRef.current = Date.now();
+
         if (currentSet < activeBlock.sets) {
             setCurrentSet((prev) => prev + 1);
             audioTrainer.speak(`Set ${currentSet + 1}. Vamos.`);
         } else {
-            if (currentBlockIndex < totalBlocks - 1) {
-                setCurrentBlockIndex((prev) => prev + 1);
+            // FINISHED ALL SETS OF CURRENT BLOCK
+            const nextIdx = currentBlockIndex + 1;
+
+            if (nextIdx < totalBlocks) {
+                const nextBlock = routine.blocks[nextIdx];
+
+                if (nextBlock.type === "loop_end") {
+                    // Logic for loop_end: find corresponding loop_start
+                    let depth = 1;
+                    let startIdx = -1;
+                    for (let i = nextIdx - 1; i >= 0; i--) {
+                        if (routine.blocks[i].type === "loop_end") depth++;
+                        if (routine.blocks[i].type === "loop_start") depth--;
+                        if (depth === 0) {
+                            startIdx = i;
+                            break;
+                        }
+                    }
+
+                    if (startIdx !== -1) {
+                        const maxReps = routine.blocks[startIdx].loop_count || 1;
+                        const currentReps = loopRepetitions[startIdx] || 1;
+
+                        if (currentReps < maxReps) {
+                            // Repeat loop
+                            setLoopRepetitions(prev => ({ ...prev, [startIdx]: currentReps + 1 }));
+                            setCurrentBlockIndex(startIdx + 1); // Jump to first exercise in loop
+                            setCurrentSet(1);
+                            audioTrainer.speak(`Serie de loop ${currentReps + 1}.`);
+                            return;
+                        } else {
+                            // Loop finished, continue to whatever is after loop_end
+                            // But first we must move currentBlockIndex to nextIdx (the loop_end)
+                            // then call nextStep recursively or just proceed
+                            setCurrentBlockIndex(nextIdx);
+                            setCurrentSet(1);
+                            // To skip the loop_end marker immediately:
+                            // The useEffect on currentBlockIndex will handle skipping loop_end
+                            return;
+                        }
+                    }
+                }
+
+                setCurrentBlockIndex(nextIdx);
                 setCurrentSet(1);
-                const nextBlock = routine.blocks[currentBlockIndex + 1];
-                audioTrainer.speak(`Siguiente ejercicio: ${nextBlock.exercise_name}.`);
+                if (nextBlock.type === "exercise" || !nextBlock.type) {
+                    audioTrainer.speak(`Siguiente ejercicio: ${nextBlock.exercise_name}.`);
+                }
             } else {
                 completeRoutine();
             }
@@ -232,6 +309,13 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             if (currentLogId) {
                 const { completeRoutineLog } = await import("@/lib/actions/routine-logs");
                 await completeRoutineLog(currentLogId, durationSeconds);
+            }
+
+            // Anti-cheat validation
+            if (durationMinutes < routine.estimated_duration * 0.5 || fastSetCount > (totalBlocks * 2)) {
+                setCheatDetected(true);
+                audioTrainer.speak("Oso oso mentiroso. Detectamos que saltaste la rutina.");
+                return;
             }
 
             // 1. Call Progress API with routineId and actual duration
@@ -424,7 +508,52 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         );
     }
 
-    // 3. ACTIVE ROUTINE
+    // 3. CHEAT DETECTED
+    if (cheatDetected) {
+        return (
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-900/20 via-black to-black opacity-80" />
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="relative z-10 text-center w-full max-w-lg bg-zinc-950 border border-red-500/20 p-8 rounded-[2rem] shadow-2xl"
+                >
+                    <div className="w-full aspect-square max-w-[320px] mx-auto mb-8 relative">
+                        <img
+                            src="/images/kuma-logro-primer-trampa.jpg"
+                            alt="Logro Trampa"
+                            className="w-full h-full object-cover rounded-2xl border-4 border-red-600 shadow-[0_0_50px_rgba(220,38,38,0.5)]"
+                        />
+                        <div className="absolute -top-6 -right-6 bg-red-600 text-white p-4 rounded-full shadow-lg border-4 border-zinc-950">
+                            <WarningCircle size={40} weight="fill" />
+                        </div>
+                    </div>
+
+                    <h2 className="text-4xl md:text-5xl font-black text-red-500 uppercase tracking-tighter mb-4 italic leading-none drop-shadow-lg">¡TE CACHAMOS!</h2>
+                    <p className="text-zinc-200 text-xl md:text-2xl font-bold mb-8 leading-tight">
+                        "Tu saltaste esta rutina, tienes la oportunidad de entrenar realmente durante el día. Si a las 12 media noche no has hecho entreno, perderás la racha. Oso oso mentiroso"
+                    </p>
+
+                    <div className="flex flex-col gap-4">
+                        <button
+                            onClick={startRoutine}
+                            className="w-full h-16 bg-white text-black rounded-[2rem] font-bold text-lg tracking-wider hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2"
+                        >
+                            <ArrowCounterClockwise className="w-6 h-6" weight="bold" />
+                            Reintentar Honestamente
+                        </button>
+                        <Link href="/rutinas" className="block w-full">
+                            <button className="w-full h-14 bg-zinc-900 text-zinc-500 rounded-[2rem] font-bold text-sm tracking-widest hover:text-white transition-colors">
+                                Volver al Menú
+                            </button>
+                        </Link>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    }
+
+    // 4. ACTIVE ROUTINE
     const progress = ((currentBlockIndex) / totalBlocks) * 100;
 
     return (

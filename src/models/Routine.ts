@@ -1,13 +1,14 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IBlock {
+    type: "exercise" | "loop_start" | "loop_end";
     exercise_name: string;
     sets: number;
     reps: number;
     rest_seconds: number;
     measure_type: "reps" | "time";
     notes?: string;
-
+    loop_count?: number; // Para loop_start
 }
 
 export interface IRoutine extends Document {
@@ -25,16 +26,22 @@ export interface IRoutine extends Document {
 }
 
 const BlockSchema = new Schema<IBlock>({
-    exercise_name: { type: String, required: true },
-    sets: { type: Number, required: true },
-    reps: { type: Number, required: true },
-    rest_seconds: { type: Number, required: true },
+    type: {
+        type: String,
+        enum: ["exercise", "loop_start", "loop_end"],
+        default: "exercise"
+    },
+    exercise_name: { type: String, required: false }, // Opcional para loop_start/end
+    sets: { type: Number, required: false },
+    reps: { type: Number, required: false },
+    rest_seconds: { type: Number, required: false },
     measure_type: {
         type: String,
         enum: ["reps", "time"],
         default: "reps"
     },
-    notes: { type: String, required: false }
+    notes: { type: String, required: false },
+    loop_count: { type: Number, required: false }
 });
 
 const RoutineSchema = new Schema<IRoutine>(
