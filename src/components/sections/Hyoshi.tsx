@@ -241,9 +241,6 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                         <div className="text-6xl md:text-8xl font-mono font-black tracking-tighter text-white tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                             {formatTime(timer)}
                         </div>
-                        <div className="mt-2 text-kuma-gold font-black uppercase tracking-[0.4em] text-[10px] opacity-70">
-                            Tempo Engine
-                        </div>
                     </div>
                 </div>
 
