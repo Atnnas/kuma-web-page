@@ -311,8 +311,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                 <div className="w-24 h-1 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)] mb-4" />
             </div>
 
-            {/* Top Bar (Status & Info) */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-end gap-4">
+            {/* Top Bar (Info Only) */}
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-end gap-4 min-h-[32px]">
                 <div className="flex items-center gap-4">
                     {!session && (
                         <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl text-amber-500 text-[10px] font-bold uppercase tracking-widest">
@@ -320,19 +320,11 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                             Modo Invitado (No guarda cambios)
                         </div>
                     )}
-                    <span className={cn(
-                        "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
-                        status === "recording" ? "bg-red-500/10 border-red-500/30 text-red-500 animate-pulse" :
-                            status === "training" ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500" :
-                                "bg-zinc-800 border-white/10 text-zinc-500"
-                    )}>
-                        {status === "recording" ? "Grabando" : status === "training" ? "Entrenando" : "Listo"}
-                    </span>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 flex flex-col gap-8">
+            <div className="flex flex-col gap-8 w-full">
+                <div className="flex flex-col gap-8 w-full">
                     {/* --- 3D COMMAND CONSOLE --- */}
                     <div className="relative group/console">
                         {/* Console Base/Body */}
@@ -515,72 +507,6 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                     </div>
 
                     <button onMouseDown={recordHit} className={cn("md:hidden w-full py-16 rounded-3xl border-4 text-2xl font-black uppercase tracking-[0.3em] transition-all active:scale-95 shadow-2xl", status === "recording" ? "bg-red-600 border-red-500 text-white" : "bg-zinc-800 border-white/5 text-zinc-500")}>Ritmo</button>
-                </div>
-
-                <div className="flex flex-col gap-6 h-full">
-                    <div className="bg-zinc-900/50 border border-white/10 rounded-3xl flex flex-col flex-grow overflow-hidden max-h-[700px] shadow-xl">
-                        <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
-                            <div className="flex items-center gap-3">
-                                <FolderOpen weight="duotone" className="w-6 h-6 text-kuma-gold" />
-                                <h3 className="font-serif font-black text-white uppercase tracking-wider text-sm">Biblioteca</h3>
-                            </div>
-                            <span className="text-[9px] font-bold text-zinc-500 bg-zinc-800/50 px-2 py-0.5 rounded-md border border-white/5 uppercase tracking-widest">
-                                {library.length} Katas
-                            </span>
-                        </div>
-
-                        <div className="flex-grow overflow-y-auto p-3 space-y-2">
-                            {isLoading ? (
-                                <div className="flex items-center justify-center py-20 text-zinc-600 animate-pulse font-bold uppercase tracking-widest text-[10px]">Cargando ritmos...</div>
-                            ) : library.map((kata) => (
-                                <button
-                                    key={kata.id}
-                                    onClick={() => {
-                                        setCurrentKata(kata);
-                                        pointsRef.current = kata.points;
-                                    }}
-                                    className={cn(
-                                        "w-full p-4 flex items-center justify-between group hover:bg-white/5 rounded-2xl transition-all text-left border border-transparent",
-                                        currentKata.name === kata.name ? "bg-kuma-gold/5 border-kuma-gold/20" : ""
-                                    )}
-                                >
-                                    <div className="flex flex-col gap-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className={cn("text-sm font-bold transition-colors", currentKata.name === kata.name ? "text-kuma-gold" : "text-white group-hover:text-kuma-gold")}>{kata.name}</span>
-                                            {kata.isCustom && <Tag weight="fill" className="w-2.5 h-2.5 text-zinc-500" />}
-                                        </div>
-                                        <span className="text-[9px] uppercase font-black tracking-widest text-zinc-600 group-hover:text-zinc-400 transition-colors">{kata.points.length} Técnicas</span>
-                                    </div>
-                                    <CaretRight weight="bold" className="w-3 h-3 text-zinc-700 group-hover:text-kuma-gold group-hover:translate-x-1 transition-all" />
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="p-4 bg-zinc-900/80 border-t border-white/5">
-                            {isAdmin ? (
-                                <>
-                                    <input
-                                        type="text"
-                                        placeholder="Nombre del nuevo Kata..."
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-kuma-gold/50 transition-all mb-3 font-bold uppercase tracking-widest"
-                                        value={currentKata.name}
-                                        onChange={(e) => setCurrentKata({ ...currentKata, name: e.target.value })}
-                                    />
-                                    <button
-                                        onClick={saveToDB}
-                                        disabled={isSaving}
-                                        className="w-full py-3 bg-kuma-gold text-black rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-lg disabled:opacity-50 disabled:grayscale"
-                                    >
-                                        {isSaving ? "Guardando..." : <><FloppyDisk weight="fill" className="w-4 h-4" /> Guardar en Mi Cuenta</>}
-                                    </button>
-                                </>
-                            ) : (
-                                <div className="py-2 text-center text-[9px] font-bold text-zinc-500 uppercase tracking-widest">
-                                    Inicia como Admin para editar
-                                </div>
-                            )}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
