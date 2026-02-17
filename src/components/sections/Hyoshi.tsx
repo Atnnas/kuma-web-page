@@ -211,7 +211,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
             const newPoint: Point = {
                 type: "hold",
                 start: timer,
-                name: `Ték. ${pointsRef.current.length + 1}`,
+                name: "",
                 pulses: []
             };
             activeHoldRef.current = newPoint;
