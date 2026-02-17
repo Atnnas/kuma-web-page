@@ -429,7 +429,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                 <div className="relative group/timeline">
                     <div className="absolute -inset-1 bg-kuma-gold/20 blur-md opacity-20 group-hover/timeline:opacity-30 transition-opacity rounded-[2.2rem]" />
 
-                    <div className="relative bg-[#0a0a0c] border border-white/10 rounded-[2rem] h-52 overflow-hidden shadow-2xl flex flex-col">
+                    <div className="relative bg-[#0a0a0c] border border-white/10 rounded-[2rem] h-52 overflow-hidden shadow-2xl flex flex-col crt-screen">
                         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
                             <div className={cn(
                                 "absolute inset-0 transition-opacity duration-1000",
@@ -464,6 +464,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
                         <div className="absolute inset-x-0 top-[33%] h-px bg-white/5 z-0" />
                         <div className="absolute inset-x-0 top-[66%] h-px bg-white/5 z-0" />
+
+                        <Oscilloscope active={activeHoldRef.current !== null || (status === "training" && currentKata.points.some(p => timer >= p.start && timer <= (p.start + (p.duration || 0))))} />
 
                         {/* Tactical HUD Overlays */}
                         <div className="absolute top-4 left-6 z-50 flex flex-col gap-1 pointer-events-none">
@@ -547,7 +549,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                         initial={{ opacity: 0 }}
                                                         animate={{ opacity: 1 }}
                                                         className={cn(
-                                                            "absolute top-[35%] h-[30%] rounded-lg border shadow-[0_0_25px_rgba(234,179,8,0.4),inset_0_0_5px_rgba(255,255,255,0.4)]",
+                                                            "absolute top-[35%] h-[30%] rounded-lg border crt-phosphor",
                                                             "bg-gradient-to-r from-kuma-gold via-white/30 to-kuma-gold border-white/30"
                                                         )}
                                                         style={{
@@ -601,23 +603,74 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     );
 };
 
+// --- CRT OSCILLOSCOPE COMPONENT ---
+const Oscilloscope = ({ active }: { active: boolean }) => {
+    return (
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-48 h-8 opacity-40 pointer-events-none z-50">
+            <svg viewBox="0 0 200 40" className="w-full h-full">
+                <motion.path
+                    d="M 0 20 Q 25 20, 50 20 T 100 20 T 150 20 T 200 20"
+                    fill="none"
+                    stroke="#eab308"
+                    strokeWidth="1"
+                    animate={{
+                        d: active
+                            ? [
+                                "M 0 20 Q 10 5, 20 20 T 40 20 T 60 20 T 80 20 T 100 20 T 120 20 T 140 20 T 160 20 T 180 20 T 200 20",
+                                "M 0 20 Q 10 35, 20 20 T 40 20 T 60 20 T 80 20 T 100 20 T 120 20 T 140 20 T 160 20 T 180 20 T 200 20",
+                                "M 0 20 Q 10 5, 20 20 T 40 20 T 60 20 T 80 20 T 100 20 T 120 20 T 140 20 T 160 20 T 180 20 T 200 20"
+                            ]
+                            : [
+                                "M 0 20 Q 50 18, 100 20 T 200 20",
+                                "M 0 20 Q 50 22, 100 20 T 200 20",
+                                "M 0 20 Q 50 18, 100 20 T 200 20"
+                            ]
+                    }}
+                    transition={{
+                        duration: active ? 0.2 : 2,
+                        repeat: Infinity,
+                        ease: "linear"
+                    }}
+                />
+            </svg>
+        </div>
+    );
+};
+
 // --- STYLES FOR THE NEXT-GEN SCREEN ---
 const CustomStyles = () => (
     <style jsx global>{`
         @keyframes scanline {
             0% { transform: translateY(-100%); opacity: 0; }
-            50% { opacity: 1; }
+            50% { opacity: 0.5; }
             100% { transform: translateY(100%); opacity: 0; }
         }
         @keyframes slow-spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            5% { opacity: 0.95; }
+            10% { opacity: 0.9; }
+            15% { opacity: 0.95; }
+            30% { opacity: 1; }
+            50% { opacity: 0.98; }
+            80% { opacity: 0.95; }
+            100% { opacity: 0.99; }
+        }
         .animate-scanline {
             animation: scanline 8s linear infinite;
         }
         .animate-slow-spin {
             animation: slow-spin 20s linear infinite;
+        }
+        .crt-phosphor {
+            filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.8)) drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .crt-screen {
+            animation: flicker 0.15s infinite;
         }
     `}</style>
 );
