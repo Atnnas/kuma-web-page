@@ -34,11 +34,13 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     const [userKatas, setUserKatas] = useState<Kata[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [playbackRate, setPlaybackRate] = useState(1);
 
     // Refs
     const requestRef = useRef<number>(0);
     const startTimeRef = useRef<number>(0);
     const lastPauseTimeRef = useRef<number>(0);
+    const lastPerformanceTimeRef = useRef<number>(0);
     const pointsRef = useRef<Point[]>([]);
     const activeHoldRef = useRef<Point | null>(null);
     const isKeyPressedRef = useRef<Set<string>>(new Set());
@@ -90,13 +92,17 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     // --- TIMER LOGIC ---
     const animate = useCallback((time: number) => {
         const currentStatus = statusRef.current;
-        const currentTimer = (currentStatus === "recording" || currentStatus === "training")
-            ? (performance.now() - startTimeRef.current) / 1000
-            : 0;
+        const now = performance.now();
+
+        let currentTimer = timerRef.current;
 
         if (currentStatus === "recording" || currentStatus === "training") {
+            const deltaTime = (now - lastPerformanceTimeRef.current) / 1000;
+            const scaledDelta = deltaTime * playbackRate;
+            currentTimer += currentStatus === "recording" ? deltaTime : scaledDelta;
             setTimer(currentTimer);
         }
+        lastPerformanceTimeRef.current = now;
 
         // --- AUDIO RECONCILIATION ENGINE (DOUBLE-GATE) ---
         // Sound activates IF AND ONLY IF (Space is held) AND (Playhead is over an active bar)
@@ -145,7 +151,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         }
 
         requestRef.current = requestAnimationFrame((t) => animate(t));
-    }, [playBeep, currentKata.points]);
+    }, [playBeep, currentKata.points, playbackRate]);
 
     useEffect(() => {
         requestRef.current = requestAnimationFrame((t) => animate(t));
@@ -156,17 +162,17 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     const startRecording = () => {
         setStatus("recording");
         setTimer(0);
-        startTimeRef.current = performance.now();
+        lastPerformanceTimeRef.current = performance.now();
         pointsRef.current = [];
         setCurrentKata(prev => ({ ...prev, points: [] }));
     };
 
     const startTraining = () => {
         if (status === "paused") {
-            startTimeRef.current = performance.now() - (lastPauseTimeRef.current * 1000);
+            lastPerformanceTimeRef.current = performance.now();
         } else {
             setTimer(0);
-            startTimeRef.current = performance.now();
+            lastPerformanceTimeRef.current = performance.now();
             pointsRef.current = currentKata.points.map(p => ({ ...p, played: false, playedPulses: [], stopped: false }));
         }
         setStatus("training");
@@ -299,7 +305,28 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                 <div className="w-24 h-1 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)] mb-4" />
             </div>
 
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-end gap-4 min-h-[32px]">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 min-h-[32px]">
+                <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl overflow-hidden backdrop-blur-md">
+                    <Clock className="w-3 h-3 text-kuma-gold" weight="bold" />
+                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mr-2">Tempo:</span>
+                    <div className="flex gap-1">
+                        {[0.5, 0.75, 1, 1.25].map(rate => (
+                            <button
+                                key={rate}
+                                onClick={() => setPlaybackRate(rate)}
+                                className={cn(
+                                    "px-2 py-0.5 rounded-md text-[9px] font-black transition-all",
+                                    playbackRate === rate
+                                        ? "bg-kuma-gold text-black shadow-[0_0_10px_rgba(234,179,8,0.4)]"
+                                        : "bg-white/5 text-zinc-500 hover:bg-white/10 hover:text-white"
+                                )}
+                            >
+                                {rate}x
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 {!session && (
                     <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl text-amber-500 text-[10px] font-bold uppercase tracking-widest">
                         <Warning weight="fill" />
@@ -403,6 +430,19 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                     <div className="absolute -inset-1 bg-kuma-gold/20 blur-md opacity-20 group-hover/timeline:opacity-30 transition-opacity rounded-[2.2rem]" />
 
                     <div className="relative bg-[#0a0a0c] border border-white/10 rounded-[2rem] h-52 overflow-hidden shadow-2xl flex flex-col">
+                        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+                            <div className={cn(
+                                "absolute inset-0 transition-opacity duration-1000",
+                                (status === "training" || status === "recording") ? "opacity-20" : "opacity-5"
+                            )}>
+                                <div className={cn(
+                                    "absolute inset-[-100%] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-kuma-gold/20 via-transparent to-transparent animate-slow-spin",
+                                    activeHoldRef.current || (status === "training" && currentKata.points.some(p => timer >= p.start && timer <= (p.start + (p.duration || 0))))
+                                        ? "scale-150 duration-500 opacity-60"
+                                        : "scale-100 duration-1000 opacity-20"
+                                )} />
+                            </div>
+                        </div>
                         <div className="absolute inset-0 pointer-events-none z-40 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] opacity-30" />
                         <div className="absolute inset-0 z-40 pointer-events-none bg-gradient-to-b from-transparent via-white/[0.02] to-transparent animate-scanline" />
 
@@ -421,6 +461,9 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                 `,
                             backgroundSize: '8px 8px'
                         }} />
+
+                        <div className="absolute inset-x-0 top-[33%] h-px bg-white/5 z-0" />
+                        <div className="absolute inset-x-0 top-[66%] h-px bg-white/5 z-0" />
 
                         {/* Tactical HUD Overlays */}
                         <div className="absolute top-4 left-6 z-50 flex flex-col gap-1 pointer-events-none">
@@ -465,7 +508,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                     {/* Real-time active hold trail (Recording) */}
                                     {status === "recording" && activeHoldRef.current && (
                                         <div
-                                            className="absolute bottom-0 h-full bg-gradient-to-r from-red-500 via-red-400 to-red-500 rounded-lg shadow-[0_0_30px_rgba(239,68,68,0.8),inset_0_0_15px_rgba(255,255,255,0.4)] border border-red-400/50"
+                                            className="absolute top-[35%] h-[30%] bg-gradient-to-r from-red-500 via-red-300 to-red-500 rounded-lg shadow-[0_0_20px_rgba(239,68,68,0.5)] border border-red-400/50"
                                             style={{
                                                 left: `${(activeHoldRef.current.start % 30) / 30 * 100}%`,
                                                 width: `${((timer - activeHoldRef.current.start) % 30) / 30 * 100}%`
@@ -478,7 +521,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                         <React.Fragment key={`ghost-${idx}`}>
                                             {point.type === "hold" && (
                                                 <div
-                                                    className="absolute bottom-0 h-full rounded-lg bg-white/5 border border-white/10 opacity-30"
+                                                    className="absolute top-[35%] h-[30%] rounded-lg bg-white/5 border border-white/5 opacity-20"
                                                     style={{
                                                         left: `${(point.start % 30) / 30 * 100}%`,
                                                         width: `${((point.duration || 0) % 30) / 30 * 100}%`
@@ -486,7 +529,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                 />
                                             )}
                                             <div
-                                                className="absolute w-1 h-[40%] bg-zinc-800 rounded-full opacity-30"
+                                                className="absolute top-[5%] h-[90%] w-px bg-zinc-800 opacity-20"
                                                 style={{ left: `${(point.start % 30) / 30 * 100}%` }}
                                             />
                                         </React.Fragment>
@@ -504,8 +547,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                         initial={{ opacity: 0 }}
                                                         animate={{ opacity: 1 }}
                                                         className={cn(
-                                                            "absolute bottom-0 h-full rounded-lg border shadow-[0_0_35px_rgba(234,179,8,0.6),inset_0_0_10px_rgba(255,255,255,0.8)]",
-                                                            "bg-gradient-to-r from-kuma-gold via-white/40 to-kuma-gold border-white/40"
+                                                            "absolute top-[35%] h-[30%] rounded-lg border shadow-[0_0_25px_rgba(234,179,8,0.4),inset_0_0_5px_rgba(255,255,255,0.4)]",
+                                                            "bg-gradient-to-r from-kuma-gold via-white/30 to-kuma-gold border-white/30"
                                                         )}
                                                         style={{
                                                             left: `${(point.start % 30) / 30 * 100}%`,
@@ -519,7 +562,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                     <motion.div
                                                         initial={{ scale: 0 }}
                                                         animate={{ scale: 1 }}
-                                                        className="absolute w-1 h-full bg-white shadow-[0_0_15px_#fff] rounded-full z-10"
+                                                        className="absolute w-0.5 top-[5%] h-[90%] bg-white/40 shadow-[0_0_10px_rgba(255,255,255,0.2)] rounded-full z-10"
                                                         style={{ left: `${(point.start % 30) / 30 * 100}%` }}
                                                     />
                                                 )}
@@ -532,7 +575,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                             key={`live-p-${idx}-${pIdx}`}
                                                             initial={{ scale: 0 }}
                                                             animate={{ scale: 1 }}
-                                                            className="absolute w-0.5 h-[60%] bg-cyan-400 shadow-[0_0_10px_#22d3ee] rounded-full z-20"
+                                                            className="absolute w-0.5 top-[5%] h-[25%] bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.6)] rounded-full z-20"
                                                             style={{ left: `${((point.start + p) % 30) / 30 * 100}%` }}
                                                         />
                                                     );
@@ -562,11 +605,19 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 const CustomStyles = () => (
     <style jsx global>{`
         @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100%); opacity: 0; }
+        }
+        @keyframes slow-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         .animate-scanline {
-            animation: scanline 4s linear infinite;
+            animation: scanline 8s linear infinite;
+        }
+        .animate-slow-spin {
+            animation: slow-spin 20s linear infinite;
         }
     `}</style>
 );
