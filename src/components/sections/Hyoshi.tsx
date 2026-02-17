@@ -667,7 +667,7 @@ const CustomStyles = () => (
         }
         .crt-phosphor {
             filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.8)) drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: filter 0.3s ease, opacity 0.3s ease;
         }
         .crt-screen {
             animation: flicker 0.15s infinite;
