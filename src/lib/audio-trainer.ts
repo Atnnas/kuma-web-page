@@ -98,20 +98,24 @@ class AudioTrainer {
     }
 
     public stopContinuousTone() {
-        if (!this.audioCtx || !this.continuousOsc || !this.continuousGain) return;
+        if (!this.audioCtx) return;
 
-        const now = this.audioCtx.currentTime;
-        this.continuousGain.gain.cancelScheduledValues(now);
-        this.continuousGain.gain.setValueAtTime(this.continuousGain.gain.value, now);
-        this.continuousGain.gain.linearRampToValueAtTime(0, now + 0.1);
+        if (this.continuousGain) {
+            const now = this.audioCtx.currentTime;
+            this.continuousGain.gain.cancelScheduledValues(now);
+            this.continuousGain.gain.setValueAtTime(this.continuousGain.gain.value, now);
+            this.continuousGain.gain.linearRampToValueAtTime(0, now + 0.05);
+        }
 
-        const osc = this.continuousOsc;
-        setTimeout(() => {
-            try {
-                osc.stop();
-                osc.disconnect();
-            } catch (e) { }
-        }, 150);
+        if (this.continuousOsc) {
+            const osc = this.continuousOsc;
+            setTimeout(() => {
+                try {
+                    osc.stop();
+                    osc.disconnect();
+                } catch (e) { }
+            }, 60);
+        }
 
         this.continuousOsc = null;
         this.continuousGain = null;
