@@ -26,6 +26,7 @@ import { DEFAULT_KATAS, type Point, type Kata } from "@/data/default-katas";
 
 export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     const { data: session } = useSession();
+    const isAdmin = session?.user?.role === "super_admin" || session?.user?.role === "editor";
     const [status, setStatus] = useState<"ready" | "recording" | "training" | "paused">("ready");
     const [timer, setTimer] = useState(0);
     const [currentKata, setCurrentKata] = useState<Kata>({ id: Date.now(), name: "", points: [] });
@@ -226,12 +227,27 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
     return (
         <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto">
-            {/* Main Title Area */}
+            {/* Main Title Area & Elegant Chronometer */}
             <div className="flex flex-col items-center justify-center text-center">
-                <PrimalTitle className="text-4xl md:text-6xl uppercase tracking-[0.2em] mb-2">
+                <PrimalTitle className="text-4xl md:text-6xl uppercase tracking-[0.2em] mb-4">
                     Hyōshi<span className="text-kuma-gold">Kata</span>
                 </PrimalTitle>
-                <div className="w-24 h-1 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)] mb-8" />
+
+                {/* Elegant Chronometer */}
+                <div className="relative group mb-8">
+                    {/* Glowing Border Wrapper */}
+                    <div className="absolute -inset-4 bg-gradient-to-r from-kuma-gold/50 via-kuma-gold to-kuma-gold/50 rounded-[2rem] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000" />
+                    <div className="relative bg-black/40 border-2 border-kuma-gold/30 backdrop-blur-2xl px-12 py-6 rounded-3xl shadow-[0_0_30px_rgba(234,179,8,0.15)] flex flex-col items-center">
+                        <div className="text-6xl md:text-8xl font-mono font-black tracking-tighter text-white tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                            {formatTime(timer)}
+                        </div>
+                        <div className="mt-2 text-kuma-gold font-black uppercase tracking-[0.4em] text-[10px] opacity-70">
+                            Tempo Engine
+                        </div>
+                    </div>
+                </div>
+
+                <div className="w-24 h-1 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)] mb-4" />
             </div>
 
             {/* Top Bar */}
@@ -263,28 +279,17 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
-                    {/* Timer Display */}
-                    <div className="bg-zinc-900/80 border border-white/10 rounded-3xl p-12 flex flex-col items-center justify-center relative overflow-hidden shadow-2xl">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-zinc-800">
-                            <motion.div
-                                className="h-full bg-kuma-gold shadow-[0_0_10px_rgba(234,179,8,0.5)]"
-                                initial={{ width: 0 }}
-                                animate={{ width: `${(timer % 60) / 60 * 100}%` }}
-                                transition={{ duration: 0.1 }}
-                            />
-                        </div>
-                        <div className="text-8xl md:text-9xl font-mono font-black tracking-tighter text-white tabular-nums drop-shadow-2xl">
-                            {formatTime(timer)}
-                        </div>
-                        <p className="mt-4 text-zinc-500 font-bold uppercase tracking-[0.3em] text-xs">Hyoshi Tempo Engine</p>
-                    </div>
-
                     {/* Action Bar */}
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                        <button onClick={startRecording} disabled={status === "recording"} className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl bg-zinc-900 border border-white/10 hover:border-red-500/50 hover:bg-red-500/5 transition-all group disabled:opacity-50">
-                            <Record weight="fill" className="w-8 h-8 text-red-500 group-hover:scale-110" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white">Grabar</span>
-                        </button>
+                    <div className={cn(
+                        "grid gap-3",
+                        isAdmin ? "grid-cols-2 md:grid-cols-5" : "grid-cols-2 md:grid-cols-3"
+                    )}>
+                        {isAdmin && (
+                            <button onClick={startRecording} disabled={status === "recording"} className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl bg-zinc-900 border border-white/10 hover:border-red-500/50 hover:bg-red-500/5 transition-all group disabled:opacity-50">
+                                <Record weight="fill" className="w-8 h-8 text-red-500 group-hover:scale-110" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white">Grabar</span>
+                            </button>
+                        )}
                         <button onClick={startTraining} disabled={status === "training" || (currentKata.points.length === 0 && status !== "paused")} className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl bg-zinc-900 border border-white/10 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all group disabled:opacity-50">
                             <Play weight="fill" className="w-8 h-8 text-emerald-500 group-hover:scale-110" />
                             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white">Entrenar</span>
@@ -408,20 +413,28 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                         </div>
 
                         <div className="p-4 bg-zinc-900/80 border-t border-white/5">
-                            <input
-                                type="text"
-                                placeholder="Nombre del nuevo Kata..."
-                                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-kuma-gold/50 transition-all mb-3 font-bold uppercase tracking-widest"
-                                value={currentKata.name}
-                                onChange={(e) => setCurrentKata({ ...currentKata, name: e.target.value })}
-                            />
-                            <button
-                                onClick={saveToDB}
-                                disabled={isSaving || !session}
-                                className="w-full py-3 bg-kuma-gold text-black rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-lg disabled:opacity-50 disabled:grayscale"
-                            >
-                                {isSaving ? "Guardando..." : <><FloppyDisk weight="fill" className="w-4 h-4" /> Guardar en Mi Cuenta</>}
-                            </button>
+                            {isAdmin ? (
+                                <>
+                                    <input
+                                        type="text"
+                                        placeholder="Nombre del nuevo Kata..."
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-kuma-gold/50 transition-all mb-3 font-bold uppercase tracking-widest"
+                                        value={currentKata.name}
+                                        onChange={(e) => setCurrentKata({ ...currentKata, name: e.target.value })}
+                                    />
+                                    <button
+                                        onClick={saveToDB}
+                                        disabled={isSaving}
+                                        className="w-full py-3 bg-kuma-gold text-black rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-lg disabled:opacity-50 disabled:grayscale"
+                                    >
+                                        {isSaving ? "Guardando..." : <><FloppyDisk weight="fill" className="w-4 h-4" /> Guardar en Mi Cuenta</>}
+                                    </button>
+                                </>
+                            ) : (
+                                <div className="py-2 text-center text-[9px] font-bold text-zinc-500 uppercase tracking-widest">
+                                    Inicia como Admin para editar
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
