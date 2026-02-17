@@ -334,15 +334,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                             {/* Texture/Grip details */}
                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-leather.png')] opacity-10 pointer-events-none" />
 
-                            {/* Label */}
-                            <div className="flex items-center justify-between mb-8 px-2">
-                                <div className="flex items-center gap-3">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500">Consola de Mando Principal</span>
-                                </div>
-                                <div className="text-[9px] font-bold text-zinc-700 uppercase tracking-widest bg-black/40 px-3 py-1 rounded-full border border-white/5">
-                                    Motor Rítmico V1.2
-                                </div>
-                            </div>
+                            <div className="mb-4" />
 
                             {/* Buttons Grid */}
                             <div className={cn(
@@ -446,10 +438,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
                             {/* Header Info */}
                             <div className="flex items-center justify-between px-6 pt-4 z-30">
-                                <div className="flex items-center gap-3">
-                                    <div className={cn("w-1.5 h-1.5 rounded-full", status === "recording" ? "bg-red-500 animate-pulse" : status === "training" ? "bg-emerald-500 animate-pulse" : "bg-zinc-700")} />
-                                    <span className="text-[8px] font-black uppercase tracking-[0.3em] text-zinc-500">Analizador de Señal</span>
-                                </div>
+                                <div className={cn("w-1.5 h-1.5 rounded-full", status === "recording" ? "bg-red-500 animate-pulse" : status === "training" ? "bg-emerald-500 animate-pulse" : "bg-zinc-700")} />
                                 <div className="text-[7px] font-bold text-zinc-700 uppercase tracking-widest tabular-nums">
                                     {formatTime(timer)} / 30.0s
                                 </div>
@@ -550,16 +539,11 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                     </div>
                                 </div>
 
-                                {/* Footer Indicators */}
-                                <div className="absolute bottom-4 left-6 right-6 flex justify-between items-center z-30">
-                                    <div className="flex gap-2">
-                                        <div className="w-1.5 h-1.5 bg-white/20 rounded-full" />
-                                        <div className="w-1.5 h-1.5 bg-white/10 rounded-full" />
-                                        <div className="w-1.5 h-1.5 bg-white/5 rounded-full" />
-                                    </div>
-                                    <div className="text-[6px] font-black uppercase tracking-[0.4em] text-zinc-600">
-                                        Motor Rítmico 3000 // Buffer de Escaneo
-                                    </div>
+                                {/* Footer Decor */}
+                                <div className="absolute bottom-4 left-6 flex gap-2 z-30">
+                                    <div className="w-1.5 h-1.5 bg-white/20 rounded-full" />
+                                    <div className="w-1.5 h-1.5 bg-white/10 rounded-full" />
+                                    <div className="w-1.5 h-1.5 bg-white/5 rounded-full" />
                                 </div>
                             </div>
                         </div>
