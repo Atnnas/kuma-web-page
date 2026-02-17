@@ -42,6 +42,11 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     const pointsRef = useRef<Point[]>([]);
     const activeHoldRef = useRef<Point | null>(null);
     const isKeyPressedRef = useRef<Set<string>>(new Set());
+    const statusRef = useRef(status);
+
+    useEffect(() => {
+        statusRef.current = status;
+    }, [status]);
 
     // --- FETCH DATA ---
     useEffect(() => {
@@ -79,11 +84,12 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
     // --- TIMER LOGIC ---
     const animate = useCallback((time: number) => {
-        if (status === "recording" || status === "training") {
+        const currentStatus = statusRef.current;
+        if (currentStatus === "recording" || currentStatus === "training") {
             const elapsed = (performance.now() - startTimeRef.current) / 1000;
             setTimer(elapsed);
 
-            if (status === "training") {
+            if (currentStatus === "training") {
                 pointsRef.current.forEach((point) => {
                     if (elapsed >= point.start && !point.played) {
                         if (point.type === "hold") {
@@ -112,7 +118,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
             }
         }
         requestRef.current = requestAnimationFrame((t) => animate(t));
-    }, [status, playBeep]);
+    }, [playBeep]);
 
     useEffect(() => {
         requestRef.current = requestAnimationFrame((t) => animate(t));
@@ -430,12 +436,11 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                 );
 
                                 return (
-                                    <motion.div
+                                    <div
                                         className="absolute top-0 bottom-6 w-[4px] z-50 pointer-events-none"
                                         style={{
-                                            left: `calc(2.5rem + ${(timer % 30) * 3.333}% * (100% - 5rem) / 100)`
+                                            left: `calc(2.5rem + ${(timer % 30) / 30 * 100}% * (100% - 5rem) / 100)`
                                         }}
-                                        transition={{ type: "tween", ease: "linear", duration: 0.1 }}
                                     >
                                         <div className="absolute inset-x-0 h-full bg-kuma-gold shadow-[0_0_20px_rgba(234,179,8,1),0_0_40px_rgba(234,179,8,0.4)]" />
 
@@ -461,7 +466,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-2 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,1)]" />
                                         <div className="absolute inset-y-0 -left-10 w-20 bg-gradient-to-r from-transparent via-kuma-gold/15 to-transparent blur-md" />
                                         <div className="absolute inset-y-0 -left-2 w-4 bg-white/40 blur-xs" />
-                                    </motion.div>
+                                    </div>
                                 );
                             })()}
 
