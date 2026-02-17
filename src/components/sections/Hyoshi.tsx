@@ -281,7 +281,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     };
 
     return (
-        <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto relative">
+        <div className="flex flex-col gap-4 w-full max-w-6xl mx-auto relative px-4">
             {/* Back Button - Top Left */}
             <button
                 onClick={onBack}
@@ -298,7 +298,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                 </PrimalTitle>
 
                 {/* Elegant Chronometer */}
-                <div className="relative group mb-8">
+                <div className="relative group mb-4">
                     {/* Glowing Border Wrapper */}
                     <div className="absolute -inset-4 bg-gradient-to-r from-kuma-gold/50 via-kuma-gold to-kuma-gold/50 rounded-[2rem] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000" />
                     <div className="relative bg-black/40 border-2 border-kuma-gold/30 backdrop-blur-2xl px-12 py-6 rounded-3xl shadow-[0_0_30px_rgba(234,179,8,0.15)] flex flex-col items-center">
@@ -323,8 +323,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-8 w-full">
-                <div className="flex flex-col gap-8 w-full">
+            <div className="flex flex-col gap-6 w-full">
+                <div className="flex flex-col gap-6 w-full">
                     {/* --- 3D COMMAND CONSOLE --- */}
                     <div className="relative group/console">
                         {/* Console Base/Body */}
