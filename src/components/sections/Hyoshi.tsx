@@ -23,7 +23,7 @@ import { audioTrainer } from "@/lib/audio-trainer";
 import { useSession } from "next-auth/react";
 
 const PX_PER_SEC = 250;
-const VIEWPORT_OFFSET = 60;
+const VIEWPORT_OFFSET = 100;
 
 import { DEFAULT_KATAS, type Point, type Kata } from "@/data/default-katas";
 
@@ -290,7 +290,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         if (status === "recording" || status === "training") {
             const viewport = document.getElementById('hyoshi-timeline-viewport');
             if (viewport) {
-                // Starts at 0, only scrolls when playhead reaches VIEWPORT_OFFSET
+                // Simplified: Absolute position - Fixed Screen Offset
                 viewport.scrollLeft = Math.max(0, timer * PX_PER_SEC - VIEWPORT_OFFSET);
             }
         }
@@ -517,23 +517,40 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                             <div
                                 className="relative flex items-center h-[90%] transition-none"
                                 style={{
-                                    width: `${Math.max(30, timer + 15) * PX_PER_SEC}px`,
-                                    paddingLeft: `${VIEWPORT_OFFSET}px`
+                                    width: `${Math.max(30, timer + 15) * PX_PER_SEC}px`
                                 }}
                             >
-                                {/* --- ELEGANT TIMELINE RULER --- */}
-                                <div className="absolute inset-x-0 bottom-1 h-8 flex items-end opacity-20 z-0 pointer-events-none">
+                                {/* --- TECHNICAL TIMELINE RULER --- */}
+                                <div className="absolute inset-x-0 bottom-1 h-12 flex items-end opacity-20 z-0 pointer-events-none">
                                     {Array.from({ length: Math.ceil(timer + 20) }).map((_, s) => (
-                                        <div
-                                            key={`tick-${s}`}
-                                            className="absolute flex flex-col items-center"
-                                            style={{ left: `${s * PX_PER_SEC}px` }}
-                                        >
-                                            <div className="w-px h-3 bg-white" />
-                                            <span className="text-[8px] font-mono mt-1 text-white/60 whitespace-nowrap">
-                                                {s === 0 ? "0s (START)" : `${s}s`}
-                                            </span>
-                                        </div>
+                                        <React.Fragment key={`ruler-sec-${s}`}>
+                                            {/* Primary Second Tick */}
+                                            <div
+                                                className="absolute flex flex-col items-center"
+                                                style={{ left: `${s * PX_PER_SEC}px` }}
+                                            >
+                                                <div className="w-[2px] h-4 bg-white/80" />
+                                                <span className="text-[9px] font-mono mt-1 text-white/80 font-bold whitespace-nowrap">
+                                                    {s === 0 ? "0s (START)" : `${s}s`}
+                                                </span>
+                                            </div>
+
+                                            {/* Sub-ticks (0.5s and 0.1s) */}
+                                            {Array.from({ length: 9 }).map((__, i) => {
+                                                const ms = (i + 1) / 10;
+                                                const isHalf = i === 4;
+                                                return (
+                                                    <div
+                                                        key={`tick-${s}-${i}`}
+                                                        className={cn(
+                                                            "absolute bottom-4 w-px bg-white/40",
+                                                            isHalf ? "h-2.5" : "h-1.5"
+                                                        )}
+                                                        style={{ left: `${(s + ms) * PX_PER_SEC}px` }}
+                                                    />
+                                                );
+                                            })}
+                                        </React.Fragment>
                                     ))}
                                 </div>
                                 {/* Real-time active hold trail (Recording) */}
