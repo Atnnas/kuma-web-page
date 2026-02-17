@@ -510,7 +510,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                     {/* Real-time active hold trail (Recording) */}
                                     {status === "recording" && activeHoldRef.current && (
                                         <div
-                                            className="absolute top-[35%] h-[30%] rounded-lg glass-hold shimmer-effect border-red-400/50"
+                                            className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect border-red-400/50"
                                             style={{
                                                 left: `${(activeHoldRef.current.start % 30) / 30 * 100}%`,
                                                 width: `${((timer - activeHoldRef.current.start) % 30) / 30 * 100}%`,
@@ -524,7 +524,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                         <React.Fragment key={`ghost-${idx}`}>
                                             {point.type === "hold" && (
                                                 <div
-                                                    className="absolute top-[35%] h-[30%] rounded-lg bg-white/5 border border-white/5 opacity-10"
+                                                    className="absolute top-[38%] h-[24%] rounded-xl bg-white/5 border border-white/5 opacity-5"
                                                     style={{
                                                         left: `${(point.start % 30) / 30 * 100}%`,
                                                         width: `${((point.duration || 0) % 30) / 30 * 100}%`
@@ -532,7 +532,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                 />
                                             )}
                                             <div
-                                                className="absolute top-[5%] h-[90%] w-px bg-zinc-800 opacity-20"
+                                                className="absolute top-[5%] h-[90%] w-0.5 bg-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] z-10"
                                                 style={{ left: `${(point.start % 30) / 30 * 100}%` }}
                                             />
                                         </React.Fragment>
@@ -550,7 +550,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                         initial={{ opacity: 0 }}
                                                         animate={{ opacity: 1 }}
                                                         className={cn(
-                                                            "absolute top-[35%] h-[30%] rounded-lg glass-hold shimmer-effect crt-phosphor"
+                                                            "absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect crt-phosphor"
                                                         )}
                                                         style={{
                                                             left: `${(point.start % 30) / 30 * 100}%`,
@@ -577,7 +577,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                             key={`live-p-${idx}-${pIdx}`}
                                                             initial={{ scale: 0 }}
                                                             animate={{ scale: 1 }}
-                                                            className="absolute w-1 top-[5%] h-[25%] glass-pulse rounded-full z-20"
+                                                            className="absolute w-1 top-[8%] h-[20%] glass-pulse rounded-full z-20"
                                                             style={{ left: `${((point.start + p) % 30) / 30 * 100}%` }}
                                                         />
                                                     );
@@ -666,15 +666,16 @@ const CustomStyles = () => (
             animation: slow-spin 20s linear infinite;
         }
         .crt-phosphor {
-            filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.4)) drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+            filter: drop-shadow(0 0 12px rgba(234, 179, 8, 0.6)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
             transition: filter 0.3s ease, opacity 0.3s ease;
         }
         .crt-screen {
             animation: flicker 0.15s infinite;
         }
         @keyframes shimmer {
-            0% { transform: translateX(-100%) skewX(-15deg); }
-            100% { transform: translateX(200%) skewX(-15deg); }
+            0% { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateX(200%) skewX(-15deg); opacity: 0; }
         }
         .shimmer-effect {
             position: relative;
@@ -685,30 +686,40 @@ const CustomStyles = () => (
             position: absolute;
             top: 0;
             left: 0;
-            width: 50%;
+            width: 100%;
             height: 100%;
             background: linear-gradient(
                 90deg,
                 transparent,
-                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.4),
                 transparent
             );
-            animation: shimmer 2s infinite;
+            animation: shimmer 1.5s infinite linear;
         }
         .glass-hold {
-            background: linear-gradient(to bottom, #ffb100, #ff9500, #ff7b00);
+            background: rgba(255, 149, 0, 0.2);
+            backdrop-filter: blur(8px);
             box-shadow: 
-                0 0 20px rgba(255, 149, 0, 0.4),
-                inset 0 1px 1px rgba(255, 255, 255, 0.4),
-                inset 0 -1px 1px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+                0 0 25px rgba(255, 149, 0, 0.3),
+                inset 0 0 15px rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+        .glass-hold::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, #ffb100, #ff9500);
+            opacity: 0.85;
+            z-index: -1;
         }
         .glass-pulse {
-            background: linear-gradient(to bottom, #00f2ff, #00d4ff, #00b8ff);
+            background: rgba(0, 242, 255, 0.3);
+            backdrop-filter: blur(4px);
             box-shadow: 
-                0 0 15px rgba(0, 242, 255, 0.6),
-                inset 0 1px 1px rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+                0 0 20px rgba(0, 242, 255, 0.5),
+                inset 0 0 10px rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
     `}</style>
 );
