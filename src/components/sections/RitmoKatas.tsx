@@ -869,9 +869,49 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                 </AnimatePresence>
 
                 <style jsx>{`
+                /* Estilos Base (Tactical HUD) */
                 .kuma-btn-3d { position: relative; padding: 4px; background: #18181b; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 0 #09090b, 0 8px 20px rgba(0,0,0,0.5); transition: all 0.1s ease; width: 60px; height: 50px; cursor: pointer; }
                 .kuma-btn-3d:active, .kuma-btn-3d.active { transform: translateY(3px); box-shadow: 0 1px 0 #000, 0 2px 10px rgba(0,0,0,0.5); }
                 .btn-inner { width: 100%; height: 100%; border-radius: 8px; box-shadow: inset 0 1px 1px rgba(255,255,255,0.1); border: 1px solid rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+                /* Estilos Gravity Chamber (Dragon Ball) */
+                .theme-dragon-ball .kuma-btn-3d {
+                    background: #e11d48; /* Crimson / Capsule Corp Pink-Red */
+                    border-radius: 50px; /* Pill Shape */
+                    border: 2px solid #881337;
+                    box-shadow: 
+                        0 6px 0 #881337, 
+                        0 12px 20px rgba(0,0,0,0.6),
+                        inset 0 2px 5px rgba(255,255,255,0.3);
+                    width: 70px;
+                    height: 55px;
+                }
+                .theme-dragon-ball .kuma-btn-3d:active, .theme-dragon-ball .kuma-btn-3d.active {
+                    transform: translateY(4px);
+                    box-shadow: 
+                        0 2px 0 #881337,
+                        0 4px 10px rgba(0,0,0,0.6),
+                        inset 0 2px 10px rgba(0,0,0,0.3);
+                }
+                .theme-dragon-ball .btn-inner {
+                    background: linear-gradient(180deg, #f43f5e 0%, #be123c 100%);
+                    border-radius: 40px;
+                    border: 1px solid rgba(255,255,255,0.2);
+                    box-shadow: inset 0 4px 4px rgba(255,255,255,0.3), inset 0 -4px 4px rgba(0,0,0,0.2);
+                }
+                .theme-dragon-ball .btn-inner span {
+                    color: white;
+                    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+                    font-family: 'Courier New', Courier, monospace; /* Digital look */
+                    font-weight: 900;
+                    letter-spacing: 0.1em;
+                }
+                /* Ajuste de iconos para el tema */
+                .theme-dragon-ball .btn-inner svg {
+                    color: white !important;
+                    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+                }
+
                 .custom-scrollbar::-webkit-scrollbar { width: 6px; }
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(234,179,8,0.2); border-radius: 10px; }
