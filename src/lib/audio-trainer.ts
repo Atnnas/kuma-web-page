@@ -52,8 +52,15 @@ class AudioTrainer {
         this.synth.speak(utterance);
     }
 
-    public playTone(frequency: number = 440, duration: number = 0.1, type: OscillatorType = "sine") {
+    private async resumeContext() {
+        if (this.audioCtx && this.audioCtx.state === "suspended") {
+            await this.audioCtx.resume();
+        }
+    }
+
+    public async playTone(frequency: number = 440, duration: number = 0.1, type: OscillatorType = "sine") {
         if (!this.audioCtx) return;
+        await this.resumeContext();
 
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
@@ -71,8 +78,9 @@ class AudioTrainer {
         osc.stop(this.audioCtx.currentTime + duration);
     }
 
-    public startContinuousTone(frequency: number = 330, type: OscillatorType = "sawtooth") {
+    public async startContinuousTone(frequency: number = 330, type: OscillatorType = "sawtooth") {
         if (!this.audioCtx || this.continuousOsc) return;
+        await this.resumeContext();
 
         this.continuousOsc = this.audioCtx.createOscillator();
         this.continuousGain = this.audioCtx.createGain();

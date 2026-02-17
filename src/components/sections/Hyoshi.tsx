@@ -43,10 +43,15 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     const activeHoldRef = useRef<Point | null>(null);
     const isKeyPressedRef = useRef<Set<string>>(new Set());
     const statusRef = useRef(status);
+    const timerRef = useRef(0);
 
     useEffect(() => {
         statusRef.current = status;
     }, [status]);
+
+    useEffect(() => {
+        timerRef.current = timer;
+    }, [timer]);
 
     // --- FETCH DATA ---
     useEffect(() => {
@@ -170,10 +175,12 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     };
 
     const recordHit = () => {
-        if (status === "recording" && !activeHoldRef.current) {
+        const currentStatus = statusRef.current;
+        const currentTimer = timerRef.current;
+        if (currentStatus === "recording" && !activeHoldRef.current) {
             const newPoint: Point = {
                 type: "hold",
-                start: timer,
+                start: currentTimer,
                 name: "",
                 pulses: []
             };
@@ -185,8 +192,10 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     };
 
     const recordRelease = () => {
-        if (status === "recording" && activeHoldRef.current) {
-            const duration = timer - activeHoldRef.current.start;
+        const currentStatus = statusRef.current;
+        const currentTimer = timerRef.current;
+        if (currentStatus === "recording" && activeHoldRef.current) {
+            const duration = currentTimer - activeHoldRef.current.start;
             activeHoldRef.current.duration = Math.max(0.1, duration);
             activeHoldRef.current = null;
             setCurrentKata(prev => ({ ...prev, points: [...pointsRef.current] }));
@@ -195,8 +204,10 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     };
 
     const recordPulse = () => {
-        if (status === "recording" && activeHoldRef.current) {
-            const pulseOffset = timer - activeHoldRef.current.start;
+        const currentStatus = statusRef.current;
+        const currentTimer = timerRef.current;
+        if (currentStatus === "recording" && activeHoldRef.current) {
+            const pulseOffset = currentTimer - activeHoldRef.current.start;
             if (!activeHoldRef.current.pulses) activeHoldRef.current.pulses = [];
             activeHoldRef.current.pulses.push(pulseOffset);
             setCurrentKata(prev => ({ ...prev, points: [...pointsRef.current] }));
@@ -235,7 +246,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
             window.removeEventListener("keyup", handleKeyUp);
             audioTrainer.stopContinuousTone();
         };
-    }, [status, timer]);
+    }, []); // Run once on mount
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
