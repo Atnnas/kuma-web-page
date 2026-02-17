@@ -371,13 +371,49 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                         <div className="absolute inset-0 pointer-events-none z-40 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] opacity-30" />
                         <div className="absolute inset-0 z-40 pointer-events-none bg-gradient-to-b from-transparent via-white/[0.02] to-transparent animate-scanline" />
 
+                        {/* Enhanced Graticule (Calibrated Grid) */}
+                        <div className="absolute inset-0 opacity-20" style={{
+                            backgroundImage: `
+                                    linear-gradient(to right, rgba(234,179,8,0.2) 1px, transparent 1px),
+                                    linear-gradient(to bottom, rgba(234,179,8,0.2) 1px, transparent 1px)
+                                `,
+                            backgroundSize: '40px 40px'
+                        }} />
                         <div className="absolute inset-0 opacity-10" style={{
-                            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(234,179,8,0.3) 1px, transparent 0)`,
-                            backgroundSize: '24px 24px'
+                            backgroundImage: `
+                                    linear-gradient(to right, rgba(234,179,8,0.1) 1px, transparent 1px),
+                                    linear-gradient(to bottom, rgba(234,179,8,0.1) 1px, transparent 1px)
+                                `,
+                            backgroundSize: '8px 8px'
                         }} />
 
-                        <div className="flex items-center justify-between px-6 pt-4 z-30">
-                            <div className={cn("w-1.5 h-1.5 rounded-full", status === "recording" ? "bg-red-500 animate-pulse" : status === "training" ? "bg-emerald-500 animate-pulse" : "bg-zinc-700")} />
+                        {/* Tactical HUD Overlays */}
+                        <div className="absolute top-4 left-6 z-50 flex flex-col gap-1 pointer-events-none">
+                            <div className="flex items-center gap-2">
+                                <div className={cn("w-2 h-2 rounded-full", status === "recording" ? "bg-red-500 animate-pulse" : status === "training" ? "bg-emerald-500 animate-pulse" : "bg-zinc-600")} />
+                                <span className="text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-tighter">
+                                    {status === "recording" ? "MODO: GRABACIÓN" : status === "training" ? "MODO: ENTRENAMIENTO" : "MODO: STANDBY"}
+                                </span>
+                            </div>
+                            <div className="text-[8px] font-mono text-zinc-500 flex gap-3">
+                                <span>FREQ: {(1 / (timer || 1)).toFixed(2)}Hz</span>
+                                <span>GAIN: +12dB</span>
+                            </div>
+                        </div>
+
+                        <div className="absolute top-4 right-6 z-50 text-right pointer-events-none">
+                            <div className="text-[9px] font-mono font-bold text-kuma-gold/80 uppercase tracking-widest">
+                                SCAN: {status !== "ready" ? "ACTIVE" : "IDLE"}
+                            </div>
+                            <div className="text-[8px] font-mono text-zinc-500">
+                                SYNC: {status === "ready" ? "---" : "LOCKED"}
+                            </div>
+                        </div>
+
+                        <div className="absolute bottom-4 right-6 z-50 pointer-events-none">
+                            <div className="text-[8px] font-mono text-zinc-600 uppercase tracking-tighter">
+                                KUMA_INSTRUMENT_SYSTEM_V4.2
+                            </div>
                         </div>
 
                         <div className="flex-grow relative px-10 flex items-center">
