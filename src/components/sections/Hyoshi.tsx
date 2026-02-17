@@ -90,40 +90,53 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     // --- TIMER LOGIC ---
     const animate = useCallback((time: number) => {
         const currentStatus = statusRef.current;
+        const currentTimer = (performance.now() - startTimeRef.current) / 1000;
+
         if (currentStatus === "recording" || currentStatus === "training") {
-            const elapsed = (performance.now() - startTimeRef.current) / 1000;
-            setTimer(elapsed);
-
-            if (currentStatus === "training") {
-                pointsRef.current.forEach((point) => {
-                    if (elapsed >= point.start && !point.played) {
-                        if (point.type === "hold") {
-                            audioTrainer.startContinuousTone();
-                        } else {
-                            playBeep();
-                        }
-                        point.played = true;
-                    }
-
-                    if (point.type === "hold" && point.duration && elapsed >= (point.start + point.duration) && point.played && !(point as any).stopped) {
-                        audioTrainer.stopContinuousTone();
-                        (point as any).stopped = true;
-                    }
-
-                    if (point.pulses) {
-                        point.pulses.forEach((pulseTimeOffset, pIdx) => {
-                            const absolutePulseTime = point.start + pulseTimeOffset;
-                            if (elapsed >= absolutePulseTime && (!point.playedPulses || !point.playedPulses.includes(pIdx))) {
-                                playBeep(1100);
-                                point.playedPulses = [...(point.playedPulses || []), pIdx];
-                            }
-                        });
-                    }
-                });
-            }
+            setTimer(currentTimer);
         }
+
+        // --- AUDIO RECONCILIATION ENGINE (DOUBLE-GATE) ---
+        // Sound activates IF AND ONLY IF (Space is held) AND (Playhead is over an active bar)
+        const isSpaceDown = isKeyPressedRef.current.has("Space");
+        const isOverRecordedBar = currentKata.points.some(p =>
+            currentTimer >= p.start && currentTimer <= (p.start + (p.duration || 0.1))
+        );
+        const isOverActiveHold = activeHoldRef.current !== null;
+        const isOverAnyBar = isOverRecordedBar || isOverActiveHold;
+
+        const shouldSound = isSpaceDown && isOverAnyBar;
+
+        if (shouldSound) {
+            audioTrainer.startContinuousTone();
+        } else {
+            audioTrainer.stopContinuousTone();
+        }
+
+        // --- TRAINING LOGIC TRIGGER ---
+        if (currentStatus === "training") {
+            pointsRef.current.forEach((point) => {
+                if (currentTimer >= point.start && !point.played) {
+                    if (point.type !== "hold") {
+                        playBeep();
+                    }
+                    point.played = true;
+                }
+
+                if (point.pulses) {
+                    point.pulses.forEach((pulseTimeOffset, pIdx) => {
+                        const absolutePulseTime = point.start + pulseTimeOffset;
+                        if (currentTimer >= absolutePulseTime && (!point.playedPulses || !point.playedPulses.includes(pIdx))) {
+                            playBeep(1100);
+                            point.playedPulses = [...(point.playedPulses || []), pIdx];
+                        }
+                    });
+                }
+            });
+        }
+
         requestRef.current = requestAnimationFrame((t) => animate(t));
-    }, [playBeep]);
+    }, [playBeep, currentKata.points]);
 
     useEffect(() => {
         requestRef.current = requestAnimationFrame((t) => animate(t));
@@ -156,14 +169,12 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         if (status === "recording") {
             setCurrentKata(prev => ({ ...prev, points: pointsRef.current }));
         }
-        audioTrainer.stopContinuousTone();
     };
 
     const pauseSystem = () => {
         if (status === "training" || status === "recording") {
             lastPauseTimeRef.current = timer;
             setStatus("paused");
-            audioTrainer.stopContinuousTone();
         }
     };
 
@@ -187,7 +198,6 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
             activeHoldRef.current = newPoint;
             pointsRef.current = [...pointsRef.current, newPoint];
             setCurrentKata(prev => ({ ...prev, points: pointsRef.current }));
-            audioTrainer.startContinuousTone();
         }
     };
 
@@ -199,7 +209,6 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
             activeHoldRef.current.duration = Math.max(0.1, duration);
             activeHoldRef.current = null;
             setCurrentKata(prev => ({ ...prev, points: [...pointsRef.current] }));
-            audioTrainer.stopContinuousTone();
         }
     };
 
@@ -222,9 +231,6 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
             if (e.code === "Space") {
                 e.preventDefault();
-                if (statusRef.current === "recording") {
-                    audioTrainer.startContinuousTone();
-                }
                 recordHit();
             } else if (e.code === "ArrowUp") {
                 e.preventDefault();
@@ -236,7 +242,6 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
             isKeyPressedRef.current.delete(e.code);
             if (e.code === "Space") {
                 e.preventDefault();
-                audioTrainer.stopContinuousTone();
                 recordRelease();
             }
         };
