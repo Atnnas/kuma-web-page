@@ -99,7 +99,12 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         if (currentStatus === "recording" || currentStatus === "training") {
             const deltaTime = (now - lastPerformanceTimeRef.current) / 1000;
             const scaledDelta = deltaTime * playbackRate;
+
+            // Advance the local accumulator
             currentTimer += currentStatus === "recording" ? deltaTime : scaledDelta;
+
+            // Sync both Ref and State immediately for maximum precision
+            timerRef.current = currentTimer;
             setTimer(currentTimer);
         }
         lastPerformanceTimeRef.current = now;
@@ -503,82 +508,154 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                 ))}
                             </div>
 
-                            {/* LÍNEA DE TIEMPO ACTIVA (SCANNER REMOVED AS PER USER REQUEST) */}
+                            {/* Playhead (Scanner) - Restored for Visual Anchor */}
+                            <div
+                                className="absolute top-0 bottom-0 w-0.5 bg-white z-50 shadow-[0_0_15px_rgba(255,255,255,0.8)] pointer-events-none"
+                                style={{
+                                    left: `${(timer % 30) / 30 * 100}%`,
+                                    transition: 'none'
+                                }}
+                            />
 
                             <div className="absolute inset-x-10 top-12 bottom-12 flex items-center overflow-hidden">
                                 <div className="relative w-full h-full flex items-center">
                                     {/* Real-time active hold trail (Recording) */}
-                                    {status === "recording" && activeHoldRef.current && (
-                                        <div
-                                            className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect border-red-400/50"
-                                            style={{
-                                                left: `${(activeHoldRef.current.start % 30) / 30 * 100}%`,
-                                                width: `${((timer - activeHoldRef.current.start) % 30) / 30 * 100}%`,
-                                                background: 'linear-gradient(to bottom, #ef4444, #dc2626)'
-                                            }}
-                                        />
-                                    )}
+                                    {status === "recording" && activeHoldRef.current && (() => {
+                                        const duration = timer - activeHoldRef.current.start;
+                                        const segments: { left: number, width: number }[] = [];
+                                        let remaining = duration;
+                                        let currentStart = activeHoldRef.current.start;
+
+                                        while (remaining > 0) {
+                                            const cycleStart = currentStart % 30;
+                                            const availableInCycle = 30 - cycleStart;
+                                            const segmentDuration = Math.min(remaining, availableInCycle);
+                                            segments.push({
+                                                left: (cycleStart / 30) * 100,
+                                                width: (segmentDuration / 30) * 100
+                                            });
+                                            currentStart += segmentDuration;
+                                            remaining -= segmentDuration;
+                                        }
+
+                                        return segments.map((seg, sIdx) => (
+                                            <div
+                                                key={`recording-seg-${sIdx}`}
+                                                className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect border-red-400/50 transition-none"
+                                                style={{
+                                                    left: `${seg.left}%`,
+                                                    width: `${seg.width}%`,
+                                                    background: 'linear-gradient(to bottom, #ef4444, #dc2626)'
+                                                }}
+                                            />
+                                        ));
+                                    })()}
 
                                     {/* GHOST LAYER (Current Kata Map) */}
-                                    {currentKata.points.map((point, idx) => (
-                                        <React.Fragment key={`ghost-${idx}`}>
-                                            {point.type === "hold" && (
-                                                <div
-                                                    className="absolute top-[38%] h-[24%] rounded-xl bg-white/5 border border-white/5 opacity-5"
-                                                    style={{
-                                                        left: `${(point.start % 30) / 30 * 100}%`,
-                                                        width: `${((point.duration || 0) % 30) / 30 * 100}%`
-                                                    }}
-                                                />
-                                            )}
+                                    {currentKata.points.map((point, idx) => {
+                                        if (point.type !== "hold") return (
                                             <div
-                                                className="absolute top-[5%] h-[90%] w-0.5 bg-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] z-10"
+                                                key={`ghost-p-${idx}`}
+                                                className="absolute top-[5%] h-[90%] w-0.5 bg-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] z-10 transition-none"
                                                 style={{ left: `${(point.start % 30) / 30 * 100}%` }}
                                             />
-                                        </React.Fragment>
-                                    ))}
+                                        );
+
+                                        const duration = point.duration || 0.1;
+                                        const segments: { left: number, width: number }[] = [];
+
+                                        let remaining = duration;
+                                        let currentStart = point.start;
+
+                                        while (remaining > 0) {
+                                            const cycleStart = currentStart % 30;
+                                            const availableInCycle = 30 - cycleStart;
+                                            const segmentDuration = Math.min(remaining, availableInCycle);
+                                            segments.push({
+                                                left: (cycleStart / 30) * 100,
+                                                width: (segmentDuration / 30) * 100
+                                            });
+                                            currentStart += segmentDuration;
+                                            remaining -= segmentDuration;
+                                        }
+
+                                        return (
+                                            <React.Fragment key={`ghost-h-${idx}`}>
+                                                {segments.map((seg, sIdx) => (
+                                                    <div
+                                                        key={`ghost-seg-${idx}-${sIdx}`}
+                                                        className="absolute top-[38%] h-[24%] rounded-xl bg-white/5 border border-white/5 opacity-5 transition-none"
+                                                        style={{ left: `${seg.left}%`, width: `${seg.width}%` }}
+                                                    />
+                                                ))}
+                                                <div
+                                                    className="absolute top-[5%] h-[90%] w-0.5 bg-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] z-10 transition-none"
+                                                    style={{ left: `${(point.start % 30) / 30 * 100}%` }}
+                                                />
+                                            </React.Fragment>
+                                        );
+                                    })}
 
                                     {/* LIVE REVEAL LAYER (Active Playback/Training) */}
                                     {currentKata.points.map((point, idx) => {
-                                        const pointProgress = Math.max(0, Math.min(1, (timer - point.start) / (point.duration || 0.1)));
                                         const isPastStart = timer >= point.start;
+                                        if (!isPastStart) return null;
+
+                                        const duration = point.duration || 0.1;
+                                        const pointProgress = Math.max(0, Math.min(1, (timer - point.start) / duration));
+                                        const elapsedDuration = duration * pointProgress;
+
+                                        const segments: { left: number, width: number, clip: number }[] = [];
+                                        let remaining = duration;
+                                        let currentStart = point.start;
+
+                                        while (remaining > 0) {
+                                            const cycleStart = currentStart % 30;
+                                            const availableInCycle = 30 - cycleStart;
+                                            const segmentTotalDuration = Math.min(remaining, availableInCycle);
+
+                                            // Calculate how much of THIS segment is covered by the current timer
+                                            const segmentElapsed = Math.max(0, Math.min(segmentTotalDuration, timer - currentStart));
+                                            const segmentProgress = segmentElapsed / segmentTotalDuration;
+
+                                            segments.push({
+                                                left: (cycleStart / 30) * 100,
+                                                width: (segmentTotalDuration / 30) * 100,
+                                                clip: 100 - (segmentProgress * 100)
+                                            });
+
+                                            currentStart += segmentTotalDuration;
+                                            remaining -= segmentTotalDuration;
+                                        }
 
                                         return (
                                             <React.Fragment key={`live-${idx}`}>
-                                                {point.type === "hold" && isPastStart && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0 }}
-                                                        animate={{ opacity: 1 }}
-                                                        className={cn(
-                                                            "absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect"
-                                                        )}
+                                                {point.type === "hold" && segments.map((seg, sIdx) => (
+                                                    <div
+                                                        key={`live-seg-${idx}-${sIdx}`}
+                                                        className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect transition-none will-change-transform"
                                                         style={{
-                                                            left: `${(point.start % 30) / 30 * 100}%`,
-                                                            width: `${((point.duration || 0) % 30) / 30 * 100}%`,
-                                                            clipPath: `inset(0 ${100 - (pointProgress * 100)}% 0 0)`
+                                                            left: `${seg.left}%`,
+                                                            width: `${seg.width}%`,
+                                                            clipPath: `inset(0 ${seg.clip}% 0 0)`
                                                         }}
                                                     />
-                                                )}
+                                                ))}
 
-                                                {isPastStart && (
-                                                    <motion.div
-                                                        initial={{ scale: 0 }}
-                                                        animate={{ scale: 1 }}
-                                                        className="absolute w-0.5 top-[5%] h-[90%] bg-white/40 shadow-[0_0_10px_rgba(255,255,255,0.2)] rounded-full z-10"
-                                                        style={{ left: `${(point.start % 30) / 30 * 100}%` }}
-                                                    />
-                                                )}
+                                                {/* Start Anchor */}
+                                                <div
+                                                    className="absolute w-0.5 top-[5%] h-[90%] bg-white/40 shadow-[0_0_10px_rgba(255,255,255,0.2)] rounded-full z-10 transition-none"
+                                                    style={{ left: `${(point.start % 30) / 30 * 100}%` }}
+                                                />
 
                                                 {point.pulses?.map((p, pIdx) => {
                                                     const absolutePulseTime = point.start + p;
                                                     const isPulseReached = timer >= absolutePulseTime;
                                                     return isPulseReached && (
-                                                        <motion.div
+                                                        <div
                                                             key={`live-p-${idx}-${pIdx}`}
-                                                            initial={{ scale: 0 }}
-                                                            animate={{ scale: 1 }}
-                                                            className="absolute w-1 top-[8%] h-[20%] glass-pulse rounded-full z-20"
-                                                            style={{ left: `${((point.start + p) % 30) / 30 * 100}%` }}
+                                                            className="absolute w-1 top-[8%] h-[20%] glass-pulse rounded-full z-20 transition-none"
+                                                            style={{ left: `${(absolutePulseTime % 30) / 30 * 100}%` }}
                                                         />
                                                     );
                                                 })}
@@ -720,6 +797,9 @@ const CustomStyles = () => (
                 0 0 20px rgba(0, 242, 255, 0.5),
                 inset 0 0 10px rgba(255, 255, 255, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .transition-none {
+            transition: none !important;
         }
     `}</style>
 );
