@@ -22,8 +22,8 @@ import { PrimalTitle } from "@/components/ui/PrimalTitle";
 import { audioTrainer } from "@/lib/audio-trainer";
 import { useSession } from "next-auth/react";
 
-const PX_PER_SEC = 250;
-const VIEWPORT_OFFSET = 850; // Keep playhead at the right (850px) to see past
+const PX_PER_SEC = 20; // Panoramic scale (approx 90s visible)
+const VIEWPORT_OFFSET = 800; // Keep playhead at the right (800px) to see past
 
 import { DEFAULT_KATAS, type Point, type Kata } from "@/data/default-katas";
 
@@ -525,38 +525,39 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                     width: `${Math.max(30, timer + 15) * PX_PER_SEC}px`
                                 }}
                             >
-                                {/* --- TECHNICAL TIMELINE RULER --- */}
+                                {/* --- TECHNICAL PANORAMIC RULER --- */}
                                 <div className="absolute inset-x-0 bottom-1 h-12 flex items-end opacity-20 z-0 pointer-events-none">
-                                    {Array.from({ length: Math.ceil(timer + 20) }).map((_, s) => (
-                                        <React.Fragment key={`ruler-sec-${s}`}>
-                                            {/* Primary Second Tick */}
-                                            <div
-                                                className="absolute flex flex-col items-center"
-                                                style={{ left: `${s * PX_PER_SEC}px` }}
-                                            >
-                                                <div className="w-[2px] h-4 bg-white/80" />
-                                                <span className="text-[9px] font-mono mt-1 text-white/80 font-bold whitespace-nowrap">
-                                                    {s === 0 ? "0s (START)" : `${s}s`}
-                                                </span>
-                                            </div>
+                                    {Array.from({ length: Math.ceil(timer + 60) }).map((_, s) => {
+                                        // Show secondary ticks every 5s, primary labels every 10s or 1m
+                                        const isMain = s % 10 === 0;
+                                        const isFive = s % 5 === 0;
 
-                                            {/* Sub-ticks (0.5s and 0.1s) */}
-                                            {Array.from({ length: 9 }).map((__, i) => {
-                                                const ms = (i + 1) / 10;
-                                                const isHalf = i === 4;
-                                                return (
-                                                    <div
-                                                        key={`tick-${s}-${i}`}
-                                                        className={cn(
-                                                            "absolute bottom-4 w-px bg-white/40",
-                                                            isHalf ? "h-2.5" : "h-1.5"
-                                                        )}
-                                                        style={{ left: `${(s + ms) * PX_PER_SEC}px` }}
-                                                    />
-                                                );
-                                            })}
-                                        </React.Fragment>
-                                    ))}
+                                        if (!isFive && s !== 0) return null; // Only show every 5s to avoid clutter at zoom level
+
+                                        const mins = Math.floor(s / 60);
+                                        const secs = s % 60;
+                                        const label = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+
+                                        return (
+                                            <React.Fragment key={`ruler-sec-${s}`}>
+                                                {/* Tick Marker */}
+                                                <div
+                                                    className="absolute flex flex-col items-center"
+                                                    style={{ left: `${s * PX_PER_SEC}px` }}
+                                                >
+                                                    <div className={cn(
+                                                        "bg-white/80",
+                                                        isMain ? "w-[2px] h-4" : "w-px h-2.5"
+                                                    )} />
+                                                    {(isMain || s === 0) && (
+                                                        <span className="text-[9px] font-mono mt-1 text-white/80 font-bold whitespace-nowrap">
+                                                            {s === 0 ? "0s (START)" : label}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </React.Fragment>
+                                        );
+                                    })}
                                 </div>
                                 {/* Real-time active hold trail (Recording) */}
                                 {status === "recording" && activeHoldRef.current && (
