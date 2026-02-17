@@ -9,8 +9,8 @@ export async function getCurrentUser() {
 export async function requireSuperAdmin() {
     const user = await getCurrentUser();
 
-    if (!user || user.role !== "super_admin") {
-        throw new Error("Unauthorized: Super Admin access required");
+    if (!user || (user.role !== "super_admin" && user.role !== "admin")) {
+        throw new Error("Unauthorized: Admin access required");
     }
 
     return user;

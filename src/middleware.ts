@@ -18,8 +18,8 @@ export default auth((req) => {
             return NextResponse.redirect(new URL("/login", nextUrl));
         }
 
-        // RBAC: Solo super_admin puede acceder al panel de administración
-        if (userRole !== "super_admin") {
+        // RBAC: super_admin y admin pueden acceder al panel de administración
+        if (userRole !== "super_admin" && userRole !== "admin") {
             return NextResponse.redirect(new URL("/", nextUrl));
         }
     }

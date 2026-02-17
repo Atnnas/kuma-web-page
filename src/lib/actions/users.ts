@@ -15,6 +15,11 @@ export async function getAllUsers() {
             isActive: user.isActive,
             createdAt: user.createdAt?.toISOString(),
             updatedAt: user.updatedAt?.toISOString(),
+            achievements: user.achievements?.map((ach: any) => ({
+                ...ach,
+                _id: ach._id?.toString(),
+                earnedAt: ach.earnedAt?.toISOString()
+            })) || []
         }));
     } catch (error) {
         console.error("Error fetching users:", error);

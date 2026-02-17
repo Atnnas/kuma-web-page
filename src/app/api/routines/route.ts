@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
         }
 
         const { searchParams } = new URL(req.url);
-        const isAdmin = searchParams.get("admin") === "true";
+        const isAdmin = searchParams.get("super_admin") === "true";
 
         // Admin Security Check
         if (isAdmin && session.user?.role !== "super_admin") {

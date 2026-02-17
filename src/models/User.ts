@@ -5,7 +5,7 @@ export interface IUser extends Document {
     email: string;
     password?: string;
     image?: string;
-    role: "super_admin" | "editor" | "user";
+    role: "super_admin" | "admin" | "editor" | "user";
     isActive?: boolean;
     workoutCount?: number;
     streakDays?: number;
@@ -54,7 +54,7 @@ const UserSchema = new Schema<IUser>(
         },
         role: {
             type: String,
-            enum: ["super_admin", "editor", "user"],
+            enum: ["super_admin", "admin", "editor", "user"],
             default: "user",
         },
         isActive: {
