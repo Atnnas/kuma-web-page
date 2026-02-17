@@ -222,7 +222,9 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
             if (e.code === "Space") {
                 e.preventDefault();
-                audioTrainer.startContinuousTone();
+                if (statusRef.current === "recording") {
+                    audioTrainer.startContinuousTone();
+                }
                 recordHit();
             } else if (e.code === "ArrowUp") {
                 e.preventDefault();
