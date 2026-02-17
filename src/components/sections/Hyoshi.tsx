@@ -436,12 +436,9 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                 backgroundSize: '24px 24px'
                             }} />
 
-                            {/* Header Info */}
+                            {/* Header Info (No text) */}
                             <div className="flex items-center justify-between px-6 pt-4 z-30">
                                 <div className={cn("w-1.5 h-1.5 rounded-full", status === "recording" ? "bg-red-500 animate-pulse" : status === "training" ? "bg-emerald-500 animate-pulse" : "bg-zinc-700")} />
-                                <div className="text-[7px] font-bold text-zinc-700 uppercase tracking-widest tabular-nums">
-                                    {formatTime(timer)} / 30.0s
-                                </div>
                             </div>
 
                             {/* Main Visualization Area */}
@@ -504,7 +501,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                     />
                                                 )}
 
-                                                {/* Main Hit Spark */}
+                                                {/* Main Hit Spark (No text) */}
                                                 <motion.div
                                                     initial={{ opacity: 0, scale: 0 }}
                                                     animate={{ opacity: 1, scale: 1 }}
@@ -513,11 +510,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                         point.played === true ? "bg-white shadow-[0_0_15px_#fff] h-full" : "bg-zinc-600 h-[60%]"
                                                     )}
                                                     style={{ left: `${(point.start % 30) * 3.333}%` }}
-                                                >
-                                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover/timeline:opacity-100 transition-opacity text-[6px] font-black text-zinc-500 whitespace-nowrap uppercase tracking-widest bg-black/60 px-2 py-0.5 rounded-md border border-white/5">
-                                                        {point.name || `PT ${idx + 1}`}
-                                                    </div>
-                                                </motion.div>
+                                                />
 
                                                 {/* Internal Pulses (Neon Sparks) */}
                                                 {point.pulses?.map((p, pIdx) => (
