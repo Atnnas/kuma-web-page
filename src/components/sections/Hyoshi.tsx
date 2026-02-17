@@ -22,6 +22,9 @@ import { PrimalTitle } from "@/components/ui/PrimalTitle";
 import { audioTrainer } from "@/lib/audio-trainer";
 import { useSession } from "next-auth/react";
 
+const PX_PER_SEC = 250;
+const VIEWPORT_OFFSET = 200;
+
 import { DEFAULT_KATAS, type Point, type Kata } from "@/data/default-katas";
 
 export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
@@ -282,6 +285,17 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms}`;
     };
 
+    // Auto-scroll logic for infinite timeline
+    React.useLayoutEffect(() => {
+        if (status === "recording" || status === "training") {
+            const viewport = document.getElementById('hyoshi-timeline-viewport');
+            if (viewport) {
+                // Keep the 'active' point shifted by VIEWPORT_OFFSET
+                viewport.scrollLeft = timer * PX_PER_SEC;
+            }
+        }
+    }, [timer, status]);
+
     return (
         <div className="flex flex-col gap-4 w-full max-w-6xl mx-auto relative px-4">
             <CustomStyles />
@@ -501,166 +515,78 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                             </div>
                         </div>
 
-                        <div className="flex-grow relative px-10 flex items-center">
-                            <div className="absolute inset-x-10 bottom-8 h-1 flex justify-between opacity-10">
-                                {[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30].map(s => (
-                                    <div key={s} className="w-px h-2 bg-white" />
+                        <div
+                            id="hyoshi-timeline-viewport"
+                            className="flex-grow relative px-10 flex items-center overflow-x-auto overflow-y-hidden no-scrollbar scroll-smooth"
+                        >
+                            <div
+                                className="relative flex items-center h-[90%] transition-none"
+                                style={{
+                                    width: `${Math.max(30, timer + 15) * PX_PER_SEC}px`,
+                                    paddingLeft: `${VIEWPORT_OFFSET}px`
+                                }}
+                            >
+                                {/* Real-time active hold trail (Recording) */}
+                                {status === "recording" && activeHoldRef.current && (
+                                    <div
+                                        className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect transition-none z-30"
+                                        style={{
+                                            left: `${activeHoldRef.current.start * PX_PER_SEC}px`,
+                                            width: `${(timer - activeHoldRef.current.start) * PX_PER_SEC}px`,
+                                        }}
+                                    />
+                                )}
+
+                                {/* GHOST LAYER (Current Kata Map) */}
+                                {currentKata.points.map((point, idx) => (
+                                    point.type === "hold" && (
+                                        <div
+                                            key={`ghost-h-${idx}`}
+                                            className="absolute top-[38%] h-[24%] rounded-xl bg-white/5 border border-white/5 opacity-5 transition-none"
+                                            style={{
+                                                left: `${point.start * PX_PER_SEC}px`,
+                                                width: `${(point.duration || 0) * PX_PER_SEC}px`
+                                            }}
+                                        />
+                                    )
                                 ))}
-                            </div>
 
-                            {/* SCANNER REMOVED */}
+                                {/* LIVE REVEAL LAYER (Active Playback/Training) */}
+                                {currentKata.points.map((point, idx) => {
+                                    const isPastStart = timer >= point.start;
+                                    if (!isPastStart) return null;
 
-                            <div className="absolute inset-x-10 top-12 bottom-12 flex items-center overflow-hidden">
-                                <div className="relative w-full h-full flex items-center">
-                                    {/* Real-time active hold trail (Recording) */}
-                                    {status === "recording" && activeHoldRef.current && (() => {
-                                        const holdStart = activeHoldRef.current.start;
-                                        const duration = timer - holdStart;
-                                        const segments: { left: number, width: number }[] = [];
-                                        let remaining = duration;
-                                        let currentStart = holdStart;
+                                    const duration = point.duration || 0.1;
+                                    const segmentElapsed = Math.max(0, Math.min(duration, timer - point.start));
+                                    const segmentProgress = segmentElapsed / duration;
 
-                                        while (remaining > 0) {
-                                            const cycleStart = currentStart % 30;
-                                            const segmentDuration = Math.min(remaining, 30 - cycleStart);
-                                            segments.push({
-                                                left: (cycleStart / 30) * 100,
-                                                width: (segmentDuration / 30) * 100
-                                            });
-                                            currentStart += segmentDuration;
-                                            remaining -= segmentDuration;
-                                        }
-
-                                        const activeCycle = Math.floor(timer / 30);
-
-                                        return segments.map((seg, sIdx) => {
-                                            const segCycle = Math.floor((holdStart + (sIdx * 30)) / 30);
-                                            if (segCycle !== activeCycle) return null;
-                                            return (
+                                    return (
+                                        <React.Fragment key={`live-${idx}`}>
+                                            {point.type === "hold" && (
                                                 <div
-                                                    key={`rec-seg-${sIdx}`}
-                                                    className="absolute top-[38%] h-[24%] rounded-xl transition-none"
+                                                    className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect transition-none z-20"
                                                     style={{
-                                                        left: `${seg.left}%`,
-                                                        width: `${seg.width}%`,
-                                                        background: 'linear-gradient(to bottom, #ef4444, #dc2626)',
-                                                        boxShadow: '0 0 15px rgba(239, 68, 68, 0.4)',
-                                                        border: '1px solid rgba(255, 255, 255, 0.2)'
+                                                        left: `${point.start * PX_PER_SEC}px`,
+                                                        width: `${duration * PX_PER_SEC}px`,
+                                                        clipPath: `inset(0 ${100 - (segmentProgress * 100)}% 0 0)`
                                                     }}
                                                 />
-                                            );
-                                        });
-                                    })()}
+                                            )}
 
-                                    {/* GHOST LAYER (Current Kata Map) */}
-                                    {currentKata.points.map((point, idx) => {
-                                        if (point.type !== "hold") return null;
-
-                                        const duration = point.duration || 0.1;
-                                        const segments: { left: number, width: number }[] = [];
-
-                                        let remaining = duration;
-                                        let currentStart = point.start;
-
-                                        while (remaining > 0) {
-                                            const cycleStart = currentStart % 30;
-                                            const availableInCycle = 30 - cycleStart;
-                                            const segmentDuration = Math.min(remaining, availableInCycle);
-                                            segments.push({
-                                                left: (cycleStart / 30) * 100,
-                                                width: (segmentDuration / 30) * 100
-                                            });
-                                            currentStart += segmentDuration;
-                                            remaining -= segmentDuration;
-                                        }
-
-                                        const activeCycle = Math.floor(timer / 30);
-
-                                        return (
-                                            <React.Fragment key={`ghost-h-${idx}`}>
-                                                {segments.map((seg, sIdx) => {
-                                                    const segCycle = Math.floor((point.start + (sIdx * 30)) / 30);
-                                                    if (segCycle !== activeCycle) return null;
-                                                    return (
-                                                        <div
-                                                            key={`ghost-seg-${idx}-${sIdx}`}
-                                                            className="absolute top-[38%] h-[24%] rounded-xl bg-white/5 border border-white/5 opacity-5 transition-none"
-                                                            style={{ left: `${seg.left}%`, width: `${seg.width}%` }}
-                                                        />
-                                                    );
-                                                })}
-                                            </React.Fragment>
-                                        );
-                                    })}
-
-                                    {/* LIVE REVEAL LAYER (Active Playback/Training) */}
-                                    {currentKata.points.map((point, idx) => {
-                                        const isPastStart = timer >= point.start;
-                                        if (!isPastStart) return null;
-
-                                        const duration = point.duration || 0.1;
-                                        const pointProgress = Math.max(0, Math.min(1, (timer - point.start) / duration));
-                                        const elapsedDuration = duration * pointProgress;
-
-                                        const segments: { left: number, width: number, clip: number }[] = [];
-                                        let remaining = duration;
-                                        let currentStart = point.start;
-
-                                        while (remaining > 0) {
-                                            const cycleStart = currentStart % 30;
-                                            const availableInCycle = 30 - cycleStart;
-                                            const segmentTotalDuration = Math.min(remaining, availableInCycle);
-
-                                            // Calculate how much of THIS segment is covered by the current timer
-                                            const segmentElapsed = Math.max(0, Math.min(segmentTotalDuration, timer - currentStart));
-                                            const segmentProgress = segmentElapsed / segmentTotalDuration;
-
-                                            segments.push({
-                                                left: (cycleStart / 30) * 100,
-                                                width: (segmentTotalDuration / 30) * 100,
-                                                clip: 100 - (segmentProgress * 100)
-                                            });
-
-                                            currentStart += segmentTotalDuration;
-                                            remaining -= segmentTotalDuration;
-                                        }
-
-                                        const activeCycle = Math.floor(timer / 30);
-
-                                        return (
-                                            <React.Fragment key={`live-${idx}`}>
-                                                {point.type === "hold" && segments.map((seg, sIdx) => {
-                                                    const segCycle = Math.floor((point.start + (sIdx * 30)) / 30);
-                                                    if (segCycle !== activeCycle) return null;
-                                                    return (
-                                                        <div
-                                                            key={`live-seg-${idx}-${sIdx}`}
-                                                            className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect transition-none"
-                                                            style={{
-                                                                left: `${seg.left}%`,
-                                                                width: `${seg.width}%`,
-                                                                clipPath: `inset(0 ${seg.clip}% 0 0)`
-                                                            }}
-                                                        />
-                                                    );
-                                                })}
-
-                                                {point.pulses?.map((p, pIdx) => {
-                                                    const absolutePulseTime = point.start + p;
-                                                    const isPulseReached = timer >= absolutePulseTime;
-                                                    const pulseCycle = Math.floor(absolutePulseTime / 30);
-                                                    return isPulseReached && pulseCycle === activeCycle && (
-                                                        <div
-                                                            key={`live-p-${idx}-${pIdx}`}
-                                                            className="absolute w-1 top-[8%] h-[20%] glass-pulse rounded-full z-20 transition-none"
-                                                            style={{ left: `${(absolutePulseTime % 30) / 30 * 100}%` }}
-                                                        />
-                                                    );
-                                                })}
-                                            </React.Fragment>
-                                        );
-                                    })}
-                                </div>
+                                            {point.pulses?.map((p, pIdx) => {
+                                                const absolutePulseTime = point.start + p;
+                                                const isPulseReached = timer >= absolutePulseTime;
+                                                return isPulseReached && (
+                                                    <div
+                                                        key={`live-p-${idx}-${pIdx}`}
+                                                        className="absolute w-2 top-[8%] h-[20%] glass-pulse rounded-full z-30 transition-none"
+                                                        style={{ left: `${absolutePulseTime * PX_PER_SEC}px` }}
+                                                    />
+                                                );
+                                            })}
+                                        </React.Fragment>
+                                    );
+                                })}
                             </div>
 
                             <div className="absolute bottom-4 left-6 flex gap-2 z-30">
@@ -799,7 +725,12 @@ const CustomStyles = () => (
         .transition-none {
             transition: none !important;
         }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     `}</style>
 );
-
-export default Hyoshi;
