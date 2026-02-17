@@ -226,7 +226,16 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     };
 
     return (
-        <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto">
+        <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto relative">
+            {/* Back Button - Top Left */}
+            <button
+                onClick={onBack}
+                className="lg:absolute top-0 left-0 flex items-center gap-2 text-zinc-500 hover:text-kuma-gold transition-colors font-bold uppercase tracking-widest text-xs z-50 py-2"
+            >
+                <ArrowLeft weight="bold" />
+                Volver a Aplicaciones
+            </button>
+
             {/* Main Title Area & Elegant Chronometer */}
             <div className="flex flex-col items-center justify-center text-center">
                 <PrimalTitle className="text-4xl md:text-6xl uppercase tracking-[0.2em] mb-4">
@@ -247,15 +256,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                 <div className="w-24 h-1 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)] mb-4" />
             </div>
 
-            {/* Top Bar */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <button
-                    onClick={onBack}
-                    className="flex items-center gap-2 text-zinc-500 hover:text-kuma-gold transition-colors font-bold uppercase tracking-widest text-xs"
-                >
-                    <ArrowLeft weight="bold" />
-                    Volver a Aplicaciones
-                </button>
+            {/* Top Bar (Status & Info) */}
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-end gap-4">
                 <div className="flex items-center gap-4">
                     {!session && (
                         <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl text-amber-500 text-[10px] font-bold uppercase tracking-widest">
