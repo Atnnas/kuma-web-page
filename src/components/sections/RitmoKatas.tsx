@@ -422,7 +422,7 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
 
     return (
         <div
-            className={`flex flex-col gap-6 w-full max-w-7xl mx-auto relative px-4 text-center select-none theme-${theme} py-6 min-h-screen`}
+            className={`w-full min-h-screen relative theme-${theme}`}
             style={{
                 backgroundImage: theme === "dragon-ball" ? "url('/images/kuma-ritmo-fondo-dragon-ball.jpg')" : "none",
                 backgroundSize: "cover",
@@ -436,437 +436,439 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                 <div className="absolute inset-0 bg-black/60 pointer-events-none z-0" />
             )}
 
-            {/* 1. Header & Cronómetro */}
-            <div className="flex flex-col items-center gap-2 relative z-10">
-                <PrimalTitle className="text-4xl md:text-6xl uppercase tracking-[0.2em] italic text-white/90">
-                    Ritmo Katas
-                </PrimalTitle>
+            <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto relative px-4 text-center select-none py-6 z-10">
 
-                <div className="relative group cursor-default">
-                    <div className="absolute -inset-2 bg-kuma-gold/20 blur-xl opacity-50 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative bg-zinc-950/80 border-2 border-kuma-gold/40 px-8 py-4 rounded-3xl shadow-[inset_0_0_30px_rgba(234,179,8,0.2)]">
-                        <span className="font-mono text-6xl md:text-8xl font-black tracking-widest text-kuma-gold drop-shadow-[0_0_15px_rgba(234,179,8,0.6)]">
-                            {formatTime(timer)}
-                        </span>
-                        <div className={`absolute top-4 right-4 w-4 h-4 rounded-full border border-white/20 shadow-lg ${status === "grabando" ? "bg-red-500 animate-pulse shadow-red-500/50" :
-                            status === "reproduciendo" ? "bg-emerald-500 shadow-emerald-500/50 animate-pulse" : "bg-zinc-800"
-                            }`} />
-                    </div>
-                </div>
-            </div>
+                {/* 1. Header & Cronómetro */}
+                <div className="flex flex-col items-center gap-2 relative z-10">
+                    <PrimalTitle className="text-4xl md:text-6xl uppercase tracking-[0.2em] italic text-white/90">
+                        Ritmo Katas
+                    </PrimalTitle>
 
-            {/* 2. Consola Master */}
-            <div className={`grid grid-cols-1 ${isAdmin ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-6 p-6 bg-zinc-900/50 border border-white/10 rounded-[2.5rem] shadow-2xl backdrop-blur-xl`}>
-
-                {/* Bloque Grabación - Solo visible para Admin */}
-                {isAdmin && (
-                    <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5 relative overflow-hidden">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Grabación</span>
-                        <div className="flex gap-4 justify-center flex-wrap">
-                            <button
-                                className={`kuma-btn-3d group ${status === "grabando" ? "active" : ""}`}
-                                onClick={() => status === "grabando" ? stopAll() : startRecording()}
-                            >
-                                <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1 px-1">
-                                    <div className={`w-5 h-5 rounded-full border-2 ${status === "grabando" ? "bg-red-500 animate-pulse border-white/50" : "bg-red-800 border-red-900"} group-hover:bg-red-600 transition-colors shadow-lg`} />
-                                    <span className={`text-[8px] font-black uppercase tracking-widest ${status === "grabando" ? "text-red-400" : "text-zinc-500"}`}>
-                                        {status === "grabando" ? "S. Activa" : "Grabar"}
-                                    </span>
-                                </div>
-                            </button>
-                            <button className="kuma-btn-3d group" onClick={stopAll}>
-                                <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
-                                    <div className="w-5 h-5 bg-zinc-600 border-2 border-zinc-700 group-hover:bg-zinc-400 transition-colors rounded-sm" />
-                                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Parar</span>
-                                </div>
-                            </button>
-                            <button className="kuma-btn-3d group" onClick={handleClearSession}>
-                                <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
-                                    <Broom weight="fill" className="text-zinc-500 group-hover:text-amber-400 w-5 h-5 transition-colors" />
-                                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Limpiar</span>
-                                </div>
-                            </button>
-                            {/* Botón Guardar - Solo aparece si es sesión propia (no de biblioteca) */}
-                            {canSave && (
-                                <button
-                                    className={`kuma-btn-3d group ${hasRecordedData ? "active" : "opacity-30 cursor-not-allowed"}`}
-                                    onClick={() => hasRecordedData && setShowSaveModal(true)}
-                                >
-                                    <div className="btn-inner bg-kuma-gold/20 flex flex-col items-center justify-center gap-1 border-kuma-gold/50 shadow-[0_0_15px_rgba(234,179,8,0.3)] px-1">
-                                        <FloppyDiskBack weight="fill" className="text-kuma-gold w-5 h-5 group-hover:scale-110 transition-transform" />
-                                        <span className="text-[7px] font-black uppercase tracking-widest text-kuma-gold leading-tight">Guardar Ritmo</span>
-                                    </div>
-                                </button>
-                            )}
+                    <div className="relative group cursor-default">
+                        <div className="absolute -inset-2 bg-kuma-gold/20 blur-xl opacity-50 group-hover:opacity-100 transition-opacity" />
+                        <div className="relative bg-zinc-950/80 border-2 border-kuma-gold/40 px-8 py-4 rounded-3xl shadow-[inset_0_0_30px_rgba(234,179,8,0.2)]">
+                            <span className="font-mono text-6xl md:text-8xl font-black tracking-widest text-kuma-gold drop-shadow-[0_0_15px_rgba(234,179,8,0.6)]">
+                                {formatTime(timer)}
+                            </span>
+                            <div className={`absolute top-4 right-4 w-4 h-4 rounded-full border border-white/20 shadow-lg ${status === "grabando" ? "bg-red-500 animate-pulse shadow-red-500/50" :
+                                status === "reproduciendo" ? "bg-emerald-500 shadow-emerald-500/50 animate-pulse" : "bg-zinc-800"
+                                }`} />
                         </div>
                     </div>
-                )}
-
-                {/* Bloque Reproducción */}
-                <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Reproducción</span>
-                    <div className="flex gap-4 justify-center">
-                        <button className="kuma-btn-3d group w-24" onClick={openLibrary}>
-                            <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
-                                <Books weight="fill" className="w-5 h-5 text-zinc-500 group-hover:text-kuma-gold transition-colors" />
-                                <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Biblioteca</span>
-                            </div>
-                        </button>
-                        <button className="kuma-btn-3d group" onClick={status === "reproduciendo" ? pauseAll : startPlayback}>
-                            <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
-                                {status === "reproduciendo" ? (
-                                    <div className="flex gap-1 group-hover:gap-1.5 transition-all">
-                                        <div className="w-1.5 h-4 bg-zinc-400 rounded-full" />
-                                        <div className="w-1.5 h-4 bg-zinc-400 rounded-full" />
-                                    </div>
-                                ) : (
-                                    <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[15px] border-l-kuma-gold border-b-[10px] border-b-transparent ml-1 group-hover:scale-110 transition-transform" />
-                                )}
-                                <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">{status === "reproduciendo" ? "Pausa" : "Play"}</span>
-                            </div>
-                        </button>
-                    </div>
                 </div>
 
-                {/* Bloque Temas */}
-                <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Temas</span>
-                    <div className="flex gap-4 justify-center">
-                        <button
-                            className={`kuma-btn-3d group w-32 ${theme === "dragon-ball" ? "active" : ""}`}
-                            onClick={() => setTheme(prev => prev === "dragon-ball" ? "tactical-hud" : "dragon-ball")}
-                        >
-                            <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
-                                <Sparkle weight="fill" className={`w-4 h-4 ${theme === "dragon-ball" ? "text-emerald-500" : "text-kuma-gold"}`} />
-                                <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">
-                                    {theme === "dragon-ball" ? "DB Radar" : "Kuma HUD"}
-                                </span>
-                            </div>
-                        </button>
-                    </div>
-                </div>
+                {/* 2. Consola Master */}
+                <div className={`grid grid-cols-1 ${isAdmin ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-6 p-6 bg-zinc-900/50 border border-white/10 rounded-[2.5rem] shadow-2xl backdrop-blur-xl`}>
 
-                {/* Bloque Ajustes */}
-                <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5 h-full">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Ajustes & Salida</span>
-                    <div className="flex items-center justify-between gap-4 h-full px-2">
-                        <div className="flex items-end gap-3 h-28 group relative">
-                            <div className="flex flex-col gap-1 h-full justify-center">
-                                {[...Array(10)].map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className={`w-2 h-1.5 rounded-sm shadow-sm transition-colors duration-200 ${(10 - i) <= volume * 10
-                                            ? (i < 3 ? "bg-red-500 shadow-red-500/40" : i < 6 ? "bg-kuma-gold shadow-kuma-gold/40" : "bg-emerald-500 shadow-emerald-500/40")
-                                            : "bg-zinc-800"
-                                            }`}
-                                    />
-                                ))}
-                            </div>
-                            <div className="relative w-8 h-full bg-zinc-950 border border-white/5 rounded-lg shadow-inner flex justify-center">
-                                <input
-                                    type="range" min="0" max="1" step="0.01"
-                                    value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))}
-                                    className="absolute inset-0 w-full h-full opacity-0 cursor-ns-resize z-20"
-                                    style={{ appearance: 'slider-vertical' } as any}
-                                />
-                                <div className="absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-0.5 bg-zinc-800" />
-                                <div
-                                    className="absolute left-0 right-0 h-8 bg-zinc-800 border-y-2 border-zinc-700 shadow-[0_4px_10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] rounded-sm pointer-events-none transition-all duration-75"
-                                    style={{ bottom: `calc(${volume * 100}% - 16px)` }}
-                                >
-                                    <div className="absolute left-1 right-1 top-1/2 -translate-y-px h-0.5 bg-kuma-gold/50" />
-                                </div>
-                            </div>
-                            <div className="absolute -top-1 -right-4 flex flex-col items-center">
-                                <span className="font-mono text-[10px] font-black text-kuma-gold bg-black border border-kuma-gold/30 px-1 rounded shadow-[0_0_10px_rgba(234,179,8,0.2)]">
-                                    {Math.round(volume * 100)}
-                                </span>
-                            </div>
-                        </div>
-
-                        <button className="kuma-btn-3d group w-20 self-center" onClick={onBack}>
-                            <div className="btn-inner bg-zinc-900/80 flex flex-col items-center justify-center gap-1">
-                                <ArrowLeft weight="bold" className="w-4 h-4 text-zinc-500 group-hover:text-red-500 transition-colors" />
-                                <span className="text-[8px] font-black uppercase tracking-widest text-zinc-400">Salir</span>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {/* 3. Radar Oscilloscope */}
-            <div className="relative w-full aspect-[21/9] md:aspect-[32/9] bg-black rounded-[3rem] overflow-hidden border-4 border-zinc-800 shadow-[0_0_50px_rgba(0,0,0,0.8),inset_0_0_100px_rgba(0,0,0,1)] group">
-                {theme === "dragon-ball" ? (
-                    <div className="absolute inset-0 pointer-events-none">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(52,211,153,0.08)_0,transparent_100%)]" />
-                        <div className="absolute inset-0" style={{ backgroundImage: `linear-gradient(rgba(52,211,153,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.15) 1px, transparent 1px)`, backgroundSize: '100px 100px' }} />
-                        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.15)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_4px,3px_100%]" />
-                    </div>
-                ) : (
-                    <div className="absolute inset-0 pointer-events-none opacity-40">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.05)_0,transparent_100%)]" />
-                        <div className="absolute inset-0" style={{ backgroundImage: `linear-gradient(rgba(234,179,8,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(234,179,8,0.1) 1px, transparent 1px)`, backgroundSize: '50px 50px' }} />
-                    </div>
-                )}
-                <canvas ref={canvasRef} width={2400} height={800} className="absolute inset-0 w-full h-full mix-blend-screen" />
-                <div className="absolute inset-0 border-[1.5rem] border-zinc-950/80 rounded-[3rem] pointer-events-none shadow-[inset_0_0_80px_rgba(0,0,0,1)]" />
-            </div>
-
-            {/* MODAL DE GUARDADO PREMIUM */}
-            <AnimatePresence>
-                {showSaveModal && (
-                    <motion.div
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
-                            className="relative w-full max-w-lg bg-zinc-900 border-2 border-kuma-gold/40 rounded-[2.5rem] p-10 shadow-[0_0_100px_rgba(0,0,0,1)] overflow-hidden"
-                        >
-                            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-kuma-gold to-transparent" />
-                            <div className="flex justify-between items-center mb-8">
-                                <div className="flex flex-col gap-1">
-                                    <h3 className="text-kuma-gold font-black uppercase tracking-widest text-2xl italic">Nueva Entrada</h3>
-                                </div>
-                                <button onClick={() => setShowSaveModal(false)} className="text-zinc-600 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">
-                                    <X className="w-6 h-6" />
-                                </button>
-                            </div>
-
-                            <div className="space-y-6">
-                                <div className="grid grid-cols-1 gap-4">
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 text-left ml-4">Nombre del Kata</label>
-                                        <input
-                                            type="text" value={kataName} onChange={(e) => setKataName(e.target.value)}
-                                            placeholder="EJ: HEIAN SHODAN"
-                                            className="w-full bg-black/50 border border-white/10 rounded-2xl px-6 py-4 text-white font-mono focus:border-kuma-gold/50 focus:outline-none transition-all placeholder:text-zinc-800"
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="flex flex-col gap-2">
-                                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 text-left ml-4">Arte Marcial</label>
-                                            <input
-                                                type="text" value={martialArt} onChange={(e) => setMartialArt(e.target.value)}
-                                                placeholder="Karate"
-                                                className="w-full bg-black/50 border border-white/10 rounded-2xl px-6 py-4 text-white font-mono focus:border-kuma-gold/50 focus:outline-none transition-all placeholder:text-zinc-800"
-                                            />
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 text-left ml-4">Estilo</label>
-                                            <input
-                                                type="text" value={style} onChange={(e) => setStyle(e.target.value)}
-                                                placeholder="Shotokan"
-                                                className="w-full bg-black/50 border border-white/10 rounded-2xl px-6 py-4 text-white font-mono focus:border-kuma-gold/50 focus:outline-none transition-all placeholder:text-zinc-800"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
+                    {/* Bloque Grabación - Solo visible para Admin */}
+                    {isAdmin && (
+                        <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5 relative overflow-hidden">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Grabación</span>
+                            <div className="flex gap-4 justify-center flex-wrap">
                                 <button
-                                    onClick={handleSaveSession}
-                                    disabled={isSaving || !kataName || !martialArt || !style}
-                                    className={`w-full kuma-btn-3d h-16 bg-zinc-800 rounded-2xl group ${isSaving ? "opacity-50" : ""}`}
+                                    className={`kuma-btn-3d group ${status === "grabando" ? "active" : ""}`}
+                                    onClick={() => status === "grabando" ? stopAll() : startRecording()}
                                 >
-                                    <div className="btn-inner flex items-center justify-center gap-3">
-                                        <FloppyDiskBack weight="fill" className={`w-6 h-6 ${isSaving ? 'animate-spin' : 'text-kuma-gold group-hover:scale-110 transition-transform'}`} />
-                                        <span className="text-xs font-black uppercase tracking-widest text-zinc-100">
-                                            {isSaving ? "Sincronizando..." : "Confirmar Registro"}
+                                    <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1 px-1">
+                                        <div className={`w-5 h-5 rounded-full border-2 ${status === "grabando" ? "bg-red-500 animate-pulse border-white/50" : "bg-red-800 border-red-900"} group-hover:bg-red-600 transition-colors shadow-lg`} />
+                                        <span className={`text-[8px] font-black uppercase tracking-widest ${status === "grabando" ? "text-red-400" : "text-zinc-500"}`}>
+                                            {status === "grabando" ? "S. Activa" : "Grabar"}
                                         </span>
                                     </div>
                                 </button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* BIBLIOTECA MODAL CENTRADO */}
-            <AnimatePresence>
-                {showLibrary && (
-                    <motion.div
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
-                            className="relative w-full max-w-4xl max-h-[85vh] bg-zinc-900 border-2 border-kuma-gold/30 rounded-[3rem] flex flex-col shadow-[0_0_80px_rgba(0,0,0,1)] overflow-hidden"
-                        >
-                            {/* Header Biblioteca */}
-                            <div className="p-8 border-b border-white/5 bg-black/20 flex flex-col gap-6">
-                                <div className="flex justify-between items-center">
-                                    <div className="flex items-center gap-4">
-                                        <div className="text-left">
-                                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter italic">Biblioteca</h2>
-                                        </div>
+                                <button className="kuma-btn-3d group" onClick={stopAll}>
+                                    <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
+                                        <div className="w-5 h-5 bg-zinc-600 border-2 border-zinc-700 group-hover:bg-zinc-400 transition-colors rounded-sm" />
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Parar</span>
                                     </div>
-                                    <button onClick={() => setShowLibrary(false)} className="text-zinc-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">
+                                </button>
+                                <button className="kuma-btn-3d group" onClick={handleClearSession}>
+                                    <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
+                                        <Broom weight="fill" className="text-zinc-500 group-hover:text-amber-400 w-5 h-5 transition-colors" />
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Limpiar</span>
+                                    </div>
+                                </button>
+                                {/* Botón Guardar - Solo aparece si es sesión propia (no de biblioteca) */}
+                                {canSave && (
+                                    <button
+                                        className={`kuma-btn-3d group ${hasRecordedData ? "active" : "opacity-30 cursor-not-allowed"}`}
+                                        onClick={() => hasRecordedData && setShowSaveModal(true)}
+                                    >
+                                        <div className="btn-inner bg-kuma-gold/20 flex flex-col items-center justify-center gap-1 border-kuma-gold/50 shadow-[0_0_15px_rgba(234,179,8,0.3)] px-1">
+                                            <FloppyDiskBack weight="fill" className="text-kuma-gold w-5 h-5 group-hover:scale-110 transition-transform" />
+                                            <span className="text-[7px] font-black uppercase tracking-widest text-kuma-gold leading-tight">Guardar Ritmo</span>
+                                        </div>
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Bloque Reproducción */}
+                    <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Reproducción</span>
+                        <div className="flex gap-4 justify-center">
+                            <button className="kuma-btn-3d group w-24" onClick={openLibrary}>
+                                <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
+                                    <Books weight="fill" className="w-5 h-5 text-zinc-500 group-hover:text-kuma-gold transition-colors" />
+                                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Biblioteca</span>
+                                </div>
+                            </button>
+                            <button className="kuma-btn-3d group" onClick={status === "reproduciendo" ? pauseAll : startPlayback}>
+                                <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
+                                    {status === "reproduciendo" ? (
+                                        <div className="flex gap-1 group-hover:gap-1.5 transition-all">
+                                            <div className="w-1.5 h-4 bg-zinc-400 rounded-full" />
+                                            <div className="w-1.5 h-4 bg-zinc-400 rounded-full" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[15px] border-l-kuma-gold border-b-[10px] border-b-transparent ml-1 group-hover:scale-110 transition-transform" />
+                                    )}
+                                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">{status === "reproduciendo" ? "Pausa" : "Play"}</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Bloque Temas */}
+                    <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Temas</span>
+                        <div className="flex gap-4 justify-center">
+                            <button
+                                className={`kuma-btn-3d group w-32 ${theme === "dragon-ball" ? "active" : ""}`}
+                                onClick={() => setTheme(prev => prev === "dragon-ball" ? "tactical-hud" : "dragon-ball")}
+                            >
+                                <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
+                                    <Sparkle weight="fill" className={`w-4 h-4 ${theme === "dragon-ball" ? "text-emerald-500" : "text-kuma-gold"}`} />
+                                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">
+                                        {theme === "dragon-ball" ? "DB Radar" : "Kuma HUD"}
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Bloque Ajustes */}
+                    <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5 h-full">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Ajustes & Salida</span>
+                        <div className="flex items-center justify-between gap-4 h-full px-2">
+                            <div className="flex items-end gap-3 h-28 group relative">
+                                <div className="flex flex-col gap-1 h-full justify-center">
+                                    {[...Array(10)].map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className={`w-2 h-1.5 rounded-sm shadow-sm transition-colors duration-200 ${(10 - i) <= volume * 10
+                                                ? (i < 3 ? "bg-red-500 shadow-red-500/40" : i < 6 ? "bg-kuma-gold shadow-kuma-gold/40" : "bg-emerald-500 shadow-emerald-500/40")
+                                                : "bg-zinc-800"
+                                                }`}
+                                        />
+                                    ))}
+                                </div>
+                                <div className="relative w-8 h-full bg-zinc-950 border border-white/5 rounded-lg shadow-inner flex justify-center">
+                                    <input
+                                        type="range" min="0" max="1" step="0.01"
+                                        value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-ns-resize z-20"
+                                        style={{ appearance: 'slider-vertical' } as any}
+                                    />
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-0.5 bg-zinc-800" />
+                                    <div
+                                        className="absolute left-0 right-0 h-8 bg-zinc-800 border-y-2 border-zinc-700 shadow-[0_4px_10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] rounded-sm pointer-events-none transition-all duration-75"
+                                        style={{ bottom: `calc(${volume * 100}% - 16px)` }}
+                                    >
+                                        <div className="absolute left-1 right-1 top-1/2 -translate-y-px h-0.5 bg-kuma-gold/50" />
+                                    </div>
+                                </div>
+                                <div className="absolute -top-1 -right-4 flex flex-col items-center">
+                                    <span className="font-mono text-[10px] font-black text-kuma-gold bg-black border border-kuma-gold/30 px-1 rounded shadow-[0_0_10px_rgba(234,179,8,0.2)]">
+                                        {Math.round(volume * 100)}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <button className="kuma-btn-3d group w-20 self-center" onClick={onBack}>
+                                <div className="btn-inner bg-zinc-900/80 flex flex-col items-center justify-center gap-1">
+                                    <ArrowLeft weight="bold" className="w-4 h-4 text-zinc-500 group-hover:text-red-500 transition-colors" />
+                                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-400">Salir</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 3. Radar Oscilloscope */}
+                <div className="relative w-full aspect-[21/9] md:aspect-[32/9] bg-black rounded-[3rem] overflow-hidden border-4 border-zinc-800 shadow-[0_0_50px_rgba(0,0,0,0.8),inset_0_0_100px_rgba(0,0,0,1)] group">
+                    {theme === "dragon-ball" ? (
+                        <div className="absolute inset-0 pointer-events-none">
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(52,211,153,0.08)_0,transparent_100%)]" />
+                            <div className="absolute inset-0" style={{ backgroundImage: `linear-gradient(rgba(52,211,153,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.15) 1px, transparent 1px)`, backgroundSize: '100px 100px' }} />
+                            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.15)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_4px,3px_100%]" />
+                        </div>
+                    ) : (
+                        <div className="absolute inset-0 pointer-events-none opacity-40">
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.05)_0,transparent_100%)]" />
+                            <div className="absolute inset-0" style={{ backgroundImage: `linear-gradient(rgba(234,179,8,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(234,179,8,0.1) 1px, transparent 1px)`, backgroundSize: '50px 50px' }} />
+                        </div>
+                    )}
+                    <canvas ref={canvasRef} width={2400} height={800} className="absolute inset-0 w-full h-full mix-blend-screen" />
+                    <div className="absolute inset-0 border-[1.5rem] border-zinc-950/80 rounded-[3rem] pointer-events-none shadow-[inset_0_0_80px_rgba(0,0,0,1)]" />
+                </div>
+
+                {/* MODAL DE GUARDADO PREMIUM */}
+                <AnimatePresence>
+                    {showSaveModal && (
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+                                className="relative w-full max-w-lg bg-zinc-900 border-2 border-kuma-gold/40 rounded-[2.5rem] p-10 shadow-[0_0_100px_rgba(0,0,0,1)] overflow-hidden"
+                            >
+                                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-kuma-gold to-transparent" />
+                                <div className="flex justify-between items-center mb-8">
+                                    <div className="flex flex-col gap-1">
+                                        <h3 className="text-kuma-gold font-black uppercase tracking-widest text-2xl italic">Nueva Entrada</h3>
+                                    </div>
+                                    <button onClick={() => setShowSaveModal(false)} className="text-zinc-600 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">
                                         <X className="w-6 h-6" />
                                     </button>
                                 </div>
 
-                                <div className="flex gap-4">
-                                    <div className="relative flex-[2]">
-                                        <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" />
-                                        <input
-                                            type="text" placeholder="Buscar kata..." value={searchLibrary} onChange={(e) => setSearchLibrary(e.target.value)}
-                                            className="w-full bg-zinc-950 border border-white/5 rounded-2xl py-3 pl-12 pr-6 outline-none focus:border-kuma-gold/30 text-white transition-all text-sm font-mono"
-                                        />
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 text-left ml-4">Nombre del Kata</label>
+                                            <input
+                                                type="text" value={kataName} onChange={(e) => setKataName(e.target.value)}
+                                                placeholder="EJ: HEIAN SHODAN"
+                                                className="w-full bg-black/50 border border-white/10 rounded-2xl px-6 py-4 text-white font-mono focus:border-kuma-gold/50 focus:outline-none transition-all placeholder:text-zinc-800"
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 text-left ml-4">Arte Marcial</label>
+                                                <input
+                                                    type="text" value={martialArt} onChange={(e) => setMartialArt(e.target.value)}
+                                                    placeholder="Karate"
+                                                    className="w-full bg-black/50 border border-white/10 rounded-2xl px-6 py-4 text-white font-mono focus:border-kuma-gold/50 focus:outline-none transition-all placeholder:text-zinc-800"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 text-left ml-4">Estilo</label>
+                                                <input
+                                                    type="text" value={style} onChange={(e) => setStyle(e.target.value)}
+                                                    placeholder="Shotokan"
+                                                    className="w-full bg-black/50 border border-white/10 rounded-2xl px-6 py-4 text-white font-mono focus:border-kuma-gold/50 focus:outline-none transition-all placeholder:text-zinc-800"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="relative flex-1 group">
-                                        <select
-                                            className="w-full bg-zinc-950 border border-white/5 rounded-2xl py-3 px-6 pr-10 text-white outline-none focus:border-kuma-gold/30 text-sm font-black uppercase tracking-widest appearance-none cursor-pointer transition-all"
-                                            value={filterArt} onChange={(e) => setFilterArt(e.target.value)}
-                                        >
-                                            <option value="all">TODAS LAS ARTES</option>
-                                            <option value="Karate">KARATE</option>
-                                        </select>
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500 group-hover:text-kuma-gold transition-colors">
-                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
+
+                                    <button
+                                        onClick={handleSaveSession}
+                                        disabled={isSaving || !kataName || !martialArt || !style}
+                                        className={`w-full kuma-btn-3d h-16 bg-zinc-800 rounded-2xl group ${isSaving ? "opacity-50" : ""}`}
+                                    >
+                                        <div className="btn-inner flex items-center justify-center gap-3">
+                                            <FloppyDiskBack weight="fill" className={`w-6 h-6 ${isSaving ? 'animate-spin' : 'text-kuma-gold group-hover:scale-110 transition-transform'}`} />
+                                            <span className="text-xs font-black uppercase tracking-widest text-zinc-100">
+                                                {isSaving ? "Sincronizando..." : "Confirmar Registro"}
+                                            </span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* BIBLIOTECA MODAL CENTRADO */}
+                <AnimatePresence>
+                    {showLibrary && (
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+                        >
+                            <motion.div
+                                initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
+                                className="relative w-full max-w-4xl max-h-[85vh] bg-zinc-900 border-2 border-kuma-gold/30 rounded-[3rem] flex flex-col shadow-[0_0_80px_rgba(0,0,0,1)] overflow-hidden"
+                            >
+                                {/* Header Biblioteca */}
+                                <div className="p-8 border-b border-white/5 bg-black/20 flex flex-col gap-6">
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center gap-4">
+                                            <div className="text-left">
+                                                <h2 className="text-2xl font-black text-white uppercase tracking-tighter italic">Biblioteca</h2>
+                                            </div>
+                                        </div>
+                                        <button onClick={() => setShowLibrary(false)} className="text-zinc-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">
+                                            <X className="w-6 h-6" />
+                                        </button>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <div className="relative flex-[2]">
+                                            <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" />
+                                            <input
+                                                type="text" placeholder="Buscar kata..." value={searchLibrary} onChange={(e) => setSearchLibrary(e.target.value)}
+                                                className="w-full bg-zinc-950 border border-white/5 rounded-2xl py-3 pl-12 pr-6 outline-none focus:border-kuma-gold/30 text-white transition-all text-sm font-mono"
+                                            />
+                                        </div>
+                                        <div className="relative flex-1 group">
+                                            <select
+                                                className="w-full bg-zinc-950 border border-white/5 rounded-2xl py-3 px-6 pr-10 text-white outline-none focus:border-kuma-gold/30 text-sm font-black uppercase tracking-widest appearance-none cursor-pointer transition-all"
+                                                value={filterArt} onChange={(e) => setFilterArt(e.target.value)}
+                                            >
+                                                <option value="all">TODAS LAS ARTES</option>
+                                                <option value="Karate">KARATE</option>
+                                            </select>
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500 group-hover:text-kuma-gold transition-colors">
+                                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Lista de Ritmos con Table-HUD */}
-                            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-black/20">
-                                <div className="w-full border-separate border-spacing-y-2">
-                                    {/* Header de la Tabla */}
-                                    <div className="grid grid-cols-[2fr_1.2fr_1.2fr_0.8fr_0.8fr] gap-4 px-8 py-4 mb-4 bg-zinc-800/30 rounded-2xl border border-white/5 text-[11px] font-black uppercase tracking-[0.3em] text-kuma-gold/80">
-                                        <div className="flex items-center gap-2"><MagnifyingGlass weight="bold" className="w-3 h-3" /> Nombre del Kata</div>
-                                        <div className="flex items-center gap-2"><Sword weight="bold" className="w-3 h-3" /> Arte Marcial</div>
-                                        <div className="flex items-center gap-2"><Scroll weight="bold" className="w-3 h-3" /> Estilo</div>
-                                        <div className="flex items-center gap-2 text-center justify-center"><TrendUp weight="bold" className="w-3 h-3" /> Sinc.</div>
-                                        <div className="text-center">Acciones</div>
-                                    </div>
+                                {/* Lista de Ritmos con Table-HUD */}
+                                <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-black/20">
+                                    <div className="w-full border-separate border-spacing-y-2">
+                                        {/* Header de la Tabla */}
+                                        <div className="grid grid-cols-[2fr_1.2fr_1.2fr_0.8fr_0.8fr] gap-4 px-8 py-4 mb-4 bg-zinc-800/30 rounded-2xl border border-white/5 text-[11px] font-black uppercase tracking-[0.3em] text-kuma-gold/80">
+                                            <div className="flex items-center gap-2"><MagnifyingGlass weight="bold" className="w-3 h-3" /> Nombre del Kata</div>
+                                            <div className="flex items-center gap-2"><Sword weight="bold" className="w-3 h-3" /> Arte Marcial</div>
+                                            <div className="flex items-center gap-2"><Scroll weight="bold" className="w-3 h-3" /> Estilo</div>
+                                            <div className="flex items-center gap-2 text-center justify-center"><TrendUp weight="bold" className="w-3 h-3" /> Sinc.</div>
+                                            <div className="text-center">Acciones</div>
+                                        </div>
 
-                                    {/* Cuerpo de la Tabla */}
-                                    <div className="space-y-3">
-                                        {filteredRhythms.map((r) => (
-                                            <motion.div
-                                                key={r._id}
-                                                whileHover={{ scale: 1.005, backgroundColor: "rgba(234,179,8,0.03)" }}
-                                                className="grid grid-cols-[2fr_1.2fr_1.2fr_0.8fr_0.8fr] gap-4 p-5 px-8 bg-zinc-900/40 rounded-2xl border border-white/5 hover:border-kuma-gold/30 items-center group transition-all duration-300 shadow-sm"
-                                            >
-                                                <div className="flex flex-col text-left">
-                                                    <span className="text-white font-black text-base tracking-tight group-hover:text-kuma-gold transition-colors">{r.name}</span>
-                                                    <span className="text-[10px] text-zinc-600 font-mono flex items-center gap-2 mt-0.5">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
-                                                        REF: {r._id.slice(-8).toUpperCase()}
-                                                    </span>
-                                                </div>
-                                                <div className="text-left">
-                                                    <span className="px-4 py-1.5 bg-zinc-950 rounded-xl border border-white/5 text-[10px] text-zinc-400 font-black uppercase tracking-widest shadow-inner">
-                                                        {r.martialArt}
-                                                    </span>
-                                                </div>
-                                                <div className="text-left">
-                                                    <span className="text-zinc-500 font-mono text-xs uppercase italic border-l-2 border-kuma-gold/20 pl-3">
-                                                        {r.style}
-                                                    </span>
-                                                </div>
-                                                <div className="text-center">
-                                                    <div className="inline-flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full border border-white/5">
-                                                        <span className="text-[10px] text-white font-mono font-bold">{r.points.length}</span>
-                                                        <div className="flex gap-0.5">
-                                                            {[...Array(3)].map((_, i) => (
-                                                                <div key={i} className={`w-1 h-1 rounded-full ${i < 2 ? 'bg-kuma-gold' : 'bg-zinc-800'}`} />
-                                                            ))}
+                                        {/* Cuerpo de la Tabla */}
+                                        <div className="space-y-3">
+                                            {filteredRhythms.map((r) => (
+                                                <motion.div
+                                                    key={r._id}
+                                                    whileHover={{ scale: 1.005, backgroundColor: "rgba(234,179,8,0.03)" }}
+                                                    className="grid grid-cols-[2fr_1.2fr_1.2fr_0.8fr_0.8fr] gap-4 p-5 px-8 bg-zinc-900/40 rounded-2xl border border-white/5 hover:border-kuma-gold/30 items-center group transition-all duration-300 shadow-sm"
+                                                >
+                                                    <div className="flex flex-col text-left">
+                                                        <span className="text-white font-black text-base tracking-tight group-hover:text-kuma-gold transition-colors">{r.name}</span>
+                                                        <span className="text-[10px] text-zinc-600 font-mono flex items-center gap-2 mt-0.5">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
+                                                            REF: {r._id.slice(-8).toUpperCase()}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-left">
+                                                        <span className="px-4 py-1.5 bg-zinc-950 rounded-xl border border-white/5 text-[10px] text-zinc-400 font-black uppercase tracking-widest shadow-inner">
+                                                            {r.martialArt}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-left">
+                                                        <span className="text-zinc-500 font-mono text-xs uppercase italic border-l-2 border-kuma-gold/20 pl-3">
+                                                            {r.style}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-center">
+                                                        <div className="inline-flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full border border-white/5">
+                                                            <span className="text-[10px] text-white font-mono font-bold">{r.points.length}</span>
+                                                            <div className="flex gap-0.5">
+                                                                {[...Array(3)].map((_, i) => (
+                                                                    <div key={i} className={`w-1 h-1 rounded-full ${i < 2 ? 'bg-kuma-gold' : 'bg-zinc-800'}`} />
+                                                                ))}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div className="flex justify-center items-center gap-3">
-                                                    <button
-                                                        onClick={() => loadRhythm(r)}
-                                                        className="w-10 h-10 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-black rounded-xl flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] border border-emerald-500/30 group/select"
-                                                        title="Elegir y Cargar"
-                                                    >
-                                                        <HandTap weight="fill" className="w-5 h-5 group-hover/select:scale-110 transition-transform" />
-                                                    </button>
-
-                                                    <div className="w-px h-6 bg-white/10 mx-1" />
-
-                                                    <button
-                                                        onClick={() => loadRhythmAndPlay(r)}
-                                                        className="w-10 h-10 bg-kuma-gold/5 text-kuma-gold hover:bg-kuma-gold hover:text-black rounded-xl flex items-center justify-center transition-all duration-300 shadow-md border border-kuma-gold/20"
-                                                        title="Cargar y Reproducir"
-                                                    >
-                                                        <Play weight="fill" className="w-5 h-5" />
-                                                    </button>
-                                                    {isAdmin && (
+                                                    <div className="flex justify-center items-center gap-3">
                                                         <button
-                                                            onClick={() => setRhythmToDelete(r)}
-                                                            className="w-10 h-10 bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-xl flex items-center justify-center transition-all duration-300 border border-red-500/10"
-                                                            title="Borrar Registro"
+                                                            onClick={() => loadRhythm(r)}
+                                                            className="w-10 h-10 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-black rounded-xl flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] border border-emerald-500/30 group/select"
+                                                            title="Elegir y Cargar"
                                                         >
-                                                            <Trash weight="bold" className="w-5 h-5" />
+                                                            <HandTap weight="fill" className="w-5 h-5 group-hover/select:scale-110 transition-transform" />
                                                         </button>
-                                                    )}
-                                                </div>
-                                            </motion.div>
-                                        ))}
+
+                                                        <div className="w-px h-6 bg-white/10 mx-1" />
+
+                                                        <button
+                                                            onClick={() => loadRhythmAndPlay(r)}
+                                                            className="w-10 h-10 bg-kuma-gold/5 text-kuma-gold hover:bg-kuma-gold hover:text-black rounded-xl flex items-center justify-center transition-all duration-300 shadow-md border border-kuma-gold/20"
+                                                            title="Cargar y Reproducir"
+                                                        >
+                                                            <Play weight="fill" className="w-5 h-5" />
+                                                        </button>
+                                                        {isAdmin && (
+                                                            <button
+                                                                onClick={() => setRhythmToDelete(r)}
+                                                                className="w-10 h-10 bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-xl flex items-center justify-center transition-all duration-300 border border-red-500/10"
+                                                                title="Borrar Registro"
+                                                            >
+                                                                <Trash weight="bold" className="w-5 h-5" />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </motion.div>
+                                            ))}
+                                        </div>
                                     </div>
+
+                                    {filteredRhythms.length === 0 && (
+                                        <div className="flex flex-col items-center justify-center py-24 text-zinc-700">
+                                            <div className="relative mb-6">
+                                                <Scroll weight="thin" className="w-20 h-20 opacity-20" />
+                                                <MagnifyingGlass className="absolute -bottom-2 -right-2 w-8 h-8 opacity-40 text-kuma-gold" />
+                                            </div>
+                                            <p className="font-mono text-xs uppercase tracking-[0.4em]">Sin registros que coincidan</p>
+                                        </div>
+                                    )}
                                 </div>
 
-                                {filteredRhythms.length === 0 && (
-                                    <div className="flex flex-col items-center justify-center py-24 text-zinc-700">
-                                        <div className="relative mb-6">
-                                            <Scroll weight="thin" className="w-20 h-20 opacity-20" />
-                                            <MagnifyingGlass className="absolute -bottom-2 -right-2 w-8 h-8 opacity-40 text-kuma-gold" />
-                                        </div>
-                                        <p className="font-mono text-xs uppercase tracking-[0.4em]">Sin registros que coincidan</p>
-                                    </div>
-                                )}
-                            </div>
 
-
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>
 
-            {/* CONFIRMACIÓN DE BORRADO */}
-            <AnimatePresence>
-                {rhythmToDelete && (
-                    <motion.div
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
-                    >
+                {/* CONFIRMACIÓN DE BORRADO */}
+                <AnimatePresence>
+                    {rhythmToDelete && (
                         <motion.div
-                            initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
-                            className="relative w-full max-w-md bg-zinc-900 border-2 border-red-500/30 rounded-[2.5rem] p-10 shadow-[0_0_100px_rgba(255,0,0,0.1)] text-center"
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
                         >
-                            <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20">
-                                <Trash weight="fill" className="text-red-500 w-10 h-10" />
-                            </div>
-                            <h3 className="text-white font-black uppercase tracking-tighter text-2xl mb-2 italic">¿Eliminar Kata?</h3>
-                            <p className="text-zinc-500 text-sm mb-8 font-mono leading-relaxed px-4">
-                                Esta acción es irreversible. El kata <span className="text-white font-bold tracking-normal">"{rhythmToDelete.name}"</span> será borrado permanentemente del servidor.
-                            </p>
+                            <motion.div
+                                initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+                                className="relative w-full max-w-md bg-zinc-900 border-2 border-red-500/30 rounded-[2.5rem] p-10 shadow-[0_0_100px_rgba(255,0,0,0.1)] text-center"
+                            >
+                                <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20">
+                                    <Trash weight="fill" className="text-red-500 w-10 h-10" />
+                                </div>
+                                <h3 className="text-white font-black uppercase tracking-tighter text-2xl mb-2 italic">¿Eliminar Kata?</h3>
+                                <p className="text-zinc-500 text-sm mb-8 font-mono leading-relaxed px-4">
+                                    Esta acción es irreversible. El kata <span className="text-white font-bold tracking-normal">"{rhythmToDelete.name}"</span> será borrado permanentemente del servidor.
+                                </p>
 
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={() => setRhythmToDelete(null)}
-                                    className="flex-1 px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all border border-white/5"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    onClick={handleDeleteRhythm}
-                                    disabled={isDeleting}
-                                    className="flex-1 px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-[0_10px_30px_rgba(220,38,38,0.3)] disabled:opacity-50"
-                                >
-                                    {isDeleting ? "Borrando..." : "Confirmar"}
-                                </button>
-                            </div>
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => setRhythmToDelete(null)}
+                                        className="flex-1 px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all border border-white/5"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        onClick={handleDeleteRhythm}
+                                        disabled={isDeleting}
+                                        className="flex-1 px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-[0_10px_30px_rgba(220,38,38,0.3)] disabled:opacity-50"
+                                    >
+                                        {isDeleting ? "Borrando..." : "Confirmar"}
+                                    </button>
+                                </div>
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>
 
-            <style jsx>{`
+                <style jsx>{`
                 .kuma-btn-3d { position: relative; padding: 4px; background: #18181b; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 0 #09090b, 0 8px 20px rgba(0,0,0,0.5); transition: all 0.1s ease; width: 60px; height: 50px; cursor: pointer; }
                 .kuma-btn-3d:active, .kuma-btn-3d.active { transform: translateY(3px); box-shadow: 0 1px 0 #000, 0 2px 10px rgba(0,0,0,0.5); }
                 .btn-inner { width: 100%; height: 100%; border-radius: 8px; box-shadow: inset 0 1px 1px rgba(255,255,255,0.1); border: 1px solid rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -875,6 +877,7 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(234,179,8,0.2); border-radius: 10px; }
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(234,179,8,0.4); }
             `}</style>
-        </div>
+            </div>
+        </div >
     );
 };

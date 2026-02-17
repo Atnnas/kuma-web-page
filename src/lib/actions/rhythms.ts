@@ -26,7 +26,7 @@ export async function saveRhythm(data: {
         revalidatePath("/admin"); // Revalida donde se use la biblioteca
         return { success: true, id: newRhythm._id.toString() };
     } catch (error: any) {
-        console.error("Error saving rhythm:", error);
+        console.error("Error saving rhythm:", error.message);
         return { success: false, error: error.message || "Failed to save rhythm" };
     }
 }
@@ -47,8 +47,8 @@ export async function getRhythms() {
             createdAt: r.createdAt.toISOString(),
             updatedAt: r.updatedAt.toISOString(),
         }));
-    } catch (error) {
-        console.error("Error fetching rhythms:", error);
+    } catch (error: any) {
+        console.error("Error fetching rhythms:", error.message);
         return [];
     }
 }
@@ -69,7 +69,7 @@ export async function deleteRhythm(id: string) {
         revalidatePath("/admin");
         return { success: true };
     } catch (error: any) {
-        console.error("Error deleting rhythm:", error);
+        console.error("Error deleting rhythm:", error.message);
         return { success: false, error: error.message || "Failed to delete rhythm" };
     }
 }
