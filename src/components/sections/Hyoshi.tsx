@@ -508,28 +508,21 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                 ))}
                             </div>
 
-                            {/* Playhead (Scanner) - Restored for Visual Anchor */}
-                            <div
-                                className="absolute top-0 bottom-0 w-0.5 bg-white z-50 shadow-[0_0_15px_rgba(255,255,255,0.8)] pointer-events-none"
-                                style={{
-                                    left: `${(timer % 30) / 30 * 100}%`,
-                                    transition: 'none'
-                                }}
-                            />
+                            {/* SCANNER REMOVED */}
 
                             <div className="absolute inset-x-10 top-12 bottom-12 flex items-center overflow-hidden">
                                 <div className="relative w-full h-full flex items-center">
                                     {/* Real-time active hold trail (Recording) */}
                                     {status === "recording" && activeHoldRef.current && (() => {
-                                        const duration = timer - activeHoldRef.current.start;
+                                        const holdStart = activeHoldRef.current.start;
+                                        const duration = timer - holdStart;
                                         const segments: { left: number, width: number }[] = [];
                                         let remaining = duration;
-                                        let currentStart = activeHoldRef.current.start;
+                                        let currentStart = holdStart;
 
                                         while (remaining > 0) {
                                             const cycleStart = currentStart % 30;
-                                            const availableInCycle = 30 - cycleStart;
-                                            const segmentDuration = Math.min(remaining, availableInCycle);
+                                            const segmentDuration = Math.min(remaining, 30 - cycleStart);
                                             segments.push({
                                                 left: (cycleStart / 30) * 100,
                                                 width: (segmentDuration / 30) * 100
@@ -538,28 +531,30 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                             remaining -= segmentDuration;
                                         }
 
-                                        return segments.map((seg, sIdx) => (
-                                            <div
-                                                key={`recording-seg-${sIdx}`}
-                                                className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect border-red-400/50 transition-none"
-                                                style={{
-                                                    left: `${seg.left}%`,
-                                                    width: `${seg.width}%`,
-                                                    background: 'linear-gradient(to bottom, #ef4444, #dc2626)'
-                                                }}
-                                            />
-                                        ));
+                                        const activeCycle = Math.floor(timer / 30);
+
+                                        return segments.map((seg, sIdx) => {
+                                            const segCycle = Math.floor((holdStart + (sIdx * 30)) / 30);
+                                            if (segCycle !== activeCycle) return null;
+                                            return (
+                                                <div
+                                                    key={`rec-seg-${sIdx}`}
+                                                    className="absolute top-[38%] h-[24%] rounded-xl transition-none"
+                                                    style={{
+                                                        left: `${seg.left}%`,
+                                                        width: `${seg.width}%`,
+                                                        background: 'linear-gradient(to bottom, #ef4444, #dc2626)',
+                                                        boxShadow: '0 0 15px rgba(239, 68, 68, 0.4)',
+                                                        border: '1px solid rgba(255, 255, 255, 0.2)'
+                                                    }}
+                                                />
+                                            );
+                                        });
                                     })()}
 
                                     {/* GHOST LAYER (Current Kata Map) */}
                                     {currentKata.points.map((point, idx) => {
-                                        if (point.type !== "hold") return (
-                                            <div
-                                                key={`ghost-p-${idx}`}
-                                                className="absolute top-[5%] h-[90%] w-0.5 bg-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] z-10 transition-none"
-                                                style={{ left: `${(point.start % 30) / 30 * 100}%` }}
-                                            />
-                                        );
+                                        if (point.type !== "hold") return null;
 
                                         const duration = point.duration || 0.1;
                                         const segments: { left: number, width: number }[] = [];
@@ -579,19 +574,21 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                             remaining -= segmentDuration;
                                         }
 
+                                        const activeCycle = Math.floor(timer / 30);
+
                                         return (
                                             <React.Fragment key={`ghost-h-${idx}`}>
-                                                {segments.map((seg, sIdx) => (
-                                                    <div
-                                                        key={`ghost-seg-${idx}-${sIdx}`}
-                                                        className="absolute top-[38%] h-[24%] rounded-xl bg-white/5 border border-white/5 opacity-5 transition-none"
-                                                        style={{ left: `${seg.left}%`, width: `${seg.width}%` }}
-                                                    />
-                                                ))}
-                                                <div
-                                                    className="absolute top-[5%] h-[90%] w-0.5 bg-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] z-10 transition-none"
-                                                    style={{ left: `${(point.start % 30) / 30 * 100}%` }}
-                                                />
+                                                {segments.map((seg, sIdx) => {
+                                                    const segCycle = Math.floor((point.start + (sIdx * 30)) / 30);
+                                                    if (segCycle !== activeCycle) return null;
+                                                    return (
+                                                        <div
+                                                            key={`ghost-seg-${idx}-${sIdx}`}
+                                                            className="absolute top-[38%] h-[24%] rounded-xl bg-white/5 border border-white/5 opacity-5 transition-none"
+                                                            style={{ left: `${seg.left}%`, width: `${seg.width}%` }}
+                                                        />
+                                                    );
+                                                })}
                                             </React.Fragment>
                                         );
                                     })}
@@ -628,30 +625,31 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                             remaining -= segmentTotalDuration;
                                         }
 
+                                        const activeCycle = Math.floor(timer / 30);
+
                                         return (
                                             <React.Fragment key={`live-${idx}`}>
-                                                {point.type === "hold" && segments.map((seg, sIdx) => (
-                                                    <div
-                                                        key={`live-seg-${idx}-${sIdx}`}
-                                                        className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect transition-none will-change-transform"
-                                                        style={{
-                                                            left: `${seg.left}%`,
-                                                            width: `${seg.width}%`,
-                                                            clipPath: `inset(0 ${seg.clip}% 0 0)`
-                                                        }}
-                                                    />
-                                                ))}
-
-                                                {/* Start Anchor */}
-                                                <div
-                                                    className="absolute w-0.5 top-[5%] h-[90%] bg-white/40 shadow-[0_0_10px_rgba(255,255,255,0.2)] rounded-full z-10 transition-none"
-                                                    style={{ left: `${(point.start % 30) / 30 * 100}%` }}
-                                                />
+                                                {point.type === "hold" && segments.map((seg, sIdx) => {
+                                                    const segCycle = Math.floor((point.start + (sIdx * 30)) / 30);
+                                                    if (segCycle !== activeCycle) return null;
+                                                    return (
+                                                        <div
+                                                            key={`live-seg-${idx}-${sIdx}`}
+                                                            className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect transition-none"
+                                                            style={{
+                                                                left: `${seg.left}%`,
+                                                                width: `${seg.width}%`,
+                                                                clipPath: `inset(0 ${seg.clip}% 0 0)`
+                                                            }}
+                                                        />
+                                                    );
+                                                })}
 
                                                 {point.pulses?.map((p, pIdx) => {
                                                     const absolutePulseTime = point.start + p;
                                                     const isPulseReached = timer >= absolutePulseTime;
-                                                    return isPulseReached && (
+                                                    const pulseCycle = Math.floor(absolutePulseTime / 30);
+                                                    return isPulseReached && pulseCycle === activeCycle && (
                                                         <div
                                                             key={`live-p-${idx}-${pIdx}`}
                                                             className="absolute w-1 top-[8%] h-[20%] glass-pulse rounded-full z-20 transition-none"
