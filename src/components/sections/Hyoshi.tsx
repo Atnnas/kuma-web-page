@@ -406,9 +406,10 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
                             <div className="absolute inset-x-10 top-12 bottom-12 flex items-center overflow-hidden">
                                 <div className="relative w-full h-full flex items-center">
+                                    {/* Real-time active hold trail (VIVID) */}
                                     {status === "recording" && activeHoldRef.current && (
                                         <div
-                                            className="absolute bottom-0 h-full bg-gradient-to-r from-red-500/40 to-red-400/60 rounded-lg shadow-[0_0_20px_rgba(239,68,68,0.3)] border-x border-red-500/50"
+                                            className="absolute bottom-0 h-full bg-gradient-to-r from-red-500 via-red-400 to-red-500 rounded-lg shadow-[0_0_30px_rgba(239,68,68,0.8),inset_0_0_15px_rgba(255,255,255,0.4)] border border-red-400/50"
                                             style={{
                                                 left: `${(activeHoldRef.current.start % 30) * 3.333}%`,
                                                 width: `${((timer - activeHoldRef.current.start) % 30) * 3.333}%`
@@ -417,15 +418,16 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                     )}
                                     {currentKata.points.map((point, idx) => (
                                         <React.Fragment key={idx}>
+                                            {/* Transitions (Hold bars - VIVID) */}
                                             {point.type === "hold" && (
                                                 <motion.div
                                                     initial={{ opacity: 0, scaleX: 0 }}
                                                     animate={{ opacity: 1, scaleX: 1 }}
                                                     className={cn(
-                                                        "absolute bottom-0 h-full rounded-lg transition-all duration-300 origin-left border-x",
+                                                        "absolute bottom-0 h-full rounded-lg transition-all duration-300 origin-left border",
                                                         point.played
-                                                            ? "bg-gradient-to-r from-kuma-gold/20 via-kuma-gold/40 to-kuma-gold/20 shadow-[0_0_30px_rgba(234,179,8,0.3)] border-kuma-gold/30"
-                                                            : "bg-white/5 border-white/10"
+                                                            ? "bg-gradient-to-r from-kuma-gold via-white/40 to-kuma-gold shadow-[0_0_35px_rgba(234,179,8,0.6),inset_0_0_10px_rgba(255,255,255,0.8)] border-white/40"
+                                                            : "bg-white/10 border-white/20"
                                                     )}
                                                     style={{
                                                         left: `${(point.start % 30) * 3.333}%`,
