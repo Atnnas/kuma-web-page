@@ -550,7 +550,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                         initial={{ opacity: 0 }}
                                                         animate={{ opacity: 1 }}
                                                         className={cn(
-                                                            "absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect crt-phosphor"
+                                                            "absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect"
                                                         )}
                                                         style={{
                                                             left: `${(point.start % 30) / 30 * 100}%`,
