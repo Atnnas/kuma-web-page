@@ -40,6 +40,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     const startTimeRef = useRef<number>(0);
     const lastPauseTimeRef = useRef<number>(0);
     const pointsRef = useRef<Point[]>([]);
+    const activeHoldRef = useRef<Point | null>(null);
+    const isKeyPressedRef = useRef<Set<string>>(new Set());
 
     // --- FETCH DATA ---
     useEffect(() => {
@@ -84,17 +86,28 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
             if (status === "training") {
                 pointsRef.current.forEach((point) => {
-                    // Start of technique
+                    // Start of technique (Hold or Hit)
                     if (elapsed >= point.start && !point.played) {
-                        playBeep();
+                        if (point.type === "hold") {
+                            audioTrainer.startContinuousTone();
+                        } else {
+                            playBeep();
+                        }
                         point.played = true;
                     }
-                    // Internal pulses
+
+                    // End of Hold
+                    if (point.type === "hold" && point.duration && elapsed >= (point.start + point.duration) && point.played && !point.stopped) {
+                        audioTrainer.stopContinuousTone();
+                        (point as any).stopped = true;
+                    }
+
+                    // Internal pulses during hold
                     if (point.pulses) {
                         point.pulses.forEach((pulseTimeOffset, pIdx) => {
                             const absolutePulseTime = point.start + pulseTimeOffset;
                             if (elapsed >= absolutePulseTime && (!point.playedPulses || !point.playedPulses.includes(pIdx))) {
-                                playPulseBeep();
+                                playBeep(1100); // Pulse beep
                                 point.playedPulses = [...(point.playedPulses || []), pIdx];
                             }
                         });
@@ -194,28 +207,70 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     };
 
     const recordHit = () => {
-        if (status === "recording") {
+        if (status === "recording" && !activeHoldRef.current) {
             const newPoint: Point = {
-                type: "hit",
+                type: "hold",
                 start: timer,
-                name: `Ték. ${pointsRef.current.length + 1}`
+                name: `Ték. ${pointsRef.current.length + 1}`,
+                pulses: []
             };
+            activeHoldRef.current = newPoint;
             pointsRef.current = [...pointsRef.current, newPoint];
             setCurrentKata(prev => ({ ...prev, points: pointsRef.current }));
-            playBeep();
+            audioTrainer.startContinuousTone();
+        }
+    };
+
+    const recordRelease = () => {
+        if (status === "recording" && activeHoldRef.current) {
+            const duration = timer - activeHoldRef.current.start;
+            activeHoldRef.current.duration = Math.max(0.1, duration);
+            activeHoldRef.current = null;
+            setCurrentKata(prev => ({ ...prev, points: [...pointsRef.current] }));
+            audioTrainer.stopContinuousTone();
+        }
+    };
+
+    const recordPulse = () => {
+        if (status === "recording" && activeHoldRef.current) {
+            const pulseOffset = timer - activeHoldRef.current.start;
+            if (!activeHoldRef.current.pulses) activeHoldRef.current.pulses = [];
+            activeHoldRef.current.pulses.push(pulseOffset);
+            setCurrentKata(prev => ({ ...prev, points: [...pointsRef.current] }));
+            playBeep(1100); // Higher pitch for pulse
         }
     };
 
     // Keyboard support
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (isKeyPressedRef.current.has(e.code)) return;
+            isKeyPressedRef.current.add(e.code);
+
             if (e.code === "Space") {
                 e.preventDefault();
                 recordHit();
+            } else if (e.code === "ArrowUp") {
+                e.preventDefault();
+                recordPulse();
             }
         };
+
+        const handleKeyUp = (e: KeyboardEvent) => {
+            isKeyPressedRef.current.delete(e.code);
+            if (e.code === "Space") {
+                e.preventDefault();
+                recordRelease();
+            }
+        };
+
         window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
+        window.addEventListener("keyup", handleKeyUp);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("keyup", handleKeyUp);
+            audioTrainer.stopContinuousTone();
+        };
     }, [status, timer]);
 
     const formatTime = (seconds: number) => {
@@ -277,34 +332,108 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 flex flex-col gap-6">
-                    {/* Action Bar */}
-                    <div className={cn(
-                        "grid gap-3",
-                        isAdmin ? "grid-cols-2 md:grid-cols-5" : "grid-cols-2 md:grid-cols-3"
-                    )}>
-                        {isAdmin && (
-                            <button onClick={startRecording} disabled={status === "recording"} className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl bg-zinc-900 border border-white/10 hover:border-red-500/50 hover:bg-red-500/5 transition-all group disabled:opacity-50">
-                                <Record weight="fill" className="w-8 h-8 text-red-500 group-hover:scale-110" />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white">Grabar</span>
-                            </button>
-                        )}
-                        <button onClick={startTraining} disabled={status === "training" || (currentKata.points.length === 0 && status !== "paused")} className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl bg-zinc-900 border border-white/10 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all group disabled:opacity-50">
-                            <Play weight="fill" className="w-8 h-8 text-emerald-500 group-hover:scale-110" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white">Entrenar</span>
-                        </button>
-                        <button onClick={pauseSystem} disabled={status === "ready" || status === "paused"} className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl bg-zinc-900 border border-white/10 hover:border-orange-500/50 hover:bg-orange-500/5 transition-all group disabled:opacity-50">
-                            <Pause weight="fill" className="w-8 h-8 text-orange-500 group-hover:scale-110" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white">Pausa</span>
-                        </button>
-                        <button onClick={stopSystem} disabled={status === "ready"} className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl bg-zinc-900 border border-white/10 hover:border-white/30 hover:bg-white/5 transition-all group disabled:opacity-50">
-                            <Stop weight="fill" className="w-8 h-8 text-white group-hover:scale-110" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white">Parar</span>
-                        </button>
-                        <button onClick={clearCurrent} className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl bg-zinc-900 border border-white/10 hover:border-zinc-500/50 hover:bg-white/5 transition-all group">
-                            <Trash weight="bold" className="w-8 h-8 text-zinc-500 group-hover:scale-110" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white">Limpiar</span>
-                        </button>
+                <div className="lg:col-span-2 flex flex-col gap-8">
+                    {/* --- 3D COMMAND CONSOLE --- */}
+                    <div className="relative group/console">
+                        {/* Console Base/Body */}
+                        <div className="absolute -inset-1 bg-gradient-to-b from-white/10 to-transparent rounded-[2.5rem] blur-sm opacity-50" />
+                        <div className="relative bg-[#1a1a1c] border-x border-t border-white/10 border-b-4 border-black rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden">
+                            {/* Texture/Grip details */}
+                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-leather.png')] opacity-10 pointer-events-none" />
+
+                            {/* Label */}
+                            <div className="flex items-center justify-between mb-8 px-2">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-kuma-gold animate-pulse shadow-[0_0_8px_rgba(234,179,8,0.8)]" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500">Master Control Console</span>
+                                </div>
+                                <div className="text-[9px] font-bold text-zinc-700 uppercase tracking-widest bg-black/40 px-3 py-1 rounded-full border border-white/5">
+                                    V1.2 Rhythmic Engine
+                                </div>
+                            </div>
+
+                            {/* Buttons Grid */}
+                            <div className={cn(
+                                "grid gap-6 md:gap-8",
+                                isAdmin ? "grid-cols-2 md:grid-cols-5" : "grid-cols-2 md:grid-cols-4"
+                            )}>
+                                {isAdmin && (
+                                    <button
+                                        onClick={status === "recording" ? stopSystem : startRecording}
+                                        className={cn(
+                                            "relative h-32 md:h-40 group transition-all duration-300 rounded-3xl active:translate-y-2",
+                                            status === "recording"
+                                                ? "shadow-[0_4px_0_#991b1b,0_15px_20px_rgba(153,27,27,0.3)] hover:shadow-[0_2px_0_#991b1b,0_8px_10px_rgba(153,27,27,0.2)]"
+                                                : "shadow-[0_8px_0_#7f1d1d,0_25px_40px_rgba(0,0,0,0.4)] hover:shadow-[0_6px_0_#7f1d1d,0_20px_30px_rgba(127,29,29,0.2)]"
+                                        )}
+                                    >
+                                        <div className={cn(
+                                            "absolute inset-0 rounded-3xl border-t border-white/20 transition-all",
+                                            status === "recording" ? "bg-red-600 animate-pulse" : "bg-red-800"
+                                        )} />
+                                        <div className="relative h-full flex flex-col items-center justify-center gap-3">
+                                            {status === "recording" ? <Stop weight="fill" className="w-10 h-10 text-white drop-shadow-md" /> : <Record weight="fill" className="w-10 h-10 text-white drop-shadow-md animate-pulse" />}
+                                            <span className="text-[11px] font-black uppercase tracking-widest text-white drop-shadow-sm">{status === "recording" ? "Parar" : "Grabar"}</span>
+                                        </div>
+                                    </button>
+                                )}
+
+                                <button
+                                    onClick={startTraining}
+                                    disabled={status === "training" || (currentKata.points.length === 0 && status !== "paused")}
+                                    className="relative h-32 md:h-40 group transition-all duration-300 rounded-3xl active:translate-y-2 disabled:opacity-30 disabled:grayscale shadow-[0_8px_0_#064e3b,0_25px_40px_rgba(0,0,0,0.4)] hover:shadow-[0_6px_0_#064e3b,0_20px_30px_rgba(6,78,59,0.2)]"
+                                >
+                                    <div className="absolute inset-0 bg-emerald-700 rounded-3xl border-t border-white/20" />
+                                    <div className="relative h-full flex flex-col items-center justify-center gap-3">
+                                        <Play weight="fill" className="w-10 h-10 text-white drop-shadow-md group-hover:scale-110 transition-transform" />
+                                        <span className="text-[11px] font-black uppercase tracking-widest text-white drop-shadow-sm">
+                                            {status === "paused" ? "Reanudar" : "Entrenar"}
+                                        </span>
+                                    </div>
+                                </button>
+
+                                <button
+                                    onClick={pauseSystem}
+                                    disabled={status === "ready" || status === "paused"}
+                                    className="relative h-32 md:h-40 group transition-all duration-300 rounded-3xl active:translate-y-2 disabled:opacity-30 disabled:grayscale shadow-[0_8px_0_#9a3412,0_25px_40px_rgba(0,0,0,0.4)] hover:shadow-[0_6px_0_#9a3412,0_20px_30px_rgba(154,52,18,0.2)]"
+                                >
+                                    <div className="absolute inset-0 bg-orange-700 rounded-3xl border-t border-white/20" />
+                                    <div className="relative h-full flex flex-col items-center justify-center gap-3">
+                                        <Pause weight="fill" className="w-10 h-10 text-white drop-shadow-md group-hover:scale-110 transition-transform" />
+                                        <span className="text-[11px] font-black uppercase tracking-widest text-white drop-shadow-sm">Pausa</span>
+                                    </div>
+                                </button>
+
+                                <button
+                                    onClick={stopSystem}
+                                    disabled={status === "ready" || status === "recording"}
+                                    className="relative h-32 md:h-40 group transition-all duration-300 rounded-3xl active:translate-y-2 disabled:opacity-30 disabled:grayscale shadow-[0_8px_0_#18181b,0_25px_40px_rgba(0,0,0,0.4)] hover:shadow-[0_6px_0_#18181b,0_20px_30px_rgba(0,0,0,0.3)]"
+                                >
+                                    <div className="absolute inset-0 bg-zinc-800 rounded-3xl border-t border-white/10" />
+                                    <div className="relative h-full flex flex-col items-center justify-center gap-3">
+                                        <Stop weight="fill" className="w-10 h-10 text-white/80 drop-shadow-md group-hover:scale-110 transition-transform" />
+                                        <span className="text-[11px] font-black uppercase tracking-widest text-white/80 drop-shadow-sm">Parar</span>
+                                    </div>
+                                </button>
+
+                                <button
+                                    onClick={clearCurrent}
+                                    className="relative h-32 md:h-40 group transition-all duration-300 rounded-3xl active:translate-y-2 shadow-[0_8px_0_#334155,0_25px_40px_rgba(0,0,0,0.4)] hover:shadow-[0_6px_0_#334155,0_20px_30px_rgba(51,65,85,0.2)]"
+                                >
+                                    <div className="absolute inset-0 bg-slate-700 rounded-3xl border-t border-white/20" />
+                                    <div className="relative h-full flex flex-col items-center justify-center gap-3">
+                                        <Trash weight="bold" className="w-10 h-10 text-white/90 drop-shadow-md group-hover:scale-110 transition-transform" />
+                                        <span className="text-[11px] font-black uppercase tracking-widest text-white/90 drop-shadow-sm">Limpiar</span>
+                                    </div>
+                                </button>
+                            </div>
+
+                            {/* Decorative Screw/Detail Elements */}
+                            <div className="absolute top-4 left-4 w-1.5 h-1.5 rounded-full bg-white/5 border border-white/10" />
+                            <div className="absolute top-4 right-4 w-1.5 h-1.5 rounded-full bg-white/5 border border-white/10" />
+                            <div className="absolute bottom-4 left-4 w-1.5 h-1.5 rounded-full bg-white/5 border border-white/10" />
+                            <div className="absolute bottom-4 right-4 w-1.5 h-1.5 rounded-full bg-white/5 border border-white/10" />
+                        </div>
                     </div>
 
                     {/* Timeline Visualization */}
@@ -334,7 +463,23 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                         <div className="absolute inset-x-6 top-6 bottom-10 flex items-center relative overflow-hidden">
                             {currentKata.points.map((point, idx) => (
                                 <React.Fragment key={idx}>
-                                    {/* Main Hit */}
+                                    {/* Transitions (Hold bars) */}
+                                    {point.type === "hold" && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: "100%" }}
+                                            className={cn(
+                                                "absolute bottom-0 rounded-t-lg transition-all duration-300",
+                                                point.played ? "bg-kuma-gold/30 shadow-[0_0_20px_rgba(234,179,8,0.2)]" : "bg-white/5"
+                                            )}
+                                            style={{
+                                                left: `${(point.start % 30) * 3.333}%`,
+                                                width: `${((point.duration || 0) % 30) * 3.333}%`
+                                            }}
+                                        />
+                                    )}
+
+                                    {/* Main Hit (Pulse Start) */}
                                     <motion.div
                                         initial={{ opacity: 0, scaleY: 0 }}
                                         animate={{ opacity: 1, scaleY: 1 }}

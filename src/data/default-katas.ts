@@ -6,6 +6,7 @@ export interface Point {
     name?: string;
     pulses?: number[];
     played?: boolean;
+    stopped?: boolean;
     playedPulses?: number[];
 }
 

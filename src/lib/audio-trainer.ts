@@ -4,6 +4,8 @@ class AudioTrainer {
     private synth: SpeechSynthesis | null = null;
     private audioCtx: AudioContext | null = null;
     private voice: SpeechSynthesisVoice | null = null;
+    private continuousOsc: OscillatorNode | null = null;
+    private continuousGain: GainNode | null = null;
 
     constructor() {
         if (typeof window !== "undefined") {
@@ -67,6 +69,44 @@ class AudioTrainer {
 
         osc.start();
         osc.stop(this.audioCtx.currentTime + duration);
+    }
+
+    public startContinuousTone(frequency: number = 330, type: OscillatorType = "sawtooth") {
+        if (!this.audioCtx || this.continuousOsc) return;
+
+        this.continuousOsc = this.audioCtx.createOscillator();
+        this.continuousGain = this.audioCtx.createGain();
+
+        this.continuousOsc.type = type;
+        this.continuousOsc.frequency.setValueAtTime(frequency, this.audioCtx.currentTime);
+
+        this.continuousGain.gain.setValueAtTime(0, this.audioCtx.currentTime);
+        this.continuousGain.gain.linearRampToValueAtTime(0.05, this.audioCtx.currentTime + 0.1);
+
+        this.continuousOsc.connect(this.continuousGain);
+        this.continuousGain.connect(this.audioCtx.destination);
+
+        this.continuousOsc.start();
+    }
+
+    public stopContinuousTone() {
+        if (!this.audioCtx || !this.continuousOsc || !this.continuousGain) return;
+
+        const now = this.audioCtx.currentTime;
+        this.continuousGain.gain.cancelScheduledValues(now);
+        this.continuousGain.gain.setValueAtTime(this.continuousGain.gain.value, now);
+        this.continuousGain.gain.linearRampToValueAtTime(0, now + 0.1);
+
+        const osc = this.continuousOsc;
+        setTimeout(() => {
+            try {
+                osc.stop();
+                osc.disconnect();
+            } catch (e) { }
+        }, 150);
+
+        this.continuousOsc = null;
+        this.continuousGain = null;
     }
 
     public playBeep() {
