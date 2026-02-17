@@ -23,7 +23,7 @@ import { audioTrainer } from "@/lib/audio-trainer";
 import { useSession } from "next-auth/react";
 
 const PX_PER_SEC = 250;
-const VIEWPORT_OFFSET = 200;
+const VIEWPORT_OFFSET = 0;
 
 import { DEFAULT_KATAS, type Point, type Kata } from "@/data/default-katas";
 
@@ -290,8 +290,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         if (status === "recording" || status === "training") {
             const viewport = document.getElementById('hyoshi-timeline-viewport');
             if (viewport) {
-                // Keep the 'active' point shifted by VIEWPORT_OFFSET
-                viewport.scrollLeft = timer * PX_PER_SEC;
+                // Fixed at left edge (0 offset)
+                viewport.scrollLeft = timer * PX_PER_SEC - VIEWPORT_OFFSET;
             }
         }
     }, [timer, status]);
@@ -537,12 +537,12 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                     />
                                 )}
 
-                                {/* GHOST LAYER (Current Kata Map) */}
-                                {currentKata.points.map((point, idx) => (
+                                {/* GHOST LAYER (Current Kata Map - visible in ready/training) */}
+                                {(status === "ready" || status === "training" || status === "paused") && currentKata.points.map((point, idx) => (
                                     point.type === "hold" && (
                                         <div
                                             key={`ghost-h-${idx}`}
-                                            className="absolute top-[38%] h-[24%] rounded-xl bg-white/5 border border-white/5 opacity-5 transition-none"
+                                            className="absolute top-[38%] h-[24%] rounded-xl glass-hold transition-none z-10 opacity-10"
                                             style={{
                                                 left: `${point.start * PX_PER_SEC}px`,
                                                 width: `${(point.duration || 0) * PX_PER_SEC}px`
@@ -576,10 +576,13 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                             {point.pulses?.map((p, pIdx) => {
                                                 const absolutePulseTime = point.start + p;
                                                 const isPulseReached = timer >= absolutePulseTime;
-                                                return isPulseReached && (
+                                                return (
                                                     <div
                                                         key={`live-p-${idx}-${pIdx}`}
-                                                        className="absolute w-2 top-[8%] h-[20%] glass-pulse rounded-full z-30 transition-none"
+                                                        className={cn(
+                                                            "absolute w-2 top-[8%] h-[20%] glass-pulse rounded-full z-30 transition-none",
+                                                            isPulseReached ? "opacity-100" : "opacity-10"
+                                                        )}
                                                         style={{ left: `${absolutePulseTime * PX_PER_SEC}px` }}
                                                     />
                                                 );
