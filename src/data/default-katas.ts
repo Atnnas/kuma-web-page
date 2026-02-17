@@ -8,6 +8,7 @@ export interface Point {
     played?: boolean;
     stopped?: boolean;
     playedPulses?: number[];
+    isActive?: boolean;
 }
 
 export interface Kata {

@@ -22,7 +22,7 @@ import { PrimalTitle } from "@/components/ui/PrimalTitle";
 import { audioTrainer } from "@/lib/audio-trainer";
 import { useSession } from "next-auth/react";
 
-const PX_PER_SEC = 20; // Panoramic scale (approx 90s visible)
+const PX_PER_SEC = 18; // Panoramic scale (approx 90s visible in ~1600px trail)
 const VIEWPORT_OFFSET = 800; // Keep playhead at the right (800px) to see past
 
 import { DEFAULT_KATAS, type Point, type Kata } from "@/data/default-katas";
@@ -188,9 +188,16 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     };
 
     const stopSystem = () => {
+        if (status === "recording" && activeHoldRef.current) {
+            // Finalize active hold if user stops while recording
+            const currentTimer = timerRef.current;
+            activeHoldRef.current.duration = Math.max(0.1, currentTimer - activeHoldRef.current.start);
+            activeHoldRef.current.isActive = false;
+            activeHoldRef.current = null;
+        }
         setStatus("ready");
         if (status === "recording") {
-            setCurrentKata(prev => ({ ...prev, points: pointsRef.current }));
+            setCurrentKata(prev => ({ ...prev, points: [...pointsRef.current] }));
         }
     };
 
@@ -212,12 +219,13 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         const currentStatus = statusRef.current;
         const currentTimer = timerRef.current;
         if (currentStatus === "recording" && !activeHoldRef.current) {
-            const newPoint: Point & { id: string } = {
+            const newPoint: Point & { id: string, isActive?: boolean } = {
                 id: Math.random().toString(36).substr(2, 9),
                 type: "hold",
                 start: currentTimer,
                 name: "",
-                pulses: []
+                pulses: [],
+                isActive: true
             };
             activeHoldRef.current = newPoint;
             pointsRef.current = [...pointsRef.current, newPoint];
@@ -231,11 +239,10 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         if (currentStatus === "recording" && activeHoldRef.current) {
             const duration = currentTimer - activeHoldRef.current.start;
             activeHoldRef.current.duration = Math.max(0.1, duration);
+            activeHoldRef.current.isActive = false; // Finished
 
-            // CRITICAL: Sync currentKata BEFORE clearing activeHoldRef to prevent rendering gap
-            const finalPoints = [...pointsRef.current];
-            setCurrentKata(prev => ({ ...prev, points: finalPoints }));
-
+            // Sync final points with state
+            setCurrentKata(prev => ({ ...prev, points: [...pointsRef.current] }));
             activeHoldRef.current = null;
         }
     };
@@ -559,56 +566,31 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                         );
                                     })}
                                 </div>
-                                {/* Real-time active hold trail (Recording) */}
-                                {status === "recording" && activeHoldRef.current && (
-                                    <div
-                                        className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect transition-none z-30"
-                                        style={{
-                                            left: `${activeHoldRef.current.start * PX_PER_SEC}px`,
-                                            width: `${(timer - activeHoldRef.current.start) * PX_PER_SEC}px`,
-                                        }}
-                                    />
-                                )}
-
-                                {/* GHOST LAYER (Current Kata Map - visible in ready/training) */}
-                                {(status === "ready" || status === "training" || status === "paused") && currentKata.points.map((point, idx) => (
-                                    point.type === "hold" && (
-                                        <div
-                                            key={`ghost-h-${idx}`}
-                                            className="absolute top-[38%] h-[24%] rounded-xl glass-hold transition-none z-10 opacity-10"
-                                            style={{
-                                                left: `${point.start * PX_PER_SEC}px`,
-                                                width: `${(point.duration || 0) * PX_PER_SEC}px`
-                                            }}
-                                        />
-                                    )
-                                ))}
-
-                                {/* LIVE REVEAL LAYER (Active Playback/Training/Recording History) */}
+                                {/* UNIFIED RHYTHMIC LAYER (Recording + Training + History) */}
                                 {currentKata.points.map((point, idx) => {
-                                    // Strictly prevent duplicate rendering of the active recording bar using ID
-                                    if (status === "recording" && activeHoldRef.current && (point as any).id === (activeHoldRef.current as any).id) return null;
+                                    const isRecording = status === "recording";
+                                    const isActive = (point as any).isActive;
+
+                                    // Growth logic: Use live timer during recording for the active bar
+                                    const duration = isActive ? (timer - point.start) : (point.duration || 0.1);
 
                                     const isPastStart = timer >= point.start;
-                                    if (!isPastStart) return null;
+                                    if (!isPastStart && !isActive) return null;
 
-                                    const duration = point.duration || 0.1;
-
-                                    // During recording, show history as solid bars. During training/paused, show fill animation.
-                                    const isRecordingHistory = status === "recording";
-                                    const segmentElapsed = isRecordingHistory ? duration : Math.max(0, Math.min(duration, timer - point.start));
+                                    // Reveal logic: Training fills up, Recording is always full
+                                    const segmentElapsed = (isRecording || isActive) ? duration : Math.max(0, Math.min(duration, timer - point.start));
                                     const segmentProgress = segmentElapsed / duration;
 
                                     return (
-                                        <React.Fragment key={`live-${idx}`}>
+                                        <React.Fragment key={`u-${(point as any).id || idx}`}>
                                             {point.type === "hold" && (
                                                 <div
                                                     className="absolute top-[38%] h-[24%] rounded-xl glass-hold shimmer-effect transition-none z-20"
                                                     style={{
                                                         left: `${point.start * PX_PER_SEC}px`,
                                                         width: `${duration * PX_PER_SEC}px`,
-                                                        clipPath: isRecordingHistory ? 'none' : `inset(0 ${100 - (segmentProgress * 100)}% 0 0)`,
-                                                        opacity: isRecordingHistory ? 0.9 : 1
+                                                        clipPath: (isRecording || isActive) ? 'none' : `inset(0 ${100 - (segmentProgress * 100)}% 0 0)`,
+                                                        opacity: (isRecording || isActive) ? 0.9 : 1
                                                     }}
                                                 />
                                             )}
@@ -616,13 +598,12 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                             {point.pulses?.map((p, pIdx) => {
                                                 const absolutePulseTime = point.start + p;
                                                 const isPulseReached = timer >= absolutePulseTime;
-                                                const isRecording = status === "recording";
                                                 return (
                                                     <div
-                                                        key={`live-p-${idx}-${pIdx}`}
+                                                        key={`up-${(point as any).id}-${pIdx}`}
                                                         className={cn(
                                                             "absolute w-2 top-[8%] h-[20%] glass-pulse rounded-full z-30 transition-none",
-                                                            (isPulseReached || isRecording) ? "opacity-100" : "opacity-10"
+                                                            (isPulseReached || isRecording || isActive) ? "opacity-100" : "opacity-10"
                                                         )}
                                                         style={{ left: `${absolutePulseTime * PX_PER_SEC}px` }}
                                                     />
