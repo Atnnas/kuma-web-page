@@ -6,6 +6,7 @@ class AudioTrainer {
     private voice: SpeechSynthesisVoice | null = null;
     private continuousOsc: OscillatorNode | null = null;
     private continuousGain: GainNode | null = null;
+    private isStarting = false;
 
     constructor() {
         if (typeof window !== "undefined") {
@@ -79,22 +80,31 @@ class AudioTrainer {
     }
 
     public async startContinuousTone(frequency: number = 330, type: OscillatorType = "sawtooth") {
-        if (!this.audioCtx || this.continuousOsc) return;
-        await this.resumeContext();
+        if (!this.audioCtx || this.continuousOsc || this.isStarting) return;
+        this.isStarting = true;
 
-        this.continuousOsc = this.audioCtx.createOscillator();
-        this.continuousGain = this.audioCtx.createGain();
+        try {
+            await this.resumeContext();
 
-        this.continuousOsc.type = type;
-        this.continuousOsc.frequency.setValueAtTime(frequency, this.audioCtx.currentTime);
+            // Re-check after async resume to prevent race conditions
+            if (this.continuousOsc) return;
 
-        this.continuousGain.gain.setValueAtTime(0, this.audioCtx.currentTime);
-        this.continuousGain.gain.linearRampToValueAtTime(0.05, this.audioCtx.currentTime + 0.1);
+            this.continuousOsc = this.audioCtx.createOscillator();
+            this.continuousGain = this.audioCtx.createGain();
 
-        this.continuousOsc.connect(this.continuousGain);
-        this.continuousGain.connect(this.audioCtx.destination);
+            this.continuousOsc.type = type;
+            this.continuousOsc.frequency.setValueAtTime(frequency, this.audioCtx.currentTime);
 
-        this.continuousOsc.start();
+            this.continuousGain.gain.setValueAtTime(0, this.audioCtx.currentTime);
+            this.continuousGain.gain.linearRampToValueAtTime(0.05, this.audioCtx.currentTime + 0.1);
+
+            this.continuousOsc.connect(this.continuousGain);
+            this.continuousGain.connect(this.audioCtx.destination);
+
+            this.continuousOsc.start();
+        } finally {
+            this.isStarting = false;
+        }
     }
 
     public stopContinuousTone() {

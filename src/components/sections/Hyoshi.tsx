@@ -90,7 +90,9 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
     // --- TIMER LOGIC ---
     const animate = useCallback((time: number) => {
         const currentStatus = statusRef.current;
-        const currentTimer = (performance.now() - startTimeRef.current) / 1000;
+        const currentTimer = (currentStatus === "recording" || currentStatus === "training")
+            ? (performance.now() - startTimeRef.current) / 1000
+            : 0;
 
         if (currentStatus === "recording" || currentStatus === "training") {
             setTimer(currentTimer);
@@ -98,14 +100,20 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
         // --- AUDIO RECONCILIATION ENGINE (DOUBLE-GATE) ---
         // Sound activates IF AND ONLY IF (Space is held) AND (Playhead is over an active bar)
+        // AND (Status is Recording or Training)
         const isSpaceDown = isKeyPressedRef.current.has("Space");
         const isOverRecordedBar = currentKata.points.some(p =>
             currentTimer >= p.start && currentTimer <= (p.start + (p.duration || 0.1))
         );
         const isOverActiveHold = activeHoldRef.current !== null;
-        const isOverAnyBar = isOverRecordedBar || isOverActiveHold;
 
-        const shouldSound = isSpaceDown && isOverAnyBar;
+        let shouldSound = false;
+        if (currentStatus === "training") {
+            shouldSound = isSpaceDown && isOverRecordedBar;
+        } else if (currentStatus === "recording") {
+            // When recording, space down means you ARE creating an active bar
+            shouldSound = isSpaceDown;
+        }
 
         if (shouldSound) {
             audioTrainer.startContinuousTone();
