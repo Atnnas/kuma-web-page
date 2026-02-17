@@ -231,8 +231,12 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         if (currentStatus === "recording" && activeHoldRef.current) {
             const duration = currentTimer - activeHoldRef.current.start;
             activeHoldRef.current.duration = Math.max(0.1, duration);
+
+            // CRITICAL: Sync currentKata BEFORE clearing activeHoldRef to prevent rendering gap
+            const finalPoints = [...pointsRef.current];
+            setCurrentKata(prev => ({ ...prev, points: finalPoints }));
+
             activeHoldRef.current = null;
-            setCurrentKata(prev => ({ ...prev, points: [...pointsRef.current] }));
         }
     };
 
@@ -579,7 +583,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                     )
                                 ))}
 
-                                {/* LIVE REVEAL LAYER (Active Playback/Training) */}
+                                {/* LIVE REVEAL LAYER (Active Playback/Training/Recording History) */}
                                 {currentKata.points.map((point, idx) => {
                                     // Strictly prevent duplicate rendering of the active recording bar using ID
                                     if (status === "recording" && activeHoldRef.current && (point as any).id === (activeHoldRef.current as any).id) return null;
@@ -588,7 +592,10 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                     if (!isPastStart) return null;
 
                                     const duration = point.duration || 0.1;
-                                    const segmentElapsed = Math.max(0, Math.min(duration, timer - point.start));
+
+                                    // During recording, show history as solid bars. During training/paused, show fill animation.
+                                    const isRecordingHistory = status === "recording";
+                                    const segmentElapsed = isRecordingHistory ? duration : Math.max(0, Math.min(duration, timer - point.start));
                                     const segmentProgress = segmentElapsed / duration;
 
                                     return (
@@ -599,7 +606,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                                     style={{
                                                         left: `${point.start * PX_PER_SEC}px`,
                                                         width: `${duration * PX_PER_SEC}px`,
-                                                        clipPath: `inset(0 ${100 - (segmentProgress * 100)}% 0 0)`
+                                                        clipPath: isRecordingHistory ? 'none' : `inset(0 ${100 - (segmentProgress * 100)}% 0 0)`,
+                                                        opacity: isRecordingHistory ? 0.9 : 1
                                                     }}
                                                 />
                                             )}
@@ -607,12 +615,13 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                             {point.pulses?.map((p, pIdx) => {
                                                 const absolutePulseTime = point.start + p;
                                                 const isPulseReached = timer >= absolutePulseTime;
+                                                const isRecording = status === "recording";
                                                 return (
                                                     <div
                                                         key={`live-p-${idx}-${pIdx}`}
                                                         className={cn(
                                                             "absolute w-2 top-[8%] h-[20%] glass-pulse rounded-full z-30 transition-none",
-                                                            isPulseReached ? "opacity-100" : "opacity-10"
+                                                            (isPulseReached || isRecording) ? "opacity-100" : "opacity-10"
                                                         )}
                                                         style={{ left: `${absolutePulseTime * PX_PER_SEC}px` }}
                                                     />
