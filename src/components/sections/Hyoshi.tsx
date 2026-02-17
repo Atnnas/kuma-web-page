@@ -282,6 +282,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
     return (
         <div className="flex flex-col gap-4 w-full max-w-6xl mx-auto relative px-4">
+            <CustomStyles />
             {/* Back Button - Top Left */}
             <button
                 onClick={onBack}
@@ -428,82 +429,141 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                         </div>
                     </div>
 
-                    {/* Timeline Visualization */}
-                    <div className="bg-zinc-900/50 border border-white/10 rounded-3xl p-6 h-40 relative overflow-hidden group/timeline shadow-inner">
-                        {/* Time Markers (Grid) */}
-                        <div className="absolute inset-x-6 bottom-4 h-[calc(100%-2rem)] flex justify-between pointer-events-none opacity-20">
-                            {[0, 5, 10, 15, 20, 25, 30].map((s) => (
-                                <div key={s} className="flex flex-col items-center h-full">
-                                    <div className="w-px h-full bg-zinc-700" />
-                                    <span className="text-[7px] font-black text-zinc-500 mt-1">{s}s</span>
+                    {/* --- NEXT-GEN RHYTHMIC SCREEN --- */}
+                    <div className="relative group/timeline">
+                        {/* Outer Frame Glow */}
+                        <div className="absolute -inset-1 bg-kuma-gold/20 blur-md opacity-20 group-hover/timeline:opacity-30 transition-opacity rounded-[2.2rem]" />
+
+                        <div className="relative bg-[#0a0a0c] border border-white/10 rounded-[2rem] h-52 overflow-hidden shadow-2xl flex flex-col">
+                            {/* CRT/Scanline Overlay */}
+                            <div className="absolute inset-0 pointer-events-none z-40 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] opacity-30" />
+                            <div className="absolute inset-0 z-40 pointer-events-none bg-gradient-to-b from-transparent via-white/[0.02] to-transparent animate-scanline" />
+
+                            {/* Hex Background / Grid */}
+                            <div className="absolute inset-0 opacity-10" style={{
+                                backgroundImage: `radial-gradient(circle at 2px 2px, rgba(234,179,8,0.3) 1px, transparent 0)`,
+                                backgroundSize: '24px 24px'
+                            }} />
+
+                            {/* Header Info */}
+                            <div className="flex items-center justify-between px-6 pt-4 z-30">
+                                <div className="flex items-center gap-3">
+                                    <div className={cn("w-1.5 h-1.5 rounded-full", status === "recording" ? "bg-red-500 animate-pulse" : status === "training" ? "bg-emerald-500 animate-pulse" : "bg-zinc-700")} />
+                                    <span className="text-[8px] font-black uppercase tracking-[0.3em] text-zinc-500">Signal Analyzer</span>
                                 </div>
-                            ))}
-                        </div>
+                                <div className="text-[7px] font-bold text-zinc-700 uppercase tracking-widest tabular-nums">
+                                    {formatTime(timer)} / 30.0s
+                                </div>
+                            </div>
 
-                        {/* Moving Playhead (Cursor) */}
-                        {(status === "training" || status === "recording" || status === "paused") && (
-                            <motion.div
-                                className="absolute top-0 bottom-4 w-0.5 bg-kuma-gold z-30 shadow-[0_0_15px_rgba(234,179,8,0.8)]"
-                                style={{
-                                    left: `calc(1.5rem + ${(timer % 30) * 3.333}% * (100% - 3rem) / 100)`
-                                }}
-                                transition={{ type: "tween", ease: "linear", duration: 0.1 }}
-                            />
-                        )}
-
-                        {/* Hits and Pulses */}
-                        <div className="absolute inset-x-6 top-6 bottom-10 flex items-center relative overflow-hidden">
-                            {currentKata.points.map((point, idx) => (
-                                <React.Fragment key={idx}>
-                                    {/* Transitions (Hold bars) */}
-                                    {point.type === "hold" && (
-                                        <motion.div
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: "100%" }}
-                                            className={cn(
-                                                "absolute bottom-0 rounded-t-lg transition-all duration-300",
-                                                point.played ? "bg-kuma-gold/30 shadow-[0_0_20px_rgba(234,179,8,0.2)]" : "bg-white/5"
-                                            )}
-                                            style={{
-                                                left: `${(point.start % 30) * 3.333}%`,
-                                                width: `${((point.duration || 0) % 30) * 3.333}%`
-                                            }}
-                                        />
-                                    )}
-
-                                    {/* Main Hit (Pulse Start) */}
-                                    <motion.div
-                                        initial={{ opacity: 0, scaleY: 0 }}
-                                        animate={{ opacity: 1, scaleY: 1 }}
-                                        className={cn(
-                                            "absolute bottom-0 w-[4px] -ml-[2px] rounded-t-full transition-all duration-300",
-                                            point.played === true ? "bg-kuma-gold shadow-[0_0_10px_rgba(234,179,8,0.4)] h-full" : "bg-white/40 h-[80%]"
-                                        )}
-                                        style={{ left: `${(point.start % 30) * 3.333}%` }}
-                                    >
-                                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 opacity-0 group-hover/timeline:opacity-100 transition-opacity text-[6px] font-black text-zinc-500 whitespace-nowrap uppercase tracking-tighter">
-                                            {point.name || `T${idx + 1}`}
-                                        </div>
-                                    </motion.div>
-
-                                    {/* Internal Pulses */}
-                                    {point.pulses?.map((p, pIdx) => (
-                                        <motion.div
-                                            key={`p-${idx}-${pIdx}`}
-                                            initial={{ opacity: 0, scaleY: 0 }}
-                                            animate={{ opacity: 1, scaleY: 1 }}
-                                            className={cn(
-                                                "absolute bottom-0 w-[2px] -ml-[1px] rounded-t-full transition-all duration-300 h-1/2",
-                                                (point.playedPulses && point.playedPulses.includes(pIdx)) ? "bg-kuma-gold/80" : "bg-white/10"
-                                            )}
-                                            style={{ left: `${((point.start + p) % 30) * 3.333}%` }}
-                                        />
+                            {/* Main Visualization Area */}
+                            <div className="flex-grow relative px-10 flex items-center">
+                                {/* Time Markers */}
+                                <div className="absolute inset-x-10 bottom-8 h-1 flex justify-between opacity-10">
+                                    {[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30].map(s => (
+                                        <div key={s} className="w-px h-2 bg-white" />
                                     ))}
-                                </React.Fragment>
-                            ))}
-                        </div>
+                                </div>
 
-                        <div className="absolute bottom-2 right-6 text-[8px] font-black uppercase tracking-widest text-zinc-700">Timeline Engine (30s Window)</div>
+                                {/* Moving Playhead (Scanner) */}
+                                {(status === "training" || status === "recording" || status === "paused") && (
+                                    <motion.div
+                                        className="absolute top-0 bottom-6 w-[2px] z-50 pointer-events-none"
+                                        style={{
+                                            left: `calc(2.5rem + ${(timer % 30) * 3.333}% * (100% - 5rem) / 100)`
+                                        }}
+                                        transition={{ type: "tween", ease: "linear", duration: 0.1 }}
+                                    >
+                                        <div className="absolute inset-0 bg-kuma-gold shadow-[0_0_20px_rgba(234,179,8,1)]" />
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-1 bg-kuma-gold rounded-full shadow-[0_0_10px_rgba(234,179,8,0.8)]" />
+                                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-1 bg-kuma-gold rounded-full shadow-[0_0_10px_rgba(234,179,8,0.8)]" />
+
+                                        {/* Scanner Beam */}
+                                        <div className="absolute inset-y-0 -left-4 w-8 bg-gradient-to-r from-transparent via-kuma-gold/5 to-transparent" />
+                                    </motion.div>
+                                )}
+
+                                {/* Hits, Pulses and Trails */}
+                                <div className="absolute inset-x-10 top-12 bottom-12 flex items-center overflow-hidden">
+                                    <div className="relative w-full h-full flex items-center">
+                                        {/* Real-time active hold trail */}
+                                        {status === "recording" && activeHoldRef.current && (
+                                            <div
+                                                className="absolute bottom-0 h-full bg-gradient-to-r from-red-500/40 to-red-400/60 rounded-lg shadow-[0_0_20px_rgba(239,68,68,0.3)] border-x border-red-500/50"
+                                                style={{
+                                                    left: `${(activeHoldRef.current.start % 30) * 3.333}%`,
+                                                    width: `${((timer - activeHoldRef.current.start) % 30) * 3.333}%`
+                                                }}
+                                            />
+                                        )}
+                                        {currentKata.points.map((point, idx) => (
+                                            <React.Fragment key={idx}>
+                                                {/* Transitions (Hold bars) */}
+                                                {point.type === "hold" && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, scaleX: 0 }}
+                                                        animate={{ opacity: 1, scaleX: 1 }}
+                                                        className={cn(
+                                                            "absolute bottom-0 h-full rounded-lg transition-all duration-300 origin-left border-x",
+                                                            point.played
+                                                                ? "bg-gradient-to-r from-kuma-gold/20 via-kuma-gold/40 to-kuma-gold/20 shadow-[0_0_30px_rgba(234,179,8,0.3)] border-kuma-gold/30"
+                                                                : "bg-white/5 border-white/10"
+                                                        )}
+                                                        style={{
+                                                            left: `${(point.start % 30) * 3.333}%`,
+                                                            width: `${((point.duration || 0) % 30) * 3.333}%`
+                                                        }}
+                                                    />
+                                                )}
+
+                                                {/* Main Hit Spark */}
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    className={cn(
+                                                        "absolute w-1 rounded-full transition-all duration-300 z-10",
+                                                        point.played === true ? "bg-white shadow-[0_0_15px_#fff] h-full" : "bg-zinc-600 h-[60%]"
+                                                    )}
+                                                    style={{ left: `${(point.start % 30) * 3.333}%` }}
+                                                >
+                                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover/timeline:opacity-100 transition-opacity text-[6px] font-black text-zinc-500 whitespace-nowrap uppercase tracking-widest bg-black/60 px-2 py-0.5 rounded-md border border-white/5">
+                                                        {point.name || `PT ${idx + 1}`}
+                                                    </div>
+                                                </motion.div>
+
+                                                {/* Internal Pulses (Neon Sparks) */}
+                                                {point.pulses?.map((p, pIdx) => (
+                                                    <motion.div
+                                                        key={`p-${idx}-${pIdx}`}
+                                                        initial={{ opacity: 0, scale: 0 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        className={cn(
+                                                            "absolute w-0.5 rounded-full z-20 transition-all duration-300",
+                                                            (point.playedPulses && point.playedPulses.includes(pIdx))
+                                                                ? "bg-cyan-400 shadow-[0_0_10px_#22d3ee] h-[60%]"
+                                                                : "bg-white/20 h-[30%]"
+                                                        )}
+                                                        style={{ left: `${((point.start + p) % 30) * 3.333}%` }}
+                                                    />
+                                                ))}
+                                            </React.Fragment>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Footer Indicators */}
+                                <div className="absolute bottom-4 left-6 right-6 flex justify-between items-center z-30">
+                                    <div className="flex gap-2">
+                                        <div className="w-1.5 h-1.5 bg-white/20 rounded-full" />
+                                        <div className="w-1.5 h-1.5 bg-white/10 rounded-full" />
+                                        <div className="w-1.5 h-1.5 bg-white/5 rounded-full" />
+                                    </div>
+                                    <div className="text-[6px] font-black uppercase tracking-[0.4em] text-zinc-600">
+                                        Rhythmic Engine 3000 // Scanning Buffer
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <button onMouseDown={recordHit} className={cn("md:hidden w-full py-16 rounded-3xl border-4 text-2xl font-black uppercase tracking-[0.3em] transition-all active:scale-95 shadow-2xl", status === "recording" ? "bg-red-600 border-red-500 text-white" : "bg-zinc-800 border-white/5 text-zinc-500")}>Ritmo</button>
@@ -512,3 +572,23 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         </div>
     );
 };
+
+// --- STYLES FOR THE NEXT-GEN SCREEN ---
+const CustomStyles = () => (
+    <style jsx global>{`
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        .animate-scanline {
+            animation: scanline 4s linear infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .animate-blink {
+            animation: blink 2s ease-in-out infinite;
+        }
+    `}</style>
+);
