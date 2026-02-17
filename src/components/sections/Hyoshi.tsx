@@ -109,9 +109,10 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
         let shouldSound = false;
         if (currentStatus === "training") {
-            shouldSound = isSpaceDown && isOverRecordedBar;
+            // During playback: sound plays automatically when passing over a bar
+            shouldSound = isOverRecordedBar;
         } else if (currentStatus === "recording") {
-            // When recording, space down means you ARE creating an active bar
+            // During recording: sound only when space is actually held
             shouldSound = isSpaceDown;
         }
 
