@@ -33,7 +33,8 @@ export async function startRoutineLog(routineId: string, title: string, estimate
             routineTitle: title,
             scheduledDuration: estimatedDuration,
             startTime: new Date(),
-            completed: false
+            completed: false,
+            expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000) // Expires in 2 hours
         });
 
         return { success: true, logId: newLog._id.toString() };
@@ -51,9 +52,12 @@ export async function completeRoutineLog(logId: string, durationSeconds: number)
         await connectDB();
 
         await RoutineLog.findByIdAndUpdate(logId, {
-            endTime: new Date(),
-            durationSeconds: durationSeconds,
-            completed: true
+            $set: {
+                endTime: new Date(),
+                durationSeconds: durationSeconds,
+                completed: true
+            },
+            $unset: { expiresAt: "" } // Stop the auto-deletion TTL
         });
 
         revalidatePath("/admin/reports/logs");

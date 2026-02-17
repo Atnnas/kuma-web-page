@@ -9,6 +9,7 @@ export interface IRoutineLog extends Document {
     endTime?: Date;
     durationSeconds?: number; // Actual time spent
     completed: boolean;
+    expiresAt?: Date; // TTL field for auto-deletion
     createdAt: Date;
     updatedAt: Date;
 }
@@ -48,11 +49,17 @@ const RoutineLogSchema = new Schema<IRoutineLog>(
             type: Boolean,
             default: false,
         },
+        expiresAt: {
+            type: Date,
+        },
     },
     {
         timestamps: true,
     }
 );
+
+// TTL Index: Delete documents at the time specified by expiresAt
+RoutineLogSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 // Prevent recompilation
 const RoutineLog: Model<IRoutineLog> = mongoose.models.RoutineLog || mongoose.model<IRoutineLog>("RoutineLog", RoutineLogSchema);
