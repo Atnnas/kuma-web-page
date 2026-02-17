@@ -23,7 +23,7 @@ import { audioTrainer } from "@/lib/audio-trainer";
 import { useSession } from "next-auth/react";
 
 const PX_PER_SEC = 250;
-const VIEWPORT_OFFSET = 100;
+const VIEWPORT_OFFSET = 850; // Keep playhead at the right (850px) to see past
 
 import { DEFAULT_KATAS, type Point, type Kata } from "@/data/default-katas";
 
@@ -212,7 +212,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         const currentStatus = statusRef.current;
         const currentTimer = timerRef.current;
         if (currentStatus === "recording" && !activeHoldRef.current) {
-            const newPoint: Point = {
+            const newPoint: Point & { id: string } = {
+                id: Math.random().toString(36).substr(2, 9),
                 type: "hold",
                 start: currentTimer,
                 name: "",
@@ -220,7 +221,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
             };
             activeHoldRef.current = newPoint;
             pointsRef.current = [...pointsRef.current, newPoint];
-            setCurrentKata(prev => ({ ...prev, points: pointsRef.current }));
+            setCurrentKata(prev => ({ ...prev, points: [...pointsRef.current] }));
         }
     };
 
@@ -512,7 +513,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
                         <div
                             id="hyoshi-timeline-viewport"
-                            className="flex-grow relative px-10 flex items-center overflow-x-auto overflow-y-hidden no-scrollbar scroll-smooth"
+                            className="flex-grow relative flex items-center overflow-x-auto overflow-y-hidden no-scrollbar"
                         >
                             <div
                                 className="relative flex items-center h-[90%] transition-none"
@@ -580,8 +581,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
                                 {/* LIVE REVEAL LAYER (Active Playback/Training) */}
                                 {currentKata.points.map((point, idx) => {
-                                    // Prevent duplicate rendering of the active recording bar
-                                    if (status === "recording" && activeHoldRef.current && Math.abs(point.start - activeHoldRef.current.start) < 0.01) return null;
+                                    // Strictly prevent duplicate rendering of the active recording bar using ID
+                                    if (status === "recording" && activeHoldRef.current && (point as any).id === (activeHoldRef.current as any).id) return null;
 
                                     const isPastStart = timer >= point.start;
                                     if (!isPastStart) return null;
