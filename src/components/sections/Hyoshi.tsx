@@ -429,105 +429,88 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                 ))}
                             </div>
 
-                            {/* LÍNEA DE TIEMPO ACTIVA (SCANNER) */}
-                            {(status === "training" || status === "recording" || status === "paused") && (() => {
-                                const isColliding = currentKata.points.some(p =>
-                                    timer >= p.start && timer <= (p.start + (p.duration || 0.1))
-                                );
-
-                                return (
-                                    <div
-                                        className="absolute top-0 bottom-6 w-[4px] z-50 pointer-events-none"
-                                        style={{
-                                            left: `calc(2.5rem + ${(timer % 30) / 30 * 100}% * (100% - 5rem) / 100)`
-                                        }}
-                                    >
-                                        <div className="absolute inset-x-0 h-full bg-kuma-gold shadow-[0_0_20px_rgba(234,179,8,1),0_0_40px_rgba(234,179,8,0.4)]" />
-
-                                        {/* IMPACT FLARES (Idea #3) */}
-                                        <AnimatePresence>
-                                            {isColliding && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, scale: 0.5 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    exit={{ opacity: 0, scale: 1.5 }}
-                                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12"
-                                                >
-                                                    {/* Outer Tactical Pulse */}
-                                                    <div className="absolute inset-0 rounded-full border-2 border-white/50 animate-ping opacity-20" />
-                                                    {/* Plasma Core Flare */}
-                                                    <div className="absolute inset-2 bg-white rounded-full blur-md shadow-[0_0_30px_#fff,0_0_60px_#facc15]" />
-                                                    <div className="absolute inset-4 bg-kuma-gold rounded-full shadow-[0_0_20px_#facc15]" />
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-
-                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-2 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,1)]" />
-                                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-2 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,1)]" />
-                                        <div className="absolute inset-y-0 -left-10 w-20 bg-gradient-to-r from-transparent via-kuma-gold/15 to-transparent blur-md" />
-                                        <div className="absolute inset-y-0 -left-2 w-4 bg-white/40 blur-xs" />
-                                    </div>
-                                );
-                            })()}
+                            {/* LÍNEA DE TIEMPO ACTIVA (SCANNER REMOVED AS PER USER REQUEST) */}
 
                             <div className="absolute inset-x-10 top-12 bottom-12 flex items-center overflow-hidden">
                                 <div className="relative w-full h-full flex items-center">
-                                    {/* Real-time active hold trail (VIVID) */}
+                                    {/* Real-time active hold trail (Recording) */}
                                     {status === "recording" && activeHoldRef.current && (
                                         <div
                                             className="absolute bottom-0 h-full bg-gradient-to-r from-red-500 via-red-400 to-red-500 rounded-lg shadow-[0_0_30px_rgba(239,68,68,0.8),inset_0_0_15px_rgba(255,255,255,0.4)] border border-red-400/50"
                                             style={{
-                                                left: `${(activeHoldRef.current.start % 30) * 3.333}%`,
-                                                width: `${((timer - activeHoldRef.current.start) % 30) * 3.333}%`
+                                                left: `${(activeHoldRef.current.start % 30) / 30 * 100}%`,
+                                                width: `${((timer - activeHoldRef.current.start) % 30) / 30 * 100}%`
                                             }}
                                         />
                                     )}
+
+                                    {/* GHOST LAYER (Current Kata Map) */}
                                     {currentKata.points.map((point, idx) => (
-                                        <React.Fragment key={idx}>
-                                            {/* Transitions (Hold bars - VIVID) */}
+                                        <React.Fragment key={`ghost-${idx}`}>
                                             {point.type === "hold" && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, scaleX: 0 }}
-                                                    animate={{ opacity: 1, scaleX: 1 }}
-                                                    className={cn(
-                                                        "absolute bottom-0 h-full rounded-lg transition-all duration-300 origin-left border",
-                                                        point.played
-                                                            ? "bg-gradient-to-r from-kuma-gold via-white/40 to-kuma-gold shadow-[0_0_35px_rgba(234,179,8,0.6),inset_0_0_10px_rgba(255,255,255,0.8)] border-white/40"
-                                                            : "bg-white/10 border-white/20"
-                                                    )}
+                                                <div
+                                                    className="absolute bottom-0 h-full rounded-lg bg-white/5 border border-white/10 opacity-30"
                                                     style={{
-                                                        left: `${(point.start % 30) * 3.333}%`,
-                                                        width: `${((point.duration || 0) % 30) * 3.333}%`
+                                                        left: `${(point.start % 30) / 30 * 100}%`,
+                                                        width: `${((point.duration || 0) % 30) / 30 * 100}%`
                                                     }}
                                                 />
                                             )}
-
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                className={cn(
-                                                    "absolute w-1 rounded-full transition-all duration-300 z-10",
-                                                    point.played === true ? "bg-white shadow-[0_0_15px_#fff] h-full" : "bg-zinc-600 h-[60%]"
-                                                )}
-                                                style={{ left: `${(point.start % 30) * 3.333}%` }}
+                                            <div
+                                                className="absolute w-1 h-[40%] bg-zinc-800 rounded-full opacity-30"
+                                                style={{ left: `${(point.start % 30) / 30 * 100}%` }}
                                             />
-
-                                            {point.pulses?.map((p, pIdx) => (
-                                                <motion.div
-                                                    key={`p-${idx}-${pIdx}`}
-                                                    initial={{ opacity: 0, scale: 0 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    className={cn(
-                                                        "absolute w-0.5 rounded-full z-20 transition-all duration-300",
-                                                        (point.playedPulses && point.playedPulses.includes(pIdx))
-                                                            ? "bg-cyan-400 shadow-[0_0_10px_#22d3ee] h-[60%]"
-                                                            : "bg-white/20 h-[30%]"
-                                                    )}
-                                                    style={{ left: `${((point.start + p) % 30) * 3.333}%` }}
-                                                />
-                                            ))}
                                         </React.Fragment>
                                     ))}
+
+                                    {/* LIVE REVEAL LAYER (Active Playback/Training) */}
+                                    {currentKata.points.map((point, idx) => {
+                                        const pointProgress = Math.max(0, Math.min(1, (timer - point.start) / (point.duration || 0.1)));
+                                        const isPastStart = timer >= point.start;
+
+                                        return (
+                                            <React.Fragment key={`live-${idx}`}>
+                                                {point.type === "hold" && isPastStart && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0 }}
+                                                        animate={{ opacity: 1 }}
+                                                        className={cn(
+                                                            "absolute bottom-0 h-full rounded-lg border shadow-[0_0_35px_rgba(234,179,8,0.6),inset_0_0_10px_rgba(255,255,255,0.8)]",
+                                                            "bg-gradient-to-r from-kuma-gold via-white/40 to-kuma-gold border-white/40"
+                                                        )}
+                                                        style={{
+                                                            left: `${(point.start % 30) / 30 * 100}%`,
+                                                            width: `${((point.duration || 0) % 30) / 30 * 100}%`,
+                                                            clipPath: `inset(0 ${100 - (pointProgress * 100)}% 0 0)`
+                                                        }}
+                                                    />
+                                                )}
+
+                                                {isPastStart && (
+                                                    <motion.div
+                                                        initial={{ scale: 0 }}
+                                                        animate={{ scale: 1 }}
+                                                        className="absolute w-1 h-full bg-white shadow-[0_0_15px_#fff] rounded-full z-10"
+                                                        style={{ left: `${(point.start % 30) / 30 * 100}%` }}
+                                                    />
+                                                )}
+
+                                                {point.pulses?.map((p, pIdx) => {
+                                                    const absolutePulseTime = point.start + p;
+                                                    const isPulseReached = timer >= absolutePulseTime;
+                                                    return isPulseReached && (
+                                                        <motion.div
+                                                            key={`live-p-${idx}-${pIdx}`}
+                                                            initial={{ scale: 0 }}
+                                                            animate={{ scale: 1 }}
+                                                            className="absolute w-0.5 h-[60%] bg-cyan-400 shadow-[0_0_10px_#22d3ee] rounded-full z-20"
+                                                            style={{ left: `${((point.start + p) % 30) / 30 * 100}%` }}
+                                                        />
+                                                    );
+                                                })}
+                                            </React.Fragment>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
