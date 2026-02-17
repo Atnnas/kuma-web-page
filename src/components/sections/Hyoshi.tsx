@@ -424,21 +424,46 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                             </div>
 
                             {/* LÍNEA DE TIEMPO ACTIVA (SCANNER) */}
-                            {(status === "training" || status === "recording" || status === "paused") && (
-                                <motion.div
-                                    className="absolute top-0 bottom-6 w-[4px] z-50 pointer-events-none"
-                                    style={{
-                                        left: `calc(2.5rem + ${(timer % 30) * 3.333}% * (100% - 5rem) / 100)`
-                                    }}
-                                    transition={{ type: "tween", ease: "linear", duration: 0.1 }}
-                                >
-                                    <div className="absolute inset-x-0 h-full bg-kuma-gold shadow-[0_0_20px_rgba(234,179,8,1),0_0_40px_rgba(234,179,8,0.4)]" />
-                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-2 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,1)]" />
-                                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-2 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,1)]" />
-                                    <div className="absolute inset-y-0 -left-10 w-20 bg-gradient-to-r from-transparent via-kuma-gold/15 to-transparent blur-md" />
-                                    <div className="absolute inset-y-0 -left-2 w-4 bg-white/40 blur-xs" />
-                                </motion.div>
-                            )}
+                            {(status === "training" || status === "recording" || status === "paused") && (() => {
+                                const isColliding = currentKata.points.some(p =>
+                                    timer >= p.start && timer <= (p.start + (p.duration || 0.1))
+                                );
+
+                                return (
+                                    <motion.div
+                                        className="absolute top-0 bottom-6 w-[4px] z-50 pointer-events-none"
+                                        style={{
+                                            left: `calc(2.5rem + ${(timer % 30) * 3.333}% * (100% - 5rem) / 100)`
+                                        }}
+                                        transition={{ type: "tween", ease: "linear", duration: 0.1 }}
+                                    >
+                                        <div className="absolute inset-x-0 h-full bg-kuma-gold shadow-[0_0_20px_rgba(234,179,8,1),0_0_40px_rgba(234,179,8,0.4)]" />
+
+                                        {/* IMPACT FLARES (Idea #3) */}
+                                        <AnimatePresence>
+                                            {isColliding && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0.5 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    exit={{ opacity: 0, scale: 1.5 }}
+                                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12"
+                                                >
+                                                    {/* Outer Tactical Pulse */}
+                                                    <div className="absolute inset-0 rounded-full border-2 border-white/50 animate-ping opacity-20" />
+                                                    {/* Plasma Core Flare */}
+                                                    <div className="absolute inset-2 bg-white rounded-full blur-md shadow-[0_0_30px_#fff,0_0_60px_#facc15]" />
+                                                    <div className="absolute inset-4 bg-kuma-gold rounded-full shadow-[0_0_20px_#facc15]" />
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-2 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,1)]" />
+                                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-2 bg-kuma-gold rounded-full shadow-[0_0_15px_rgba(234,179,8,1)]" />
+                                        <div className="absolute inset-y-0 -left-10 w-20 bg-gradient-to-r from-transparent via-kuma-gold/15 to-transparent blur-md" />
+                                        <div className="absolute inset-y-0 -left-2 w-4 bg-white/40 blur-xs" />
+                                    </motion.div>
+                                );
+                            })()}
 
                             <div className="absolute inset-x-10 top-12 bottom-12 flex items-center overflow-hidden">
                                 <div className="relative w-full h-full flex items-center">
