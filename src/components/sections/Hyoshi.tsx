@@ -509,11 +509,6 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                             </div>
                         </div>
 
-                        <div className="absolute bottom-4 right-6 z-50 pointer-events-none">
-                            <div className="text-[8px] font-mono text-zinc-600 uppercase tracking-tighter">
-                                KUMA_INSTRUMENT_SYSTEM_V4.2
-                            </div>
-                        </div>
 
                         <div
                             id="hyoshi-timeline-viewport"
