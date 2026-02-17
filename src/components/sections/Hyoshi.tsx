@@ -23,7 +23,7 @@ import { audioTrainer } from "@/lib/audio-trainer";
 import { useSession } from "next-auth/react";
 
 const PX_PER_SEC = 250;
-const VIEWPORT_OFFSET = 0;
+const VIEWPORT_OFFSET = 60;
 
 import { DEFAULT_KATAS, type Point, type Kata } from "@/data/default-katas";
 
@@ -290,8 +290,8 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
         if (status === "recording" || status === "training") {
             const viewport = document.getElementById('hyoshi-timeline-viewport');
             if (viewport) {
-                // Fixed at left edge (0 offset)
-                viewport.scrollLeft = timer * PX_PER_SEC - VIEWPORT_OFFSET;
+                // Starts at 0, only scrolls when playhead reaches VIEWPORT_OFFSET
+                viewport.scrollLeft = Math.max(0, timer * PX_PER_SEC - VIEWPORT_OFFSET);
             }
         }
     }, [timer, status]);
@@ -526,6 +526,21 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                     paddingLeft: `${VIEWPORT_OFFSET}px`
                                 }}
                             >
+                                {/* --- ELEGANT TIMELINE RULER --- */}
+                                <div className="absolute inset-x-0 bottom-1 h-8 flex items-end opacity-20 z-0 pointer-events-none">
+                                    {Array.from({ length: Math.ceil(timer + 20) }).map((_, s) => (
+                                        <div
+                                            key={`tick-${s}`}
+                                            className="absolute flex flex-col items-center"
+                                            style={{ left: `${s * PX_PER_SEC}px` }}
+                                        >
+                                            <div className="w-px h-3 bg-white" />
+                                            <span className="text-[8px] font-mono mt-1 text-white/60 whitespace-nowrap">
+                                                {s === 0 ? "0s (START)" : `${s}s`}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
                                 {/* Real-time active hold trail (Recording) */}
                                 {status === "recording" && activeHoldRef.current && (
                                     <div
@@ -553,6 +568,9 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
                                 {/* LIVE REVEAL LAYER (Active Playback/Training) */}
                                 {currentKata.points.map((point, idx) => {
+                                    // Prevent duplicate rendering of the active recording bar
+                                    if (status === "recording" && activeHoldRef.current && Math.abs(point.start - activeHoldRef.current.start) < 0.01) return null;
+
                                     const isPastStart = timer >= point.start;
                                     if (!isPastStart) return null;
 
@@ -590,6 +608,16 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
                                         </React.Fragment>
                                     );
                                 })}
+
+                                {/* --- PLAYHEAD INDICATOR --- */}
+                                {(status === "recording" || status === "training") && (
+                                    <div
+                                        className="absolute top-0 bottom-0 w-[2px] bg-white/40 z-50 shadow-[0_0_10px_rgba(255,255,255,0.5)] pointer-events-none transition-none"
+                                        style={{ left: `${timer * PX_PER_SEC}px` }}
+                                    >
+                                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full" />
+                                    </div>
+                                )}
                             </div>
 
                             <div className="absolute bottom-4 left-6 flex gap-2 z-30">
