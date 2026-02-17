@@ -211,6 +211,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
 
             if (e.code === "Space") {
                 e.preventDefault();
+                audioTrainer.startContinuousTone();
                 recordHit();
             } else if (e.code === "ArrowUp") {
                 e.preventDefault();
@@ -222,6 +223,7 @@ export const Hyoshi = ({ onBack }: { onBack: () => void }) => {
             isKeyPressedRef.current.delete(e.code);
             if (e.code === "Space") {
                 e.preventDefault();
+                audioTrainer.stopContinuousTone();
                 recordRelease();
             }
         };
