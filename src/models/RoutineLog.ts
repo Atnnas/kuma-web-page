@@ -9,6 +9,13 @@ export interface IRoutineLog extends Document {
     endTime?: Date;
     durationSeconds?: number; // Actual time spent
     completed: boolean;
+    lastState?: {
+        currentBlockIndex: number;
+        currentSet: number;
+        completedSets: number;
+        loopRepetitions: Record<number, number>;
+        elapsedSeconds?: number;
+    };
     expiresAt?: Date; // TTL field for auto-deletion
     createdAt: Date;
     updatedAt: Date;
@@ -48,6 +55,13 @@ const RoutineLogSchema = new Schema<IRoutineLog>(
         completed: {
             type: Boolean,
             default: false,
+        },
+        lastState: {
+            currentBlockIndex: { type: Number },
+            currentSet: { type: Number },
+            completedSets: { type: Number },
+            loopRepetitions: { type: Schema.Types.Mixed },
+            elapsedSeconds: { type: Number }
         },
         expiresAt: {
             type: Date,

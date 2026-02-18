@@ -34,7 +34,8 @@ export async function startRoutineLog(routineId: string, title: string, estimate
             scheduledDuration: estimatedDuration,
             startTime: new Date(),
             completed: false,
-            expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000) // Expires in 2 hours
+            // We don't set expiresAt here. 
+            // It will only be set if the user explicitly abandons it.
         });
 
         return { success: true, logId: newLog._id.toString() };
@@ -83,5 +84,67 @@ export async function deleteRoutineLogs(logIds: string[]) {
     } catch (error) {
         console.error("Error deleting routine logs:", error);
         return { success: false, error: "Failed to delete logs" };
+    }
+}
+
+export async function getUnfinishedRoutineLog(routineId: string) {
+    try {
+        const session = await auth();
+        if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+
+        await connectDB();
+        const user = await User.findOne({ email: session.user.email }).select("_id");
+        if (!user) return { success: false, error: "User not found" };
+
+        // Find the most recent incomplete log for this routine that hasn't expired
+        const log = await RoutineLog.findOne({
+            user: user._id,
+            routine: routineId,
+            completed: false,
+            $or: [
+                { expiresAt: { $exists: false } },
+                { expiresAt: { $gt: new Date() } }
+            ]
+        }).sort({ createdAt: -1 });
+
+        if (!log) return { success: true, log: null };
+
+        return { success: true, log: JSON.parse(JSON.stringify(log)) };
+    } catch (error) {
+        console.error("Error getting unfinished log:", error);
+        return { success: false, error: "Failed to fetch log" };
+    }
+}
+
+export async function updateRoutineProgress(logId: string, state: any) {
+    try {
+        if (!logId) return { success: false, error: "No log ID provided" };
+
+        await connectDB();
+        await RoutineLog.findByIdAndUpdate(logId, {
+            $set: { lastState: state }
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating routine progress:", error);
+        return { success: false, error: "Failed to update progress" };
+    }
+}
+
+export async function abandonRoutineLog(logId: string) {
+    try {
+        if (!logId) return { success: false, error: "No log ID provided" };
+
+        await connectDB();
+        // Set expiresAt to 2 hours from now instead of deleting immediately
+        await RoutineLog.findByIdAndUpdate(logId, {
+            $set: { expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000) }
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error abandoning routine log:", error);
+        return { success: false, error: "Failed to abandon log" };
     }
 }

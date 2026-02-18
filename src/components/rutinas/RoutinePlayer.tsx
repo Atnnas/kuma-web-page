@@ -21,6 +21,19 @@ import { cn } from "@/lib/utils";
 import { audioTrainer } from "@/lib/audio-trainer";
 import { getExerciseGif } from "@/lib/exercise-assets";
 import { AchievementOverlay } from "../gamification/AchievementOverlay";
+import {
+    getUnfinishedRoutineLog,
+    updateRoutineProgress,
+    abandonRoutineLog,
+    startRoutineLog,
+    completeRoutineLog
+} from "@/lib/actions/routine-logs";
+import {
+    ArrowClockwise,
+    DoorOpen,
+    DeviceMobile,
+    Clock
+} from "@phosphor-icons/react/dist/ssr";
 
 // --- INTERFACES ---
 interface IBlock {
@@ -103,7 +116,11 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
 
     // Gamification State
     const [showTrophy, setShowTrophy] = useState(false);
-    // const [earnedBelt, setEarnedBelt] = useState<string>(""); // REVERTED
+
+    // Recovery State
+    const [pendingLog, setPendingLog] = useState<any>(null);
+    const [showRecoveryOverlay, setShowRecoveryOverlay] = useState(false);
+    const [isLoadingRecovery, setIsLoadingRecovery] = useState(true);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const activeBlock = routine.blocks[currentBlockIndex];
@@ -156,11 +173,40 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         }
         return () => clearInterval(interval);
     }, [isTimerRunning, exerciseTimeLeft, isResting, status]);
-    // Initial Coach Voice
     useEffect(() => {
         if (status === "active" && currentBlockIndex === 0 && currentSet === 1 && !isResting) {
             audioTrainer.speak(`Iniciando ${routine.title}. Vamos con ${routine.blocks[0].exercise_name}`);
         }
+    }, [status]);
+
+    // Check for unfinished routine on mount
+    useEffect(() => {
+        const checkRecovery = async () => {
+            try {
+                const res = await getUnfinishedRoutineLog(routine._id);
+                if (res.success && res.log) {
+                    setPendingLog(res.log);
+                    setShowRecoveryOverlay(true);
+                }
+            } catch (err) {
+                console.error("Recovery check failed:", err);
+            } finally {
+                setIsLoadingRecovery(false);
+            }
+        };
+        checkRecovery();
+    }, [routine._id]);
+
+    // Exit Guard (beforeunload)
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (status === "active") {
+                e.preventDefault();
+                e.returnValue = "";
+            }
+        };
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
     }, [status]);
 
     // --- ACTIONS ---
@@ -168,6 +214,12 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
 
     // --- ACTIONS ---
     const startRoutine = async () => {
+        // If there was a pending log but we start over, abandon it
+        if (pendingLog) {
+            await abandonRoutineLog(pendingLog._id);
+            setPendingLog(null);
+        }
+
         setStatus("active");
         setCurrentBlockIndex(0);
         setCurrentSet(1);
@@ -185,7 +237,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
 
         // START LOGGING
         try {
-            const { startRoutineLog } = await import("@/lib/actions/routine-logs");
             const res = await startRoutineLog(routine._id, routine.title, routine.estimated_duration);
             if (res.success && res.logId) {
                 setCurrentLogId(res.logId);
@@ -195,6 +246,32 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         }
     };
 
+    const resumeRoutine = async () => {
+        if (!pendingLog || !pendingLog.lastState) return;
+
+        const { lastState } = pendingLog;
+
+        setStatus("active");
+        setCurrentBlockIndex(lastState.currentBlockIndex || 0);
+        setCurrentSet(lastState.currentSet || 1);
+        setCompletedSets(lastState.completedSets || 0);
+        setLoopRepetitions(lastState.loopRepetitions || {});
+
+        // Restore timing
+        const elapsedSeconds = lastState.elapsedSeconds || 0;
+        setStartTime(Date.now() - (elapsedSeconds * 1000));
+        setStartTimeRef.current = Date.now();
+
+        setCurrentLogId(pendingLog._id);
+
+        // Recalculate total sets
+        const total = getTotalSetsRecursive(routine.blocks);
+        setTotalSets(total);
+
+        setShowRecoveryOverlay(false);
+        audioTrainer.speak(`Bienvenido de nuevo. Retomamos en ${routine.blocks[lastState.currentBlockIndex].exercise_name}`);
+    };
+
     const triggerImpact = () => {
         setImpact(true);
         setTimeout(() => setImpact(false), 300); // 300ms shake
@@ -202,7 +279,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
 
     const [hasShownOneHourReward, setHasShownOneHourReward] = useState(false);
 
-    const finishSet = () => {
+    const finishSet = async () => {
         setIsTimerRunning(false); // Stop exercise timer if running
         audioTrainer.playBeep();
         triggerImpact(); // TRIGGER VISUAL IMPACT
@@ -215,6 +292,18 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             }
         }
         setStartTimeRef.current = Date.now();
+
+        // Sync Progress to DB
+        if (currentLogId) {
+            const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+            updateRoutineProgress(currentLogId, {
+                currentBlockIndex,
+                currentSet,
+                completedSets,
+                loopRepetitions,
+                elapsedSeconds: elapsed
+            }).catch(console.error);
+        }
 
         // Real-time Reward Check (> 1 hour in session)
         if (!hasShownOneHourReward && startTime) {
@@ -428,6 +517,69 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             <div className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black z-0" />
                 <div className="absolute top-0 left-0 w-full h-1/2 bg-kuma-gold/5 blur-[120px] rounded-full z-0 pointer-events-none" />
+
+                <AnimatePresence>
+                    {showRecoveryOverlay && !isLoadingRecovery && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm"
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, y: 20 }}
+                                animate={{ scale: 1, y: 0 }}
+                                className="bg-zinc-900 border border-white/10 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl relative overflow-hidden"
+                            >
+                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600" />
+
+                                <div className="flex flex-col items-center text-center space-y-6">
+                                    <div className="w-20 h-20 rounded-3xl bg-cyan-500/10 flex items-center justify-center">
+                                        <DeviceMobile className="w-10 h-10 text-cyan-400" weight="duotone" />
+                                    </div>
+
+                                    <div>
+                                        <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Sesión Detectada</h2>
+                                        <p className="text-zinc-400 leading-relaxed font-medium">
+                                            Parece que tienes una rutina de <strong>{routine.title}</strong> a medias. ¿Deseas retomarla donde la dejaste?
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-black/40 rounded-2xl p-4 w-full flex items-center justify-between border border-white/5">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">
+                                                <Clock className="w-4 h-4 text-zinc-400" weight="bold" />
+                                            </div>
+                                            <span className="text-sm font-bold text-zinc-300">Progreso guardado</span>
+                                        </div>
+                                        <span className="text-cyan-400 font-black">{Math.round((pendingLog.lastState?.completedSets / getTotalSetsRecursive(routine.blocks)) * 100)}%</span>
+                                    </div>
+
+                                    <div className="flex flex-col w-full gap-3 pt-4">
+                                        <button
+                                            onClick={resumeRoutine}
+                                            className="w-full h-14 bg-white text-black rounded-2xl font-black uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-cyan-50 transition-colors active:scale-95"
+                                        >
+                                            <ArrowClockwise className="w-5 h-5" weight="bold" />
+                                            Continuar Sesión
+                                        </button>
+                                        <button
+                                            onClick={startRoutine}
+                                            className="w-full h-14 bg-zinc-800 text-zinc-400 rounded-2xl font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:text-white hover:bg-zinc-750 transition-all active:scale-95"
+                                        >
+                                            <DoorOpen className="w-5 h-5" weight="bold" />
+                                            Empezar de Nuevo
+                                        </button>
+                                    </div>
+
+                                    <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest pt-2">
+                                        Sincronizado vía Kuma Cloud
+                                    </p>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 <div className="relative z-10 flex-1 flex flex-col p-6 items-center justify-center max-w-md mx-auto w-full lg:max-w-4xl lg:flex-row lg:gap-16">
                     <motion.div
