@@ -46,6 +46,12 @@ export async function getRhythms() {
             createdBy: r.createdBy.toString(),
             createdAt: r.createdAt.toISOString(),
             updatedAt: r.updatedAt.toISOString(),
+            points: r.points.map((p: any) => ({
+                id: p.id,
+                tiempo: p.tiempo,
+                tipo: p.tipo,
+                estado: p.estado
+            }))
         }));
     } catch (error: any) {
         console.error("Error fetching rhythms:", error.message);

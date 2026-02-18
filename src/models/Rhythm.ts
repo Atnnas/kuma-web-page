@@ -21,12 +21,15 @@ const RhythmSchema = new Schema<IRhythm>(
         martialArt: { type: String, required: true },
         style: { type: String, required: true },
         points: [
-            {
-                id: { type: Number, required: true },
-                tiempo: { type: Number, required: true },
-                tipo: { type: String, enum: ["fluido", "pulso"], required: true },
-                estado: { type: String, enum: ["inicio", "final"] },
-            },
+            new Schema(
+                {
+                    id: { type: Number, required: true },
+                    tiempo: { type: Number, required: true },
+                    tipo: { type: String, enum: ["fluido", "pulso"], required: true },
+                    estado: { type: String, enum: ["inicio", "final"] },
+                },
+                { _id: false }
+            ),
         ],
         createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     },

@@ -21,7 +21,10 @@ import {
     Broom,
     Trash,
     HandTap,
-    SelectionAll
+    SelectionAll,
+    Star,
+    CaretDown,
+    Check
 } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -55,6 +58,9 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
     const [filterArt, setFilterArt] = useState("all");
     const [rhythmToDelete, setRhythmToDelete] = useState<any | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    // Dropdown Custom State
+    const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
 
     // Refs de Datos y Motor
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -441,7 +447,21 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                 {/* 1. Header & Cronómetro */}
                 <div className="flex flex-col items-center gap-2 relative z-10">
                     <PrimalTitle className="text-4xl md:text-6xl uppercase tracking-[0.2em] italic text-white/90">
-                        Ritmo Katas
+                        {theme === "dragon-ball" ? (
+                            <span className="flex items-center gap-1 font-dragon-z relative">
+                                <span className="text-grad-db-yellow z-10">RITM</span>
+                                <div className="relative w-12 h-12 md:w-16 md:h-16 mx-1 flex-shrink-0 z-20 group-hover:rotate-[360deg] transition-transform duration-700 ease-in-out">
+                                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-300 via-orange-500 to-red-600 shadow-[0_0_15px_rgba(251,146,60,0.6)] border-2 border-orange-200/50" />
+                                    <div className="absolute top-2 left-3 w-4 h-2 rounded-[100%] bg-white/60 blur-[1px] rotate-[-45deg]" />
+                                    <Star weight="fill" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-red-700 w-6 h-6 md:w-8 md:h-8 drop-shadow-sm" />
+                                </div>
+                                <span className="text-grad-db-red z-10"> KATAS</span>
+                                {/* Sombra 3D del Texto */}
+                                <span className="absolute left-1 top-1 text-black/80 -z-10 select-none blur-[1px]">RITMO KATAS</span>
+                            </span>
+                        ) : (
+                            "Ritmo Katas"
+                        )}
                     </PrimalTitle>
 
                     <div className="relative group cursor-default">
@@ -531,20 +551,48 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                     </div>
 
                     {/* Bloque Temas */}
-                    <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5">
+                    <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5 relative z-50">
                         <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Temas</span>
-                        <div className="flex gap-4 justify-center">
+                        <div className="relative w-full">
                             <button
-                                className={`kuma-btn-3d group w-32 ${theme === "dragon-ball" ? "active" : ""}`}
-                                onClick={() => setTheme(prev => prev === "dragon-ball" ? "tactical-hud" : "dragon-ball")}
+                                onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
+                                className={`w-full flex items-center justify-between bg-zinc-800 border border-white/5 rounded-2xl py-3 px-6 text-white outline-none focus:border-kuma-gold/30 text-[10px] font-black uppercase tracking-widest transition-all shadow-lg hover:bg-zinc-700 ${isThemeDropdownOpen ? 'border-kuma-gold/50' : ''}`}
                             >
-                                <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
+                                <div className="flex items-center gap-3">
                                     <Sparkle weight="fill" className={`w-4 h-4 ${theme === "dragon-ball" ? "text-emerald-500" : "text-kuma-gold"}`} />
-                                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">
-                                        {theme === "dragon-ball" ? "DB Radar" : "Kuma HUD"}
-                                    </span>
+                                    <span>{theme === "dragon-ball" ? "Dragon Ball" : "Kuma HUD"}</span>
                                 </div>
+                                <CaretDown weight="bold" className={`w-4 h-4 text-zinc-500 transition-transform duration-300 ${isThemeDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
+
+                            <AnimatePresence>
+                                {isThemeDropdownOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="absolute top-full left-0 right-0 mt-2 bg-zinc-900 border border-white/10 rounded-2xl shadow-xl overflow-hidden z-[60]"
+                                    >
+                                        <div className="p-1 flex flex-col gap-1">
+                                            <button
+                                                onClick={() => { setTheme("dragon-ball"); setIsThemeDropdownOpen(false); }}
+                                                className={`w-full text-left px-4 py-3 rounded-xl flex items-center justify-between transition-colors ${theme === "dragon-ball" ? "bg-red-500/20 text-red-400" : "hover:bg-white/5 text-zinc-400 hover:text-white"}`}
+                                            >
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Dragon Ball</span>
+                                                {theme === "dragon-ball" && <Check weight="bold" className="w-4 h-4" />}
+                                            </button>
+                                            <button
+                                                onClick={() => { setTheme("tactical-hud"); setIsThemeDropdownOpen(false); }}
+                                                className={`w-full text-left px-4 py-3 rounded-xl flex items-center justify-between transition-colors ${theme === "tactical-hud" ? "bg-kuma-gold/20 text-kuma-gold" : "hover:bg-white/5 text-zinc-400 hover:text-white"}`}
+                                            >
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Kuma HUD</span>
+                                                {theme === "tactical-hud" && <Check weight="bold" className="w-4 h-4" />}
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
 
@@ -910,6 +958,44 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                 .theme-dragon-ball .btn-inner svg {
                     color: white !important;
                     filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+                }
+
+                /* FUENTE DRAGON BALL Z */
+                .font-dragon-z {
+                    font-family: 'Impact', 'Arial Black', sans-serif;
+                    letter-spacing: 0.05em;
+                    transform: skewX(-10deg) rotate(-2deg);
+                    display: inline-flex;
+                    align-items: center;
+                }
+                .text-grad-db-yellow {
+                    color: #fbbf24; /* Amber-400 */
+                    background: linear-gradient(180deg, #fef08a 0%, #facc15 50%, #eab308 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    -webkit-text-stroke: 1.5px #991b1b; /* Red-800 border like "DRAGON" */
+                    filter: drop-shadow(3px 3px 0px #000);
+                    position: relative;
+                }
+                .text-grad-db-red {
+                    color: #dc2626; /* Red-600 */
+                    background: linear-gradient(180deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    -webkit-text-stroke: 1.5px #facc15; /* Yellow/Gold border like "Z" */
+                    filter: drop-shadow(3px 3px 0px #000);
+                    position: relative;
+                }
+
+                @media (min-width: 768px) {
+                    .text-grad-db-yellow {
+                        -webkit-text-stroke: 2.5px #991b1b;
+                        filter: drop-shadow(5px 5px 0px #000);
+                    }
+                    .text-grad-db-red {
+                        -webkit-text-stroke: 2.5px #facc15;
+                        filter: drop-shadow(5px 5px 0px #000);
+                    }
                 }
 
                 .custom-scrollbar::-webkit-scrollbar { width: 6px; }
