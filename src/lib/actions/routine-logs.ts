@@ -148,3 +148,29 @@ export async function abandonRoutineLog(logId: string) {
         return { success: false, error: "Failed to abandon log" };
     }
 }
+export async function getAnyUnfinishedLog() {
+    try {
+        const session = await auth();
+        if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+
+        await connectDB();
+        const user = await User.findOne({ email: session.user.email }).select("_id");
+        if (!user) return { success: false, error: "User not found" };
+
+        const log = await RoutineLog.findOne({
+            user: user._id,
+            completed: false,
+            $or: [
+                { expiresAt: { $exists: false } },
+                { expiresAt: { $gt: new Date() } }
+            ]
+        }).sort({ createdAt: -1 });
+
+        if (!log) return { success: true, log: null };
+
+        return { success: true, log: JSON.parse(JSON.stringify(log)) };
+    } catch (error) {
+        console.error("Error getting any unfinished log:", error);
+        return { success: false, error: "Failed to fetch log" };
+    }
+}

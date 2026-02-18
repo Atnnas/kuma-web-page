@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { BackButton } from "@/components/ui/BackButton";
 import { PrimalTitle } from "@/components/ui/PrimalTitle";
-import { Loader2 } from "lucide-react";
+import { Loader2, Play, X, Clock, ArrowRight } from "lucide-react";
 import { RutinasTable } from "@/components/rutinas/RutinasTable";
 import { StreakLeaderboard } from "@/components/gamification/StreakLeaderboard";
+import { getAnyUnfinishedLog, abandonRoutineLog } from "@/lib/actions/routine-logs";
+import Link from "next/link";
 
 interface IRoutine {
     _id: string;
@@ -24,6 +26,17 @@ interface RutinasClientPageProps {
 export function RutinasClientPage({ user }: RutinasClientPageProps) {
     const [routines, setRoutines] = useState<IRoutine[]>([]);
     const [loading, setLoading] = useState(true);
+    const [pendingLog, setPendingLog] = useState<any>(null);
+
+    useEffect(() => {
+        async function checkRecovery() {
+            const res = await getAnyUnfinishedLog();
+            if (res.success && res.log) {
+                setPendingLog(res.log);
+            }
+        }
+        checkRecovery();
+    }, []);
 
     useEffect(() => {
         async function fetchRoutines() {
@@ -84,10 +97,57 @@ export function RutinasClientPage({ user }: RutinasClientPageProps) {
 
                 {/* --- LEADERBOARD --- */}
                 {user && (
-                    <div className="mb-12">
+                    <div className="mb-8">
                         <StreakLeaderboard />
                     </div>
                 )}
+
+                {/* --- GLOBAL RECOVERY BANNER --- */}
+                <AnimatePresence>
+                    {pendingLog && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="mb-12 relative group"
+                        >
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition" />
+                            <div className="relative bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-3xl p-6 flex flex-col md:flex-row items-center gap-6 overflow-hidden">
+                                <div className="absolute top-0 right-0 p-3">
+                                    <button
+                                        onClick={async () => {
+                                            await abandonRoutineLog(pendingLog._id);
+                                            setPendingLog(null);
+                                        }}
+                                        className="text-zinc-500 hover:text-white transition-colors p-1"
+                                    >
+                                        <X size={18} />
+                                    </button>
+                                </div>
+
+                                <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
+                                    <Clock className="w-8 h-8 text-cyan-400" />
+                                </div>
+
+                                <div className="flex-1 text-center md:text-left">
+                                    <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
+                                        <span className="inline-block w-2 h-2 bg-cyan-500 rounded-full animate-pulse" />
+                                        <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.2em]">Sesión por Continuar</span>
+                                    </div>
+                                    <h3 className="text-xl font-black text-white">{pendingLog.routineTitle}</h3>
+                                    <p className="text-zinc-500 text-sm font-medium">Quedaste en el ejercicio {pendingLog.lastState?.currentBlockIndex + 1} del entrenamiento.</p>
+                                </div>
+
+                                <Link href={`/rutinas/${pendingLog.routine}`} className="w-full md:w-auto">
+                                    <button className="w-full md:w-64 h-14 bg-white text-black rounded-2xl font-black uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-cyan-50 transition-all active:scale-95 group/btn shadow-xl shadow-white/5">
+                                        Continuar Entrenamiento
+                                        <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                                    </button>
+                                </Link>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {loading ? (
                     <div className="flex justify-center py-20">
