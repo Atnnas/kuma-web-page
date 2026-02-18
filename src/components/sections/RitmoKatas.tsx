@@ -663,9 +663,9 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                     {/* Goku Flotando en el Radar (Solo Dragon Ball) */}
                     {theme === "dragon-ball" && (
                         <motion.div
-                            initial={{ x: "10%", y: "35%" }}
+                            initial={{ x: "10%", y: "15%" }}
                             animate={{
-                                y: ["30%", "40%"],
+                                y: ["10%", "20%"],
                                 x: ["10%", "12%"]
                             }}
                             transition={{
