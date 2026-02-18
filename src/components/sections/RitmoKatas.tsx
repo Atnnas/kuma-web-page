@@ -449,6 +449,23 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                     <PrimalTitle className="text-4xl md:text-6xl uppercase tracking-[0.2em] italic text-white/90">
                         {theme === "dragon-ball" ? (
                             <span className="flex items-center gap-1 font-dragon-z relative">
+                                <motion.div
+                                    initial={{ y: 0 }}
+                                    animate={{ y: [-8, 8] }}
+                                    transition={{
+                                        duration: 2.5,
+                                        repeat: Infinity,
+                                        repeatType: "reverse",
+                                        ease: "easeInOut"
+                                    }}
+                                    className="absolute -top-14 left-1/2 -translate-x-1/2 w-20 h-20 md:w-24 md:h-24 pointer-events-none z-30"
+                                >
+                                    <img
+                                        src="/images/kuma-goku-nube-voladora.jpeg"
+                                        alt="Goku Nube Voladora"
+                                        className="w-full h-full object-contain drop-shadow-[0_10px_15px_rgba(234,179,8,0.6)] rounded-full"
+                                    />
+                                </motion.div>
                                 <span className="text-grad-db-yellow z-10">RITM</span>
                                 <div className="relative w-12 h-12 md:w-16 md:h-16 mx-1 flex-shrink-0 z-20 group-hover:rotate-[360deg] transition-transform duration-700 ease-in-out">
                                     <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-300 via-orange-500 to-red-600 shadow-[0_0_15px_rgba(251,146,60,0.6)] border-2 border-orange-200/50" />
