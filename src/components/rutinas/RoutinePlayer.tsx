@@ -573,7 +573,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                     </div>
 
                                     <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest pt-2">
-                                        Sincronizado vía Kuma Cloud
+                                        Solo se cuenta el tiempo de entrenamiento activo • Sincronizado vía Kuma Cloud
                                     </p>
                                 </div>
                             </motion.div>

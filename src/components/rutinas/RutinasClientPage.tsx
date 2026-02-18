@@ -153,7 +153,7 @@ export function RutinasClientPage({ user }: RutinasClientPageProps) {
                                         <div className="flex flex-wrap justify-center lg:justify-start gap-3">
                                             <div className="px-3 py-1 bg-white/5 rounded-full border border-white/5 flex items-center gap-2 text-xs font-bold text-zinc-400">
                                                 <Clock size={12} className="text-cyan-500" />
-                                                Próximo: {pendingLog.lastState?.currentBlockIndex + 1}
+                                                Tiempo Activo: {Math.floor((pendingLog.lastState?.elapsedSeconds || 0) / 60)}m
                                             </div>
                                             <div className="px-3 py-1 bg-cyan-500/10 rounded-full border border-cyan-500/20 flex items-center gap-2 text-xs font-bold text-cyan-400">
                                                 <div className="w-24 h-1 bg-zinc-800 rounded-full overflow-hidden">
