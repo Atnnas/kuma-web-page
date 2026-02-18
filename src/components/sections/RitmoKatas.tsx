@@ -38,7 +38,7 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
     const isAdmin = session?.user?.role === "admin" || session?.user?.role === "super_admin";
 
     const [status, setStatus] = useState<Status>("listo");
-    const [theme, setTheme] = useState<Theme>("dragon-ball");
+    const [theme, setTheme] = useState<Theme>("tactical-hud");
     const [timer, setTimer] = useState(0);
     const [volume, setVolume] = useState(0.8);
 
