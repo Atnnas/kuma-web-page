@@ -453,8 +453,8 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                     await abandonRoutineLog(currentLogId);
                 }
 
-                // Silent stop or simple finish without rewards
-                setStatus("intro"); // Return to intro or a neutral state instead of "completed" with confetti
+                setCheatDetected(true);
+                audioTrainer.speak("Oso oso mentiroso. Detectamos que saltaste la rutina.");
                 return;
             }
 
