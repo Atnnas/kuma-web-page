@@ -145,6 +145,39 @@ export async function abandonRoutineLog(logId: string) {
         return { success: false, error: "Failed to abandon log" };
     }
 }
+
+/**
+ * Deletes a routine log immediately.
+ * Validates that the log belongs to the requesting user OR provides super_admin override.
+ */
+export async function deleteRoutineLog(logId: string) {
+    try {
+        if (!logId) return { success: false, error: "No log ID provided" };
+
+        const session = await auth();
+        if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+
+        await connectDB();
+        const user = await User.findOne({ email: session.user.email }).select("_id role");
+        if (!user) return { success: false, error: "User not found" };
+
+        const log = await RoutineLog.findById(logId);
+        if (!log) return { success: true }; // Already deleted or doesn't exist
+
+        // Security check: Only owner or super_admin can delete
+        if (log.user.toString() !== user._id.toString() && user.role !== "super_admin") {
+            return { success: false, error: "Unauthorized to delete this log" };
+        }
+
+        await RoutineLog.findByIdAndDelete(logId);
+
+        revalidatePath("/admin/reports/logs");
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting routine log:", error);
+        return { success: false, error: "Failed to delete log" };
+    }
+}
 export async function getAnyUnfinishedLog() {
     try {
         const session = await auth();

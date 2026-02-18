@@ -447,10 +447,10 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             const isCheated = (durationMinutes < routine.estimated_duration * 0.4) || (fastSetCount > (totalSets * 0.5));
 
             if (isCheated) {
-                // If cheated, we don't complete the log, we ABANDON it (sets expiresAt)
+                // If cheated, we don't complete the log, we DELETE it (removes trace)
                 if (currentLogId) {
-                    const { abandonRoutineLog } = await import("@/lib/actions/routine-logs");
-                    await abandonRoutineLog(currentLogId);
+                    const { deleteRoutineLog } = await import("@/lib/actions/routine-logs");
+                    await deleteRoutineLog(currentLogId);
                 }
 
                 setCheatDetected(true);
