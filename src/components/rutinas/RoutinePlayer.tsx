@@ -284,10 +284,10 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         audioTrainer.playBeep();
         triggerImpact(); // TRIGGER VISUAL IMPACT
 
-        // Fast Interaction Detection
+        // Fast Interaction Detection (Cheating protection)
         if (setStartTimeRef.current) {
             const setDuration = Date.now() - setStartTimeRef.current;
-            if (setDuration < 2000) { // Less than 2 seconds
+            if (setDuration < 4000) { // Less than 4 seconds is usually a skip
                 setFastSetCount(prev => prev + 1);
             }
         }
@@ -439,23 +439,32 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         try {
             const endTime = Date.now();
             const durationMs = startTime ? (endTime - startTime) : 0;
-            const durationMinutes = Math.max(1, Math.floor(durationMs / 60000)); // Min 1 minute
+            const durationMinutes = Math.max(1, Math.floor(durationMs / 60000));
             const durationSeconds = Math.round(durationMs / 1000);
 
-            // 0. COMPLETE LOG IF EXISTS
+            // 1. Anti-cheat validation (Granular & Global)
+            // Stricter condition: Less than 40% of estimated duration OR too many fast sets (cheated sets)
+            const isCheated = (durationMinutes < routine.estimated_duration * 0.4) || (fastSetCount > (totalSets * 0.5));
+
+            if (isCheated) {
+                // If cheated, we don't complete the log, we ABANDON it (sets expiresAt)
+                if (currentLogId) {
+                    const { abandonRoutineLog } = await import("@/lib/actions/routine-logs");
+                    await abandonRoutineLog(currentLogId);
+                }
+
+                // Silent stop or simple finish without rewards
+                setStatus("intro"); // Return to intro or a neutral state instead of "completed" with confetti
+                return;
+            }
+
+            // 2. COMPLETE LOG IF VALID
             if (currentLogId) {
                 const { completeRoutineLog } = await import("@/lib/actions/routine-logs");
                 await completeRoutineLog(currentLogId, durationSeconds);
             }
 
-            // Anti-cheat validation
-            if (durationMinutes < routine.estimated_duration * 0.5 || fastSetCount > (totalBlocks * 2)) {
-                setCheatDetected(true);
-                audioTrainer.speak("Oso oso mentiroso. Detectamos que saltaste la rutina.");
-                return;
-            }
-
-            // 1. Call Progress API with routineId and actual duration
+            // 3. Call Progress API (XP/Achievements)
             const res = await fetch("/api/workouts/complete", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -468,19 +477,16 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             const data = await res.json();
 
             if (data.newAchievements && data.newAchievements.length > 0) {
-                // 2. Queue Achievements (Filter out Spirit Kuma if it was already shown during the session)
                 const achievements = data.newAchievements
                     .map((item: any) => item.trophy)
                     .filter((t: any) => !(t.name === "Espíritu Kuma" && hasShownOneHourReward));
 
                 if (achievements.length > 0) {
                     setAchievementQueue(prev => [...prev, ...achievements]);
-                } else if (!showTrophy && achievementQueue.length === 0) {
-                    // If everything was filtered but we need to finish
+                } else {
                     setStatus("completed");
                 }
             } else {
-                // 3. No achievements, just Standard Completion
                 setStatus("completed");
                 audioTrainer.playWin();
                 audioTrainer.speak("¡Rutina completada! Excelente trabajo.");
@@ -488,7 +494,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             }
         } catch (error) {
             console.error("Error saving progress:", error);
-            // Fallback to standard completion
             setStatus("completed");
             triggerConfetti();
         }
