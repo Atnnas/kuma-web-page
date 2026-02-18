@@ -449,23 +449,6 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                     <PrimalTitle className="text-4xl md:text-6xl uppercase tracking-[0.2em] italic text-white/90">
                         {theme === "dragon-ball" ? (
                             <span className="flex items-center gap-1 font-dragon-z relative">
-                                <motion.div
-                                    initial={{ y: 0 }}
-                                    animate={{ y: [-8, 8] }}
-                                    transition={{
-                                        duration: 2.5,
-                                        repeat: Infinity,
-                                        repeatType: "reverse",
-                                        ease: "easeInOut"
-                                    }}
-                                    className="absolute -top-14 left-1/2 -translate-x-1/2 w-20 h-20 md:w-24 md:h-24 pointer-events-none z-30"
-                                >
-                                    <img
-                                        src="/images/kuma-goku-nube-voladora.jpeg"
-                                        alt="Goku Nube Voladora"
-                                        className="w-full h-full object-contain drop-shadow-[0_10px_15px_rgba(234,179,8,0.6)] rounded-full"
-                                    />
-                                </motion.div>
                                 <span className="text-grad-db-yellow z-10">RITM</span>
                                 <div className="relative w-12 h-12 md:w-16 md:h-16 mx-1 flex-shrink-0 z-20 group-hover:rotate-[360deg] transition-transform duration-700 ease-in-out">
                                     <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-300 via-orange-500 to-red-600 shadow-[0_0_15px_rgba(251,146,60,0.6)] border-2 border-orange-200/50" />
@@ -676,6 +659,29 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                         </div>
                     )}
                     <canvas ref={canvasRef} width={2400} height={800} className="absolute inset-0 w-full h-full mix-blend-screen" />
+
+                    {/* Goku Flotando en el Radar (Solo Dragon Ball) */}
+                    {theme === "dragon-ball" && (
+                        <motion.div
+                            initial={{ x: "10%", y: "35%" }}
+                            animate={{
+                                y: ["30%", "40%"],
+                                x: ["10%", "12%"]
+                            }}
+                            transition={{
+                                y: { duration: 2.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" },
+                                x: { duration: 6, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }
+                            }}
+                            className="absolute pointer-events-none z-20 w-32 h-32 md:w-48 md:h-48"
+                        >
+                            <img
+                                src="/images/kuma-goku-nube-voladora.png"
+                                alt="Goku en Nube Voladora"
+                                className="w-full h-full object-contain filter drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]"
+                            />
+                        </motion.div>
+                    )}
+
                     <div className="absolute inset-0 border-[1.5rem] border-zinc-950/80 rounded-[3rem] pointer-events-none shadow-[inset_0_0_80px_rgba(0,0,0,1)]" />
                 </div>
 
