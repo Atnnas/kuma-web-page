@@ -52,6 +52,33 @@ const formatTime = (seconds: number) => {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
+const getTotalSetsRecursive = (blocks: IBlock[]): number => {
+    let total = 0;
+    let i = 0;
+    while (i < blocks.length) {
+        const block = blocks[i];
+        if (block.type === "loop_start") {
+            let depth = 1;
+            let j = i + 1;
+            while (j < blocks.length && depth > 0) {
+                if (blocks[j].type === "loop_start") depth++;
+                if (blocks[j].type === "loop_end") depth--;
+                j++;
+            }
+            const loopBlocks = blocks.slice(i + 1, j - 1);
+            const loopCount = block.loop_count || 1;
+            total += loopCount * getTotalSetsRecursive(loopBlocks);
+            i = j;
+        } else if (block.type === "loop_end") {
+            i++;
+        } else {
+            total += block.sets;
+            i++;
+        }
+    }
+    return total;
+};
+
 export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const [status, setStatus] = useState<"intro" | "active" | "completed">("intro");
     const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
@@ -63,6 +90,10 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const [startTime, setStartTime] = useState<number | null>(null);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [exerciseTimeLeft, setExerciseTimeLeft] = useState(0);
+
+    // Accurate Progress State
+    const [totalSets, setTotalSets] = useState(0);
+    const [completedSets, setCompletedSets] = useState(0);
 
     // Loop State
     const [loopRepetitions, setLoopRepetitions] = useState<{ [blockIndex: number]: number }>({});
@@ -147,6 +178,11 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         setCheatDetected(false);
         setLoopRepetitions({});
 
+        // Calculate total sets including all loop cycles
+        const total = getTotalSetsRecursive(routine.blocks);
+        setTotalSets(total);
+        setCompletedSets(0);
+
         // START LOGGING
         try {
             const { startRoutineLog } = await import("@/lib/actions/routine-logs");
@@ -199,9 +235,17 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             audioTrainer.speak("Descansa.");
             startRest();
         } else if (activeBlock.rest_seconds > 0 && currentSet === activeBlock.sets && currentBlockIndex < totalBlocks - 1) {
-            // Check if NEXT block is a loop_end and current repetitions remain.
-            // If so, we might need a rest before jumping back.
-            audioTrainer.speak("Descansa. Siguiente ejercicio pronto.");
+            const nextBlock = routine.blocks[currentBlockIndex + 1];
+            if (nextBlock.type === "loop_end") {
+                const loopCtx = getLoopContext();
+                if (loopCtx && loopCtx.currentCycle < loopCtx.maxCycles) {
+                    audioTrainer.speak(`Descansa. Prepárate para el ciclo ${loopCtx.currentCycle + 1}.`);
+                } else {
+                    audioTrainer.speak("Descansa. Siguiente ejercicio pronto.");
+                }
+            } else {
+                audioTrainer.speak("Descansa. Siguiente ejercicio pronto.");
+            }
             startRest();
         } else {
             nextStep();
@@ -226,9 +270,11 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
 
         if (currentSet < activeBlock.sets) {
             setCurrentSet((prev) => prev + 1);
+            setCompletedSets((prev) => prev + 1);
             audioTrainer.speak(`Set ${currentSet + 1}. Vamos.`);
         } else {
             // FINISHED ALL SETS OF CURRENT BLOCK
+            setCompletedSets((prev) => prev + 1);
             const nextIdx = currentBlockIndex + 1;
 
             if (nextIdx < totalBlocks) {
@@ -256,7 +302,9 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                             setLoopRepetitions(prev => ({ ...prev, [startIdx]: currentReps + 1 }));
                             setCurrentBlockIndex(startIdx + 1); // Jump to first exercise in loop
                             setCurrentSet(1);
-                            audioTrainer.speak(`Serie de loop ${currentReps + 1}.`);
+
+                            const cycleMsg = `Iniciando ciclo ${currentReps + 1} de ${maxReps}.`;
+                            audioTrainer.speak(cycleMsg);
                             return;
                         } else {
                             // Loop finished, continue to whatever is after loop_end
@@ -554,7 +602,34 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     }
 
     // 4. ACTIVE ROUTINE
-    const progress = ((currentBlockIndex) / totalBlocks) * 100;
+    const progress = totalSets > 0 ? (completedSets / totalSets) * 100 : 0;
+
+    // Helper to find if a block is inside a loop
+    const getLoopContext = () => {
+        let depth = 0;
+        let startIdx = -1;
+        for (let i = currentBlockIndex; i >= 0; i--) {
+            if (routine.blocks[i].type === "loop_end" && i !== currentBlockIndex) depth++;
+            if (routine.blocks[i].type === "loop_start") {
+                if (depth === 0) {
+                    startIdx = i;
+                    break;
+                }
+                depth--;
+            }
+        }
+        if (startIdx !== -1) {
+            return {
+                startIdx,
+                currentCycle: loopRepetitions[startIdx] || 1,
+                maxCycles: routine.blocks[startIdx].loop_count || 1,
+                loopName: routine.blocks[startIdx].exercise_name
+            };
+        }
+        return null;
+    };
+
+    const loopContext = getLoopContext();
 
     return (
         <div className={cn(
@@ -609,7 +684,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                     <motion.div
                         className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-cyan-600 via-cyan-400 to-white"
                         initial={{ width: 0 }}
-                        animate={{ width: `${progress}%` }}
+                        animate={{ width: `${Math.min(100, progress)}%` }}
                         transition={{ type: "spring", stiffness: 50, damping: 15 }}
                     >
                         <motion.div
@@ -620,17 +695,45 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-12 bg-white blur-md" />
                     </motion.div>
                     <div className="absolute inset-0 flex justify-between px-1">
-                        {routine.blocks.map((_, idx) => (
-                            <div key={idx} className={cn("h-full w-[2px] transform skew-x-[-10deg]", idx < currentBlockIndex ? "bg-cyan-900/30" : "bg-black/40")} />
-                        ))}
+                        {routine.blocks.map((block, idx) => {
+                            const isInsideLoop = () => {
+                                let d = 0;
+                                for (let i = idx; i >= 0; i--) {
+                                    if (routine.blocks[i].type === "loop_end" && i !== idx) d++;
+                                    if (routine.blocks[i].type === "loop_start") {
+                                        if (d === 0) return true;
+                                        d--;
+                                    }
+                                }
+                                return false;
+                            };
+                            return (
+                                <div
+                                    key={idx}
+                                    className={cn(
+                                        "h-full w-[2px] transform skew-x-[-10deg] transition-colors",
+                                        idx < currentBlockIndex ? "bg-cyan-900/30" : "bg-black/40",
+                                        isInsideLoop() && "bg-cyan-400/20 w-[4px]"
+                                    )}
+                                />
+                            );
+                        })}
                     </div>
                 </div>
                 <div className="flex justify-between items-center mt-2 px-1">
-                    <span className="text-[10px] font-bold text-cyan-500 tracking-[0.2em] animate-pulse">
-                        {Math.round(progress)}% COMPLETADO
-                    </span>
+                    <div className="flex flex-col gap-0.5">
+                        <span className="text-[10px] font-bold text-cyan-500 tracking-[0.2em] animate-pulse">
+                            {Math.round(progress)}% COMPLETADO
+                        </span>
+                        {loopContext && (
+                            <span className="text-[9px] font-black text-white/60 uppercase tracking-widest flex items-center gap-1.5">
+                                <ArrowCounterClockwise size={12} weight="bold" className="text-cyan-400 animate-spin-slow" />
+                                {loopContext.loopName}: Ciclo {loopContext.currentCycle} de {loopContext.maxCycles}
+                            </span>
+                        )}
+                    </div>
                     <span className="text-[10px] font-bold text-zinc-600 tracking-[0.2em]">
-                        {currentBlockIndex} / {totalBlocks} BLOCKS
+                        {completedSets} / {totalSets} SETS TOTALES
                     </span>
                 </div>
             </div>
@@ -681,10 +784,18 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                     <div className="hidden lg:block absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] z-0 pointer-events-none" />
 
                                     <div className="flex flex-col items-center text-center space-y-2 relative z-10 w-full lg:items-start lg:text-left">
-                                        <div className="bg-black/30 backdrop-blur px-4 py-1.5 rounded-full border border-white/5 mb-4 inline-flex shadow-lg">
+                                        <div className="bg-black/30 backdrop-blur px-4 py-1.5 rounded-full border border-white/5 mb-4 inline-flex shadow-lg flex-col gap-1">
                                             <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
-                                                Ejercico {currentBlockIndex + 1} de {totalBlocks}
+                                                Ejercicio {currentBlockIndex + 1} de {totalBlocks}
                                             </span>
+                                            {loopContext && (
+                                                <div className="flex items-center gap-2 text-cyan-400">
+                                                    <ArrowCounterClockwise size={12} weight="bold" className="animate-spin-slow" />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest">
+                                                        Ciclo {loopContext.currentCycle} de {loopContext.maxCycles}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                         <h2 className="text-2xl md:text-3xl lg:text-5xl font-black text-white leading-tight max-w-4xl drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">
                                             {activeBlock.exercise_name}
@@ -785,7 +896,9 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                         >
                                             {timeLeft}
                                         </motion.span>
-                                        <span className="text-sm font-bold text-teal-400 uppercase tracking-[0.3em] mt-2 lg:text-lg animate-pulse">Respira</span>
+                                        <span className="text-sm font-bold text-teal-400 uppercase tracking-[0.3em] mt-2 lg:text-lg animate-pulse">
+                                            {loopContext && currentSet === activeBlock.sets ? `Preparando Ciclo ${loopContext.currentCycle + 1}` : "Respira"}
+                                        </span>
                                     </div>
                                 </div>
                             </motion.div>
@@ -805,7 +918,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                 className="space-y-6 lg:space-y-8"
                             >
                                 <div className="hidden lg:block bg-zinc-900/50 backdrop-blur rounded-[2rem] p-8 border border-white/5 shadow-2xl">
-                                    <span className="text-xs text-zinc-500 font-bold uppercase tracking-widest block mb-4">Siguiente paso</span>
                                     {currentSet < activeBlock.sets ? (
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
@@ -817,14 +929,61 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                             </div>
                                         </div>
                                     ) : currentBlockIndex < totalBlocks - 1 ? (
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-                                                <SkipForward className="w-6 h-6 text-zinc-400" weight="bold" />
-                                            </div>
-                                            <div>
-                                                <div className="text-white font-bold text-xl">{routine.blocks[currentBlockIndex + 1].exercise_name}</div>
-                                            </div>
-                                        </div>
+                                        (() => {
+                                            const nextBlock = routine.blocks[currentBlockIndex + 1];
+                                            if (nextBlock.type === "loop_end") {
+                                                // Find loop_start and check repetitions
+                                                let depth = 1;
+                                                let startIdx = -1;
+                                                for (let i = currentBlockIndex; i >= 0; i--) {
+                                                    if (routine.blocks[i].type === "loop_end") depth++;
+                                                    if (routine.blocks[i].type === "loop_start") depth--;
+                                                    if (depth === 0) {
+                                                        startIdx = i;
+                                                        break;
+                                                    }
+                                                }
+                                                const maxReps = routine.blocks[startIdx]?.loop_count || 1;
+                                                const currentReps = loopRepetitions[startIdx] || 1;
+                                                if (currentReps < maxReps) {
+                                                    return (
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center">
+                                                                <ArrowCounterClockwise className="w-6 h-6 text-cyan-400" weight="bold" />
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-white font-bold text-xl">Repetir Loop</div>
+                                                                <div className="text-cyan-500 font-bold uppercase text-[10px]">Ciclo {currentReps + 1} de {maxReps}</div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                }
+                                                // If loop finishes, show what's after loop_end
+                                                const afterLoop = routine.blocks[currentBlockIndex + 2];
+                                                if (afterLoop) {
+                                                    return (
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                                                                <SkipForward className="w-6 h-6 text-zinc-400" weight="bold" />
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-white font-bold text-xl">{afterLoop.exercise_name}</div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                }
+                                            }
+                                            return (
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                                                        <SkipForward className="w-6 h-6 text-zinc-400" weight="bold" />
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-white font-bold text-xl">{nextBlock.exercise_name}</div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()
                                     ) : (
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-full bg-kuma-gold/20 flex items-center justify-center">
