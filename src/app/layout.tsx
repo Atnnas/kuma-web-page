@@ -66,7 +66,7 @@ export default async function RootLayout({
       >
         <div className="fixed inset-0 bg-black/40 z-[-1] pointer-events-none" />
         <AnalyticsTracker />
-        <Providers>
+        <Providers session={session}>
           <Navbar key="navbar-key-fix" user={session?.user} />
 
           <CookieConsent />
