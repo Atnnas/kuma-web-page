@@ -34,7 +34,6 @@ import {
     DeviceMobile,
     Clock
 } from "@phosphor-icons/react/dist/ssr";
-import { RoutineStatsSummary } from "./RoutineStatsSummary";
 
 // --- INTERFACES ---
 interface IBlock {
@@ -122,16 +121,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const [pendingLog, setPendingLog] = useState<any>(null);
     const [showRecoveryOverlay, setShowRecoveryOverlay] = useState(false);
     const [isLoadingRecovery, setIsLoadingRecovery] = useState(true);
-
-    // Completion Stats State
-    const [completionStats, setCompletionStats] = useState<{
-        workoutCount: number;
-        streakDays: number;
-        dailyMinutes: number;
-        totalMinutes: number;
-        achievements: any[];
-        totalTime: number;
-    } | null>(null);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const activeBlock = routine.blocks[currentBlockIndex];
@@ -497,14 +486,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 } else {
                     setStatus("completed");
                 }
-                setCompletionStats({
-                    workoutCount: data.workoutCount,
-                    streakDays: data.streakDays,
-                    dailyMinutes: data.dailyMinutes,
-                    totalMinutes: data.totalMinutes,
-                    achievements: data.newAchievements?.map((item: any) => item.trophy) || [],
-                    totalTime: durationSeconds
-                });
+            } else {
                 setStatus("completed");
                 audioTrainer.playWin();
                 audioTrainer.speak("¡Rutina completada! Excelente trabajo.");
@@ -512,15 +494,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             }
         } catch (error) {
             console.error("Error saving progress:", error);
-            // Fallback stats if API fails
-            setCompletionStats({
-                workoutCount: 0,
-                streakDays: 0,
-                dailyMinutes: 0,
-                totalMinutes: 0,
-                achievements: [],
-                totalTime: startTime ? Math.round((Date.now() - startTime) / 1000) : 0
-            });
             setStatus("completed");
             triggerConfetti();
         }
@@ -713,18 +686,30 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     }
 
     // 2. COMPLETED
-    if (status === "completed" && completionStats) {
+    if (status === "completed") {
         return (
-            <RoutineStatsSummary
-                routineTitle={routine.title}
-                totalTime={completionStats.totalTime}
-                streakDays={completionStats.streakDays}
-                workoutCount={completionStats.workoutCount}
-                dailyMinutes={completionStats.dailyMinutes}
-                totalMinutes={completionStats.totalMinutes}
-                achievements={completionStats.achievements}
-                onBack={() => window.location.href = "/rutinas"}
-            />
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-green-900/20 via-black to-black" />
+                <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="relative z-10 text-center w-full max-w-md"
+                >
+                    <div className="w-32 h-32 mx-auto bg-green-500 rounded-full flex items-center justify-center mb-8 shadow-[0_0_60px_rgba(34,197,94,0.3)]">
+                        <Trophy className="w-16 h-16 text-black fill-black" weight="duotone" />
+                    </div>
+                    <h2 className="text-5xl font-black text-white italic tracking-tighter mb-4">¡VICTORIA!</h2>
+                    <p className="text-zinc-400 text-lg mb-2">Rutina completada con éxito.</p>
+                    {startTime && (
+                        <div className="text-kuma-gold font-mono font-bold text-xl mb-12">
+                            Tiempo Total: {Math.max(1, Math.round((Date.now() - startTime) / 60000))} min
+                        </div>
+                    )}
+                    <Link href="/rutinas" className="block w-full">
+                        <button className="w-full h-16 bg-zinc-800 text-white rounded-[2rem] font-bold text-lg tracking-wider hover:bg-zinc-700 transition-colors">Volver al Dojo</button>
+                    </Link>
+                </motion.div>
+            </div>
         );
     }
 
