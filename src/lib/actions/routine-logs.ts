@@ -34,8 +34,8 @@ export async function startRoutineLog(routineId: string, title: string, estimate
             scheduledDuration: estimatedDuration,
             startTime: new Date(),
             completed: false,
-            // We don't set expiresAt here. 
-            // It will only be set if the user explicitly abandons it.
+            // Automatic cleanup if session is lost (2 hour window)
+            expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000)
         });
 
         return { success: true, logId: newLog._id.toString() };
@@ -119,7 +119,11 @@ export async function updateRoutineProgress(logId: string, state: any) {
 
         await connectDB();
         await RoutineLog.findByIdAndUpdate(logId, {
-            $set: { lastState: state }
+            $set: {
+                lastState: state,
+                // Refresh rolling expiration window (2 hours from last activity)
+                expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000)
+            }
         });
 
         return { success: true };
