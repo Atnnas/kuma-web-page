@@ -511,12 +511,12 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                                 {/* Botón Guardar - Solo aparece si es sesión propia (no de biblioteca) */}
                                 {canSave && (
                                     <button
-                                        className={`kuma-btn-3d group ${hasRecordedData ? "active" : "opacity-30 cursor-not-allowed"}`}
+                                        className={`kuma-btn-3d group ${hasRecordedData ? "active" : "opacity-30 cursor-not-allowed"} !w-[70px]`}
                                         onClick={() => hasRecordedData && setShowSaveModal(true)}
                                     >
                                         <div className="btn-inner bg-kuma-gold/20 flex flex-col items-center justify-center gap-1 border-kuma-gold/50 shadow-[0_0_15px_rgba(234,179,8,0.3)] px-1">
                                             <FloppyDiskBack weight="fill" className="text-kuma-gold w-5 h-5 group-hover:scale-110 transition-transform" />
-                                            <span className="text-[7px] font-black uppercase tracking-widest text-kuma-gold leading-tight">Guardar Ritmo</span>
+                                            <span className="text-kuma-gold">Guardar</span>
                                         </div>
                                     </button>
                                 )}
@@ -528,7 +528,7 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                     <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5">
                         <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Reproducción</span>
                         <div className="flex gap-4 justify-center">
-                            <button className="kuma-btn-3d group w-24" onClick={openLibrary}>
+                            <button className="kuma-btn-3d group !w-[96px]" onClick={openLibrary}>
                                 <div className="btn-inner bg-zinc-800 flex flex-col items-center justify-center gap-1">
                                     <Books weight="fill" className="w-5 h-5 text-zinc-500 group-hover:text-kuma-gold transition-colors" />
                                     <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Biblioteca</span>
@@ -634,7 +634,7 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                                 </div>
                             </div>
 
-                            <button className="kuma-btn-3d group w-20 self-center" onClick={onBack}>
+                            <button className="kuma-btn-3d group !w-[80px] self-center" onClick={onBack}>
                                 <div className="btn-inner bg-zinc-900/80 flex flex-col items-center justify-center gap-1">
                                     <ArrowLeft weight="bold" className="w-4 h-4 text-zinc-500 group-hover:text-red-500 transition-colors" />
                                     <span className="text-[8px] font-black uppercase tracking-widest text-zinc-400">Salir</span>
@@ -948,46 +948,111 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
 
                 <style jsx>{`
                 /* Estilos Base (Tactical HUD) */
-                .kuma-btn-3d { position: relative; padding: 4px; background: #18181b; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 0 #09090b, 0 8px 20px rgba(0,0,0,0.5); transition: all 0.1s ease; width: 60px; height: 50px; cursor: pointer; }
-                .kuma-btn-3d:active, .kuma-btn-3d.active { transform: translateY(3px); box-shadow: 0 1px 0 #000, 0 2px 10px rgba(0,0,0,0.5); }
-                .btn-inner { width: 100%; height: 100%; border-radius: 8px; box-shadow: inset 0 1px 1px rgba(255,255,255,0.1); border: 1px solid rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+                .kuma-btn-3d { 
+                    position: relative; 
+                    padding: 3px; 
+                    background: #18181b; 
+                    border-radius: 14px; 
+                    border: 1px solid rgba(255,255,255,0.1); 
+                    box-shadow: 
+                        0 5px 0 #09090b, 
+                        0 10px 20px rgba(0,0,0,0.6),
+                        inset 0 1px 1px rgba(255,255,255,0.05); 
+                    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1); 
+                    width: 64px; 
+                    height: 56px; 
+                    cursor: pointer; 
+                    display: flex;
+                    align-items: stretch;
+                }
+                .kuma-btn-3d:active, .kuma-btn-3d.active { 
+                    transform: translateY(3px); 
+                    box-shadow: 0 2px 0 #000, 0 4px 10px rgba(0,0,0,0.7); 
+                }
+                .btn-inner { 
+                    flex: 1;
+                    border-radius: 10px; 
+                    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.05); 
+                    border: 1px solid rgba(0,0,0,0.6); 
+                    display: flex; 
+                    flex-direction: column; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 3px;
+                    background: linear-gradient(180deg, #27272a 0%, #18181b 100%);
+                    overflow: hidden;
+                    position: relative;
+                }
+                .btn-inner span {
+                    font-size: 9px;
+                    font-weight: 900;
+                    text-transform: uppercase;
+                    letter-spacing: 0.12em;
+                    color: #71717a;
+                    transition: color 0.2s;
+                    line-height: 1;
+                    font-family: var(--font-mono);
+                }
+                .kuma-btn-3d:hover .btn-inner span {
+                    color: #e4e4e7;
+                }
 
                 /* Estilos Gravity Chamber (Dragon Ball) */
                 .theme-dragon-ball .kuma-btn-3d {
-                    background: #e11d48; /* Crimson / Capsule Corp Pink-Red */
-                    border-radius: 50px; /* Pill Shape */
-                    border: 2px solid #881337;
+                    background: #e11d48;
+                    border-radius: 60px;
+                    border: 2px solid #9f1239;
                     box-shadow: 
-                        0 6px 0 #881337, 
-                        0 12px 20px rgba(0,0,0,0.6),
-                        inset 0 2px 5px rgba(255,255,255,0.3);
-                    width: 70px;
-                    height: 55px;
+                        0 7px 0 #881337, 
+                        0 14px 28px rgba(0,0,0,0.7),
+                        inset 0 2px 4px rgba(255,255,255,0.4);
+                    width: 74px;
+                    height: 58px;
                 }
                 .theme-dragon-ball .kuma-btn-3d:active, .theme-dragon-ball .kuma-btn-3d.active {
                     transform: translateY(4px);
                     box-shadow: 
-                        0 2px 0 #881337,
-                        0 4px 10px rgba(0,0,0,0.6),
-                        inset 0 2px 10px rgba(0,0,0,0.3);
+                        0 3px 0 #881337,
+                        0 6px 14px rgba(0,0,0,0.7),
+                        inset 0 2px 10px rgba(0,0,0,0.4);
                 }
                 .theme-dragon-ball .btn-inner {
-                    background: linear-gradient(180deg, #f43f5e 0%, #be123c 100%);
-                    border-radius: 40px;
-                    border: 1px solid rgba(255,255,255,0.2);
-                    box-shadow: inset 0 4px 4px rgba(255,255,255,0.3), inset 0 -4px 4px rgba(0,0,0,0.2);
+                    background: linear-gradient(180deg, #fb7185 0%, #e11d48 50%, #9f1239 100%);
+                    border-radius: 50px;
+                    border: 1px solid rgba(255,255,255,0.4);
+                    box-shadow: 
+                        inset 0 4px 12px rgba(255,255,255,0.5), 
+                        inset 0 -4px 12px rgba(0,0,0,0.4);
+                }
+                .theme-dragon-ball .btn-inner::after {
+                    content: '';
+                    position: absolute;
+                    top: -50%;
+                    left: -50%;
+                    width: 200%;
+                    height: 200%;
+                    background: linear-gradient(
+                        45deg, 
+                        transparent 45%, 
+                        rgba(255,255,255,0.1) 48%, 
+                        rgba(255,255,255,0.4) 50%, 
+                        rgba(255,255,255,0.1) 52%, 
+                        transparent 55%
+                    );
+                    pointer-events: none;
+                    transition: transform 0.4s ease-out;
+                }
+                .theme-dragon-ball .kuma-btn-3d:hover .btn-inner::after {
+                    transform: translate(10%, 10%);
                 }
                 .theme-dragon-ball .btn-inner span {
-                    color: white;
+                    color: white !important;
                     text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-                    font-family: 'Courier New', Courier, monospace; /* Digital look */
                     font-weight: 900;
-                    letter-spacing: 0.1em;
                 }
-                /* Ajuste de iconos para el tema */
                 .theme-dragon-ball .btn-inner svg {
                     color: white !important;
-                    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+                    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
                 }
 
                 /* FUENTE DRAGON BALL Z */
