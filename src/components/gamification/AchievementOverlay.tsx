@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import * as PhosphorIcons from "@phosphor-icons/react";
+import Image from "next/image";
 
 interface AchievementOverlayProps {
     show: boolean;
@@ -21,23 +22,33 @@ interface AchievementOverlayProps {
 
 export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlayProps) {
     const { width, height } = useWindowSize();
-    // Audio removed as per user request
-    // const [audio] = useState(() => typeof Audio !== "undefined" ? new Audio("/sounds/achievement.mp3") : null);
+    const [activeTrophy, setActiveTrophy] = useState<AchievementOverlayProps["trophy"]>(null);
 
-    if (!trophy) return null;
+    // Sync trophy with local state to avoid flash of previous content when closing
+    useEffect(() => {
+        if (show && trophy) {
+            setActiveTrophy(trophy);
+        }
+    }, [show, trophy]);
+
+    if (!activeTrophy && !trophy) return null;
+
+    // Use either the incoming trophy or the cached active one during exit animation
+    const currentTrophy = show ? trophy : activeTrophy;
+    if (!currentTrophy) return null;
 
     // Dynamic Icon
-    const IconComponent = (PhosphorIcons as any)[trophy.icon] || PhosphorIcons.Trophy;
+    const IconComponent = (PhosphorIcons as any)[currentTrophy.icon] || PhosphorIcons.Trophy;
 
     // Custom Animation for "Primer Entrenamiento"
-    if (trophy.slug === "primer-entrenamiento") {
+    if (currentTrophy.slug === "primer-entrenamiento") {
         return (
             <AnimatePresence>
                 {show && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0, transition: { duration: 1 } }}
+                        exit={{ opacity: 0, transition: { duration: 0.5 } }}
                         onClick={onClose}
                         className="fixed inset-0 z-[100] flex items-center justify-center bg-black/98 cursor-pointer overflow-hidden"
                     >
@@ -73,16 +84,18 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                     className="w-full h-64 md:h-80 my-8 relative flex items-center justify-center bg-black/50 rounded-2xl border border-yellow-500/30 backdrop-blur-md mx-auto aspect-square max-w-[320px] overflow-hidden shadow-2xl"
                                 >
                                     {/* KUMA TROPHY IMAGE */}
-                                    <img
+                                    <Image
                                         src="/images/kuma-logro-primer-entreno.jpg"
                                         alt="Primer Entrenamiento"
-                                        className="w-full h-full object-cover opacity-90"
+                                        fill
+                                        priority
+                                        className="object-cover opacity-90"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
                                 </motion.div>
 
                                 <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-widest uppercase drop-shadow-2xl font-mono">
-                                    {trophy.name}
+                                    {currentTrophy.name}
                                 </h2>
 
                                 <motion.p
@@ -91,7 +104,7 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                     transition={{ delay: 1 }}
                                     className="text-xl md:text-2xl text-yellow-100 max-w-2xl mx-auto font-bold italics leading-relaxed"
                                 >
-                                    {trophy.description}
+                                    {currentTrophy.description}
                                 </motion.p>
                             </motion.div>
                         </div>
@@ -102,14 +115,14 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
     }
 
     // Custom Animation for "Spirit of the Bear" (Kuma Revenant)
-    if (trophy.slug === "kuma-revenant") {
+    if (currentTrophy.slug === "kuma-revenant") {
         return (
             <AnimatePresence>
                 {show && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0, transition: { duration: 1 } }}
+                        exit={{ opacity: 0, transition: { duration: 0.5 } }}
                         onClick={onClose}
                         className="fixed inset-0 z-[100] flex items-center justify-center bg-black/98 cursor-pointer overflow-hidden"
                     >
@@ -165,10 +178,12 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                     className="w-full h-64 md:h-80 my-8 relative flex items-center justify-center bg-black/50 rounded-2xl border border-red-900/50 backdrop-blur-md mx-auto aspect-square max-w-[320px] overflow-hidden"
                                 >
                                     {/* KUMA TROPHY IMAGE */}
-                                    <img
+                                    <Image
                                         src="/images/kuma-logro-hora-entreno.jpg"
                                         alt="Espíritu Kuma"
-                                        className="w-full h-full object-cover opacity-90 mix-blend-hard-light"
+                                        fill
+                                        priority
+                                        className="object-cover opacity-90 mix-blend-hard-light"
                                     />
 
                                     {/* Overlay Gradient for drama */}
@@ -185,7 +200,7 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                     transition={{ delay: 1 }}
                                     className="text-2xl md:text-3xl text-red-100 max-w-3xl mx-auto font-bold italics"
                                 >
-                                    {trophy.description}
+                                    {currentTrophy.description}
                                 </motion.p>
                             </motion.div>
                         </div>
@@ -196,7 +211,7 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
     }
 
     // Custom Animation for "Oso Oso Mentiroso" (Cheat Achievement)
-    if (trophy.slug === "oso-oso-mentiroso") {
+    if (currentTrophy.slug === "oso-oso-mentiroso") {
         const WarningIcon = (PhosphorIcons as any)["WarningCircle"] || PhosphorIcons.Trophy;
         const ResetIcon = (PhosphorIcons as any)["ArrowCounterClockwise"] || PhosphorIcons.Trophy;
 
@@ -206,7 +221,7 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0, transition: { duration: 1 } }}
+                        exit={{ opacity: 0, transition: { duration: 0.5 } }}
                         onClick={onClose}
                         className="fixed inset-0 z-[100] flex items-center justify-center bg-black/98 cursor-pointer overflow-hidden"
                     >
@@ -228,10 +243,12 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                 className="relative z-10 bg-zinc-950 border border-red-500/20 p-8 rounded-[2rem] shadow-2xl"
                             >
                                 <div className="w-full aspect-square max-w-[320px] mx-auto mb-8 relative">
-                                    <img
+                                    <Image
                                         src="/images/kuma-logro-primer-trampa.jpg"
                                         alt="Logro Trampa"
-                                        className="w-full h-full object-cover rounded-2xl border-4 border-red-600 shadow-[0_0_50px_rgba(220,38,38,0.5)]"
+                                        fill
+                                        priority
+                                        className="object-cover rounded-2xl border-4 border-red-600 shadow-[0_0_50px_rgba(220,38,38,0.5)]"
                                     />
                                     <div className="absolute -top-6 -right-6 bg-red-600 text-white p-4 rounded-full shadow-lg border-4 border-zinc-950">
                                         <WarningIcon size={40} weight="fill" />
@@ -263,7 +280,7 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0, transition: { duration: 1 } }}
+                    exit={{ opacity: 0, transition: { duration: 0.5 } }}
                     onClick={onClose} // Close on click/tap
                     className="fixed inset-0 z-[100] flex items-center justify-center bg-black/98 cursor-pointer"
                 >
@@ -273,7 +290,7 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] bg-gradient-radial from-red-600/20 via-transparent to-transparent animate-reverse-spin opacity-50" />
                     </div>
 
-                    <Confetti width={width} height={height} numberOfPieces={500} recycle={true} gravity={0.2} colors={[trophy.color, '#FFD700', '#FFFFFF']} />
+                    <Confetti width={width} height={height} numberOfPieces={500} recycle={true} gravity={0.2} colors={[currentTrophy.color, '#FFD700', '#FFFFFF']} />
 
                     <div className="relative text-center p-8 max-w-4xl w-full">
                         <motion.div
@@ -298,12 +315,12 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                 <IconComponent
                                     className="w-48 h-48 md:w-64 md:h-64 drop-shadow-[0_0_50px_rgba(255,255,255,0.8)]"
                                     weight="fill"
-                                    style={{ color: trophy.color }}
+                                    style={{ color: currentTrophy.color }}
                                 />
                             </motion.div>
 
                             <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-widest uppercase drop-shadow-2xl">
-                                {trophy.name}
+                                {currentTrophy.name}
                             </h2>
 
                             <motion.p
@@ -312,7 +329,7 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                 transition={{ delay: 1 }}
                                 className="text-2xl text-zinc-200 max-w-2xl mx-auto font-bold"
                             >
-                                {trophy.description}
+                                {currentTrophy.description}
                             </motion.p>
                         </motion.div>
                     </div>
