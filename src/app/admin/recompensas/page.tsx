@@ -7,6 +7,14 @@ import { AchievementOverlay } from "@/components/gamification/AchievementOverlay
 import { StreakFlame } from "@/components/layout/StreakFlame";
 import { StreakCelebrationOverlay } from "@/components/gamification/StreakCelebrationOverlay";
 import { StreakLossOverlay } from "@/components/gamification/StreakLossOverlay";
+import Image from "next/image";
+
+// Central Mapping for images
+const TROPHY_IMAGES: Record<string, string> = {
+    "primer-entrenamiento": "/images/kuma-logro-primer-entreno.jpg",
+    "kuma-revenant": "/images/kuma-logro-hora-entreno.jpg",
+    "oso-oso-mentiroso": "/images/kuma-logro-primer-trampa.jpg"
+};
 
 // Static Definitions for Visual Testing
 const DEMO_TROPHIES = [
@@ -150,11 +158,16 @@ export default function RecompensasPage() {
                                 <tr key={trophy._id} className="group hover:bg-white/5 transition-colors">
                                     <td className="p-4 text-center">
                                         <div
-                                            className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto border border-white/10 shadow-sm overflow-hidden"
+                                            className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto border border-white/10 shadow-sm overflow-hidden relative"
                                             style={{ backgroundColor: `${trophy.color}15`, color: trophy.color }}
                                         >
-                                            {trophy.slug === 'oso-oso-mentiroso' ? (
-                                                <img src="/images/kuma-logro-primer-trampa.jpg" className="w-full h-full object-cover" />
+                                            {TROPHY_IMAGES[trophy.slug] ? (
+                                                <Image
+                                                    src={TROPHY_IMAGES[trophy.slug]}
+                                                    alt={trophy.name}
+                                                    fill
+                                                    className="object-cover"
+                                                />
                                             ) : (
                                                 <Trophy weight="duotone" className="w-6 h-6" />
                                             )}
@@ -205,11 +218,16 @@ export default function RecompensasPage() {
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center gap-4">
                                     <div
-                                        className="w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 shadow-lg overflow-hidden"
+                                        className="w-16 h-16 rounded-2xl flex items-center justify-center border border-white/10 shadow-lg overflow-hidden relative"
                                         style={{ backgroundColor: `${trophy.color}15`, color: trophy.color }}
                                     >
-                                        {trophy.slug === 'oso-oso-mentiroso' ? (
-                                            <img src="/images/kuma-logro-primer-trampa.jpg" className="w-full h-full object-cover" />
+                                        {TROPHY_IMAGES[trophy.slug] ? (
+                                            <Image
+                                                src={TROPHY_IMAGES[trophy.slug]}
+                                                alt={trophy.name}
+                                                fill
+                                                className="object-cover"
+                                            />
                                         ) : (
                                             <Trophy weight="duotone" className="w-8 h-8" />
                                         )}

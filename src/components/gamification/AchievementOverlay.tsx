@@ -20,6 +20,12 @@ interface AchievementOverlayProps {
     onClose: () => void;
 }
 
+const TROPHY_IMAGES: Record<string, string> = {
+    "primer-entrenamiento": "/images/kuma-logro-primer-entreno.jpg",
+    "kuma-revenant": "/images/kuma-logro-hora-entreno.jpg",
+    "oso-oso-mentiroso": "/images/kuma-logro-primer-trampa.jpg"
+};
+
 export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlayProps) {
     const { width, height } = useWindowSize();
     const [activeTrophy, setActiveTrophy] = useState<AchievementOverlayProps["trophy"]>(null);
@@ -300,7 +306,7 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                             className="relative z-10"
                         >
                             <h1 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400 mb-8 uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(234,179,8,0.8)] animate-pulse">
-                                ¡PRIMER LOGRO!
+                                ¡NUEVO LOGRO!
                             </h1>
 
                             <motion.div
@@ -310,13 +316,24 @@ export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlay
                                     filter: ["drop-shadow(0 0 20px rgba(255,215,0,0.5))", "drop-shadow(0 0 60px rgba(255,215,0,1))", "drop-shadow(0 0 20px rgba(255,215,0,0.5))"]
                                 }}
                                 transition={{ duration: 2, repeat: Infinity }}
-                                className="w-full h-48 md:h-64 my-8 relative flex items-center justify-center"
+                                className="w-full h-48 md:h-64 my-8 relative flex items-center justify-center overflow-hidden rounded-2xl"
                             >
-                                <IconComponent
-                                    className="w-48 h-48 md:w-64 md:h-64 drop-shadow-[0_0_50px_rgba(255,255,255,0.8)]"
-                                    weight="fill"
-                                    style={{ color: currentTrophy.color }}
-                                />
+                                {currentTrophy.slug && TROPHY_IMAGES[currentTrophy.slug] ? (
+                                    <div className="relative w-48 h-48 md:w-64 md:h-64 border-2 border-kuma-gold/50 rounded-2xl overflow-hidden shadow-2xl">
+                                        <Image
+                                            src={TROPHY_IMAGES[currentTrophy.slug]}
+                                            alt={currentTrophy.name}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                ) : (
+                                    <IconComponent
+                                        className="w-48 h-48 md:w-64 md:h-64 drop-shadow-[0_0_50px_rgba(255,255,255,0.8)]"
+                                        weight="fill"
+                                        style={{ color: currentTrophy.color }}
+                                    />
+                                )}
                             </motion.div>
 
                             <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-widest uppercase drop-shadow-2xl">
