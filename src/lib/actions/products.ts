@@ -78,8 +78,8 @@ export async function createProduct(data: any) {
         });
 
         await newProduct.save();
-        revalidatePath("/tienda");
-        revalidatePath("/admin/tienda");
+        revalidatePath("/shop");
+        revalidatePath("/admin/shop");
         return { success: true, message: "Producto creado exitosamente" };
     } catch (error: any) {
         console.error("Failed to create product:", error);
@@ -96,8 +96,8 @@ export async function updateProduct(id: string, data: any) {
 
         await Product.findByIdAndUpdate(id, data, { new: true });
 
-        revalidatePath("/tienda");
-        revalidatePath("/admin/tienda");
+        revalidatePath("/shop");
+        revalidatePath("/admin/shop");
         return { success: true, message: "Producto actualizado exitosamente" };
     } catch (error: any) {
         console.error("Failed to update product:", error);
@@ -110,8 +110,8 @@ export async function deleteProduct(id: string) {
         await connectDB();
         await Product.findByIdAndDelete(id);
 
-        revalidatePath("/tienda");
-        revalidatePath("/admin/tienda");
+        revalidatePath("/shop");
+        revalidatePath("/admin/shop");
         return { success: true, message: "Producto eliminado" };
     } catch (error: any) {
         console.error("Failed to delete product:", error);
@@ -124,8 +124,8 @@ export async function toggleProductStatus(id: string, isActive: boolean) {
         await connectDB();
         await Product.findByIdAndUpdate(id, { isActive });
 
-        revalidatePath("/tienda");
-        revalidatePath("/admin/tienda");
+        revalidatePath("/shop");
+        revalidatePath("/admin/shop");
         return { success: true };
     } catch (error: any) {
         console.error("Failed to toggle status:", error);

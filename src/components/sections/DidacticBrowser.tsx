@@ -26,7 +26,7 @@ const RESOURCES: Resource[] = [
         title: "Cuerpo Humano en Japonés",
         tag: "Anatomía Kuma",
         description: "Estudio del cuerpo humano en japonés. Puntos vitales (Kyusho) y terminología esencial.",
-        link: "/recursos/didactica/cuerpo-humano",
+        link: "/resources/didactica/cuerpo-humano",
         image: "/images/kuma-partes-cuerpo.jpg"
     },
     {
@@ -35,7 +35,7 @@ const RESOURCES: Resource[] = [
         title: "Historia del Karategi",
         tag: "Historia & Tradición",
         description: "Origen, evolución y significado del uniforme blanco en el Camino del Guerrero.",
-        link: "/recursos/didactica/karategi",
+        link: "/resources/didactica/karategi",
         image: "/images/kuma-karategui-partes.jpg"
     },
     {
@@ -44,7 +44,7 @@ const RESOURCES: Resource[] = [
         title: "Kumite (WKF & Tradicional)",
         tag: "Combate & Estrategia",
         description: "Evolución histórica del combate: del Tegumi al Jiyu Kumite deportivo.",
-        link: "/recursos/didactica/kumite",
+        link: "/resources/didactica/kumite",
         image: "/images/kuma-reglamento-kumite.jpg"
     },
     {
@@ -53,7 +53,7 @@ const RESOURCES: Resource[] = [
         title: "Reglas del Kumite WKF",
         tag: "Reglamento Deportivo",
         description: "Historia de la WKF y sistema de puntuación oficial.",
-        link: "/recursos/didactica/reglas-wkf",
+        link: "/resources/didactica/reglas-wkf",
         image: "/images/kuma-intro-puntos.jpg"
     },
     {
@@ -62,7 +62,7 @@ const RESOURCES: Resource[] = [
         title: "Penalizaciones, Kumite WKF",
         tag: "Reglamento & Sanciones",
         description: "Riesgos y consecuencias. El precio de infringir las reglas.",
-        link: "/recursos/didactica/penalizaciones",
+        link: "/resources/didactica/penalizaciones",
         image: "/images/kuma-arbitro.jpg"
     },
     {
@@ -71,7 +71,7 @@ const RESOURCES: Resource[] = [
         title: "Sistema de Puntos",
         tag: "Reglamento & Puntuación",
         description: "Valoración técnica. Yuko, Waza-ari e Ippon.",
-        link: "/recursos/didactica/puntos-kumite",
+        link: "/resources/didactica/puntos-kumite",
         image: "/images/kuma-arbitro-puntos.jpg"
     },
     {
@@ -80,7 +80,7 @@ const RESOURCES: Resource[] = [
         title: "Reglamento General (2026)",
         tag: "Guía de Estudio",
         description: "Resumen visual del reglamento WKF actualizado. Cambios 2026, duración y diagrama de flujo.",
-        link: "/recursos/didactica/reglamento-general-kumite",
+        link: "/resources/didactica/reglamento-general-kumite",
         image: "/images/kuma-reglamento-kumite.jpg"
     },
     // Future resources can be added here

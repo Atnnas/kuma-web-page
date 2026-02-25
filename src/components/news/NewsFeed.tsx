@@ -83,7 +83,7 @@ export function NewsFeed({ newsItems }: NewsFeedProps) {
                                 {featuredNews.description}
                             </p>
 
-                            <Link href={`/noticias/${featuredNews.slug}`}>
+                            <Link href={`/news/${featuredNews.slug}`}>
                                 <Button className="bg-red-600 hover:bg-white hover:text-red-600 text-white rounded-full px-8 py-6 text-sm font-bold uppercase tracking-widest transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.5)] group-hover:shadow-[0_0_30px_rgba(255,255,255,0.4)]">
                                     Leer Más <ArrowRight className="ml-2 w-5 h-5" />
                                 </Button>
@@ -138,7 +138,7 @@ export function NewsFeed({ newsItems }: NewsFeedProps) {
                                 </p>
 
                                 <div className="mt-auto pt-4 border-t border-zinc-800 flex justify-between items-center">
-                                    <Link href={`/noticias/${item.slug}`} className="flex items-center gap-2 group/link w-full justify-between">
+                                    <Link href={`/news/${item.slug}`} className="flex items-center gap-2 group/link w-full justify-between">
                                         <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest group-hover/link:text-white transition-colors">
                                             Leer Artículo
                                         </span>

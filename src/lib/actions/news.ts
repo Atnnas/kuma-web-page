@@ -120,7 +120,9 @@ export async function createNewsItem(data: Partial<INews>) {
         });
 
         // Convert to simple object to avoid serializing issues if needed, but for server actions usually fine to return simple status
-        // revalidatePath('/noticias') // If we were using revalidatePath, importing { revalidatePath } from 'next/cache'
+        const { revalidatePath } = await import("next/cache");
+        revalidatePath("/news");
+        revalidatePath("/admin/news");
 
         return { success: true, id: newItem._id.toString() };
     } catch (error) {

@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
-import Horario from "@/models/Horario";
+import Schedule from "@/models/Schedule";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
         await connectDB();
-        let horarios = await Horario.find({}).sort({ order: 1 }).lean();
+        let schedules = await Schedule.find({}).sort({ order: 1 }).lean();
 
         // INJECTION: Add KUMA KIDS for L, M, V at 6 PM
         const targetDays = ["Lunes", "Miércoles", "Miercoles", "Viernes"];
@@ -19,7 +19,7 @@ export async function GET() {
             color: "gold"
         };
 
-        horarios = horarios.map((day: any) => {
+        const processedSchedules = schedules.map((day: any) => {
             const isTargetDay = targetDays.some(td => day.day.includes(td));
             if (isTargetDay) {
                 const hasKids = day.sessions.some((s: any) => s.group.toUpperCase().includes("KIDS"));
@@ -37,9 +37,9 @@ export async function GET() {
             return day;
         });
 
-        return NextResponse.json(horarios);
+        return NextResponse.json(processedSchedules);
     } catch (error) {
-        return NextResponse.json({ error: "Failed to fetch horarios" }, { status: 500 });
+        return NextResponse.json({ error: "Failed to fetch schedules" }, { status: 500 });
     }
 }
 
@@ -49,14 +49,14 @@ export async function POST(req: Request) {
         const data = await req.json();
 
         if (Array.isArray(data)) {
-            await Horario.deleteMany({}); // Clear existing
-            const horarios = await Horario.insertMany(data);
-            return NextResponse.json(horarios);
+            await Schedule.deleteMany({}); // Clear existing
+            const schedules = await Schedule.insertMany(data);
+            return NextResponse.json(schedules);
         } else {
-            const horario = await Horario.create(data);
-            return NextResponse.json(horario);
+            const schedule = await Schedule.create(data);
+            return NextResponse.json(schedule);
         }
     } catch (error) {
-        return NextResponse.json({ error: "Failed to create horario" }, { status: 500 });
+        return NextResponse.json({ error: "Failed to create schedule" }, { status: 500 });
     }
 }

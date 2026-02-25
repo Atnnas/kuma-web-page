@@ -41,7 +41,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
             } else {
                 await createProduct(data);
             }
-            router.push("/admin/tienda");
+            router.push("/admin/shop");
             router.refresh();
         } catch (error) {
             console.error(error);
@@ -57,7 +57,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
         setLoading(true);
         try {
             await deleteProduct(initialData._id);
-            router.push("/admin/tienda");
+            router.push("/admin/shop");
             router.refresh();
         } catch (error) {
             console.error(error);
@@ -96,7 +96,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link
-                        href="/admin/tienda"
+                        href="/admin/shop"
                         className="p-2 hover:bg-white/10 rounded-full transition-colors text-zinc-400 hover:text-white"
                     >
                         <ArrowLeft className="w-6 h-6" />

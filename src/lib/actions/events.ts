@@ -114,7 +114,7 @@ export async function createEvent(data: Partial<IEvent>) {
         await connectDB();
 
         const newEvent = await Event.create(data);
-        revalidatePath("/calendario");
+        revalidatePath("/calendar");
         revalidatePath("/admin/events");
         return { success: true, id: newEvent._id.toString() };
     } catch (error) {
@@ -128,7 +128,7 @@ export async function updateEvent(id: string, data: Partial<IEvent>) {
         await requireSuperAdmin();
         await connectDB();
         await Event.findByIdAndUpdate(id, data);
-        revalidatePath("/calendario");
+        revalidatePath("/calendar");
         revalidatePath("/admin/events");
         return { success: true };
     } catch (error) {
@@ -142,7 +142,7 @@ export async function deleteEvent(id: string) {
         await requireSuperAdmin();
         await connectDB();
         await Event.findByIdAndDelete(id);
-        revalidatePath("/calendario");
+        revalidatePath("/calendar");
         revalidatePath("/admin/events");
         return { success: true };
     } catch (error) {
@@ -181,7 +181,7 @@ export async function toggleParticipation(eventId: string, shouldParticipate: bo
         }
         // console.log("Update Result:", result ? "Found & Updated" : "Event Not Found"); // DEBUG
 
-        revalidatePath("/calendario");
+        revalidatePath("/calendar");
         return { success: true };
     } catch (error) {
         console.error("Error toggling participation:", error);

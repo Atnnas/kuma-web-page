@@ -8,7 +8,7 @@ export interface ISession {
     color: string; // Tailwind gradient classes
 }
 
-export interface IHorario extends Document {
+export interface ISchedule extends Document {
     day: string; // "Lunes, Miércoles y Viernes", etc.
     order: number; // For sorting
     sessions: ISession[];
@@ -22,14 +22,14 @@ const SessionSchema = new Schema({
     color: { type: String, required: true },
 });
 
-const HorarioSchema = new Schema({
+const ScheduleSchema = new Schema({
     day: { type: String, required: true },
     order: { type: Number, required: true },
     sessions: [SessionSchema],
-}, { timestamps: true, collection: 'Horarios' });
+}, { timestamps: true, collection: 'Horarios' }); // Keep collection name for now
 
-// Model name "Horario" -> Collection "horarios"
-if (process.env.NODE_ENV !== "production") delete mongoose.models.Horario;
-const Horario: Model<IHorario> = mongoose.models.Horario || mongoose.model<IHorario>("Horario", HorarioSchema);
+// Model name "Schedule" -> Collection "horarios"
+if (process.env.NODE_ENV !== "production") delete mongoose.models.Schedule;
+const Schedule: Model<ISchedule> = mongoose.models.Schedule || mongoose.model<ISchedule>("Schedule", ScheduleSchema);
 
-export default Horario;
+export default Schedule;

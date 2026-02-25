@@ -25,7 +25,7 @@ export default auth((req) => {
     }
 
     // 2. Proteger Rutinas (Solo usuarios registrados y ACTIVOS)
-    if (nextUrl.pathname.startsWith("/rutinas")) {
+    if (nextUrl.pathname.startsWith("/routines")) {
         if (!isLoggedIn) {
             return NextResponse.redirect(new URL("/login", nextUrl));
         }

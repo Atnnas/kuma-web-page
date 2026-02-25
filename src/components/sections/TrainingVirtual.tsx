@@ -101,7 +101,7 @@ export const TrainingVirtual = ({ user, mode = "default" }: TrainingVirtualProps
                     ) : (
                         <>
                             {/* Normal Cards (Rutinas & Biblioteca) */}
-                            <Link href="/rutinas" className="flex-1 min-w-[300px]">
+                            <Link href="/routines" className="flex-1 min-w-[300px]">
                                 <motion.div
                                     initial={{ opacity: 0, x: -50 }}
                                     whileInView={{ opacity: 1, x: 0 }}

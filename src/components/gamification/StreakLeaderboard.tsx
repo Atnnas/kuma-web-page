@@ -20,7 +20,7 @@ export function StreakLeaderboard() {
     useEffect(() => {
         const fetchLeaderboard = async () => {
             try {
-                const res = await fetch("/api/user/leaderboard", { cache: "no-store" });
+                const res = await fetch("/api/users/leaderboard", { cache: "no-store" });
                 if (res.ok) {
                     const data = await res.json();
                     setLeaders(data);

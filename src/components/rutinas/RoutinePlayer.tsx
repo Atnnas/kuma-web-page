@@ -594,7 +594,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                         animate={{ opacity: 1, y: 0 }}
                         className="w-full flex justify-between items-center mb-12 lg:absolute lg:top-8 lg:left-8 lg:w-auto lg:mb-0"
                     >
-                        <Link href="/rutinas">
+                        <Link href="/routines">
                             <button className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-colors backdrop-blur-md">
                                 <X className="w-5 h-5" weight="bold" />
                             </button>
@@ -707,7 +707,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                             Tiempo Total: {Math.max(1, Math.round((Date.now() - startTime) / 60000))} min
                         </div>
                     )}
-                    <Link href="/rutinas" className="block w-full">
+                    <Link href="/routines" className="block w-full">
                         <button className="w-full h-16 bg-zinc-800 text-white rounded-[2rem] font-bold text-lg tracking-wider hover:bg-zinc-700 transition-colors">Volver al Dojo</button>
                     </Link>
                 </motion.div>
@@ -749,7 +749,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                             <ArrowCounterClockwise className="w-6 h-6" weight="bold" />
                             Reintentar Honestamente
                         </button>
-                        <Link href="/rutinas" className="block w-full">
+                        <Link href="/routines" className="block w-full">
                             <button className="w-full h-14 bg-zinc-900 text-zinc-500 rounded-[2rem] font-bold text-sm tracking-widest hover:text-white transition-colors">
                                 Volver al Menú
                             </button>

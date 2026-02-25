@@ -12,20 +12,20 @@ interface ISession {
     color: string;
 }
 
-interface IHorario {
+interface ISchedule {
     _id: string;
     day: string;
     sessions: ISession[];
 }
 
 interface WeeklyScheduleTableProps {
-    data?: IHorario[];
+    data?: ISchedule[];
 }
 
 const TIME_SLOTS = ["5:00 PM", "6:00 PM", "7:00 PM", "8:00 PM", "8:30 PM"];
 const DAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
-const DEFAULT_SCHEDULE: IHorario[] = [
+const DEFAULT_SCHEDULE: ISchedule[] = [
     {
         _id: "1", day: "Lunes",
         sessions: [

@@ -94,7 +94,7 @@ export function NewsDetailView({ newsItem }: NewsDetailViewProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
 
                 <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-end container mx-auto px-4 pb-12">
-                    <Link href="/noticias" className="inline-flex items-center text-zinc-300 hover:text-white transition-colors mb-6 group w-fit relative z-10">
+                    <Link href="/news" className="inline-flex items-center text-zinc-300 hover:text-white transition-colors mb-6 group w-fit relative z-10">
                         <ArrowLeft className="mr-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                         Volver a Noticias
                     </Link>

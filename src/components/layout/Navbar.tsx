@@ -28,19 +28,19 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
 
     const navItems: NavItem[] = [
         { name: "Inicio", href: "/" },
-        { name: "Filosofía", href: "/filosofia" },
+        { name: "Filosofía", href: "/philosophy" },
         {
             name: "Recursos",
             href: "#",
             subItems: [
-                { name: "Didáctica", href: "/recursos/didactica" },
-                { name: "Aplicaciones", href: "/recursos/aplicaciones" }
+                { name: "Didáctica", href: "/resources/didactica" },
+                { name: "Aplicaciones", href: "/resources/aplicaciones" }
             ]
         },
-        { name: "Entrenamiento", href: "/entrenamiento" },
-        { name: "Calendario de Eventos", href: "/calendario" },
-        { name: "Noticias", href: "/noticias" },
-        { name: "Tienda", href: "/tienda" },
+        { name: "Entrenamiento", href: "/training" },
+        { name: "Calendario de Eventos", href: "/calendar" },
+        { name: "Noticias", href: "/news" },
+        { name: "Tienda", href: "/shop" },
         ...(user?.role === "super_admin" ? [{ name: "Herramientas", href: "/admin/news" }] : []),
     ];
 

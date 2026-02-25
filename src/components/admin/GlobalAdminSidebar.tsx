@@ -19,7 +19,7 @@ const menuItems = [
     { type: "section", label: "GENERAL" },
     { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
     { icon: Users, label: "Usuarios", href: "/admin/users" },
-    { icon: Trophy, label: "Recompensas", href: "/admin/recompensas" },
+    { icon: Trophy, label: "Recompensas", href: "/admin/rewards" },
     { icon: Settings, label: "Configuración", href: "/admin/settings" },
 
     { type: "section", label: "HERRAMIENTAS" },

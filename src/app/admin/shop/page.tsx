@@ -115,7 +115,7 @@ export default async function AdminStorePage() {
                             {/* Actions Footer - Big Buttons for Touch */}
                             <div className="grid grid-cols-2 gap-4 mt-auto">
                                 <Link
-                                    href={`/admin/tienda/${product._id}`}
+                                    href={`/admin/shop/${product._id}`}
                                     className="flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white hover:text-white py-4 rounded-2xl font-black uppercase text-sm tracking-widest transition-all border border-white/10 group-hover:border-white/30 active:scale-95 shadow-lg"
                                 >
                                     <Pencil className="w-5 h-5" /> Editar

@@ -33,11 +33,11 @@ const menuItems = [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { label: "Noticias", href: "/admin/news", icon: Newspaper },
     { label: "Calendario", href: "/admin/events", icon: Calendar },
-    { label: "Rutinas", href: "/admin/rutinas", icon: Dumbbell },
+    { label: "Rutinas", href: "/admin/routines", icon: Dumbbell },
     { label: "Organizadores", href: "/admin/organizers", icon: Briefcase },
-    { label: "Tienda", href: "/admin/tienda", icon: ShoppingBag },
+    { label: "Tienda", href: "/admin/shop", icon: ShoppingBag },
     { label: "Usuarios", href: "/admin/users", icon: Users },
-    { label: "Recompensas", href: "/admin/recompensas", icon: Trophy },
+    { label: "Recompensas", href: "/admin/rewards", icon: Trophy },
     { label: "Configuración", href: "/admin/settings", icon: Settings },
 ];
 

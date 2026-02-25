@@ -168,7 +168,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                 transition={{ type: "spring", duration: 0.5, delay: idx * 0.05 }}
                                 className="group relative"
                             >
-                                <Link href={`/rutinas/${routine._id}`} className="block h-full">
+                                <Link href={`/routines/${routine._id}`} className="block h-full">
                                     <div className="h-full relative bg-zinc-900 border border-white/5 rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-300 group-hover:border-cyan-500/30 group-hover:shadow-[0_0_40px_-10px_rgba(6,182,212,0.3)]">
                                         <div className={`absolute inset-0 bg-gradient-to-br opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-60 ${routine.difficulty === "Principiante" ? "from-green-900 to-black" : routine.difficulty === "Intermedio" ? "from-yellow-900 to-black" : "from-red-900 to-black"}`} />
                                         <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-10" />
@@ -287,7 +287,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                             </div>
                                         </td>
                                         <td className="p-6 text-right">
-                                            <Link href={`/rutinas/${routine._id}`}>
+                                            <Link href={`/routines/${routine._id}`}>
                                                 <button className="bg-transparent hover:bg-white text-white hover:text-black border border-white/20 hover:border-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] flex items-center gap-2 ml-auto group/btn">
                                                     <PlayCircle className="w-5 h-5 group-hover/btn:fill-black" weight="duotone" />
                                                     Iniciar

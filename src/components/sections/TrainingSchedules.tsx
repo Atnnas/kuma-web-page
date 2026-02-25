@@ -15,7 +15,7 @@ interface ISession {
     color: string;
 }
 
-interface IHorario {
+interface ISchedule {
     _id: string;
     day: string;
     sessions: ISession[];
@@ -36,7 +36,7 @@ interface TrainingSchedulesProps {
 }
 
 export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) => {
-    const [horarios, setHorarios] = useState<IHorario[]>([]);
+    const [schedules, setSchedules] = useState<ISchedule[]>([]);
     const [loading, setLoading] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
 
@@ -50,21 +50,21 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
     }, []);
 
     useEffect(() => {
-        const fetchHorarios = async () => {
+        const fetchSchedules = async () => {
             try {
-                const res = await fetch('/api/horarios');
+                const res = await fetch('/api/schedules');
                 if (res.ok) {
                     const data = await res.json();
-                    setHorarios(data);
+                    setSchedules(data);
                 }
             } catch (error) {
-                console.error("Failed to fetch horarios", error);
+                console.error("Failed to fetch schedules", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchHorarios();
+        fetchSchedules();
     }, []);
 
     // Helper to get icon component
@@ -119,7 +119,7 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
                         <div className="pb-12 px-2 md:px-0">
                             {isMobile && !isDashboard ? ( // Mobile View: Cards
                                 <div className="grid grid-cols-1 gap-6">
-                                    {horarios.map((daySchedule, idx) => (
+                                    {schedules.map((daySchedule, idx) => (
                                         <motion.div
                                             key={daySchedule._id}
                                             initial={{ opacity: 0, y: 30 }}
@@ -169,7 +169,7 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
                                     ))}
                                 </div>
                             ) : ( // Desktop: New Weekly Grid
-                                <WeeklyScheduleTable data={horarios} />
+                                <WeeklyScheduleTable data={schedules} />
                             )}
                         </div>
                     )}

@@ -9,8 +9,8 @@ import { AnimatedTabs } from "@/components/ui/animated-tabs";
 
 
 export const metadata = {
-    title: "Horarios y Entrenamiento | Kuma Dojo",
-    description: "Consulta nuestros horarios de entrenamiento para niños, adultos y competidores.",
+    title: "Training & Schedules | Kuma Dojo",
+    description: "Check our training schedules for children, adults, and competitors.",
 };
 
 export default async function TrainingPage() {
@@ -18,8 +18,8 @@ export default async function TrainingPage() {
 
     const tabs = [
         {
-            id: "horarios",
-            label: "Horarios",
+            id: "schedules",
+            label: "Schedules",
             content: <TrainingSchedules />
         },
         {
@@ -56,7 +56,7 @@ export default async function TrainingPage() {
 
                 <AnimatedTabs
                     tabs={tabs}
-                    defaultTab="horarios"
+                    defaultTab="schedules"
                     className="w-full"
                     tabListClassName="mb-8"
                 />

@@ -29,7 +29,7 @@ export function StreakFlame({ variant = "default", overrideStreak }: StreakFlame
     useEffect(() => {
         const fetchStreak = async () => {
             try {
-                const res = await fetch("/api/user/streak", { cache: "no-store" });
+                const res = await fetch("/api/users/streak", { cache: "no-store" });
                 if (res.ok) {
                     const data = await res.json();
                     setStreak(data.streak);
@@ -60,10 +60,10 @@ export function StreakFlame({ variant = "default", overrideStreak }: StreakFlame
     }, [restDays, prevRestDays]);
 
     useEffect(() => {
-        if (serverCelebrationRequest && pathname?.startsWith("/rutinas")) {
+        if (serverCelebrationRequest && pathname?.startsWith("/routines")) {
             setShowOverlay(true);
         }
-        if (serverLossRequest && pathname?.startsWith("/rutinas")) {
+        if (serverLossRequest && pathname?.startsWith("/routines")) {
             setShowLossOverlay(true);
         }
     }, [pathname, serverCelebrationRequest, serverLossRequest]);
@@ -72,7 +72,7 @@ export function StreakFlame({ variant = "default", overrideStreak }: StreakFlame
         setShowOverlay(false);
         setServerCelebrationRequest(false);
         try {
-            await fetch("/api/user/streak/mark-seen", {
+            await fetch("/api/users/streak/mark-seen", {
                 method: "POST",
                 body: JSON.stringify({ type: "gain" })
             });
@@ -85,7 +85,7 @@ export function StreakFlame({ variant = "default", overrideStreak }: StreakFlame
         setShowLossOverlay(false);
         setServerLossRequest(false);
         try {
-            await fetch("/api/user/streak/mark-seen", {
+            await fetch("/api/users/streak/mark-seen", {
                 method: "POST",
                 body: JSON.stringify({ type: "loss" })
             });

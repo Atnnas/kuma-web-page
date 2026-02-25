@@ -8,7 +8,7 @@ export function StoreFloatingButton() {
 
     return (
         <AdminFloatingButton
-            onClick={() => router.push("/admin/tienda/new")}
+            onClick={() => router.push("/admin/shop/new")}
             label="Nuevo Producto"
         />
     );
