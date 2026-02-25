@@ -639,7 +639,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                                         onClick={() => setPreviewRoutine(routine)}
                                                         className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 text-xs font-black uppercase tracking-widest transition-all"
                                                     >
-                                                        Ver
+                                                        Vista Previa
                                                     </button>
                                                     {/* Start button */}
                                                     <Link href={`/routines/${routine._id}`}>
