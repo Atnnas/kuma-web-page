@@ -39,7 +39,7 @@ export default function HumanBodyPage() {
                 </div>
 
                 {/* Return Button */}
-                <BackButton href="/recursos/didactica" />
+                <BackButton href="/resources/didactica" />
             </header>
 
             {/* --- CONTENT --- */}

@@ -30,7 +30,7 @@ export default function AplicacionesPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {/* Ritmo Katas Card - Luxury Minimalist */}
-                        <Link href="/recursos/aplicaciones/ritmo-katas" className="contents">
+                        <Link href="/resources/aplicaciones/ritmo-katas" className="contents">
                             <motion.div
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}

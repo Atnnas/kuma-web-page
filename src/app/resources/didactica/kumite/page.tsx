@@ -40,7 +40,7 @@ export default function KumitePage() {
                 </div>
 
                 {/* Return Button */}
-                <BackButton href="/recursos/didactica" />
+                <BackButton href="/resources/didactica" />
             </header>
 
             {/* --- CONTENT --- */}

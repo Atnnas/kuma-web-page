@@ -19,7 +19,7 @@ export default function ReglamentoGeneralPage() {
                     </PrimalTitle>
                 </div>
 
-                <BackButton href="/recursos/didactica" />
+                <BackButton href="/resources/didactica" />
             </header>
 
             {/* --- CONTENT --- */}

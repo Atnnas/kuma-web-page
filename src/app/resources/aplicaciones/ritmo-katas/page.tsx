@@ -7,7 +7,7 @@ export default function RitmoKatasPage() {
     const router = useRouter();
 
     const handleBack = () => {
-        router.push("/recursos/aplicaciones");
+        router.push("/resources/aplicaciones");
     };
 
     return (

@@ -41,7 +41,7 @@ export default function PenalizacionesPage() {
                 </div>
 
                 {/* Return Button */}
-                <BackButton href="/recursos/didactica" />
+                <BackButton href="/resources/didactica" />
             </header>
 
             {/* --- CONTENT --- */}
