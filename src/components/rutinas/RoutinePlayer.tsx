@@ -116,6 +116,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
 
     // Gamification State
     const [showTrophy, setShowTrophy] = useState(false);
+    const [isFinishing, setIsFinishing] = useState(false);
 
     // Recovery State
     const [pendingLog, setPendingLog] = useState<any>(null);
@@ -436,6 +437,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     }, [achievementQueue, showTrophy]);
 
     const completeRoutine = async () => {
+        setIsFinishing(true);
         try {
             const endTime = Date.now();
             const durationMs = startTime ? (endTime - startTime) : 0;
@@ -807,8 +809,8 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                     // Remove current from queue
                     setAchievementQueue(prev => prev.slice(1));
 
-                    // If no more achievements, go to completed screen
-                    if (achievementQueue.length <= 1) {
+                    // If no more achievements AND we were finishing, go to completed screen
+                    if (achievementQueue.length <= 1 && isFinishing) {
                         setStatus("completed");
                         triggerConfetti();
                     }
