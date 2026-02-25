@@ -15,6 +15,7 @@ export interface IUser extends Document {
     dailyTrainingMinutes?: number;
     totalTrainingMinutes?: number;
     restDays?: number;
+    favoriteRoutines?: string[];
     lastTrainingResetDate?: Date | null;
     emailVerified?: Date | null;
     verificationToken?: string;
@@ -97,6 +98,10 @@ const UserSchema = new Schema<IUser>(
         restDays: {
             type: Number,
             default: 0,
+        },
+        favoriteRoutines: {
+            type: [{ type: Schema.Types.ObjectId, ref: "Routine" }],
+            default: [],
         },
         lastTrainingResetDate: {
             type: Date,
