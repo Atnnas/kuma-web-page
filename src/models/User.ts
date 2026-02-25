@@ -14,6 +14,7 @@ export interface IUser extends Document {
     lastStreakLossShownDate?: Date | null;
     dailyTrainingMinutes?: number;
     totalTrainingMinutes?: number;
+    restDays?: number;
     lastTrainingResetDate?: Date | null;
     emailVerified?: Date | null;
     verificationToken?: string;
@@ -90,6 +91,10 @@ const UserSchema = new Schema<IUser>(
             default: 0,
         },
         totalTrainingMinutes: {
+            type: Number,
+            default: 0,
+        },
+        restDays: {
             type: Number,
             default: 0,
         },

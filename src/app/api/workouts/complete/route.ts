@@ -24,6 +24,9 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
+        const earnedAchievements: any[] = [];
+        const existingSlugs = new Set((user.achievements || []).map(a => a.slug));
+
         // --- TIMEZONE LOGIC (Costa Rica: UTC-6) ---
         const getKumaToday = () => {
             const now = new Date();
@@ -56,10 +59,51 @@ export async function POST(req: NextRequest) {
 
             if (diffDays === 1) {
                 // Trained yesterday, increment streak
-                user.streakDays = (user.streakDays || 0) + 1;
+                const oldStreak = user.streakDays || 0;
+                user.streakDays = oldStreak + 1;
+
+                // --- REST DAYS GAIN LOGIC ---
+                // Award 1 rest day every 5 days of streak
+                if (user.streakDays % 5 === 0) {
+                    user.restDays = (user.restDays || 0) + 1;
+
+                    const restDayAchievementSlug = "kuma-logro-primer-dia-descanso";
+                    const restDayMetadata = {
+                        name: "Logro: Día de Descanso",
+                        description: "¡Excelente! Has ganado un día de descanso por 5 días de trabajo.",
+                        icon: "Fire",
+                        color: "#22d3ee", // Cyan/Blue
+                        rarity: "Raro"
+                    };
+
+                    // Award permanent Badge if it's the first rest day (streak 5)
+                    if (user.streakDays === 5 && !existingSlugs.has(restDayAchievementSlug)) {
+                        const achievement = {
+                            slug: restDayAchievementSlug,
+                            earnedAt: new Date(),
+                            metadata: restDayMetadata
+                        };
+                        // @ts-ignore
+                        user.achievements.push(achievement);
+                    }
+
+                    // ALWAYS push to earnedAchievements to show the visual reward/overlay
+                    earnedAchievements.push({ trophy: restDayMetadata });
+                }
             } else if (diffDays > 1) {
-                // Missed a day, reset streak
-                user.streakDays = 1;
+                // Missed day(s)
+                const missedDays = diffDays - 1;
+                const availableRestDays = user.restDays || 0;
+
+                if (availableRestDays >= missedDays) {
+                    // Protected by rest days!
+                    user.restDays = availableRestDays - missedDays;
+                    // Streak stays the same as last time
+                } else {
+                    // Not enough rest days, reset streak
+                    user.streakDays = 1;
+                    user.restDays = 0;
+                }
             }
             // If diffDays === 0 (trained today), count stays same
         }
@@ -88,8 +132,6 @@ export async function POST(req: NextRequest) {
         }
 
         // --- ACHIEVEMENTS CHECK & PERSISTENCE ---
-        const earnedAchievements: any[] = [];
-        const existingSlugs = new Set((user.achievements || []).map(a => a.slug));
 
         // Helper to award a trophy
         const awardTrophy = (slug: string, name: string, description: string, icon: string, color: string, rarity: string) => {
@@ -152,6 +194,7 @@ export async function POST(req: NextRequest) {
             success: true,
             workoutCount: user.workoutCount,
             streakDays: user.streakDays,
+            restDays: user.restDays,
             dailyMinutes: user.dailyTrainingMinutes,
             totalMinutes: user.totalTrainingMinutes,
             newAchievements: earnedAchievements

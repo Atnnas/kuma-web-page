@@ -26,11 +26,16 @@ export async function GET() {
 
         const topStreaks = await User.find({
             streakDays: { $gt: 0 },
-            lastWorkoutDate: { $gte: activeThreshold }
+            // A user is "active" if they trained recently OR if they have rest days
+            // that could potentially be protecting their streak.
+            $or: [
+                { lastWorkoutDate: { $gte: activeThreshold } },
+                { restDays: { $gt: 0 } }
+            ]
         })
-            .sort({ streakDays: -1 }) // Descending order
+            .sort({ streakDays: -1 })
             .limit(5)
-            .select("name image streakDays"); // Only select necessary fields
+            .select("name image streakDays restDays lastWorkoutDate");
 
         return NextResponse.json(topStreaks);
     } catch (error) {

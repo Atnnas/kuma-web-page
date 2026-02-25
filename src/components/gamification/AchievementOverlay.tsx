@@ -23,7 +23,8 @@ interface AchievementOverlayProps {
 const TROPHY_IMAGES: Record<string, string> = {
     "primer-entrenamiento": "/images/kuma-logro-primer-entreno.jpg",
     "kuma-revenant": "/images/kuma-logro-hora-entreno.jpg",
-    "oso-oso-mentiroso": "/images/kuma-logro-primer-trampa.jpg"
+    "oso-oso-mentiroso": "/images/kuma-logro-primer-trampa.jpg",
+    "kuma-logro-primer-dia-descanso": "/images/kuma-logro-primer-dia-descanso.jpg"
 };
 
 export function AchievementOverlay({ show, trophy, onClose }: AchievementOverlayProps) {

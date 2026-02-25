@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
         await dbConnect();
 
-        const user = await User.findOne({ email: session.user.email }).select("streakDays lastWorkoutDate lastStreakShownDate lastStreakLossShownDate");
+        const user = await User.findOne({ email: session.user.email }).select("streakDays restDays lastWorkoutDate lastStreakShownDate lastStreakLossShownDate");
 
         if (!user) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -37,7 +37,13 @@ export async function GET(req: NextRequest) {
             const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays > 1) {
-                displayStreak = 0;
+                const missedDays = diffDays - 1;
+                const restDays = user.restDays || 0;
+
+                if (restDays < missedDays) {
+                    displayStreak = 0;
+                }
+                // If restDays >= missedDays, displayStreak remains the user.streakDays value
             }
         }
 
@@ -70,6 +76,7 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json({
             streak: displayStreak,
+            restDays: user.restDays || 0,
             showCelebration: showCelebration,
             showLossCelebration: showLossCelebration
         });

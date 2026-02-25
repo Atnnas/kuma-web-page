@@ -13,7 +13,8 @@ import Image from "next/image";
 const TROPHY_IMAGES: Record<string, string> = {
     "primer-entrenamiento": "/images/kuma-logro-primer-entreno.jpg",
     "kuma-revenant": "/images/kuma-logro-hora-entreno.jpg",
-    "oso-oso-mentiroso": "/images/kuma-logro-primer-trampa.jpg"
+    "oso-oso-mentiroso": "/images/kuma-logro-primer-trampa.jpg",
+    "kuma-logro-primer-dia-descanso": "/images/kuma-logro-primer-dia-descanso.jpg"
 };
 
 // Static Definitions for Visual Testing
@@ -45,6 +46,16 @@ const DEMO_TROPHIES = [
         description: "Tu saltaste esta rutina, tienes la oportunidad de entrenar realmente durante el día. Si a las 12 media noche no has hecho entreno, perderás la racha. Oso oso mentiroso.",
         icon: "Skull",
         color: "#ef4444", // Red 500
+        rarity: "Raro",
+        hidden: false
+    },
+    {
+        _id: "trophy-rest-day",
+        slug: "kuma-logro-primer-dia-descanso",
+        name: "Logro: Día de Descanso",
+        description: "¡Excelente! Has ganado un día de descanso por 5 días de trabajo.",
+        icon: "Fire",
+        color: "#22d3ee",
         rarity: "Raro",
         hidden: false
     }
