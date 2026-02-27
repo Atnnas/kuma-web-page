@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Spinner, Plus, Trash, FloppyDisk, X, Barbell, Clock, TextAlignLeft, ChartBar, DotsSixVertical, WarningCircle, ArrowCounterClockwise } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/Button";
+import { getAllUsers } from "@/lib/actions/users";
 import { StrictCombobox } from "@/components/ui/StrictCombobox";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +29,8 @@ export interface IRoutineData {
     equipment_types: string[];
     blocks: IBlock[];
     active: boolean;
+    visibility: "public" | "hidden";
+    allowedUsers: string[];
 }
 
 interface RoutineEditorProps {
@@ -46,7 +49,25 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
         equipment_types: initialData?.equipment_types || ["peso_corporal"],
         blocks: initialData?.blocks || [],
         active: initialData?.active ?? true,
+        visibility: initialData?.visibility || "public",
+        allowedUsers: initialData?.allowedUsers || [],
     });
+
+    const [allUsers, setAllUsers] = useState<{ _id: string, name: string, email: string }[]>([]);
+    const [userSearch, setUserSearch] = useState("");
+
+    // Fetch users for the assignment picker
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const dataCount = await getAllUsers();
+                setAllUsers(dataCount);
+            } catch (error) {
+                console.error("Failed to fetch users", error);
+            }
+        };
+        fetchUsers();
+    }, []);
 
 
 
@@ -277,6 +298,90 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                             : "SOLO PESO CORPORAL"
                                     }
                                 </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* --- VISIBILITY & TARGETING --- */}
+                    <div className="space-y-6 pt-6 border-t border-white/5">
+                        <h3 className="text-sm font-bold text-kuma-gold uppercase tracking-widest">Privacidad y Asignación</h3>
+
+                        <div className="grid grid-cols-1 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Visibilidad en Catálogo</label>
+                                <select
+                                    value={formData.visibility}
+                                    onChange={e => setFormData(d => ({ ...d, visibility: e.target.value as any }))}
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-kuma-gold focus:outline-none"
+                                >
+                                    <option value="public">Público (Aparece en la lista general)</option>
+                                    <option value="hidden">Oculto (No aparece en la lista, solo acceso directo/asignado)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Asignar a Alumnos Específicos</label>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {formData.allowedUsers.map(userId => {
+                                    const user = allUsers.find(u => u._id === userId);
+                                    return (
+                                        <span key={userId} className="flex items-center gap-1 bg-kuma-gold/20 text-kuma-gold border border-kuma-gold/30 px-2 py-1 rounded-md text-[10px] font-bold">
+                                            {user?.name || userId}
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData(d => ({ ...d, allowedUsers: d.allowedUsers.filter(id => id !== userId) }))}
+                                                className="hover:text-white"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </span>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Buscar alumno por nombre o correo..."
+                                    value={userSearch}
+                                    onChange={e => setUserSearch(e.target.value)}
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-kuma-gold focus:outline-none pr-10"
+                                />
+                                {userSearch && (
+                                    <div className="absolute top-full left-0 right-0 mt-2 bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl z-[100] max-h-48 overflow-y-auto">
+                                        {allUsers
+                                            .filter(u =>
+                                                (u.name.toLowerCase().includes(userSearch.toLowerCase()) ||
+                                                    u.email.toLowerCase().includes(userSearch.toLowerCase())) &&
+                                                !formData.allowedUsers.includes(u._id)
+                                            )
+                                            .map(user => (
+                                                <button
+                                                    key={user._id}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setFormData(d => ({ ...d, allowedUsers: [...d.allowedUsers, user._id] }));
+                                                        setUserSearch("");
+                                                    }}
+                                                    className="w-full p-3 text-left hover:bg-zinc-800 flex flex-col border-b border-white/5 last:border-0"
+                                                >
+                                                    <span className="text-sm font-bold text-white">{user.name}</span>
+                                                    <span className="text-[10px] text-zinc-500">{user.email}</span>
+                                                </button>
+                                            ))
+                                        }
+                                        {allUsers.filter(u =>
+                                            (u.name.toLowerCase().includes(userSearch.toLowerCase()) ||
+                                                u.email.toLowerCase().includes(userSearch.toLowerCase())) &&
+                                            !formData.allowedUsers.includes(u._id)
+                                        ).length === 0 && (
+                                                <div className="p-4 text-center text-zinc-500 text-xs italic">
+                                                    No se encontraron alumnos disponibles.
+                                                </div>
+                                            )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

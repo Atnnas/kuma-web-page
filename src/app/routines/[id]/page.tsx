@@ -1,6 +1,7 @@
 import { RoutinePlayer } from "@/components/rutinas/RoutinePlayer";
 import connectDB from "@/lib/db";
 import Routine from "@/models/Routine";
+import User from "@/models/User";
 import { notFound } from "next/navigation";
 
 import { auth } from "@/auth";
@@ -30,6 +31,20 @@ export default async function RoutinePlayerPage({ params }: { params: Promise<{ 
     try {
         const doc = await Routine.findById(id).lean();
         if (!doc) notFound();
+
+        // --- Targeted Routines Permission Check ---
+        if (user.role !== "super_admin") {
+            const dbUser = await User.findOne({ email: user.email });
+            if (!dbUser) notFound();
+
+            const isPublic = !doc.allowedUsers || doc.allowedUsers.length === 0;
+            const isAssignedToUser = doc.allowedUsers?.some((uid: any) => uid.toString() === dbUser._id.toString());
+
+            if (!isPublic && !isAssignedToUser) {
+                // Return 404 so it "doesn't exist" for unauthorized users
+                notFound();
+            }
+        }
 
         // Serialize ObjectId and Dates
         routine = {

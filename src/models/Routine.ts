@@ -20,6 +20,8 @@ export interface IRoutine extends Document {
     equipment_types: string[];
     blocks: IBlock[];
     active: boolean;
+    visibility: "public" | "hidden";
+    allowedUsers: mongoose.Types.ObjectId[];
     thumbnail?: string;
     createdAt: Date;
     updatedAt: Date;
@@ -81,6 +83,15 @@ const RoutineSchema = new Schema<IRoutine>(
         active: {
             type: Boolean,
             default: true
+        },
+        visibility: {
+            type: String,
+            enum: ["public", "hidden"],
+            default: "public"
+        },
+        allowedUsers: {
+            type: [{ type: Schema.Types.ObjectId, ref: "User" }],
+            default: []
         },
         thumbnail: {
             type: String,

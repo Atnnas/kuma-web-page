@@ -200,7 +200,19 @@ export function RutinasTable({ data }: RutinasTableProps) {
         key: null,
         direction: "asc",
     });
-    const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+    // Responsive check to force grid on mobile
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setViewMode("grid");
+            }
+        };
+        handleResize(); // Initial check
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     // Filters
     const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>("all");
@@ -395,8 +407,8 @@ export function RutinasTable({ data }: RutinasTableProps) {
 
                 {/* Right Side: Toggle + Count */}
                 <div className="flex items-center gap-4">
-                    {/* View Toggle */}
-                    <div className="flex bg-zinc-950 p-1 rounded-xl border border-white/10">
+                    {/* View Toggle - Hidden on Mobile */}
+                    <div className="hidden md:flex bg-zinc-950 p-1 rounded-xl border border-white/10">
                         <button
                             onClick={() => setViewMode("list")}
                             className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-white text-black shadow-lg" : "text-zinc-500 hover:text-white"}`}

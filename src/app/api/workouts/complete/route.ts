@@ -27,6 +27,21 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
+        // --- Targeted Routines Permission Check ---
+        const targetRoutine = await Routine.findById(routineId);
+        if (!targetRoutine) {
+            return NextResponse.json({ error: "Routine not found" }, { status: 404 });
+        }
+
+        if (user.role !== "super_admin") {
+            const isPublic = !targetRoutine.allowedUsers || targetRoutine.allowedUsers.length === 0;
+            const isAssignedToUser = targetRoutine.allowedUsers?.some((uid: any) => uid.toString() === user._id.toString());
+
+            if (!isPublic && !isAssignedToUser) {
+                return NextResponse.json({ error: "Unauthorized: Access to this routine is restricted" }, { status: 403 });
+            }
+        }
+
         // Save timezone if provided by client (updates profile if they moved/changed)
         if (clientTimezone) {
             user.timezone = clientTimezone;

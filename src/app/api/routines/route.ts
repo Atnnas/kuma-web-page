@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Routine from "@/models/Routine";
 import Exercise from "@/models/Exercise";
+import User from "@/models/User";
 import { auth } from "@/auth";
 
 // GET /api/routines
@@ -19,12 +20,35 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const isAdmin = searchParams.get("super_admin") === "true";
 
-        // Admin Security Check
-        if (isAdmin && session.user?.role !== "super_admin") {
-            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-        }
+        let query: any = { active: true };
 
-        const query = isAdmin ? {} : { active: true };
+        const isSuperAdmin = session.user?.role === "super_admin";
+
+        if (isAdmin && isSuperAdmin) {
+            // Admin Panel Mode: see absolute everything (active + inactive)
+            query = {};
+        } else if (isSuperAdmin) {
+            // Admin Listing Mode: see all active routines regardless of targeting/visibility
+            query = { active: true };
+        } else {
+            // Non-admin: Filter by visibility and targeting
+            const user = await User.findOne({ email: session.user.email });
+            if (!user) {
+                return NextResponse.json({ error: "User not found" }, { status: 404 });
+            }
+
+            const userId = user._id;
+
+            query = {
+                active: true,
+                visibility: { $ne: "hidden" },
+                $or: [
+                    { allowedUsers: { $exists: false } },
+                    { allowedUsers: { $size: 0 } },
+                    { allowedUsers: userId }
+                ]
+            };
+        }
 
         const routines = await Routine.find(query).sort({ createdAt: -1 });
         return NextResponse.json(routines);
