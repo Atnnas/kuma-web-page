@@ -188,7 +188,7 @@ export function RutinasClientPage({ user }: RutinasClientPageProps) {
                                         No continuar
                                     </button>
 
-                                    <Link href={`/routines/${pendingLog.routine}`} className="order-1 sm:order-2">
+                                    <Link href={`/routines/${pendingLog.routine}?resume=true`} className="order-1 sm:order-2">
                                         <button className="h-14 px-10 w-full sm:w-auto bg-white text-black rounded-[1.5rem] font-black uppercase tracking-[0.15em] text-sm flex items-center justify-center gap-3 hover:bg-cyan-50 transition-all active:scale-95 shadow-[0_10px_25px_-5px_rgba(255,255,255,0.2)] group/btn">
                                             <Play className="w-5 h-5 fill-black group-hover/btn:scale-110 transition-transform" />
                                             Continuar Entrenamiento

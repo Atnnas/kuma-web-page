@@ -197,8 +197,9 @@ export async function getAnyUnfinishedLog() {
         const log = await RoutineLog.findOne({
             user: user._id,
             completed: false,
-            expiresAt: { $exists: false }
-        }).sort({ createdAt: -1 });
+            lastState: { $exists: true },
+            expiresAt: { $gt: new Date() }
+        }).sort({ updatedAt: -1 });
 
         if (!log) return { success: true, log: null };
 
