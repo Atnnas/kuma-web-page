@@ -30,23 +30,22 @@ export function RutinasClientPage({ user }: RutinasClientPageProps) {
     const [pendingLog, setPendingLog] = useState<any>(null);
     const [recovering, setRecovering] = useState(false);
     const [userStreak, setUserStreak] = useState(0);
+    const [userWorkouts, setUserWorkouts] = useState(0);
 
     useEffect(() => {
         const fetchUserStreak = async () => {
             try {
-                // We use the leaderboard API to get the user's current streak
                 const res = await fetch("/api/users/leaderboard", { cache: "no-store" });
                 if (res.ok) {
                     const data = await res.json();
-                    // Basic heuristic: match by name or image if id is not direct, 
-                    // but usually user._id or user.id is in the session
                     const currentUser = data.find((u: any) => u._id === user?._id || u._id === user?.id || u.email === user?.email);
                     if (currentUser) {
                         setUserStreak(currentUser.streakDays || 0);
+                        setUserWorkouts(currentUser.workoutCount || 0);
                     }
                 }
             } catch (error) {
-                console.error("Failed to fetch user streak", error);
+                console.error("Failed to fetch user data", error);
             }
         };
         fetchUserStreak();
@@ -252,15 +251,15 @@ export function RutinasClientPage({ user }: RutinasClientPageProps) {
                     </div>
 
                     {/* RIGHT COLUMN: Kuma Mascot */}
-                    <div className="relative order-1 lg:order-2 flex justify-center lg:w-[300px] shrink-0">
+                    <div className="relative order-1 lg:order-2 flex justify-center lg:w-[350px] shrink-0">
                         <div className="sticky top-24 lg:top-32 xl:top-40 w-full flex justify-center">
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.2, duration: 0.5 }}
-                                className="w-full"
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                transition={{ delay: 0.2, duration: 0.6 }}
+                                className="w-full flex justify-center"
                             >
-                                <KumaMascot streak={userStreak} />
+                                <KumaMascot streak={userStreak} workouts={userWorkouts} className="scale-110 lg:scale-125" />
                             </motion.div>
                         </div>
                     </div>
