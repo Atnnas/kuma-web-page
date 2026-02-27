@@ -133,11 +133,11 @@ export function RutinasClientPage({ user }: RutinasClientPageProps) {
             </header>
 
             {/* Content */}
-            <section className="relative z-20 px-4 max-w-7xl mx-auto pt-12">
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8 items-start">
+            <section className="relative z-20 px-4 max-w-6xl mx-auto pt-12">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start justify-center">
 
                     {/* LEFT COLUMN: Stats & Tables */}
-                    <div className="space-y-8 order-2 lg:order-1">
+                    <div className="flex-1 w-full space-y-8 order-2 lg:order-1 max-w-4xl">
                         {/* Leaderboard */}
                         {user && (
                             <div className="mb-0">
@@ -252,13 +252,13 @@ export function RutinasClientPage({ user }: RutinasClientPageProps) {
                     </div>
 
                     {/* RIGHT COLUMN: Kuma Mascot */}
-                    <div className="relative order-1 lg:order-2 flex justify-center lg:block">
+                    <div className="relative order-1 lg:order-2 flex justify-center lg:w-[300px] shrink-0">
                         <div className="sticky top-24 lg:top-32 xl:top-40 w-full flex justify-center">
                             <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.5, duration: 0.8 }}
-                                className="w-full max-w-[300px]"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.2, duration: 0.5 }}
+                                className="w-full"
                             >
                                 <KumaMascot streak={userStreak} />
                             </motion.div>
