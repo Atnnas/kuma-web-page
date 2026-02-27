@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
         const today = getKumaDate(now);
 
         let displayStreak = user.streakDays || 0;
+        let displayRestDays = user.restDays || 0;
 
         if (user.lastWorkoutDate) {
             const lastWorkout = getKumaDate(new Date(user.lastWorkoutDate));
@@ -38,12 +39,13 @@ export async function GET(req: NextRequest) {
 
             if (diffDays > 1) {
                 const missedDays = diffDays - 1;
-                const restDays = user.restDays || 0;
 
-                if (restDays < missedDays) {
+                if (displayRestDays >= missedDays) {
+                    displayRestDays -= missedDays;
+                } else {
                     displayStreak = 0;
+                    displayRestDays = 0;
                 }
-                // If restDays >= missedDays, displayStreak remains the user.streakDays value
             }
         }
 
@@ -76,7 +78,7 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json({
             streak: displayStreak,
-            restDays: user.restDays || 0,
+            restDays: displayRestDays,
             showCelebration: showCelebration,
             showLossCelebration: showLossCelebration
         });

@@ -15,27 +15,48 @@ export async function GET() {
         const kumaNow = new Date(now.getTime() + kumaOffset);
 
         // A streak is active if they trained today or yesterday in Kuma time.
-        // Yesterday starts at midnight of the day before today.
         const kumaToday = new Date(Date.UTC(kumaNow.getUTCFullYear(), kumaNow.getUTCMonth(), kumaNow.getUTCDate()));
-        const yesterdayKuma = new Date(kumaToday.getTime() - (24 * 60 * 60 * 1000));
 
-        // We need the UTC timestamp that corresponds to yesterday 00:00:00 in UTC-6.
-        const activeThreshold = new Date(yesterdayKuma.getTime() - kumaOffset);
+        // Fetch all users with a potential streak to calculate their real-time "effective" status
+        const candidates = await User.find({
+            streakDays: { $gt: 0 }
+        }).select("name image streakDays restDays lastWorkoutDate");
 
-        const topStreaks = await User.find({
-            streakDays: { $gt: 0 },
-            // A user is "active" if they trained recently OR if they have rest days
-            // that could potentially be protecting their streak.
-            $or: [
-                { lastWorkoutDate: { $gte: activeThreshold } },
-                { restDays: { $gt: 0 } }
-            ]
+        const leaderboard = candidates.map(user => {
+            let effectiveStreak = user.streakDays || 0;
+            let effectiveRestDays = user.restDays || 0;
+
+            if (user.lastWorkoutDate) {
+                const lDate = new Date(user.lastWorkoutDate.getTime() + kumaOffset);
+                const lastWorkoutKuma = new Date(Date.UTC(lDate.getUTCFullYear(), lDate.getUTCMonth(), lDate.getUTCDate()));
+
+                const diffTime = kumaToday.getTime() - lastWorkoutKuma.getTime();
+                const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays > 1) {
+                    const missedDays = diffDays - 1;
+                    if (effectiveRestDays >= missedDays) {
+                        effectiveRestDays -= missedDays;
+                    } else {
+                        effectiveStreak = 0;
+                        effectiveRestDays = 0;
+                    }
+                }
+            }
+
+            return {
+                _id: user._id,
+                name: user.name,
+                image: user.image,
+                streakDays: effectiveStreak,
+                restDays: effectiveRestDays
+            };
         })
-            .sort({ streakDays: -1 })
-            .limit(5)
-            .select("name image streakDays restDays lastWorkoutDate");
+            .filter(u => u.streakDays > 0)
+            .sort((a, b) => b.streakDays - a.streakDays)
+            .slice(0, 5);
 
-        return NextResponse.json(topStreaks);
+        return NextResponse.json(leaderboard);
     } catch (error) {
         console.error("Error fetching leaderboard:", error);
         return NextResponse.json(
