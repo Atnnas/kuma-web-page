@@ -28,10 +28,10 @@ export async function GET(req: NextRequest) {
             // Admin Panel Mode: see absolute everything (active + inactive)
             query = {};
         } else if (isSuperAdmin) {
-            // Admin Listing Mode: see all active routines regardless of targeting/visibility
+            // Admin Listing Mode: see all active routines regardless of targeting
             query = { active: true };
         } else {
-            // Non-admin: Filter by visibility and targeting
+            // Non-admin: Filter by targeting
             const user = await User.findOne({ email: session.user.email });
             if (!user) {
                 return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -41,7 +41,6 @@ export async function GET(req: NextRequest) {
 
             query = {
                 active: true,
-                visibility: { $ne: "hidden" },
                 $or: [
                     { allowedUsers: { $exists: false } },
                     { allowedUsers: { $size: 0 } },

@@ -29,7 +29,6 @@ export interface IRoutineData {
     equipment_types: string[];
     blocks: IBlock[];
     active: boolean;
-    visibility: "public" | "hidden";
     allowedUsers: string[];
 }
 
@@ -49,7 +48,6 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
         equipment_types: initialData?.equipment_types || ["peso_corporal"],
         blocks: initialData?.blocks || [],
         active: initialData?.active ?? true,
-        visibility: initialData?.visibility || "public",
         allowedUsers: initialData?.allowedUsers || [],
     });
 
@@ -304,23 +302,9 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
 
                     {/* --- VISIBILITY & TARGETING --- */}
                     <div className="space-y-6 pt-6 border-t border-white/5">
-                        <h3 className="text-sm font-bold text-kuma-gold uppercase tracking-widest">Privacidad y Asignación</h3>
+                        <h3 className="text-sm font-bold text-kuma-gold uppercase tracking-widest">Asignación Directa</h3>
 
-                        <div className="grid grid-cols-1 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Visibilidad en Catálogo</label>
-                                <select
-                                    value={formData.visibility}
-                                    onChange={e => setFormData(d => ({ ...d, visibility: e.target.value as any }))}
-                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-white focus:border-kuma-gold focus:outline-none"
-                                >
-                                    <option value="public">Público (Aparece en la lista general)</option>
-                                    <option value="hidden">Oculto (No aparece en la lista, solo acceso directo/asignado)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
+                        <div className="space-y-4">
                             <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Asignar a Alumnos Específicos</label>
                             <div className="flex flex-wrap gap-2 mb-2">
                                 {formData.allowedUsers.map(userId => {
@@ -516,10 +500,10 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                         </div>
                     </div>
                 </form>
-            </div>
+            </div >
 
             {/* --- FLOATING ACTIONS FOOTER --- */}
-            <div className="fixed md:sticky bottom-0 inset-x-0 p-4 bg-zinc-900/90 backdrop-blur-xl border-t border-white/10 flex flex-wrap justify-between items-center gap-4 z-50 rounded-b-xl">
+            < div className="fixed md:sticky bottom-0 inset-x-0 p-4 bg-zinc-900/90 backdrop-blur-xl border-t border-white/10 flex flex-wrap justify-between items-center gap-4 z-50 rounded-b-xl" >
                 <div className="flex flex-wrap gap-2">
                     <Button
                         type="button"
@@ -561,7 +545,7 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                         {initialData?._id ? "Guardar Cambios" : "Crear Rutina"}
                     </button>
                 </div>
-            </div>
-        </motion.div>
+            </div >
+        </motion.div >
     );
 }
