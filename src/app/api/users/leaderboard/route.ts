@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
+import { getMidnightInTimezone } from "@/lib/date-utils";
 
 export const dynamic = "force-dynamic";
 
@@ -9,28 +10,25 @@ export async function GET() {
     try {
         await connectDB();
 
-        // --- TIMEZONE LOGIC (Costa Rica: UTC-6) ---
-        const kumaOffset = -6 * 60 * 60 * 1000;
+        // --- TIMEZONE-AWARE LOGIC ---
         const now = new Date();
-        const kumaNow = new Date(now.getTime() + kumaOffset);
-
-        // A streak is active if they trained today or yesterday in Kuma time.
-        const kumaToday = new Date(Date.UTC(kumaNow.getUTCFullYear(), kumaNow.getUTCMonth(), kumaNow.getUTCDate()));
 
         // Fetch all users with a potential streak to calculate their real-time "effective" status
         const candidates = await User.find({
             streakDays: { $gt: 0 }
-        }).select("name image streakDays restDays lastWorkoutDate");
+        }).select("name image streakDays restDays lastWorkoutDate timezone");
 
         const leaderboard = candidates.map(user => {
+            const userTimezone = user.timezone || "America/Costa_Rica";
+            const todayInUserTZ = getMidnightInTimezone(now, userTimezone);
+
             let effectiveStreak = user.streakDays || 0;
             let effectiveRestDays = user.restDays || 0;
 
             if (user.lastWorkoutDate) {
-                const lDate = new Date(user.lastWorkoutDate.getTime() + kumaOffset);
-                const lastWorkoutKuma = new Date(Date.UTC(lDate.getUTCFullYear(), lDate.getUTCMonth(), lDate.getUTCDate()));
+                const lastWorkoutInUserTZ = getMidnightInTimezone(new Date(user.lastWorkoutDate), userTimezone);
 
-                const diffTime = kumaToday.getTime() - lastWorkoutKuma.getTime();
+                const diffTime = todayInUserTZ.getTime() - lastWorkoutInUserTZ.getTime();
                 const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
                 if (diffDays > 1) {

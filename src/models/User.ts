@@ -20,6 +20,7 @@ export interface IUser extends Document {
     emailVerified?: Date | null;
     verificationToken?: string;
     verificationTokenExpires?: Date;
+    timezone?: string;
     achievements?: {
         slug: string;
         earnedAt: Date;
@@ -114,6 +115,10 @@ const UserSchema = new Schema<IUser>(
         verificationTokenExpires: {
             type: Date,
             select: false,
+        },
+        timezone: {
+            type: String,
+            default: "America/Costa_Rica",
         },
         achievements: {
             type: [

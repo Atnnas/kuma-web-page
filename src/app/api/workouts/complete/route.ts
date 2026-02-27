@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import Routine from "@/models/Routine";
+import RoutineLog from "@/models/RoutineLog";
+import { getMidnightInTimezone } from "@/lib/date-utils";
 import { revalidatePath } from "next/cache";
 
 export async function POST(req: NextRequest) {
@@ -13,9 +15,9 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Parse body to get routineId
+        // Parse body to get routineId and timezone
         const body = await req.json();
-        const { routineId } = body;
+        const { routineId, timezone: clientTimezone } = body;
 
         await dbConnect();
 
@@ -25,33 +27,25 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
+        // Save timezone if provided by client (updates profile if they moved/changed)
+        if (clientTimezone) {
+            user.timezone = clientTimezone;
+        }
+
+        const userTimezone = user.timezone || "America/Costa_Rica";
+
         const earnedAchievements: any[] = [];
         const existingSlugs = new Set((user.achievements || []).map(a => a.slug));
 
-        // --- TIMEZONE LOGIC (Costa Rica: UTC-6) ---
-        const getKumaToday = () => {
-            const now = new Date();
-            // Offset to Costa Rica (UTC-6)
-            const msInHour = 60 * 60 * 1000;
-            const kumaNow = new Date(now.getTime() + (-6 * msInHour));
-            return new Date(Date.UTC(kumaNow.getUTCFullYear(), kumaNow.getUTCMonth(), kumaNow.getUTCDate()));
-        };
-
-        const today = getKumaToday();
+        // --- TIMEZONE-AWARE LOGIC ---
         const now = new Date();
+        const today = getMidnightInTimezone(now, userTimezone);
 
         // 2. Fetch Duration (Strictly use body.duration)
         const routineDuration = (body.duration && typeof body.duration === 'number') ? body.duration : 0;
 
         // --- STREAK LOGIC ---
-        let lastWorkoutDate = user.lastWorkoutDate ? new Date(user.lastWorkoutDate) : null;
-        let lastWorkoutKuma = null;
-
-        if (lastWorkoutDate) {
-            const msInHour = 60 * 60 * 1000;
-            const lDate = new Date(lastWorkoutDate.getTime() + (-6 * msInHour));
-            lastWorkoutKuma = new Date(Date.UTC(lDate.getUTCFullYear(), lDate.getUTCMonth(), lDate.getUTCDate()));
-        }
+        let lastWorkoutKuma = user.lastWorkoutDate ? getMidnightInTimezone(new Date(user.lastWorkoutDate), userTimezone) : null;
 
         // If never trained, streak = 1
         if (!lastWorkoutKuma) {
@@ -118,13 +112,7 @@ export async function POST(req: NextRequest) {
         user.totalTrainingMinutes = (user.totalTrainingMinutes || 0) + routineDuration;
 
         // 2. Daily accumulation (Reset if it's a new day)
-        let lastResetDate = user.lastTrainingResetDate ? new Date(user.lastTrainingResetDate) : null;
-        let lastResetKuma = null;
-        if (lastResetDate) {
-            const msInHour = 60 * 60 * 1000;
-            const rDate = new Date(lastResetDate.getTime() + (-6 * msInHour));
-            lastResetKuma = new Date(Date.UTC(rDate.getUTCFullYear(), rDate.getUTCMonth(), rDate.getUTCDate()));
-        }
+        let lastResetKuma = user.lastTrainingResetDate ? getMidnightInTimezone(new Date(user.lastTrainingResetDate), userTimezone) : null;
 
         if (!lastResetKuma || lastResetKuma.getTime() !== today.getTime()) {
             // New day, reset daily time

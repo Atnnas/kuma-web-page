@@ -485,7 +485,8 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     routineId: routine._id,
-                    duration: durationMinutes
+                    duration: durationMinutes,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
                 })
             });
 

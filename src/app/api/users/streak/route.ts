@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
+import { getMidnightInTimezone } from "@/lib/date-utils";
 
 export async function GET(req: NextRequest) {
     try {
@@ -19,21 +20,17 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // --- TIMEZONE LOGIC (Costa Rica: UTC-6) ---
-        const kumaOffset = -6 * 60 * 60 * 1000;
-        const getKumaDate = (date: Date) => {
-            const d = new Date(date.getTime() + kumaOffset);
-            return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-        };
+        const userTimezone = user.timezone || "America/Costa_Rica";
 
+        // --- TIMEZONE-AWARE LOGIC ---
         const now = new Date();
-        const today = getKumaDate(now);
+        const today = getMidnightInTimezone(now, userTimezone);
 
         let displayStreak = user.streakDays || 0;
         let displayRestDays = user.restDays || 0;
 
         if (user.lastWorkoutDate) {
-            const lastWorkout = getKumaDate(new Date(user.lastWorkoutDate));
+            const lastWorkout = getMidnightInTimezone(new Date(user.lastWorkoutDate), userTimezone);
             const diffTime = today.getTime() - lastWorkout.getTime();
             const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
@@ -55,10 +52,9 @@ export async function GET(req: NextRequest) {
 
         // A. Conditions for Positive Celebration (Maintenance/Gain):
         if (displayStreak > 0) {
-            let lastShown = user.lastStreakShownDate ? getKumaDate(new Date(user.lastStreakShownDate)) : null;
-
+            let lastShown = user.lastStreakShownDate ? getMidnightInTimezone(new Date(user.lastStreakShownDate), userTimezone) : null;
             if (!lastShown || lastShown.getTime() < today.getTime()) {
-                const lastWorkout = user.lastWorkoutDate ? getKumaDate(new Date(user.lastWorkoutDate)) : null;
+                const lastWorkout = user.lastWorkoutDate ? getMidnightInTimezone(new Date(user.lastWorkoutDate), userTimezone) : null;
                 if (lastWorkout && (today.getTime() - lastWorkout.getTime()) <= (1000 * 60 * 60 * 24)) {
                     showCelebration = true;
                 }
@@ -66,8 +62,8 @@ export async function GET(req: NextRequest) {
         }
         // B. Conditions for Loss Celebration (Sorrow):
         else if (displayStreak === 0 && user.lastWorkoutDate) {
-            const lastWorkout = getKumaDate(new Date(user.lastWorkoutDate));
-            let lastLossShown = user.lastStreakLossShownDate ? getKumaDate(new Date(user.lastStreakLossShownDate)) : null;
+            const lastWorkout = getMidnightInTimezone(new Date(user.lastWorkoutDate), userTimezone);
+            let lastLossShown = user.lastStreakLossShownDate ? getMidnightInTimezone(new Date(user.lastStreakLossShownDate), userTimezone) : null;
 
             // Only show if we haven't shown the loss since the last time they trained
             // (meaning this is a "new" loss event for the person)
