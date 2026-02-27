@@ -141,9 +141,12 @@ export async function abandonRoutineLog(logId: string) {
         if (!logId) return { success: false, error: "No log ID provided" };
 
         await connectDB();
-        // Expire immediately so it's never found again by getAnyUnfinishedLog
+        // Expire permanently (unix epoch) so it's never found again by any recovery query
         await RoutineLog.findByIdAndUpdate(logId, {
-            $set: { expiresAt: new Date() }
+            $set: {
+                expiresAt: new Date(0),
+                completed: false // Explicitly keep as incomplete but expired
+            }
         });
 
         return { success: true };

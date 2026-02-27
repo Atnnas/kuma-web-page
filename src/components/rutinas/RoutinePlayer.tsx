@@ -112,6 +112,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     // Gamification State
     const [showTrophy, setShowTrophy] = useState(false);
     const [isFinishing, setIsFinishing] = useState(false);
+    const [currentLogId, setCurrentLogId] = useState<string | null>(null);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const activeBlock = routine.blocks[currentBlockIndex];
@@ -178,25 +179,57 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 const res = await getUnfinishedRoutineLog(routine._id);
                 if (!res.success || !res.log?.lastState) return;
                 const { lastState } = res.log;
+
                 isAutoResuming.current = true; // prevent reactive save from firing on restore
+
+                // RESTORE EXACT STATE
                 setCurrentBlockIndex(lastState.currentBlockIndex || 0);
                 setCurrentSet(lastState.currentSet || 1);
                 setCompletedSets(lastState.completedSets || 0);
                 setLoopRepetitions(lastState.loopRepetitions || {});
+
+                // Restore timer for timed exercises
+                if (lastState.exerciseTimeLeft !== undefined) {
+                    setExerciseTimeLeft(lastState.exerciseTimeLeft);
+                }
+
                 const elapsedSeconds = lastState.elapsedSeconds || 0;
                 setStartTime(Date.now() - elapsedSeconds * 1000);
                 setStartTimeRef.current = Date.now();
                 setCurrentLogId(res.log._id);
+
                 const total = getTotalSetsRecursive(routine.blocks);
                 setTotalSets(total);
+
+                // IMPORTANT: GO DIRECTLY TO ACTIVE
                 setStatus("active");
-                audioTrainer.speak(`Bienvenido de nuevo. Retomamos en ${routine.blocks[lastState.currentBlockIndex]?.exercise_name ?? "el ejercicio"}`);
+
+                // (Silent resume - removed voice speak here)
             } catch (err) {
                 console.error("Auto-resume failed:", err);
             }
         };
         autoResume();
     }, []);
+
+    // Periodic Progress Sync (Every 5 seconds)
+    useEffect(() => {
+        if (status !== "active" || !currentLogId) return;
+
+        const interval = setInterval(() => {
+            const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+            updateRoutineProgress(currentLogId, {
+                currentBlockIndex,
+                currentSet,
+                completedSets,
+                loopRepetitions,
+                elapsedSeconds: elapsed,
+                exerciseTimeLeft // Save exact seconds left in current exercise
+            }).catch(console.error);
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, [status, currentLogId, currentBlockIndex, currentSet, completedSets, exerciseTimeLeft]);
 
     // Reactive progress save — fires AFTER React applies state changes from nextStep()
     // This ensures we always save where the user needs to GO NEXT, not where they just were
@@ -214,7 +247,8 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             currentSet,
             completedSets,
             loopRepetitions,
-            elapsedSeconds: elapsed
+            elapsedSeconds: elapsed,
+            exerciseTimeLeft: activeBlock?.measure_type === "time" ? activeBlock.reps : undefined
         }).catch(console.error);
     }, [currentBlockIndex, currentSet, completedSets]);
 
@@ -231,7 +265,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     }, [status]);
 
     // --- ACTIONS ---
-    const [currentLogId, setCurrentLogId] = useState<string | null>(null);
 
     // --- ACTIONS ---
     const startRoutine = async () => {
