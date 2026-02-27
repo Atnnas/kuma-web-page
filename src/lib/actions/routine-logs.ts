@@ -141,9 +141,9 @@ export async function abandonRoutineLog(logId: string) {
         if (!logId) return { success: false, error: "No log ID provided" };
 
         await connectDB();
-        // Set expiresAt to 2 hours from now instead of deleting immediately
+        // Expire immediately so it's never found again by getAnyUnfinishedLog
         await RoutineLog.findByIdAndUpdate(logId, {
-            $set: { expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000) }
+            $set: { expiresAt: new Date() }
         });
 
         return { success: true };

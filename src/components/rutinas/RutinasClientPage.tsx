@@ -32,7 +32,10 @@ export function RutinasClientPage({ user }: RutinasClientPageProps) {
         async function checkRecovery() {
             const res = await getAnyUnfinishedLog();
             if (res.success && res.log) {
-                setPendingLog(res.log);
+                const dismissedId = sessionStorage.getItem("routine_recovery_dismissed");
+                if (dismissedId !== res.log._id) {
+                    setPendingLog(res.log);
+                }
             }
         }
         checkRecovery();
@@ -179,6 +182,7 @@ export function RutinasClientPage({ user }: RutinasClientPageProps) {
                                 <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-4 relative z-10">
                                     <button
                                         onClick={async () => {
+                                            sessionStorage.setItem("routine_recovery_dismissed", pendingLog._id);
                                             await abandonRoutineLog(pendingLog._id);
                                             setPendingLog(null);
                                         }}

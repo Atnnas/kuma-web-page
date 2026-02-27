@@ -178,6 +178,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 const res = await getUnfinishedRoutineLog(routine._id);
                 if (!res.success || !res.log?.lastState) return;
                 const { lastState } = res.log;
+                isAutoResuming.current = true; // prevent reactive save from firing on restore
                 setCurrentBlockIndex(lastState.currentBlockIndex || 0);
                 setCurrentSet(lastState.currentSet || 1);
                 setCompletedSets(lastState.completedSets || 0);
@@ -196,6 +197,26 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         };
         autoResume();
     }, []);
+
+    // Reactive progress save — fires AFTER React applies state changes from nextStep()
+    // This ensures we always save where the user needs to GO NEXT, not where they just were
+    const isAutoResuming = useRef(false);
+    useEffect(() => {
+        // Skip first save when auto-resuming (that would overwrite the restored state)
+        if (status !== "active" || !currentLogId) return;
+        if (isAutoResuming.current) {
+            isAutoResuming.current = false;
+            return;
+        }
+        const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+        updateRoutineProgress(currentLogId, {
+            currentBlockIndex,
+            currentSet,
+            completedSets,
+            loopRepetitions,
+            elapsedSeconds: elapsed
+        }).catch(console.error);
+    }, [currentBlockIndex, currentSet, completedSets]);
 
     // Exit Guard (beforeunload)
     useEffect(() => {
@@ -261,17 +282,8 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         }
         setStartTimeRef.current = Date.now();
 
-        // Sync Progress to DB
-        if (currentLogId) {
-            const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
-            updateRoutineProgress(currentLogId, {
-                currentBlockIndex,
-                currentSet,
-                completedSets,
-                loopRepetitions,
-                elapsedSeconds: elapsed
-            }).catch(console.error);
-        }
+        // Sync Progress to DB — handled reactively by the useEffect on [currentBlockIndex, currentSet, completedSets]
+        // This ensures we always capture state AFTER nextStep() advances the position
 
         // Real-time Reward Check (> 1 hour in session)
         if (!hasShownOneHourReward && startTime) {
