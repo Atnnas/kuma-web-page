@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
         const kumaOffset = -6 * 60 * 60 * 1000;
         const getKumaDate = (date: Date) => {
             const d = new Date(date.getTime() + kumaOffset);
-            return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+            return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
         };
 
         const now = new Date();

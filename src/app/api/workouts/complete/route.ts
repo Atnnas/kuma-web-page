@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import Routine from "@/models/Routine";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req: NextRequest) {
     try {
@@ -31,8 +32,9 @@ export async function POST(req: NextRequest) {
         const getKumaToday = () => {
             const now = new Date();
             // Offset to Costa Rica (UTC-6)
-            const kumaDate = new Date(now.getTime() + (-6 * 60 * 60 * 1000));
-            return new Date(kumaDate.getUTCFullYear(), kumaDate.getUTCMonth(), kumaDate.getUTCDate());
+            const msInHour = 60 * 60 * 1000;
+            const kumaNow = new Date(now.getTime() + (-6 * msInHour));
+            return new Date(Date.UTC(kumaNow.getUTCFullYear(), kumaNow.getUTCMonth(), kumaNow.getUTCDate()));
         };
 
         const today = getKumaToday();
@@ -46,8 +48,9 @@ export async function POST(req: NextRequest) {
         let lastWorkoutKuma = null;
 
         if (lastWorkoutDate) {
-            const lDate = new Date(lastWorkoutDate.getTime() + (-6 * 60 * 60 * 1000));
-            lastWorkoutKuma = new Date(lDate.getUTCFullYear(), lDate.getUTCMonth(), lDate.getUTCDate());
+            const msInHour = 60 * 60 * 1000;
+            const lDate = new Date(lastWorkoutDate.getTime() + (-6 * msInHour));
+            lastWorkoutKuma = new Date(Date.UTC(lDate.getUTCFullYear(), lDate.getUTCMonth(), lDate.getUTCDate()));
         }
 
         // If never trained, streak = 1
@@ -118,8 +121,9 @@ export async function POST(req: NextRequest) {
         let lastResetDate = user.lastTrainingResetDate ? new Date(user.lastTrainingResetDate) : null;
         let lastResetKuma = null;
         if (lastResetDate) {
-            const rDate = new Date(lastResetDate.getTime() + (-6 * 60 * 60 * 1000));
-            lastResetKuma = new Date(rDate.getUTCFullYear(), rDate.getUTCMonth(), rDate.getUTCDate());
+            const msInHour = 60 * 60 * 1000;
+            const rDate = new Date(lastResetDate.getTime() + (-6 * msInHour));
+            lastResetKuma = new Date(Date.UTC(rDate.getUTCFullYear(), rDate.getUTCMonth(), rDate.getUTCDate()));
         }
 
         if (!lastResetKuma || lastResetKuma.getTime() !== today.getTime()) {
@@ -189,6 +193,11 @@ export async function POST(req: NextRequest) {
         user.workoutCount = (user.workoutCount || 0) + 1;
 
         await user.save();
+
+        // Ensure leaderboard and routine pages are fresh
+        revalidatePath("/routines");
+        revalidatePath("/rutinas");
+        revalidatePath("/admin/reports/logs");
 
         return NextResponse.json({
             success: true,

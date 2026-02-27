@@ -16,12 +16,10 @@ export async function GET() {
 
         // A streak is active if they trained today or yesterday in Kuma time.
         // Yesterday starts at midnight of the day before today.
-        const kumaToday = new Date(kumaNow.getUTCFullYear(), kumaNow.getUTCMonth(), kumaNow.getUTCDate());
+        const kumaToday = new Date(Date.UTC(kumaNow.getUTCFullYear(), kumaNow.getUTCMonth(), kumaNow.getUTCDate()));
         const yesterdayKuma = new Date(kumaToday.getTime() - (24 * 60 * 60 * 1000));
 
         // We need the UTC timestamp that corresponds to yesterday 00:00:00 in UTC-6.
-        // If kumaToday is 2026-02-11 00:00:00 (UTC-6), it is 2026-02-11 06:00:00 (UTC).
-        // yesterdayKuma is 2026-02-10 00:00:00 (UTC-6), which is 2026-02-10 06:00:00 (UTC).
         const activeThreshold = new Date(yesterdayKuma.getTime() - kumaOffset);
 
         const topStreaks = await User.find({

@@ -457,10 +457,11 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             const durationSeconds = Math.round(durationMs / 1000);
 
             // 1. Anti-cheat validation (Granular & Global)
-            // Stricter condition: Less than 40% of estimated duration OR too many fast sets (cheated sets)
-            const isCheated = (durationMinutes < routine.estimated_duration * 0.4) || (fastSetCount > (totalSets * 0.5));
+            // Stricter condition: Less than 30% of estimated duration OR too many fast sets (cheated sets)
+            const isCheated = (durationMinutes < routine.estimated_duration * 0.3) || (fastSetCount > (totalSets * 0.5));
 
             if (isCheated) {
+                console.log(`[CheatDetection] Routine: ${routine.title}, Duration: ${durationMinutes}m, FastSets: ${fastSetCount}/${totalSets}`);
                 // If cheated, we don't complete the log, we DELETE it (removes trace)
                 if (currentLogId) {
                     const { deleteRoutineLog } = await import("@/lib/actions/routine-logs");
