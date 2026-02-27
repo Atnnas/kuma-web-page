@@ -96,13 +96,16 @@ export async function getUnfinishedRoutineLog(routineId: string) {
         const user = await User.findOne({ email: session.user.email }).select("_id");
         if (!user) return { success: false, error: "User not found" };
 
-        // Find the most recent incomplete log for this routine that hasn't been abandoned
+        // Find the most recent incomplete log for this routine that:
+        // - Has saved progress (lastState was set by updateRoutineProgress)
+        // - Is still within the active 2-hour recovery window (expiresAt in the future)
         const log = await RoutineLog.findOne({
             user: user._id,
             routine: routineId,
             completed: false,
-            expiresAt: { $exists: false }
-        }).sort({ createdAt: -1 });
+            lastState: { $exists: true },
+            expiresAt: { $gt: new Date() }
+        }).sort({ updatedAt: -1 });
 
         if (!log) return { success: true, log: null };
 
