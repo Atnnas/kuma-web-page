@@ -113,6 +113,39 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const [showTrophy, setShowTrophy] = useState(false);
     const [isFinishing, setIsFinishing] = useState(false);
     const [currentLogId, setCurrentLogId] = useState<string | null>(null);
+    const wakeLockRef = useRef<any>(null);
+
+    // Haptic Helper
+    const vibrate = (pattern: number | number[] = 100) => {
+        if (typeof navigator !== "undefined" && navigator.vibrate) {
+            navigator.vibrate(pattern);
+        }
+    };
+
+    // Wake Lock API (Recommendation #7)
+    useEffect(() => {
+        const requestWakeLock = async () => {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLockRef.current = await (navigator as any).wakeLock.request('screen');
+                }
+            } catch (err) {
+                console.error("Wake Lock failed:", err);
+            }
+        };
+
+        if (status === "active") {
+            requestWakeLock();
+        }
+
+        return () => {
+            if (wakeLockRef.current) {
+                wakeLockRef.current.release().then(() => {
+                    wakeLockRef.current = null;
+                });
+            }
+        };
+    }, [status]);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const activeBlock = routine.blocks[currentBlockIndex];
@@ -125,6 +158,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 if (timeLeft <= 3) audioTrainer.playCountdown();
                 timerRef.current = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
             } else if (timeLeft === 0) {
+                vibrate([200, 100, 200]); // Recommendation #4
                 audioTrainer.playStart();
                 finishRest();
             }
@@ -156,6 +190,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                         audioTrainer.playCountdown();
                     }
                     if (next === 0) {
+                        vibrate(300); // Recommendation #4
                         audioTrainer.playStart();
                         setIsTimerRunning(false);
                     }
@@ -303,6 +338,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
 
     const finishSet = async () => {
         setIsTimerRunning(false); // Stop exercise timer if running
+        vibrate(80); // Recommendation #4
         audioTrainer.playBeep();
         triggerImpact(); // TRIGGER VISUAL IMPACT
 
@@ -424,7 +460,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 setCurrentBlockIndex(nextIdx);
                 setCurrentSet(1);
                 if (nextBlock.type === "exercise" || !nextBlock.type) {
-                    audioTrainer.speak(`Siguiente ejercicio: ${nextBlock.exercise_name}.`);
+                    audioTrainer.speak(`Siguiente ejercicio: ${nextBlock.exercise_name}. ${nextBlock.sets} sets de ${nextBlock.reps} ${nextBlock.measure_type === 'time' ? 'segundos' : 'repeticiones'}. Prepárate.`);
                 }
             } else {
                 completeRoutine();
@@ -504,7 +540,9 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 }
             } else {
                 setStatus("completed");
+                vibrate([100, 50, 100, 50, 300]); // Success pattern
                 audioTrainer.playWin();
+                setTimeout(() => audioTrainer.speak("¡Osu! Gran trabajo."), 1000); // Recommendation #10
                 audioTrainer.speak("¡Rutina completada! Excelente trabajo.");
                 triggerConfetti();
             }
@@ -650,8 +688,17 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                     animate={{ scale: 1, opacity: 1 }}
                     className="relative z-10 text-center w-full max-w-md"
                 >
-                    <div className="w-32 h-32 mx-auto bg-green-500 rounded-full flex items-center justify-center mb-8 shadow-[0_0_60px_rgba(34,197,94,0.3)]">
-                        <Trophy className="w-16 h-16 text-black fill-black" weight="duotone" />
+                    <div className="w-40 h-40 mx-auto relative mb-8">
+                        <motion.img
+                            src="/images/kuma-logro-primer-entreno.jpg"
+                            className="w-full h-full object-cover rounded-full border-4 border-kuma-gold shadow-[0_0_50px_rgba(234,179,8,0.5)]"
+                            initial={{ rotate: -10, scale: 0 }}
+                            animate={{ rotate: 0, scale: 1 }}
+                            transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
+                        />
+                        <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-kuma-gold rounded-full flex items-center justify-center shadow-lg border-4 border-black">
+                            <Trophy className="w-8 h-8 text-black" weight="duotone" />
+                        </div>
                     </div>
                     <h2 className="text-5xl font-black text-white italic tracking-tighter mb-4">¡VICTORIA!</h2>
                     <p className="text-zinc-400 text-lg mb-2">Rutina completada con éxito.</p>
@@ -745,12 +792,25 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
 
     return (
         <div className={cn(
-            "min-h-screen flex flex-col relative transition-colors duration-700 ease-in-out font-sans overflow-hidden",
-            isResting ? "bg-[#0b1215]" : "bg-black"
+            "min-h-screen flex flex-col relative transition-all duration-1000 ease-in-out font-sans overflow-hidden",
+            isResting ? "bg-[#02080a]" : "bg-black"
         )}>
-            {/* Background Ambience */}
+            {/* Full Screen Impact Flash (Epicness) */}
+            <AnimatePresence>
+                {impact && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.5 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-white z-[100] pointer-events-none mix-blend-overlay"
+                    />
+                )}
+            </AnimatePresence>
             <div className={cn("absolute inset-0 transition-opacity duration-1000", isResting ? "opacity-100" : "opacity-0")}>
-                <div className="absolute inset-0 bg-gradient-to-t from-teal-900/20 to-transparent" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-teal-950/40 via-black to-black" />
+            </div>
+            <div className={cn("absolute inset-0 transition-opacity duration-1000", !isResting && status === "active" ? "opacity-100" : "opacity-0")}>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-kuma-gold/5 via-black to-black" />
             </div>
 
             {/* --- OVERLAYS --- */}
@@ -806,30 +866,39 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                         />
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-12 bg-white blur-md" />
                     </motion.div>
+                    {/* Roadmap Markers (Recommendation #9) */}
                     <div className="absolute inset-0 flex justify-between px-1">
-                        {routine.blocks.map((block, idx) => {
-                            const isInsideLoop = () => {
-                                let d = 0;
-                                for (let i = idx; i >= 0; i--) {
-                                    if (routine.blocks[i].type === "loop_end" && i !== idx) d++;
-                                    if (routine.blocks[i].type === "loop_start") {
-                                        if (d === 0) return true;
-                                        d--;
-                                    }
-                                }
-                                return false;
-                            };
-                            return (
-                                <div
-                                    key={idx}
-                                    className={cn(
-                                        "h-full w-[2px] transform skew-x-[-10deg] transition-colors",
-                                        idx < currentBlockIndex ? "bg-cyan-900/30" : "bg-black/40",
-                                        isInsideLoop() && "bg-cyan-400/20 w-[4px]"
-                                    )}
-                                />
-                            );
-                        })}
+                        {routine.blocks.map((block, idx) => (
+                            <div
+                                key={`roadmap-${idx}`}
+                                className={cn(
+                                    "h-full w-[1px] bg-white/10 z-10 transition-colors",
+                                    idx === currentBlockIndex && "bg-cyan-400 w-px shadow-[0_0_10px_#22d3ee]"
+                                )}
+                            />
+                        ))}
+                    </div>
+                    {/* Roadmap Markers (Recommendation #9) */}
+                    <div className="absolute inset-0 flex px-1">
+                        {(() => {
+                            let accumulatedSets = 0;
+                            return routine.blocks.map((block, idx) => {
+                                if (block.type === 'loop_start' || block.type === 'loop_end') return null;
+                                const width = (block.sets / totalSets) * 100;
+                                const left = (accumulatedSets / totalSets) * 100;
+                                accumulatedSets += block.sets;
+                                return (
+                                    <div
+                                        key={`roadmap-${idx}`}
+                                        className={cn(
+                                            "absolute top-0 bottom-0 border-r border-white/20 z-10 transition-colors",
+                                            idx === currentBlockIndex && "border-white/40 shadow-[0_0_10px_rgba(255,255,255,0.3)]"
+                                        )}
+                                        style={{ left: `${left}%`, width: `${width}%` }}
+                                    />
+                                );
+                            });
+                        })()}
                     </div>
                 </div>
                 <div className="flex justify-between items-center mt-2 px-1">
@@ -862,7 +931,13 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 1.05 }}
-                                className="flex-1 flex flex-col relative perspective-[2000px]" // ADDED PERSPECTIVE
+                                // Tap Anywhere logic (Recommendation #3)
+                                onClick={() => {
+                                    if (activeBlock.measure_type !== "time" || exerciseTimeLeft === 0) {
+                                        finishSet();
+                                    }
+                                }}
+                                className="flex-1 flex flex-col relative perspective-[2000px] cursor-pointer"
                             >
                                 {/* 3D WRAPPER FOR FLOATING EFFECT */}
                                 <motion.div
@@ -876,8 +951,12 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                         rotateY: [0, -1, 0]
                                     }}
                                     transition={impact ? { duration: 0.4, ease: "easeInOut" } : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                                    className="flex-1 bg-zinc-900 rounded-[3rem] border border-white/10 p-8 flex flex-col items-center justify-between relative overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] lg:h-[70vh] lg:min-h-[600px] transform-style-3d group"
+                                    className="flex-1 bg-zinc-900/60 backdrop-blur-xl rounded-[3rem] border border-white/10 p-8 flex flex-col items-center justify-between relative overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] lg:h-[70vh] lg:min-h-[600px] transform-style-3d group"
                                 >
+                                    {/* Decorative Character (Epicness) */}
+                                    <div className="absolute -right-20 -bottom-20 w-80 h-80 opacity-10 grayscale hover:grayscale-0 transition-all duration-1000 pointer-events-none z-0">
+                                        <img src="/images/kuma-zanshing-v2.jpg" className="w-full h-full object-contain mix-blend-screen" />
+                                    </div>
                                     {/* IMPACT FLASH */}
                                     <div className={cn(
                                         "absolute inset-0 bg-red-500 mix-blend-overlay z-50 pointer-events-none transition-opacity duration-100",
@@ -940,14 +1019,29 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                             <div className="text-center relative z-10 lg:scale-150 transition-all duration-700">
                                                 <div className="relative">
                                                     <span className={cn(
-                                                        "text-[6rem] lg:text-[10rem] font-bold leading-none tracking-tighter tabular-nums drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-colors duration-300",
-                                                        exerciseTimeLeft <= 5 && isTimerRunning ? "text-red-500 animate-pulse" : "text-white"
+                                                        "text-[6rem] lg:text-[12rem] font-black leading-none tracking-tighter tabular-nums drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-all duration-300",
+                                                        exerciseTimeLeft <= 5 && isTimerRunning ? "text-red-500 scale-110" : "text-white"
                                                     )}>
                                                         {activeBlock.measure_type === "time" ? formatTime(exerciseTimeLeft) : activeBlock.reps}
                                                     </span>
+
+                                                    {/* Giant Countdown Overlay (Recommendation #2) */}
+                                                    <AnimatePresence>
+                                                        {exerciseTimeLeft <= 5 && isTimerRunning && (
+                                                            <motion.div
+                                                                key={`giant-count-${exerciseTimeLeft}`}
+                                                                initial={{ scale: 2, opacity: 0 }}
+                                                                animate={{ scale: 1, opacity: 0.3 }}
+                                                                exit={{ scale: 0.5, opacity: 0 }}
+                                                                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                                                            >
+                                                                <span className="text-[15rem] lg:text-[25rem] font-black text-red-500 blur-sm">{exerciseTimeLeft}</span>
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
                                                 </div>
-                                                <span className="block text-2xl font-medium text-zinc-500 uppercase tracking-widest mt-2 lg:mt-6">
-                                                    {activeBlock.measure_type === "time" ? "Tiempo" : "Reps"}
+                                                <span className="block text-2xl font-black text-zinc-500 uppercase tracking-[0.4em] mt-2 lg:mt-6">
+                                                    {activeBlock.measure_type === "time" ? "Faltan" : "Repeticiones"}
                                                 </span>
                                             </div>
                                         </div>
@@ -1000,7 +1094,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                     </svg>
                                     <div className="flex flex-col items-center">
                                         <motion.span
-                                            className="text-8xl lg:text-[10rem] font-black text-white tabular-nums tracking-tighter drop-shadow-2xl"
+                                            className="text-9xl lg:text-[12rem] font-black text-white tabular-nums tracking-tighter drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]"
                                             key={timeLeft}
                                             initial={{ scale: 1.5, opacity: 0 }}
                                             animate={{ scale: 1, opacity: 1 }}
@@ -1008,11 +1102,43 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                         >
                                             {timeLeft}
                                         </motion.span>
+
+                                        {/* Giant Visual Countdown - Rest (Recommendation #2) */}
+                                        <AnimatePresence>
+                                            {timeLeft <= 5 && (
+                                                <motion.div
+                                                    key={`giant-rest-${timeLeft}`}
+                                                    initial={{ scale: 3, opacity: 0 }}
+                                                    animate={{ scale: 1, opacity: 0.2 }}
+                                                    exit={{ scale: 0, opacity: 0 }}
+                                                    className="absolute inset-0 flex items-center justify-center pointer-events-none z-[-1]"
+                                                >
+                                                    <span className="text-[20rem] lg:text-[30rem] font-black text-teal-500">{timeLeft}</span>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+
                                         <span className="text-sm font-bold text-teal-400 uppercase tracking-[0.3em] mt-2 lg:text-lg animate-pulse">
-                                            {loopContext && currentSet === activeBlock.sets ? `Preparando Ciclo ${loopContext.currentCycle + 1}` : "Respira"}
+                                            {loopContext && currentSet === activeBlock.sets ? `Preparando Ciclo ${loopContext.currentCycle + 1}` : "Prepárate"}
                                         </span>
                                     </div>
                                 </div>
+
+                                {/* Next Exercise Preview (Recommendation #1) */}
+                                {currentBlockIndex < totalBlocks - 1 && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 max-w-sm w-full"
+                                    >
+                                        <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest block mb-2">Siguiente Ejercicio</span>
+                                        <h4 className="text-xl font-black text-white">{routine.blocks[currentBlockIndex + 1].exercise_name}</h4>
+                                        <div className="flex gap-4 mt-2">
+                                            <span className="text-xs text-kuma-gold font-bold">{routine.blocks[currentBlockIndex + 1].sets} Sets</span>
+                                            <span className="text-xs text-zinc-400 font-bold">{routine.blocks[currentBlockIndex + 1].reps} {routine.blocks[currentBlockIndex + 1].measure_type === 'time' ? 'seg' : 'reps'}</span>
+                                        </div>
+                                    </motion.div>
+                                )}
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -1107,9 +1233,17 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                 </div>
 
                                 <button
-                                    onClick={finishSet}
-                                    className="w-full h-20 lg:h-32 bg-white hover:bg-zinc-200 text-black rounded-[2.5rem] font-black text-xl lg:text-2xl uppercase tracking-widest flex items-center justify-center gap-3 active:scale-90 transition-all shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_60px_rgba(255,255,255,0.3)] transform hover:-translate-y-1"
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Prevent "Tap Anywhere" double trigger
+                                        finishSet();
+                                    }}
+                                    className="w-full h-20 lg:h-32 bg-white hover:bg-zinc-200 text-black rounded-[2.5rem] font-black text-xl lg:text-2xl uppercase tracking-widest flex items-center justify-center gap-3 active:scale-90 transition-all shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_60px_rgba(255,255,255,0.3)] transform hover:-translate-y-1 relative overflow-hidden"
                                 >
+                                    <motion.div
+                                        animate={{ x: ["-100%", "200%"] }}
+                                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                        className="absolute inset-0 bg-gradient-to-r from-transparent via-black/5 to-transparent skew-x-[-20deg]"
+                                    />
                                     <Check className="w-8 h-8 lg:w-10 lg:h-10" weight="bold" />
                                     Hecho
                                 </button>
