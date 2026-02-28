@@ -691,24 +691,41 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                                     }}
                                     className="relative flex-1 h-full bg-zinc-950/50 border border-white/5 rounded-2xl p-3 flex flex-col-reverse gap-1.5 cursor-ns-resize group/bar overflow-visible shadow-inner select-none touch-none"
                                 >
-                                    {/* 3D Drag Knob (Handle) */}
+                                    {/* 3D Drag Knob (Handle) - Centered & Theme Aware */}
                                     <motion.div
                                         animate={{
                                             bottom: `${volume * 100}%`,
-                                            scale: isDragging ? 1.3 : 1,
+                                            scale: isDragging ? 1.4 : 1,
                                             boxShadow: isDragging
-                                                ? `0 0 30px ${volume > 0.7 ? "rgba(239,68,68,0.8)" : volume > 0.3 ? "rgba(234,179,8,0.8)" : "rgba(16,185,129,0.8)"}`
-                                                : "0 4px 12px rgba(0,0,0,0.6)"
+                                                ? (theme === "dragon-ball"
+                                                    ? "0 0 30px rgba(251,146,60,0.8)"
+                                                    : `0 0 30px ${volume > 0.7 ? "rgba(239,68,68,0.8)" : volume > 0.3 ? "rgba(234,179,8,0.8)" : "rgba(16,185,129,0.8)"}`)
+                                                : "0 4px 15px rgba(0,0,0,0.7)"
                                         }}
                                         className={cn(
-                                            "absolute left-1/2 -translate-x-1/2 w-8 h-8 rounded-full border-2 border-white/30 z-30 flex items-center justify-center transition-colors duration-300 pointer-events-none shadow-2xl",
-                                            volume > 0.7 ? "bg-red-500" : volume > 0.3 ? "bg-kuma-gold" : "bg-emerald-500"
+                                            "absolute left-1/2 -translate-x-1/2 w-10 h-10 rounded-full z-30 flex items-center justify-center transition-all duration-300 pointer-events-none shadow-2xl overflow-hidden",
+                                            theme === "dragon-ball"
+                                                ? "bg-gradient-to-br from-amber-300 via-orange-500 to-red-600 border-2 border-orange-200/50"
+                                                : cn("border-2 border-white/30", volume > 0.7 ? "bg-red-500" : volume > 0.3 ? "bg-kuma-gold" : "bg-emerald-500")
                                         )}
-                                        style={{ translateX: '-50%', marginBottom: '-16px' }}
+                                        style={{ marginBottom: '-20px' }}
                                     >
-                                        <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_10px_white]" />
-                                        {/* Premium metal texture effect */}
-                                        <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent,rgba(255,255,255,0.1),transparent)] group-hover/bar:animate-spin-slow" />
+                                        {theme === "dragon-ball" ? (
+                                            <div className="relative w-full h-full flex items-center justify-center">
+                                                {/* Dragon Ball Stars (Fixed pattern) */}
+                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                    <Star weight="fill" className="text-red-700 w-4 h-4 drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
+                                                </div>
+                                                {/* Highlight */}
+                                                <div className="absolute top-1 left-2 w-3 h-2 rounded-[100%] bg-white/40 blur-[1px] rotate-[-45deg]" />
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_12px_white]" />
+                                                {/* Premium metal texture effect */}
+                                                <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent,rgba(255,255,255,0.15),transparent)] group-hover/bar:animate-spin-slow opacity-50" />
+                                            </>
+                                        )}
                                     </motion.div>
 
                                     {/* LED Segments */}
