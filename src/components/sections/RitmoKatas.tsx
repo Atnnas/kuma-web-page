@@ -3,12 +3,12 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { PrimalTitle } from "@/components/ui/PrimalTitle";
 import { saveRhythm, getRhythms, deleteRhythm } from "@/lib/actions/rhythms";
+import { cn } from "@/lib/utils";
 import {
     Record,
     Play,
     Pause,
     Stop,
-    SpeakerHigh,
     ArrowLeft,
     Sparkle,
     FloppyDiskBack,
@@ -23,6 +23,9 @@ import {
     HandTap,
     SelectionAll,
     Star,
+    SpeakerNone,
+    SpeakerLow,
+    SpeakerHigh,
     CaretDown,
     Check
 } from "@phosphor-icons/react";
@@ -596,48 +599,110 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                         </div>
                     </div>
 
-                    {/* Bloque Ajustes */}
-                    <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5 h-full">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 text-left">Ajustes & Salida</span>
-                        <div className="flex items-center justify-between gap-4 h-full px-2">
-                            <div className="flex items-end gap-3 h-28 group relative">
-                                <div className="flex flex-col gap-1 h-full justify-center">
-                                    {[...Array(10)].map((_, i) => (
-                                        <div
+                    {/* Bloque Ajustes & Volumen Premium (Recommendation: Overhaul) */}
+                    <div className="flex flex-col gap-4 p-4 bg-black/40 rounded-[2rem] border border-white/5 h-full relative overflow-hidden group/settings transition-all duration-500 hover:border-kuma-gold/20">
+                        {/* Background Decor */}
+                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-kuma-gold/5 blur-3xl rounded-full pointer-events-none group-hover/settings:bg-kuma-gold/10 transition-colors" />
+
+                        <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Master Tuning</span>
+                            <div className="flex gap-1">
+                                {[...Array(3)].map((_, i) => (
+                                    <div key={i} className={cn("w-1 h-1 rounded-full", volume > (i * 0.3) ? "bg-kuma-gold/50" : "bg-zinc-800")} />
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col items-center justify-center gap-6 h-full px-2">
+                            {/* Radial Volume Dial */}
+                            <div className="relative w-32 h-32 flex items-center justify-center group/dial">
+                                {/* Outer Glow Ring */}
+                                <motion.div
+                                    animate={{
+                                        scale: volume > 0.8 ? [1, 1.05, 1] : 1,
+                                        opacity: volume > 0.8 ? [0.3, 0.6, 0.3] : 0.2
+                                    }}
+                                    transition={{ duration: 0.5, repeat: Infinity }}
+                                    className={cn(
+                                        "absolute inset-0 rounded-full blur-xl transition-colors duration-500",
+                                        volume > 0.7 ? "bg-red-500" : volume > 0.3 ? "bg-kuma-gold" : "bg-emerald-500"
+                                    )}
+                                />
+
+                                {/* SVG Radial Progress */}
+                                <svg className="w-full h-full -rotate-90 drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]" viewBox="0 0 100 100">
+                                    {/* Track */}
+                                    <circle
+                                        cx="50" cy="50" r="42"
+                                        fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8"
+                                    />
+                                    {/* Progress */}
+                                    <motion.circle
+                                        cx="50" cy="50" r="42"
+                                        fill="none"
+                                        stroke={volume > 0.7 ? "#ef4444" : volume > 0.3 ? "#eab308" : "#10b981"}
+                                        strokeWidth="8"
+                                        strokeLinecap="round"
+                                        initial={{ pathLength: 0 }}
+                                        animate={{ pathLength: volume }}
+                                        transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                                        style={{ filter: `drop-shadow(0 0 5px ${volume > 0.7 ? "#ef4444" : volume > 0.3 ? "#eab308" : "#10b981"})` }}
+                                    />
+                                    {/* Indicator Dots */}
+                                    {[...Array(12)].map((_, i) => (
+                                        <circle
                                             key={i}
-                                            className={`w-2 h-1.5 rounded-sm shadow-sm transition-colors duration-200 ${(10 - i) <= volume * 10
-                                                ? (i < 3 ? "bg-red-500 shadow-red-500/40" : i < 6 ? "bg-kuma-gold shadow-kuma-gold/40" : "bg-emerald-500 shadow-emerald-500/40")
-                                                : "bg-zinc-800"
-                                                }`}
+                                            cx={50 + 34 * Math.cos((i * 30 * Math.PI) / 180)}
+                                            cy={50 + 34 * Math.sin((i * 30 * Math.PI) / 180)}
+                                            r="1.5"
+                                            fill={volume >= (i / 11) ? "white" : "rgba(255,255,255,0.1)"}
+                                            className="transition-colors duration-300"
                                         />
                                     ))}
-                                </div>
-                                <div className="relative w-8 h-full bg-zinc-950 border border-white/5 rounded-lg shadow-inner flex justify-center">
+                                </svg>
+
+                                {/* Central Interaction Area */}
+                                <div className="absolute inset-4 rounded-full bg-zinc-950 border border-white/10 shadow-inner flex flex-col items-center justify-center cursor-ns-resize overflow-hidden">
                                     <input
                                         type="range" min="0" max="1" step="0.01"
                                         value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))}
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-ns-resize z-20"
-                                        style={{ appearance: 'slider-vertical' } as any}
+                                        className="absolute inset-0 opacity-0 cursor-ns-resize z-10"
                                     />
-                                    <div className="absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-0.5 bg-zinc-800" />
-                                    <div
-                                        className="absolute left-0 right-0 h-8 bg-zinc-800 border-y-2 border-zinc-700 shadow-[0_4px_10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] rounded-sm pointer-events-none transition-all duration-75"
-                                        style={{ bottom: `calc(${volume * 100}% - 16px)` }}
-                                    >
-                                        <div className="absolute left-1 right-1 top-1/2 -translate-y-px h-0.5 bg-kuma-gold/50" />
-                                    </div>
-                                </div>
-                                <div className="absolute -top-1 -right-4 flex flex-col items-center">
-                                    <span className="font-mono text-[10px] font-black text-kuma-gold bg-black border border-kuma-gold/30 px-1 rounded shadow-[0_0_10px_rgba(234,179,8,0.2)]">
-                                        {Math.round(volume * 100)}
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={volume === 0 ? 'none' : volume < 0.5 ? 'low' : 'high'}
+                                            initial={{ scale: 0.5, opacity: 0 }}
+                                            animate={{ scale: 1, opacity: 1 }}
+                                            exit={{ scale: 0.5, opacity: 0 }}
+                                            className={cn(
+                                                "mb-0.5",
+                                                volume > 0.7 ? "text-red-500" : volume > 0.3 ? "text-kuma-gold" : "text-emerald-500"
+                                            )}
+                                        >
+                                            {volume === 0 ? <SpeakerNone weight="bold" size={20} /> :
+                                                volume < 0.5 ? <SpeakerLow weight="bold" size={20} /> :
+                                                    <SpeakerHigh weight="bold" size={20} />}
+                                        </motion.div>
+                                    </AnimatePresence>
+                                    <span className="text-[10px] font-black font-mono text-white/50 leading-none">
+                                        {Math.round(volume * 100)}%
                                     </span>
+
+                                    {/* Dynamic Pulse Ring */}
+                                    {volume > 0 && (
+                                        <motion.div
+                                            animate={{ scale: [1, 1.4], opacity: [0.5, 0] }}
+                                            transition={{ duration: 2 - (volume * 1.5), repeat: Infinity, ease: "easeOut" }}
+                                            className="absolute inset-0 border border-white/20 rounded-full pointer-events-none"
+                                        />
+                                    )}
                                 </div>
                             </div>
 
-                            <button className="kuma-btn-3d group !w-[80px] self-center" onClick={onBack}>
-                                <div className="btn-inner bg-zinc-900/80 flex flex-col items-center justify-center gap-1">
+                            <button className="kuma-btn-3d group !w-full !h-14" onClick={onBack}>
+                                <div className="btn-inner bg-zinc-900/80 flex items-center justify-center gap-2">
                                     <ArrowLeft weight="bold" className="w-4 h-4 text-zinc-500 group-hover:text-red-500 transition-colors" />
-                                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-400">Salir</span>
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Volver</span>
                                 </div>
                             </button>
                         </div>
