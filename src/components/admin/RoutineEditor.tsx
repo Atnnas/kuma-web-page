@@ -310,7 +310,7 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                 {formData.allowedUsers.map(userId => {
                                     const user = allUsers.find(u => u._id === userId);
                                     return (
-                                        <span key={userId} className="flex items-center gap-1 bg-kuma-gold/20 text-kuma-gold border border-kuma-gold/30 px-2 py-1 rounded-md text-[10px] font-bold">
+                                        <span key={userId} className="flex items-center gap-2 bg-zinc-950 text-kuma-gold border border-kuma-gold/20 pl-3 pr-1 py-1 rounded-full text-xs font-bold shadow-lg group/badge">
                                             {user?.name || userId}
                                             <button
                                                 type="button"
@@ -321,10 +321,10 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                                         allowedUsers: d.allowedUsers.filter(id => id.toString() !== stringIdToRemove)
                                                     }));
                                                 }}
-                                                className="hover:bg-red-500/20 p-1 rounded-sm transition-colors text-kuma-gold/50 hover:text-red-500"
-                                                title="Quitar"
+                                                className="bg-zinc-900 hover:bg-red-500/20 p-1.5 rounded-full transition-all text-kuma-gold/50 hover:text-red-500 flex items-center justify-center border border-white/5 hover:border-red-500/30"
+                                                title="Quitar Alumno"
                                             >
-                                                <X className="w-3 h-3" weight="bold" />
+                                                <X className="w-4 h-4" weight="bold" />
                                             </button>
                                         </span>
                                     );
