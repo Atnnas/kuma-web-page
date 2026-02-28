@@ -38,6 +38,15 @@ type Punto = { id: number; tiempo: number; tipo: "fluido" | "pulso"; estado?: "i
 
 export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
     const { data: session } = useSession();
+
+    // --- Refs y Lógica de Arrastre de Volumen ---
+    const isDraggingRef = useRef(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const dragStartYRef = useRef(0);
+    const dragStartXRef = useRef(0);
+    const startVolumeRef = useRef(0.8);
+
+    // --- State ---
     const isAdmin = session?.user?.role === "admin" || session?.user?.role === "super_admin";
 
     const [status, setStatus] = useState<Status>("listo");
@@ -446,6 +455,14 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
             )}
 
             <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto relative px-4 text-center select-none py-6 z-10">
+                {/* Standard Back Button (Top Corner) */}
+                <button
+                    onClick={onBack}
+                    className="absolute top-4 left-4 z-50 flex items-center gap-2 text-zinc-500 hover:text-kuma-gold transition-all duration-300 group px-3 py-2 rounded-xl hover:bg-white/5 active:scale-95"
+                >
+                    <ArrowLeft weight="bold" className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                    <span className="font-black uppercase tracking-widest text-[10px]">Salir del Dojo</span>
+                </button>
 
                 {/* 1. Header & Cronómetro */}
                 <div className="flex flex-col items-center gap-2 relative z-10">
@@ -645,13 +662,54 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                                     </div>
                                 </div>
 
-                                {/* LED Bar Container */}
-                                <div className="relative flex-1 h-full bg-zinc-950/50 border border-white/5 rounded-2xl p-3 flex flex-col-reverse gap-1.5 cursor-ns-resize group/bar overflow-hidden shadow-inner">
-                                    <input
-                                        type="range" min="0" max="1" step="0.01"
-                                        value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))}
-                                        className="absolute inset-0 opacity-0 cursor-ns-resize z-20"
-                                    />
+                                {/* LED Bar Container with Precision Drag */}
+                                <div
+                                    onPointerDown={(e) => {
+                                        isDraggingRef.current = true;
+                                        setIsDragging(true);
+                                        dragStartYRef.current = e.clientY;
+                                        dragStartXRef.current = e.clientX;
+                                        startVolumeRef.current = volume;
+                                        e.currentTarget.setPointerCapture(e.pointerId);
+                                    }}
+                                    onPointerMove={(e) => {
+                                        if (!isDraggingRef.current) return;
+                                        const deltaY = dragStartYRef.current - e.clientY;
+                                        const deltaX = Math.abs(dragStartXRef.current - e.clientX);
+                                        // Precision logic: horizontal distance reduces sensitivity (DAW style)
+                                        const totalHeight = 192; // 48 * 4 = 192px (h-48)
+                                        // Even more sensitive: let's make it very precise when moving far away
+                                        const sensitivity = 1 / (1 + deltaX / 50);
+                                        let nextVol = startVolumeRef.current + (deltaY / (totalHeight * 0.8)) * sensitivity;
+                                        nextVol = Math.max(0, Math.min(1, nextVol));
+                                        setVolume(nextVol);
+                                    }}
+                                    onPointerUp={(e) => {
+                                        isDraggingRef.current = false;
+                                        setIsDragging(false);
+                                        e.currentTarget.releasePointerCapture(e.pointerId);
+                                    }}
+                                    className="relative flex-1 h-full bg-zinc-950/50 border border-white/5 rounded-2xl p-3 flex flex-col-reverse gap-1.5 cursor-ns-resize group/bar overflow-visible shadow-inner select-none touch-none"
+                                >
+                                    {/* 3D Drag Knob (Handle) */}
+                                    <motion.div
+                                        animate={{
+                                            bottom: `${volume * 100}%`,
+                                            scale: isDragging ? 1.3 : 1,
+                                            boxShadow: isDragging
+                                                ? `0 0 30px ${volume > 0.7 ? "rgba(239,68,68,0.8)" : volume > 0.3 ? "rgba(234,179,8,0.8)" : "rgba(16,185,129,0.8)"}`
+                                                : "0 4px 12px rgba(0,0,0,0.6)"
+                                        }}
+                                        className={cn(
+                                            "absolute left-1/2 -translate-x-1/2 w-8 h-8 rounded-full border-2 border-white/30 z-30 flex items-center justify-center transition-colors duration-300 pointer-events-none shadow-2xl",
+                                            volume > 0.7 ? "bg-red-500" : volume > 0.3 ? "bg-kuma-gold" : "bg-emerald-500"
+                                        )}
+                                        style={{ translateX: '-50%', marginBottom: '-16px' }}
+                                    >
+                                        <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_10px_white]" />
+                                        {/* Premium metal texture effect */}
+                                        <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent,rgba(255,255,255,0.1),transparent)] group-hover/bar:animate-spin-slow" />
+                                    </motion.div>
 
                                     {/* LED Segments */}
                                     {[...Array(14)].map((_, i) => {
@@ -696,12 +754,6 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                                 </div>
                             </div>
 
-                            <button className="kuma-btn-3d group !w-full !h-14" onClick={onBack}>
-                                <div className="btn-inner bg-zinc-900/80 flex items-center justify-center gap-2">
-                                    <ArrowLeft weight="bold" className="w-4 h-4 text-zinc-500 group-hover:text-red-500 transition-colors" />
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Volver</span>
-                                </div>
-                            </button>
                         </div>
                     </div>
                 </div>
