@@ -48,7 +48,7 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
         equipment_types: initialData?.equipment_types || ["peso_corporal"],
         blocks: initialData?.blocks || [],
         active: initialData?.active ?? true,
-        allowedUsers: initialData?.allowedUsers || [],
+        allowedUsers: (initialData?.allowedUsers || []).map(id => id.toString()),
     });
 
     const [allUsers, setAllUsers] = useState<{ _id: string, name: string, email: string }[]>([]);
@@ -314,10 +314,17 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                             {user?.name || userId}
                                             <button
                                                 type="button"
-                                                onClick={() => setFormData(d => ({ ...d, allowedUsers: d.allowedUsers.filter(id => id !== userId) }))}
-                                                className="hover:text-white"
+                                                onClick={() => {
+                                                    const stringIdToRemove = userId.toString();
+                                                    setFormData(d => ({
+                                                        ...d,
+                                                        allowedUsers: d.allowedUsers.filter(id => id.toString() !== stringIdToRemove)
+                                                    }));
+                                                }}
+                                                className="hover:bg-red-500/20 p-1 rounded-sm transition-colors text-kuma-gold/50 hover:text-red-500"
+                                                title="Quitar"
                                             >
-                                                <X className="w-3 h-3" />
+                                                <X className="w-3 h-3" weight="bold" />
                                             </button>
                                         </span>
                                     );
@@ -338,14 +345,14 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                             .filter(u =>
                                                 (u.name.toLowerCase().includes(userSearch.toLowerCase()) ||
                                                     u.email.toLowerCase().includes(userSearch.toLowerCase())) &&
-                                                !formData.allowedUsers.includes(u._id)
+                                                !formData.allowedUsers.some(id => id.toString() === u._id.toString())
                                             )
                                             .map(user => (
                                                 <button
                                                     key={user._id}
                                                     type="button"
                                                     onClick={() => {
-                                                        setFormData(d => ({ ...d, allowedUsers: [...d.allowedUsers, user._id] }));
+                                                        setFormData(d => ({ ...d, allowedUsers: [...d.allowedUsers, user._id.toString()] }));
                                                         setUserSearch("");
                                                     }}
                                                     className="w-full p-3 text-left hover:bg-zinc-800 flex flex-col border-b border-white/5 last:border-0"
@@ -358,7 +365,7 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                         {allUsers.filter(u =>
                                             (u.name.toLowerCase().includes(userSearch.toLowerCase()) ||
                                                 u.email.toLowerCase().includes(userSearch.toLowerCase())) &&
-                                            !formData.allowedUsers.includes(u._id)
+                                            !formData.allowedUsers.some(id => id.toString() === u._id.toString())
                                         ).length === 0 && (
                                                 <div className="p-4 text-center text-zinc-500 text-xs italic">
                                                     No se encontraron alumnos disponibles.
