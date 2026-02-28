@@ -674,13 +674,17 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                                     }}
                                     onPointerMove={(e) => {
                                         if (!isDraggingRef.current) return;
+                                        const container = e.currentTarget;
+                                        const rect = container.getBoundingClientRect();
                                         const deltaY = dragStartYRef.current - e.clientY;
                                         const deltaX = Math.abs(dragStartXRef.current - e.clientX);
+
                                         // Precision logic: horizontal distance reduces sensitivity (DAW style)
-                                        const totalHeight = 192; // 48 * 4 = 192px (h-48)
-                                        // Even more sensitive: let's make it very precise when moving far away
-                                        const sensitivity = 1 / (1 + deltaX / 50);
-                                        let nextVol = startVolumeRef.current + (deltaY / (totalHeight * 0.8)) * sensitivity;
+                                        // If deltaX is small (< 50px), we aim for 1:1 mapping with the bar height
+                                        const totalHeight = rect.height;
+                                        const sensitivity = 1 / (1 + deltaX / 100);
+
+                                        let nextVol = startVolumeRef.current + (deltaY / totalHeight) * sensitivity;
                                         nextVol = Math.max(0, Math.min(1, nextVol));
                                         setVolume(nextVol);
                                     }}
@@ -701,6 +705,11 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                                                     ? "0 0 30px rgba(251,146,60,0.8)"
                                                     : `0 0 30px ${volume > 0.7 ? "rgba(239,68,68,0.8)" : volume > 0.3 ? "rgba(234,179,8,0.8)" : "rgba(16,185,129,0.8)"}`)
                                                 : "0 4px 15px rgba(0,0,0,0.7)"
+                                        }}
+                                        transition={{
+                                            bottom: { type: "tween", duration: 0.05, ease: "linear" },
+                                            scale: { type: "spring", stiffness: 300, damping: 20 },
+                                            boxShadow: { duration: 0.2 }
                                         }}
                                         className={cn(
                                             "absolute left-1/2 -translate-x-1/2 w-10 h-10 rounded-full z-30 flex items-center justify-center transition-all duration-300 pointer-events-none shadow-2xl overflow-hidden",
