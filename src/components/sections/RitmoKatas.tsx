@@ -613,89 +613,86 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                             </div>
                         </div>
 
-                        <div className="flex flex-col items-center justify-center gap-6 h-full px-2">
-                            {/* Radial Volume Dial */}
-                            <div className="relative w-32 h-32 flex items-center justify-center group/dial">
-                                {/* Outer Glow Ring */}
-                                <motion.div
-                                    animate={{
-                                        scale: volume > 0.8 ? [1, 1.05, 1] : 1,
-                                        opacity: volume > 0.8 ? [0.3, 0.6, 0.3] : 0.2
-                                    }}
-                                    transition={{ duration: 0.5, repeat: Infinity }}
-                                    className={cn(
-                                        "absolute inset-0 rounded-full blur-xl transition-colors duration-500",
-                                        volume > 0.7 ? "bg-red-500" : volume > 0.3 ? "bg-kuma-gold" : "bg-emerald-500"
-                                    )}
-                                />
+                        <div className="flex flex-col items-center justify-between h-full gap-4 px-2 py-2">
+                            {/* Premium Neon Equalizer Bar */}
+                            <div className="relative flex items-center gap-6 h-48 w-full group/eq">
+                                {/* Digital Readout & Icon */}
+                                <div className="flex flex-col items-center gap-2 min-w-[50px]">
+                                    <div className={cn(
+                                        "w-12 h-12 rounded-2xl bg-zinc-950 border border-white/5 flex items-center justify-center shadow-inner transition-colors duration-500",
+                                        volume > 0.7 ? "border-red-500/30" : volume > 0.3 ? "border-kuma-gold/30" : "border-emerald-500/30"
+                                    )}>
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={volume === 0 ? 'none' : volume < 0.5 ? 'low' : 'high'}
+                                                initial={{ scale: 0.5, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                exit={{ scale: 0.5, opacity: 0 }}
+                                                className={cn(
+                                                    volume > 0.7 ? "text-red-500" : volume > 0.3 ? "text-kuma-gold" : "text-emerald-500"
+                                                )}
+                                            >
+                                                {volume === 0 ? <SpeakerNone weight="bold" size={24} /> :
+                                                    volume < 0.5 ? <SpeakerLow weight="bold" size={24} /> :
+                                                        <SpeakerHigh weight="bold" size={24} />}
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </div>
+                                    <div className="bg-black/50 border border-white/5 px-2 py-1 rounded-lg">
+                                        <span className="font-mono text-[10px] font-black text-white/80 tracking-tighter">
+                                            {Math.round(volume * 100)}%
+                                        </span>
+                                    </div>
+                                </div>
 
-                                {/* SVG Radial Progress */}
-                                <svg className="w-full h-full -rotate-90 drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]" viewBox="0 0 100 100">
-                                    {/* Track */}
-                                    <circle
-                                        cx="50" cy="50" r="42"
-                                        fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8"
-                                    />
-                                    {/* Progress */}
-                                    <motion.circle
-                                        cx="50" cy="50" r="42"
-                                        fill="none"
-                                        stroke={volume > 0.7 ? "#ef4444" : volume > 0.3 ? "#eab308" : "#10b981"}
-                                        strokeWidth="8"
-                                        strokeLinecap="round"
-                                        initial={{ pathLength: 0 }}
-                                        animate={{ pathLength: volume }}
-                                        transition={{ type: "spring", stiffness: 100, damping: 15 }}
-                                        style={{ filter: `drop-shadow(0 0 5px ${volume > 0.7 ? "#ef4444" : volume > 0.3 ? "#eab308" : "#10b981"})` }}
-                                    />
-                                    {/* Indicator Dots */}
-                                    {[...Array(12)].map((_, i) => (
-                                        <circle
-                                            key={i}
-                                            cx={50 + 34 * Math.cos((i * 30 * Math.PI) / 180)}
-                                            cy={50 + 34 * Math.sin((i * 30 * Math.PI) / 180)}
-                                            r="1.5"
-                                            fill={volume >= (i / 11) ? "white" : "rgba(255,255,255,0.1)"}
-                                            className="transition-colors duration-300"
-                                        />
-                                    ))}
-                                </svg>
-
-                                {/* Central Interaction Area */}
-                                <div className="absolute inset-4 rounded-full bg-zinc-950 border border-white/10 shadow-inner flex flex-col items-center justify-center cursor-ns-resize overflow-hidden">
+                                {/* LED Bar Container */}
+                                <div className="relative flex-1 h-full bg-zinc-950/50 border border-white/5 rounded-2xl p-3 flex flex-col-reverse gap-1.5 cursor-ns-resize group/bar overflow-hidden shadow-inner">
                                     <input
                                         type="range" min="0" max="1" step="0.01"
                                         value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))}
-                                        className="absolute inset-0 opacity-0 cursor-ns-resize z-10"
+                                        className="absolute inset-0 opacity-0 cursor-ns-resize z-20"
                                     />
-                                    <AnimatePresence mode="wait">
-                                        <motion.div
-                                            key={volume === 0 ? 'none' : volume < 0.5 ? 'low' : 'high'}
-                                            initial={{ scale: 0.5, opacity: 0 }}
-                                            animate={{ scale: 1, opacity: 1 }}
-                                            exit={{ scale: 0.5, opacity: 0 }}
-                                            className={cn(
-                                                "mb-0.5",
-                                                volume > 0.7 ? "text-red-500" : volume > 0.3 ? "text-kuma-gold" : "text-emerald-500"
-                                            )}
-                                        >
-                                            {volume === 0 ? <SpeakerNone weight="bold" size={20} /> :
-                                                volume < 0.5 ? <SpeakerLow weight="bold" size={20} /> :
-                                                    <SpeakerHigh weight="bold" size={20} />}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    <span className="text-[10px] font-black font-mono text-white/50 leading-none">
-                                        {Math.round(volume * 100)}%
-                                    </span>
 
-                                    {/* Dynamic Pulse Ring */}
-                                    {volume > 0 && (
-                                        <motion.div
-                                            animate={{ scale: [1, 1.4], opacity: [0.5, 0] }}
-                                            transition={{ duration: 2 - (volume * 1.5), repeat: Infinity, ease: "easeOut" }}
-                                            className="absolute inset-0 border border-white/20 rounded-full pointer-events-none"
-                                        />
-                                    )}
+                                    {/* LED Segments */}
+                                    {[...Array(14)].map((_, i) => {
+                                        const threshold = i / 13;
+                                        const isActive = volume > threshold;
+                                        const isLow = i < 5;
+                                        const isMid = i >= 5 && i < 10;
+                                        const isHigh = i >= 10;
+
+                                        return (
+                                            <motion.div
+                                                key={i}
+                                                animate={{
+                                                    opacity: isActive ? 1 : 0.1,
+                                                    scaleX: isActive ? 1 : 0.9,
+                                                    backgroundColor: isActive
+                                                        ? (isHigh ? "#ef4444" : isMid ? "#eab308" : "#10b981")
+                                                        : "rgba(255,255,255,0.1)"
+                                                }}
+                                                className={cn(
+                                                    "h-2 w-full rounded-sm transition-all duration-200",
+                                                    isActive && "shadow-[0_0_10px_currentColor]"
+                                                )}
+                                                style={{
+                                                    color: isHigh ? "#ef4444" : isMid ? "#eab308" : "#10b981"
+                                                }}
+                                            />
+                                        );
+                                    })}
+
+                                    {/* Global Master Glow */}
+                                    <motion.div
+                                        animate={{
+                                            opacity: volume > 0 ? 0.2 : 0,
+                                            height: `${volume * 100}%`
+                                        }}
+                                        className={cn(
+                                            "absolute bottom-0 left-0 right-0 pointer-events-none blur-2xl transition-colors duration-500",
+                                            volume > 0.7 ? "bg-red-500" : volume > 0.3 ? "bg-kuma-gold" : "bg-emerald-500"
+                                        )}
+                                    />
                                 </div>
                             </div>
 
