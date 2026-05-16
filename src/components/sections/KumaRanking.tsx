@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getEnrolledAthletes, giveKiai, updateAthletePhotoSelf } from "@/lib/actions/athletes";
+import { getEnrolledAthletes, updateAthletePhotoSelf } from "@/lib/actions/athletes";
 import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
@@ -36,8 +36,6 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite">("Todos");
-    const [kiaiLoading, setKiaiLoading] = useState<string | null>(null);
-    const [kiaiAnimation, setKiaiAnimation] = useState<string | null>(null);
     const [editingPhotoAthlete, setEditingPhotoAthlete] = useState<Athlete | null>(null);
     const [celebratingAthlete, setCelebratingAthlete] = useState<Athlete | null>(null);
 
@@ -52,34 +50,6 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
         loadAthletes();
     }, []);
 
-    const handleKiai = async (athleteId: string) => {
-        if (kiaiLoading) return;
-        setKiaiLoading(athleteId);
-        
-        const res = await giveKiai(athleteId);
-        if (res.success) {
-            setKiaiAnimation(athleteId);
-            setTimeout(() => setKiaiAnimation(null), 1000);
-            
-            // Update local state to reflect new Kiai count instantly
-            setAthletes(prev => prev.map(ath => {
-                if (ath._id === athleteId) {
-                    return {
-                        ...ath,
-                        athleteProfile: {
-                            ...ath.athleteProfile,
-                            kiaiReceived: res.kiaiCount || (ath.athleteProfile.kiaiReceived + 1)
-                        }
-                    };
-                }
-                return ath;
-            }));
-        } else {
-            alert(res.error);
-        }
-        setKiaiLoading(null);
-    };
-
     // Filter and Sort athletes
     const filteredAthletes = athletes
         .filter(ath => {
@@ -87,12 +57,12 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
             const matchesSpec = selectedSpec === "Todos" || ath.athleteProfile.specialization === selectedSpec || ath.athleteProfile.specialization === "Ambos";
             return matchesSearch && matchesSpec;
         })
-        // Sort by OVR desc, then by Kiai count desc
+        // Sort by OVR desc, then by name alphabetically
         .sort((a, b) => {
             if (b.athleteProfile.stats.ovr !== a.athleteProfile.stats.ovr) {
                 return b.athleteProfile.stats.ovr - a.athleteProfile.stats.ovr;
             }
-            return (b.athleteProfile.kiaiReceived || 0) - (a.athleteProfile.kiaiReceived || 0);
+            return a.name.localeCompare(b.name);
         });
 
     const podium = filteredAthletes.slice(0, 3);
@@ -184,21 +154,21 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
                             {/* SECOND PLACE */}
                             {podium[1] && (
                                 <div className="order-2 md:order-1">
-                                    <PodiumCard athlete={podium[1]} position={2} currentUser={currentUser} onKiai={handleKiai} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} kiaiLoading={kiaiLoading} kiaiAnimation={kiaiAnimation} style={getBeltStyles(podium[1].athleteProfile.beltRank)} />
+                                    <PodiumCard athlete={podium[1]} position={2} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[1].athleteProfile.beltRank)} />
                                 </div>
                             )}
 
                             {/* FIRST PLACE */}
                             {podium[0] && (
                                 <div className="order-1 md:order-2 md:-translate-y-8">
-                                    <PodiumCard athlete={podium[0]} position={1} currentUser={currentUser} onKiai={handleKiai} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} kiaiLoading={kiaiLoading} kiaiAnimation={kiaiAnimation} style={getBeltStyles(podium[0].athleteProfile.beltRank)} />
+                                    <PodiumCard athlete={podium[0]} position={1} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[0].athleteProfile.beltRank)} />
                                 </div>
                             )}
 
                             {/* THIRD PLACE */}
                             {podium[2] && (
                                 <div className="order-3">
-                                    <PodiumCard athlete={podium[2]} position={3} currentUser={currentUser} onKiai={handleKiai} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} kiaiLoading={kiaiLoading} kiaiAnimation={kiaiAnimation} style={getBeltStyles(podium[2].athleteProfile.beltRank)} />
+                                    <PodiumCard athlete={podium[2]} position={3} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[2].athleteProfile.beltRank)} />
                                 </div>
                             )}
 
@@ -271,32 +241,18 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
                                                     </div>
                                                 </div>
 
-                                                {/* Social Interaction (Kiai button) */}
-                                                <div className="flex items-center gap-2">
-                                                    <div className="text-right hidden xs:block">
-                                                        <p className="text-[8px] font-bold text-zinc-600 uppercase">KIAIS</p>
-                                                        <p className="text-xs font-black text-kuma-gold">{ath.athleteProfile.kiaiReceived || 0}</p>
+                                                {/* Edit photo button */}
+                                                {currentUser?.email && ath.email && ath.email.toLowerCase().trim() === currentUser.email.toLowerCase().trim() && (
+                                                    <div className="flex items-center gap-2">
+                                                         <Button
+                                                             onClick={() => setEditingPhotoAthlete(ath)}
+                                                             className="h-9 w-9 p-0 rounded-xl bg-zinc-900 border border-white/5 hover:border-white/20 text-zinc-400 hover:text-white transition-all duration-200 flex items-center justify-center shrink-0"
+                                                             title="Editar mi foto"
+                                                         >
+                                                             <Camera className="w-4 h-4" />
+                                                         </Button>
                                                     </div>
-                                                    <Button
-                                                        onClick={() => handleKiai(ath._id)}
-                                                        loading={kiaiLoading === ath._id}
-                                                        className={cn(
-                                                            "h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all relative overflow-hidden",
-                                                            kiaiAnimation === ath._id
-                                                                ? "bg-red-600 border-red-500 text-white animate-bounce"
-                                                                : "bg-zinc-900 border-white/5 text-zinc-400 hover:border-red-500/50 hover:bg-red-950/20 hover:text-red-400"
-                                                        )}
-                                                     >
-                                                         {kiaiAnimation === ath._id ? "¡KIAI!" : "KIAI"}
-                                                     </Button>
-                                                     <Button
-                                                         onClick={() => setEditingPhotoAthlete(ath)}
-                                                         className="h-9 w-9 p-0 rounded-xl bg-zinc-900 border border-white/5 hover:border-white/20 text-zinc-400 hover:text-white transition-all duration-200 flex items-center justify-center shrink-0"
-                                                         title="Editar mi foto"
-                                                     >
-                                                         <Camera className="w-4 h-4" />
-                                                     </Button>
-                                                </div>
+                                                )}
                                             </div>
                                         </motion.div>
                                     );
@@ -330,15 +286,12 @@ interface PodiumCardProps {
     athlete: Athlete;
     position: 1 | 2 | 3;
     currentUser?: any;
-    onKiai: (id: string) => Promise<void>;
     onEditPhoto: (athlete: Athlete) => void;
     onClickCard: (athlete: Athlete) => void;
-    kiaiLoading: string | null;
-    kiaiAnimation: string | null;
     style: { border: string; glow: string; bg: string; text: string };
 }
 
-function PodiumCard({ athlete, position, onKiai, onEditPhoto, onClickCard, kiaiLoading, kiaiAnimation }: PodiumCardProps) {
+function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }: PodiumCardProps) {
     const isFirst = position === 1;
     const ovr = athlete.athleteProfile.stats.ovr;
     const beltRank = athlete.athleteProfile.beltRank;
@@ -555,9 +508,9 @@ function PodiumCard({ athlete, position, onKiai, onEditPhoto, onClickCard, kiaiL
                                         <span className="text-white font-black text-[11px] drop-shadow">{athlete.athleteProfile.stats.esp}</span>
                                         <span className="text-white/60 uppercase tracking-widest text-[8px]">ESP</span>
                                     </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="font-black text-[11px] drop-shadow" style={{ color: fut.textColor }}>{athlete.athleteProfile.kiaiReceived || 0}</span>
-                                        <span className="text-white/60 uppercase tracking-widest text-[8px]">KIA</span>
+                                    <div className="flex justify-between items-center opacity-0 pointer-events-none">
+                                        <span className="text-white font-black text-[11px] drop-shadow">0</span>
+                                        <span className="text-white/60 uppercase tracking-widest text-[8px]">-</span>
                                     </div>
                                 </div>
                             </div>
@@ -577,29 +530,15 @@ function PodiumCard({ athlete, position, onKiai, onEditPhoto, onClickCard, kiaiL
                 </div>
             </div>
 
-            {/* SEND KIAI BUTTON */}
-            <Button
-                onClick={() => onKiai(athlete._id)}
-                loading={kiaiLoading === athlete._id}
-                className={cn(
-                    "w-full max-w-[275px] h-12 rounded-2xl text-xs font-black uppercase tracking-[0.2em] relative overflow-hidden transition-all duration-300 border shadow-lg",
-                    kiaiAnimation === athlete._id
-                        ? "bg-red-600 border-red-500 text-white animate-bounce shadow-[0_0_20px_rgba(220,38,38,0.5)]"
-                        : isFirst
-                            ? "bg-kuma-gold text-black border-kuma-gold hover:bg-white hover:text-black hover:border-white shadow-[0_0_20px_rgba(212,175,55,0.2)]"
-                            : "bg-zinc-900 border-white/5 text-zinc-400 hover:border-red-500/50 hover:bg-red-950/20 hover:text-red-400"
-                )}
-            >
-                {kiaiAnimation === athlete._id ? "¡KIAI SHOUT!" : "Gritar Kiai"}
-            </Button>
-
             {/* SELF IMAGE EDIT LINK */}
-            <button
-                onClick={() => onEditPhoto(athlete)}
-                className="mt-2 text-[9px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest transition-colors duration-200 flex items-center gap-1.5 justify-center mx-auto"
-            >
-                <Camera className="w-3.5 h-3.5" /> Editar mi Foto
-            </button>
+            {currentUser?.email && athlete.email && athlete.email.toLowerCase().trim() === currentUser.email.toLowerCase().trim() && (
+                <button
+                    onClick={() => onEditPhoto(athlete)}
+                    className="mt-2 text-[9px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest transition-colors duration-200 flex items-center gap-1.5 justify-center mx-auto"
+                >
+                    <Camera className="w-3.5 h-3.5" /> Editar mi Foto
+                </button>
+            )}
         </motion.div>
     );
 }
@@ -1034,8 +973,6 @@ const getKumaHonorDetails = (ath: Athlete) => {
 
 export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrationModalProps) {
     const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, glossX: 50, glossY: 50, scale: 1 });
-    const [celebrationKiaiCount, setCelebrationKiaiCount] = useState(0);
-    const [isKiaiActive, setIsKiaiActive] = useState(false);
 
     if (!isOpen || !athlete) return null;
 
@@ -1112,12 +1049,6 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
 
     const handleMouseLeave = () => {
         setTilt({ rotateX: 0, rotateY: 0, glossX: 50, glossY: 50, scale: 1 });
-    };
-
-    const triggerKiaiShout = () => {
-        setCelebrationKiaiCount(prev => prev + 1);
-        setIsKiaiActive(true);
-        setTimeout(() => setIsKiaiActive(false), 500);
     };
 
     const floatingEmojis = ["🥋", "🏆", "🔥", "⚡", "🥋", "🥊", "🎉", "💥", "🏆", "🔥"];
@@ -1326,25 +1257,7 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
                             </div>
                         </div>
 
-                        <div className="w-full max-w-md flex flex-col gap-3">
-                            <Button
-                                onClick={triggerKiaiShout}
-                                className={cn(
-                                    "w-full h-14 rounded-2xl text-xs font-black uppercase tracking-[0.2em] relative overflow-hidden transition-all duration-300 border shadow-lg flex items-center justify-center gap-2",
-                                    isKiaiActive
-                                        ? "bg-red-600 border-red-500 text-white animate-ping shadow-[0_0_30px_rgba(220,38,38,0.7)]"
-                                        : "bg-kuma-gold hover:bg-white text-black border-kuma-gold hover:border-white shadow-[0_0_25px_rgba(212,175,55,0.35)]"
-                                )}
-                            >
-                                <Flame className={cn("w-4 h-4 animate-bounce", isKiaiActive ? "text-white" : "text-black")} /> 
-                                {isKiaiActive ? "¡¡¡KIIAAAAAIIII!!!" : "Gritar Kiai de Fiesta"}
-                            </Button>
-                            
-                            <div className="flex justify-between items-center text-[10px] text-zinc-500 font-bold uppercase tracking-widest px-1">
-                                <span>Gritos en esta celebración:</span>
-                                <span className="text-white font-black">{celebrationKiaiCount}</span>
-                            </div>
-                        </div>
+
 
                         <div className="text-[10px] text-zinc-600 flex items-center gap-1.5 justify-center md:justify-start">
                             <Sparkles className="w-3.5 h-3.5 text-kuma-gold" />
