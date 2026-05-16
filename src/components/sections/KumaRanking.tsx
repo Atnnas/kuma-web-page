@@ -197,7 +197,6 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
                                             <div 
                                                 onClick={() => setCelebratingAthlete(ath)}
                                                 className="flex items-center gap-4 cursor-pointer"
-                                                title="Celebrar en 3D"
                                             >
                                                 {/* Rank Number */}
                                                 <span className="w-8 text-center text-sm font-black italic text-zinc-600">
@@ -360,12 +359,7 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                     clipPath: cardClipPath
                 }}
             >
-                {/* Click / Hover interactive guide */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-all duration-300 z-30 flex items-center justify-center pointer-events-none">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/70 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-kuma-gold flex items-center gap-1 shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                        🎉 Celebrar en 3D
-                    </div>
-                </div>
+
                 {/* 1. Outer Border / Bezel Frame */}
                 <div 
                     className={cn("absolute inset-0 bg-gradient-to-b", fut.borderClass)}
@@ -1108,10 +1102,7 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
                     </button>
 
                     <div className="flex flex-col items-center justify-center shrink-0 w-full md:w-1/2">
-                        <div className="text-center mb-4">
-                            <p className="text-[10px] font-black text-kuma-gold uppercase tracking-[0.3em] mb-1">Interactive 3D Card</p>
-                            <h4 className="text-zinc-400 text-xs font-bold">¡Mueve tu mouse o dedo encima para inclinarla!</h4>
-                        </div>
+
 
                         <div
                             onMouseMove={handleMouseMove}
