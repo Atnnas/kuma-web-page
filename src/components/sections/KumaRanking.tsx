@@ -88,21 +88,7 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
             {/* Top decorative element */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Header */}
-            <div className="text-center mb-16 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                >
-                    <h2 className="text-4xl md:text-6xl font-serif font-black uppercase tracking-widest text-white mb-4">
-                        KUMA <span className="text-kuma-gold">RANKING</span>
-                    </h2>
-                    <p className="text-zinc-400 text-sm md:text-base max-w-2xl mx-auto font-medium leading-relaxed">
-                        El podio de honor de nuestro dojo. Entrena duro para elevar tus estadísticas y destaca en el Karate Card del Kuma Dojo.
-                    </p>
-                </motion.div>
-            </div>
+
 
             {/* Search and Filters */}
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-16 relative z-10">
