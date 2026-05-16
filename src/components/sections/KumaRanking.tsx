@@ -977,6 +977,15 @@ const getKumaHonorDetails = (ath: Athlete) => {
     const belt = ath.athleteProfile.beltRank.toLowerCase();
     const ovr = stats.ovr;
 
+    // Custom overrides for specific athletes
+    if (ath.name.toLowerCase().includes("kristel")) {
+        return {
+            badge: "🐍 CC : MAMBA NEGRA",
+            desc: "Una competidora de agilidad excepcional y precisión técnica implacable en el tatami. Su enfoque de combate y disciplina constante la convierten en un referente de superación marcial.",
+            ability: "kisame Tzuki"
+        };
+    }
+
     if (ovr >= 80) {
         return {
             badge: "🏆 KUMA SENPAI DE ÉLITE",
