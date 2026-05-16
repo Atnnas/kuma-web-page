@@ -125,9 +125,6 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                 >
-                    <span className="px-4 py-1.5 rounded-full bg-red-950/50 border border-red-500/30 text-red-500 text-xs font-black uppercase tracking-[0.2em] mb-4 inline-block">
-                        Ecosistema Gamificado
-                    </span>
                     <h2 className="text-4xl md:text-6xl font-serif font-black uppercase tracking-widest text-white mb-4">
                         KUMA <span className="text-kuma-gold">RANKING</span>
                     </h2>
