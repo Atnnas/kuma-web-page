@@ -1,15 +1,11 @@
 import { auth } from "@/auth";
-import { Users, Newspaper, Activity } from "lucide-react";
+import { Users, Newspaper, Activity, Trophy, BarChart3, TrendingUp, Star } from "lucide-react";
 import Link from "next/link";
 import { getNews } from "@/lib/actions/news";
-import CardClass from "@/models/User"; // Temporarily importing User model via default to counts. 
-// Note: We'll create a proper server action for stats later to avoid direct DB calls cleanly if needed, 
-// but for dashboard home we can do a quick fetch.
 import connectDB from "@/lib/db";
 import User from "@/models/User";
 
 import { getAnalyticsStats } from "@/lib/actions/analytics";
-import { BarChart3, TrendingUp } from "lucide-react";
 
 async function getStats() {
     await connectDB();
@@ -91,11 +87,12 @@ export default async function AdminDashboard() {
                         <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
                         ACCIONES DE MANDO
                     </h3>
-                    <div className="space-y-4">
-                        <Link href="/admin/reports" className="block w-full bg-zinc-900/80 hover:bg-red-950/30 border border-zinc-800 hover:border-red-900/50 p-4 rounded-lg text-center transition-all hover:scale-[1.02] group">
-                            <span className="font-bold text-zinc-300 group-hover:text-red-400 uppercase tracking-widest text-sm flex items-center justify-center gap-2">
-                                <TrendingUp className="w-4 h-4" /> Reportes
-                            </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <Link href="/admin/users" className="flex items-center justify-center gap-2 bg-zinc-900/80 hover:bg-white hover:text-black border border-zinc-800 p-4 rounded-lg transition-all font-bold uppercase text-xs tracking-widest">
+                            <Users className="w-4 h-4" /> Usuarios
+                        </Link>
+                        <Link href="/admin/reports" className="flex items-center justify-center gap-2 bg-zinc-900/80 hover:bg-white hover:text-black border border-zinc-800 p-4 rounded-lg transition-all font-bold uppercase text-xs tracking-widest">
+                            <TrendingUp className="w-4 h-4" /> Reportes
                         </Link>
                     </div>
                 </div>

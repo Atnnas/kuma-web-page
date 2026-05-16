@@ -110,6 +110,43 @@
   color: transparent;
 }
 
+/* KUMA 3D BUTTONS */
+.kuma-btn-3d {
+  @apply relative w-16 h-16 transition-all duration-100;
+  perspective: 1000px;
+}
+
+.kuma-btn-3d .btn-inner {
+  @apply w-full h-full rounded-2xl border-2 border-white/10 shadow-[0_6px_0_rgb(24,24,27)] transition-all duration-100 flex flex-col items-center justify-center;
+  transform: translateZ(0);
+}
+
+.kuma-btn-3d:hover .btn-inner {
+  @apply border-white/20 shadow-[0_8px_0_rgb(24,24,27)];
+  transform: translateY(-2px);
+}
+
+.kuma-btn-3d:active .btn-inner,
+.kuma-btn-3d.active .btn-inner {
+  @apply shadow-[0_2px_0_rgb(24,24,27)];
+  transform: translateY(4px);
+}
+
+/* Animations */
+@keyframes shine {
+  0% { transform: translateX(-200%); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
 body {
   background-image: url('/images/metal-bear.png');
   background-size: cover;

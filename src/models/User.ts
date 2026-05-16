@@ -21,6 +21,32 @@ export interface IUser extends Document {
     verificationToken?: string;
     verificationTokenExpires?: Date;
     timezone?: string;
+    
+    // Kuma Karate Card & Profile
+    athleteProfile?: {
+        birthDate: Date;
+        weight: number;
+        height: number;
+        beltRank: string;
+        phone: string;
+        emergencyContact: {
+            name: string;
+            phone: string;
+        };
+        medicalConditions: string;
+        specialization: "Kata" | "Kumite" | "Ambos";
+        stats: {
+            vel: number;
+            pot: number;
+            tec: number;
+            res: number;
+            esp: number;
+            ovr: number;
+        };
+        kiaiReceived: number;
+        isEnrolled: boolean;
+    };
+
     achievements?: {
         slug: string;
         earnedAt: Date;
@@ -136,13 +162,39 @@ const UserSchema = new Schema<IUser>(
             ],
             default: [],
         },
+        athleteProfile: {
+            birthDate: Date,
+            weight: Number,
+            height: Number,
+            beltRank: { type: String, default: "Blanco" },
+            phone: String,
+            emergencyContact: {
+                name: String,
+                phone: String
+            },
+            medicalConditions: String,
+            specialization: { type: String, enum: ["Kata", "Kumite", "Ambos"], default: "Ambos" },
+            stats: {
+                vel: { type: Number, default: 10 },
+                pot: { type: Number, default: 10 },
+                tec: { type: Number, default: 10 },
+                res: { type: Number, default: 10 },
+                esp: { type: Number, default: 10 },
+                ovr: { type: Number, default: 10 }
+            },
+            kiaiReceived: { type: Number, default: 0 },
+            isEnrolled: { type: Boolean, default: false }
+        },
     },
     {
         timestamps: true,
     }
 );
 
-// Prevent recompilation of model in development
-const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+// Force recreation of the model in development to apply schema updates
+if (mongoose.models && mongoose.models.User) {
+    delete (mongoose.models as any).User;
+}
+const User: Model<IUser> = mongoose.model<IUser>("User", UserSchema);
 
 export default User;

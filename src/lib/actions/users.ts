@@ -9,17 +9,9 @@ export async function getAllUsers() {
     try {
         await connectDB();
         const users = await User.find({}).sort({ createdAt: -1 }).lean();
-        return users.map((user: any) => ({
+        return JSON.parse(JSON.stringify(users)).map((user: any) => ({
             ...user,
             _id: user._id.toString(),
-            isActive: user.isActive,
-            createdAt: user.createdAt?.toISOString(),
-            updatedAt: user.updatedAt?.toISOString(),
-            achievements: user.achievements?.map((ach: any) => ({
-                ...ach,
-                _id: ach._id?.toString(),
-                earnedAt: ach.earnedAt?.toISOString()
-            })) || []
         }));
     } catch (error) {
         console.error("Error fetching users:", error);

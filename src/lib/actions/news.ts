@@ -29,16 +29,10 @@ export async function getNews() {
         await connectDB();
         // Sort by date descending
         const news = await News.find({}).sort({ date: -1 }).lean();
-
-        // Convert _id to string and date to string if needed, or return as is and handle in UI
-        // We'll return it serialized simple types
-        return news.map((item: any) => ({
+        return JSON.parse(JSON.stringify(news)).map((item: any) => ({
             ...item,
             id: item._id.toString(),
             _id: item._id.toString(),
-            // We can return the date as ISO string or original format?
-            // Let's return ISO for better handling, UI component should format it
-            date: item.date ? new Date(item.date).toISOString() : new Date().toISOString(),
         }));
     } catch (error) {
         console.error("Error fetching news:", error);
