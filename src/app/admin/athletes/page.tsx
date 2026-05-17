@@ -293,7 +293,7 @@ export default function AdminAthletesPage() {
                                                             
                                                             {/* Spec position abbreviation */}
                                                             <div className="text-[10px] font-black tracking-wider leading-none mb-1.5 text-inherit">
-                                                                {isEnrolled ? (specialization === "Kata" ? "KTA" : specialization === "Kumite" ? "KMT" : "Ka/Ku") : "---"}
+                                                                {isEnrolled ? (specialization === "Kata" ? "KA" : specialization === "Kumite" ? "KU" : "KA/KU") : "---"}
                                                             </div>
                                                             
                                                             <div className="h-[1px] w-5 bg-current opacity-50 mb-1.5" />

@@ -412,8 +412,8 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                                     
                                     {/* Spec position abbreviation */}
                                     <div className="text-[12px] font-black tracking-wider leading-none mb-1.5 text-inherit">
-                                        {athlete.athleteProfile.specialization === "Kata" ? "KTA" : 
-                                         athlete.athleteProfile.specialization === "Kumite" ? "KMT" : "Ka/Ku"}
+                                        {athlete.athleteProfile.specialization === "Kata" ? "KA" : 
+                                         athlete.athleteProfile.specialization === "Kumite" ? "KU" : "KA/KU"}
                                     </div>
                                     
                                     <div className="h-[1.5px] w-6 bg-current opacity-60 mb-1.5" />
@@ -1132,8 +1132,8 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
                                         </div>
                                         
                                         <div className="text-[13px] font-black tracking-wider leading-none mb-2 text-inherit">
-                                            {athlete.athleteProfile.specialization === "Kata" ? "KTA" : 
-                                             athlete.athleteProfile.specialization === "Kumite" ? "KMT" : "Ka/Ku"}
+                                            {athlete.athleteProfile.specialization === "Kata" ? "KA" : 
+                                             athlete.athleteProfile.specialization === "Kumite" ? "KU" : "KA/KU"}
                                         </div>
                                         
                                         <div className="h-[2px] w-8 bg-current opacity-60 mb-2" />
