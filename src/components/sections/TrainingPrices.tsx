@@ -88,7 +88,7 @@ export const TrainingPrices = ({ user, mode = "default" }: TrainingPricesProps) 
                         <div className={
                             isCarousel
                                 ? "flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent custom-scrollbar h-full items-stretch px-2"
-                                : "grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-7xl mx-auto"
+                                : "grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-7xl mx-auto items-stretch"
                         }>
                             {plans.map((plan, index) => {
                                 const isLocked = plan.restricted && (!user || user.isActive === false);
@@ -101,7 +101,7 @@ export const TrainingPrices = ({ user, mode = "default" }: TrainingPricesProps) 
                                         viewport={{ once: true }}
                                         transition={{ delay: index * 0.1 }}
                                         className={`relative group rounded-[2.5rem] border backdrop-blur-xl flex flex-col items-center text-center overflow-hidden transition-all duration-300 hover:-translate-y-2
-                                            ${isCarousel ? "min-w-[280px] w-[280px] snap-center shrink-0 p-6" : "p-10"}
+                                            ${isCarousel ? "min-w-[280px] w-[280px] snap-center shrink-0 p-6" : "p-10 h-full w-full"}
                                             ${isLocked
                                                 ? "bg-zinc-950/60 border-white/5 grayscale opacity-80 cursor-not-allowed hover:bg-zinc-950/70"
                                                 : plan.recommended

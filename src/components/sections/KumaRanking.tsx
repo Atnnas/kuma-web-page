@@ -134,25 +134,25 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
                     
                     {/* PODIUM SECTION */}
                     {podium.length > 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end justify-center max-w-5xl mx-auto pt-10">
+                        <div className="flex flex-col md:flex-row gap-8 items-end justify-center max-w-5xl mx-auto pt-10 flex-wrap">
                             
                             {/* SECOND PLACE */}
                             {podium[1] && (
-                                <div className="order-2 md:order-1">
+                                <div className="order-2 md:order-1 flex-1 min-w-[260px] max-w-[300px]">
                                     <PodiumCard athlete={podium[1]} position={2} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[1].athleteProfile.beltRank)} />
                                 </div>
                             )}
 
                             {/* FIRST PLACE */}
                             {podium[0] && (
-                                <div className="order-1 md:order-2 md:-translate-y-8">
+                                <div className="order-1 md:order-2 md:-translate-y-8 flex-1 min-w-[260px] max-w-[300px]">
                                     <PodiumCard athlete={podium[0]} position={1} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[0].athleteProfile.beltRank)} />
                                 </div>
                             )}
 
                             {/* THIRD PLACE */}
                             {podium[2] && (
-                                <div className="order-3">
+                                <div className="order-3 flex-1 min-w-[260px] max-w-[300px]">
                                     <PodiumCard athlete={podium[2]} position={3} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[2].athleteProfile.beltRank)} />
                                 </div>
                             )}

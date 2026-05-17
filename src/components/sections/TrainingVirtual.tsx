@@ -129,30 +129,32 @@ export const TrainingVirtual = ({ user, mode = "default" }: TrainingVirtualProps
                             </Link>
 
                             {/* Card 2: Videos Técnicos */}
-                            <motion.div
-                                initial={{ opacity: 0, x: 50 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                className="group relative p-10 bg-zinc-950/40 border border-white/5 rounded-[2.5rem] hover:bg-zinc-900/40 hover:border-blue-500/20 transition-all duration-500 flex flex-col items-start text-left backdrop-blur-xl overflow-hidden min-h-[350px]"
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-bl from-blue-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <Link href="/resources" className="flex-1 min-w-[300px]">
+                                <motion.div
+                                    initial={{ opacity: 0, x: 50 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    className="group relative h-full p-10 bg-zinc-950/40 border border-white/5 rounded-[2.5rem] hover:bg-zinc-900/40 hover:border-blue-500/20 transition-all duration-500 flex flex-col items-start text-left backdrop-blur-xl overflow-hidden min-h-[350px] cursor-pointer"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-bl from-blue-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                                <div className="w-16 h-16 bg-blue-500/5 rounded-2xl flex items-center justify-center mb-8 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500/10 transition-all duration-500 relative z-10">
-                                    <Video className="w-8 h-8" />
-                                </div>
+                                    <div className="w-16 h-16 bg-blue-500/5 rounded-2xl flex items-center justify-center mb-8 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500/10 transition-all duration-500 relative z-10">
+                                        <Video className="w-8 h-8" />
+                                    </div>
 
-                                <h3 className="text-3xl font-black uppercase text-white mb-3 relative z-10 group-hover:text-blue-400 transition-colors tracking-tight">Biblioteca</h3>
-                                <p className="text-zinc-500 text-base mb-8 max-w-sm relative z-10 leading-relaxed">
-                                    Explicaciones técnicas detalladas de Katas y Kumite, cuadro por cuadro.
-                                </p>
+                                    <h3 className="text-3xl font-black uppercase text-white mb-3 relative z-10 group-hover:text-blue-400 transition-colors tracking-tight">Biblioteca</h3>
+                                    <p className="text-zinc-500 text-base mb-8 max-w-sm relative z-10 leading-relaxed">
+                                        Explicaciones técnicas detalladas de Katas y Kumite, cuadro por cuadro.
+                                    </p>
 
-                                <button className="mt-auto px-6 py-3 rounded-full border border-white/10 group-hover:bg-blue-600/90 group-hover:border-transparent group-hover:text-white text-zinc-400 font-bold uppercase text-xs tracking-[0.2em] transition-all relative z-10">
-                                    Explorar
-                                </button>
+                                    <div className="mt-auto px-6 py-3 rounded-full border border-white/10 group-hover:bg-blue-600/90 group-hover:border-transparent group-hover:text-white text-zinc-400 font-bold uppercase text-xs tracking-[0.2em] transition-all relative z-10">
+                                        Explorar
+                                    </div>
 
-                                {/* Bg Detail */}
-                                <Video className="absolute -bottom-8 -right-8 w-48 h-48 text-white/5 rotate-[15deg] group-hover:rotate-0 transition-transform duration-700 ease-out" />
-                            </motion.div>
+                                    {/* Bg Detail */}
+                                    <Video className="absolute -bottom-8 -right-8 w-48 h-48 text-white/5 rotate-[15deg] group-hover:rotate-0 transition-transform duration-700 ease-out" />
+                                </motion.div>
+                            </Link>
                         </>
                     )}
                 </div>
