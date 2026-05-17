@@ -18,7 +18,8 @@ import {
     ShoppingBag,
     Dumbbell,
     Trophy,
-    Star
+    Star,
+    ClipboardCheck
 } from "lucide-react";
 import { handleSignOut } from "@/lib/actions";
 import Image from "next/image"; // Added for Avatar
@@ -39,6 +40,7 @@ const menuItems = [
     { label: "Tienda", href: "/admin/shop", icon: ShoppingBag },
     { label: "Usuarios", href: "/admin/users", icon: Users },
     { label: "Kuma Manager", href: "/admin/athletes", icon: Star },
+    { label: "Asistencia", href: "/admin/attendance", icon: ClipboardCheck },
     { label: "Recompensas", href: "/admin/rewards", icon: Trophy },
     { label: "Configuración", href: "/admin/settings", icon: Settings },
 ];

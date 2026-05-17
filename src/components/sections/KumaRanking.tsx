@@ -27,7 +27,6 @@ interface Athlete {
             esp: number;
             ovr: number;
         };
-        kiaiReceived: number;
     };
 }
 
@@ -212,7 +211,7 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
                                                 </div>
                                             </div>
 
-                                            {/* Stats Summary & Kiai Shouting */}
+                                            {/* Stats Summary */}
                                             <div className="flex items-center gap-6">
                                                 <div className="flex gap-4 items-center">
                                                     <div className="text-center">

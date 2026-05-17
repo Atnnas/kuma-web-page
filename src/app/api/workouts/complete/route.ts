@@ -195,6 +195,49 @@ export async function POST(req: NextRequest) {
         // Increment total workout count
         user.workoutCount = (user.workoutCount || 0) + 1;
 
+        // --- AUTOMATIC MONTHLY ATTENDANCE LOG INTEGRATION ---
+        // Online routine completion automatically feeds the attendance log month-by-month
+        try {
+            const todayStr = now.toISOString().split("T")[0];
+            
+            // Map routine keywords to the corrected session categories
+            let sessionName: "Fuerza" | "Explosión" | "Técnica" | "Kata" | "Kumite" = "Técnica";
+            const lowerTitle = targetRoutine.title.toLowerCase();
+            const lowerDesc = targetRoutine.description.toLowerCase();
+            
+            if (lowerTitle.includes("fuerza") || lowerDesc.includes("fuerza") || lowerTitle.includes("potencia") || lowerDesc.includes("potencia")) {
+                sessionName = "Fuerza";
+            } else if (lowerTitle.includes("explosion") || lowerTitle.includes("explosión") || lowerTitle.includes("velocidad") || lowerDesc.includes("explosion") || lowerDesc.includes("explosión") || lowerDesc.includes("velocidad")) {
+                sessionName = "Explosión";
+            } else if (lowerTitle.includes("kata") || lowerDesc.includes("kata") || lowerTitle.includes("forma") || lowerDesc.includes("forma")) {
+                sessionName = "Kata";
+            } else if (lowerTitle.includes("kumite") || lowerDesc.includes("kumite") || lowerTitle.includes("combate") || lowerDesc.includes("combate") || lowerTitle.includes("sparring") || lowerDesc.includes("sparring")) {
+                sessionName = "Kumite";
+            } else if (lowerTitle.includes("tecnica") || lowerTitle.includes("técnica") || lowerDesc.includes("tecnica") || lowerDesc.includes("técnica")) {
+                sessionName = "Técnica";
+            }
+
+            const AttendanceLog = (await import("@/models/AttendanceLog")).default;
+            const existingAttendance = await AttendanceLog.findOne({
+                user: user._id,
+                date: todayStr,
+                sessionName
+            });
+
+            if (!existingAttendance) {
+                await AttendanceLog.create({
+                    user: user._id,
+                    date: todayStr,
+                    sessionName,
+                    status: "Presente",
+                    method: "QR_Scan" // Scanned/completed self-service on device
+                });
+            }
+        } catch (attendanceErr) {
+            // Non-blocking error to ensure routine completion still succeeds
+            console.error("Error logging workout completion to attendance:", attendanceErr);
+        }
+
         await user.save();
 
         // Ensure leaderboard and routine pages are fresh

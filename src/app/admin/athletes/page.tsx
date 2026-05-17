@@ -369,9 +369,9 @@ export default function AdminAthletesPage() {
                                                                 <span className="text-white font-black text-[10px] drop-shadow">{isEnrolled ? user.athleteProfile.stats.esp : "--"}</span>
                                                                 <span className="text-white/50 uppercase tracking-widest text-[7px]">ESP</span>
                                                             </div>
-                                                            <div className="flex justify-between items-center">
-                                                                <span className="font-black text-[10px] drop-shadow" style={{ color: fut.textColor }}>{isEnrolled ? (user.athleteProfile.kiaiReceived || 0) : "--"}</span>
-                                                                <span className="text-white/50 uppercase tracking-widest text-[7px]">KIA</span>
+                                                            <div className="flex justify-between items-center opacity-0 pointer-events-none">
+                                                                <span className="font-black text-[10px] drop-shadow">0</span>
+                                                                <span className="text-white/50 uppercase tracking-widest text-[7px]">-</span>
                                                             </div>
                                                         </div>
                                                     </div>

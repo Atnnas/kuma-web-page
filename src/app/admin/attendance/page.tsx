@@ -1,0 +1,488 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { SwipeBackWrapper } from "@/components/admin/AdminNavigation";
+import { Button } from "@/components/ui/Button";
+import { Loader2, Search, User, ClipboardCheck, Calendar, Info, Check, Clock, UserX, Sparkles, CheckCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
+import confetti from "canvas-confetti";
+
+// Actions
+import { getAthletesForAttendance, getAttendanceForSession, submitAttendanceSession } from "@/lib/actions/attendance";
+
+interface AttendanceRecord {
+    userId: string;
+    status: "Presente" | "Tarde" | "Ausente";
+}
+
+export default function AdminAttendancePage() {
+    const [athletes, setAthletes] = useState<any[]>([]);
+    const [attendanceMap, setAttendanceMap] = useState<Record<string, "Presente" | "Tarde" | "Ausente">>({});
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+    
+    // Filters
+    const [selectedDate, setSelectedDate] = useState(() => {
+        const today = new Date();
+        return today.toISOString().split("T")[0];
+    });
+    
+    // Session Selection - Correct spelling: "Fuerza", "Explosión", "Técnica", "Kata", "Kumite"
+    const [selectedSession, setSelectedSession] = useState<"Fuerza" | "Explosión" | "Técnica" | "Kata" | "Kumite">("Kata");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite" | "Ambos">("Todos");
+    
+    // Load initial athletes
+    const loadAthletes = async () => {
+        setIsLoading(true);
+        const data = await getAthletesForAttendance();
+        setAthletes(data);
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        loadAthletes();
+    }, []);
+
+    // Load attendance records for the active date + session
+    const loadSessionAttendance = useCallback(async () => {
+        if (!selectedDate || !selectedSession) return;
+        
+        setIsLoading(true);
+        const logs = await getAttendanceForSession(selectedDate, selectedSession);
+        
+        // Build initial map, defaulting everyone else to Ausente
+        const newMap: Record<string, "Presente" | "Tarde" | "Ausente"> = {};
+        
+        // Map fetched logs
+        logs.forEach((log: any) => {
+            newMap[log.userId] = log.status;
+        });
+        
+        setAttendanceMap(newMap);
+        setIsLoading(false);
+    }, [selectedDate, selectedSession]);
+
+    useEffect(() => {
+        loadSessionAttendance();
+    }, [selectedDate, selectedSession, loadSessionAttendance]);
+
+    // Handle status change for an individual athlete
+    const handleStatusChange = (userId: string, newStatus: "Presente" | "Tarde" | "Ausente") => {
+        setAttendanceMap((prev) => ({
+            ...prev,
+            [userId]: newStatus,
+        }));
+    };
+
+    // Bulk actions
+    const markAllPresent = () => {
+        const updatedMap = { ...attendanceMap };
+        filteredAthletes.forEach((ath) => {
+            updatedMap[ath._id] = "Presente";
+        });
+        setAttendanceMap(updatedMap);
+    };
+
+    const markAllAbsent = () => {
+        const updatedMap = { ...attendanceMap };
+        filteredAthletes.forEach((ath) => {
+            updatedMap[ath._id] = "Ausente";
+        });
+        setAttendanceMap(updatedMap);
+    };
+
+    // Save attendance to backend
+    const handleSaveAttendance = async () => {
+        setIsSaving(true);
+        
+        // Prepare records array
+        const records = athletes.map((ath) => ({
+            userId: ath._id,
+            status: attendanceMap[ath._id] || "Ausente",
+        }));
+
+        const res = await submitAttendanceSession(selectedDate, selectedSession, records);
+        setIsSaving(false);
+
+        if (res.success) {
+            // High-end Confetti burst!
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ["#ffd700", "#10b981", "#ef4444", "#ffffff"],
+            });
+            alert("¡Asistencia guardada con éxito! Se han actualizado las estadísticas de entrenamiento de los atletas.");
+            loadSessionAttendance();
+        } else {
+            alert(res.error || "Ocurrió un error al guardar la asistencia.");
+        }
+    };
+
+    // Filter athletes in client side
+    const filteredAthletes = athletes.filter((ath) => {
+        const matchesSearch = ath.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                              ath.email?.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const matchesSpec = selectedSpec === "Todos" ||
+                            ath.athleteProfile.specialization === selectedSpec ||
+                            ath.athleteProfile.specialization === "Ambos";
+                            
+        return matchesSearch && matchesSpec;
+    });
+
+    // Helper for OVR Card color themes
+    const getFUTStyles = (rating: number) => {
+        if (rating >= 75) {
+            return {
+                bgCard: "from-[#fceb92] via-[#e5c060] to-[#b38930]",
+                borderClass: "border-[#e5c060]",
+                glowClass: "shadow-[0_0_20px_rgba(212,175,55,0.3)]",
+                textColor: "text-[#8d691e]",
+                beltBadge: "bg-[#8d691e]/15 text-[#8d691e]",
+            };
+        }
+        if (rating >= 65) {
+            return {
+                bgCard: "from-[#f1f5f9] via-[#cbd5e1] to-[#64748b]",
+                borderClass: "border-[#cbd5e1]",
+                glowClass: "shadow-[0_0_20px_rgba(148,163,184,0.2)]",
+                textColor: "text-[#475569]",
+                beltBadge: "bg-[#475569]/15 text-[#475569]",
+            };
+        }
+        return {
+            bgCard: "from-[#e07a3f] via-[#b45309] to-[#451a03]",
+            borderClass: "border-[#b45309]",
+            glowClass: "shadow-[0_0_20px_rgba(180,83,9,0.2)]",
+            textColor: "text-[#ffd7a8]",
+            beltBadge: "bg-[#451a03]/30 text-[#ffd7a8]",
+        };
+    };
+
+    // Helper for belt names
+    const getBeltBadgeColor = (belt: string) => {
+        const rank = belt.toLowerCase();
+        if (rank.includes("negro")) return "border-zinc-300 text-white bg-zinc-900 border";
+        if (rank.includes("marrón") || rank.includes("marron")) return "border-amber-800 text-amber-500 bg-amber-950/40 border";
+        if (rank.includes("morado")) return "border-purple-600 text-purple-400 bg-purple-950/40 border";
+        if (rank.includes("azul")) return "border-blue-600 text-blue-400 bg-blue-950/40 border";
+        if (rank.includes("verde")) return "border-green-600 text-green-400 bg-green-950/40 border";
+        if (rank.includes("naranja")) return "border-orange-500 text-orange-400 bg-orange-950/40 border";
+        if (rank.includes("amarillo")) return "border-yellow-500 text-yellow-400 bg-yellow-950/40 border";
+        return "border-zinc-600 text-zinc-300 bg-zinc-800/40 border";
+    };
+
+    // Counts for summary
+    const countPresent = filteredAthletes.filter(ath => attendanceMap[ath._id] === "Presente").length;
+    const countTarde = filteredAthletes.filter(ath => attendanceMap[ath._id] === "Tarde").length;
+    const countAusente = filteredAthletes.filter(ath => (attendanceMap[ath._id] || "Ausente") === "Ausente").length;
+
+    return (
+        <SwipeBackWrapper>
+            <div className="max-w-7xl mx-auto py-8 px-4 pb-32">
+                
+                {/* Cabecera */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                    <div>
+                        <h1 className="text-3xl md:text-5xl font-serif font-black uppercase tracking-widest mb-1 text-kuma-gold drop-shadow-lg flex items-center gap-3">
+                            KUMA <span className="text-red-600">ASISTENCIA</span>
+                        </h1>
+                        <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest flex items-center gap-2">
+                            <ClipboardCheck className="w-4 h-4 text-kuma-gold" /> Pase de Lista Express (Kaizen Training)
+                        </p>
+                    </div>
+                </div>
+
+                {/* Filtros de Sesión y Configuración */}
+                <div className="bg-zinc-950/60 backdrop-blur-xl border border-white/5 rounded-2xl p-6 mb-8 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-red-600/5 rounded-full blur-3xl pointer-events-none" />
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+                        {/* Selector de Fecha */}
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                                <Calendar className="w-3.5 h-3.5 text-red-500" /> Fecha del Entrenamiento
+                            </label>
+                            <input
+                                type="date"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white text-sm focus:border-red-500 focus:outline-none transition-all shadow-inner"
+                            />
+                        </div>
+
+                        {/* Selector de Sesión - Fuerza, Explosión, Técnica, Kata, Kumite */}
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                                <Sparkles className="w-3.5 h-3.5 text-kuma-gold" /> Tipo de Sesión
+                            </label>
+                            <div className="grid grid-cols-5 gap-1 bg-zinc-900 p-1 border border-zinc-800 rounded-xl">
+                                {["Fuerza", "Explosión", "Técnica", "Kata", "Kumite"].map((session) => (
+                                    <button
+                                        key={session}
+                                        onClick={() => setSelectedSession(session as any)}
+                                        className={cn(
+                                            "py-2 px-1 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all text-center leading-none flex items-center justify-center min-h-[36px]",
+                                            selectedSession === session
+                                                ? "bg-red-600 text-white shadow-md shadow-red-900/30"
+                                                : "text-zinc-500 hover:text-zinc-300"
+                                        )}
+                                    >
+                                        {session}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Summary Badges */}
+                        <div className="flex gap-3 justify-between items-center bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-3 h-[46px]">
+                            <div className="text-center flex-1">
+                                <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider">Presentes</p>
+                                <p className="text-sm font-black text-emerald-500">{countPresent}</p>
+                            </div>
+                            <div className="h-6 w-px bg-zinc-800" />
+                            <div className="text-center flex-1">
+                                <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider">Tardes</p>
+                                <p className="text-sm font-black text-amber-500">{countTarde}</p>
+                            </div>
+                            <div className="h-6 w-px bg-zinc-800" />
+                            <div className="text-center flex-1">
+                                <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider">Faltas</p>
+                                <p className="text-sm font-black text-zinc-400">{countAusente}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Buscador y Filtros por Especialidad */}
+                <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
+                    <div className="relative w-full md:w-96">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 w-5 h-5" />
+                        <input
+                            type="text"
+                            placeholder="Buscar atleta por nombre..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full bg-zinc-900 border border-zinc-800 rounded-full py-3.5 pl-12 pr-6 text-white text-sm focus:border-red-500 focus:outline-none transition-all shadow-xl"
+                        />
+                    </div>
+
+                    <div className="flex gap-2 items-center w-full md:w-auto overflow-x-auto no-scrollbar py-1">
+                        {["Todos", "Kata", "Kumite"].map((spec) => (
+                            <button
+                                key={spec}
+                                onClick={() => setSelectedSpec(spec as any)}
+                                className={cn(
+                                    "px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer whitespace-nowrap",
+                                    selectedSpec === spec
+                                        ? "bg-kuma-gold text-black border-kuma-gold shadow-lg shadow-kuma-gold/20"
+                                        : "bg-zinc-900/60 text-zinc-400 border-zinc-800/80 hover:text-white"
+                                )}
+                            >
+                                {spec}
+                            </button>
+                        ))}
+                        
+                        <div className="h-6 w-px bg-zinc-800 mx-2 hidden md:block" />
+
+                        <div className="flex gap-1.5">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={markAllPresent}
+                                className="text-[9px] font-black uppercase tracking-widest border-emerald-500/20 text-emerald-500 bg-emerald-950/10 hover:bg-emerald-950/30 cursor-pointer"
+                            >
+                                <Check className="w-3 h-3 mr-1" /> Todos Presentes
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={markAllAbsent}
+                                className="text-[9px] font-black uppercase tracking-widest border-zinc-700 text-zinc-400 bg-zinc-800/30 hover:bg-zinc-800/50 cursor-pointer"
+                            >
+                                <UserX className="w-3 h-3 mr-1" /> Todos Ausentes
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Listado de Atletas en Rejilla */}
+                {isLoading ? (
+                    <div className="flex flex-col justify-center items-center py-32 gap-4">
+                        <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
+                        <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.2em]">Cargando lista de atletas...</p>
+                    </div>
+                ) : filteredAthletes.length === 0 ? (
+                    <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-2xl p-16 text-center shadow-inner">
+                        <UserX className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
+                        <p className="text-zinc-400 text-sm font-bold uppercase tracking-wider">No se encontraron atletas inscritos</p>
+                        <p className="text-zinc-600 text-xs mt-1">Verifica la búsqueda o comprueba que estén inscritos en el Kuma Manager.</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {filteredAthletes.map((ath) => {
+                            const currentStatus = attendanceMap[ath._id] || "Ausente";
+                            const fut = getFUTStyles(ath.athleteProfile.stats.ovr);
+                            const beltColor = getBeltBadgeColor(ath.athleteProfile.beltRank);
+
+                            return (
+                                <motion.div
+                                    key={ath._id}
+                                    layout
+                                    className={cn(
+                                        "relative flex flex-col bg-zinc-950 rounded-2xl overflow-hidden border transition-all duration-300 select-none",
+                                        currentStatus === "Ausente"
+                                            ? "border-zinc-800/50 opacity-45 grayscale"
+                                            : currentStatus === "Presente"
+                                            ? "border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.25)] ring-1 ring-emerald-500/20"
+                                            : "border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.25)] ring-1 ring-amber-500/20"
+                                    )}
+                                >
+                                    {/* Status Badge overlays on top */}
+                                    <div className="absolute top-3 right-3 z-10 flex gap-1">
+                                        <AnimatePresence mode="wait">
+                                            {currentStatus === "Presente" && (
+                                                <motion.span
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    exit={{ scale: 0 }}
+                                                    className="bg-emerald-500 text-black p-1 rounded-full text-xs shadow-lg shadow-emerald-500/30 flex items-center justify-center w-5 h-5"
+                                                    title="Presente"
+                                                >
+                                                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                                                </motion.span>
+                                            )}
+                                            {currentStatus === "Tarde" && (
+                                                <motion.span
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    exit={{ scale: 0 }}
+                                                    className="bg-amber-500 text-black p-1 rounded-full text-xs shadow-lg shadow-amber-500/30 flex items-center justify-center w-5 h-5"
+                                                    title="Llegada Tardía"
+                                                >
+                                                    <Clock className="w-3.5 h-3.5 stroke-[3]" />
+                                                </motion.span>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+
+                                    {/* Card Header styling */}
+                                    <div className={cn("p-5 flex-1 flex flex-col items-center justify-center text-center gap-3 bg-gradient-to-b", 
+                                        currentStatus === "Ausente" 
+                                            ? "from-zinc-900/50 via-zinc-950 to-zinc-950" 
+                                            : "from-zinc-900 via-zinc-950 to-zinc-950"
+                                    )}>
+                                        {/* Avatar / Portrait */}
+                                        <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-zinc-800 shadow-md">
+                                            {ath.image ? (
+                                                <img src={ath.image} alt={ath.name} className="object-cover w-full h-full" />
+                                            ) : (
+                                                <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-600 font-black text-lg">
+                                                    {ath.name?.[0]?.toUpperCase()}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Name & Specialization */}
+                                        <div>
+                                            <h3 className="text-sm font-black text-zinc-100 uppercase tracking-wide leading-none">{ath.name?.split(" ")[0]}</h3>
+                                            <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">
+                                                {ath.name?.split(" ").slice(1).join(" ") || "Atleta"}
+                                            </p>
+                                            {/* Badge / Stats Panel */}
+                                            <div className="flex gap-1.5 items-center mt-1 flex-wrap justify-center">
+                                                <span className={cn("text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest border border-zinc-850", beltColor)}>
+                                                    {ath.athleteProfile.beltRank}
+                                                </span>
+                                                <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest bg-zinc-900 text-zinc-400 border border-zinc-800">
+                                                    OVR {ath.athleteProfile.stats.ovr}
+                                                </span>
+                                                <span 
+                                                    className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest bg-red-950/20 text-red-400 border border-red-900/30 flex items-center gap-1"
+                                                    title="Asistencias de este mes (Entrenamientos Físicos y Online)"
+                                                >
+                                                    <ClipboardCheck className="w-2.5 h-2.5" /> MES: {ath.athleteProfile.monthlyAttendanceCount || 0}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons Footer */}
+                                    <div className="grid grid-cols-3 border-t border-zinc-900 bg-zinc-900/20 p-1.5 gap-1">
+                                        <button
+                                            onClick={() => handleStatusChange(ath._id, "Ausente")}
+                                            className={cn(
+                                                "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
+                                                currentStatus === "Ausente"
+                                                    ? "bg-zinc-850 text-zinc-300 border border-zinc-700/50 shadow-inner"
+                                                    : "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-900/60"
+                                            )}
+                                        >
+                                            <UserX className="w-3 h-3" /> Falta
+                                        </button>
+                                        
+                                        <button
+                                            onClick={() => handleStatusChange(ath._id, "Tarde")}
+                                            className={cn(
+                                                "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
+                                                currentStatus === "Tarde"
+                                                    ? "bg-amber-600 text-black font-black shadow-md shadow-amber-950/20"
+                                                    : "text-zinc-500 hover:text-amber-500 hover:bg-amber-950/10"
+                                            )}
+                                        >
+                                            <Clock className="w-3 h-3" /> Tarde
+                                        </button>
+
+                                        <button
+                                            onClick={() => handleStatusChange(ath._id, "Presente")}
+                                            className={cn(
+                                                "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
+                                                currentStatus === "Presente"
+                                                    ? "bg-emerald-600 text-black font-black shadow-md shadow-emerald-950/20"
+                                                    : "text-zinc-500 hover:text-emerald-500 hover:bg-emerald-950/10"
+                                            )}
+                                        >
+                                            <Check className="w-3 h-3" /> OK
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                )}
+
+                {/* Floating/Sticky Save Panel */}
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-full max-w-lg px-4">
+                    <div className="bg-zinc-950/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-between gap-4">
+                        <div className="hidden sm:block">
+                            <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Resumen Asistencia</p>
+                            <p className="text-xs text-zinc-100 font-bold mt-0.5">
+                                <span className="text-emerald-500">{countPresent} Presentes</span>, <span className="text-amber-500">{countTarde} Tardes</span>
+                            </p>
+                        </div>
+                        
+                        <Button
+                            onClick={handleSaveAttendance}
+                            disabled={isSaving || athletes.length === 0}
+                            className="w-full sm:w-auto bg-red-600 text-white hover:bg-red-700 font-black uppercase text-xs tracking-widest px-8 py-3.5 shadow-lg shadow-red-600/20 rounded-xl cursor-pointer"
+                        >
+                            {isSaving ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin animate-infinite" /> Guardando...
+                                </>
+                            ) : (
+                                <>
+                                    <CheckCircle className="w-4 h-4 mr-2" /> Guardar Lista de Asistencia
+                                </>
+                            )}
+                        </Button>
+                    </div>
+                </div>
+
+            </div>
+        </SwipeBackWrapper>
+    );
+}

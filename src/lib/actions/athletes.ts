@@ -76,32 +76,6 @@ export async function updateAthleteProfile(userId: string, profileData: any) {
 }
 
 /**
- * Send a supportive "Kiai" to an athlete to increase their spirit / social score
- */
-export async function giveKiai(athleteId: string) {
-    try {
-        await connectDB();
-        
-        // Find user to check if they are enrolled
-        const athlete = await User.findOne({ _id: athleteId, "athleteProfile.isEnrolled": true });
-        if (!athlete) {
-            return { success: false, error: "El Kuma no está inscrito o no existe" };
-        }
-
-        // Increment kiaiReceived count
-        await User.findByIdAndUpdate(athleteId, {
-            $inc: { "athleteProfile.kiaiReceived": 1 }
-        });
-
-        revalidatePath("/training");
-        return { success: true, kiaiCount: (athlete.athleteProfile?.kiaiReceived || 0) + 1 };
-    } catch (error) {
-        console.error("Error giving Kiai:", error);
-        return { success: false, error: "Error al enviar el Kiai" };
-    }
-}
-
-/**
  * Create a new user and immediately enroll them as an athlete
  */
 export async function createAndEnrollAthlete(userData: { name: string, email: string }) {

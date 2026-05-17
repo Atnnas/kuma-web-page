@@ -43,7 +43,6 @@ export interface IUser extends Document {
             esp: number;
             ovr: number;
         };
-        kiaiReceived: number;
         isEnrolled: boolean;
     };
 
@@ -182,7 +181,6 @@ const UserSchema = new Schema<IUser>(
                 esp: { type: Number, default: 10 },
                 ovr: { type: Number, default: 10 }
             },
-            kiaiReceived: { type: Number, default: 0 },
             isEnrolled: { type: Boolean, default: false }
         },
     },
