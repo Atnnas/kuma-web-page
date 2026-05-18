@@ -1,7 +1,5 @@
 "use client";
-
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface Tab {
@@ -48,14 +46,12 @@ export const AnimatedTabs = ({
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={cn(
-                                "relative px-4 py-2 text-sm md:text-base font-bold rounded-xl text-zinc-400 outline-none transition-colors hover:text-white"
+                                "relative px-4 py-2 text-sm md:text-base font-bold rounded-xl text-zinc-400 outline-none transition-all duration-300 hover:text-white"
                             )}
                         >
                             {activeTab === tab.id && (
-                                <motion.div
-                                    layoutId="active-tab"
-                                    className="absolute inset-0 bg-white/10 shadow-[0_0_20px_rgba(255,255,255,0.1)] backdrop-blur-sm rounded-xl border border-white/5"
-                                    transition={{ type: "spring", duration: 0.6 }}
+                                <div
+                                    className="absolute inset-0 bg-white/10 shadow-[0_0_20px_rgba(255,255,255,0.1)] backdrop-blur-sm rounded-xl border border-white/5 transition-all duration-300"
                                 />
                             )}
                             <span className={cn("relative z-10 transition-colors", activeTab === tab.id ? "text-white" : "")}>
@@ -68,20 +64,19 @@ export const AnimatedTabs = ({
 
             {/* Content Area */}
             <div className={cn("w-full relative", contentClassName)}>
-                <AnimatePresence mode="wait">
-                    {selectedTab && (
-                        <motion.div
-                            key={selectedTab.id}
-                            initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                            exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                            transition={{ duration: 0.3 }}
-                            className="w-full"
-                        >
-                            {selectedTab.content}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                {tabs.map((tab) => (
+                    <div
+                        key={tab.id}
+                        className={cn(
+                            "w-full transition-all duration-300",
+                            activeTab === tab.id
+                                ? "block opacity-100 translate-y-0"
+                                : "hidden opacity-0 translate-y-2"
+                        )}
+                    >
+                        {tab.content}
+                    </div>
+                ))}
             </div>
         </div>
     );

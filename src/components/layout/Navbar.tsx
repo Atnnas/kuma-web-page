@@ -34,6 +34,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
             ]
         },
         { name: "Entrenamiento", href: "/training" },
+        ...((user || process.env.NODE_ENV === "development") ? [{ name: "KumaCards", href: "/kumacards" }] : []),
         { name: "Calendario de Eventos", href: "/calendar" },
         { name: "Noticias", href: "/news" },
         { name: "Tienda", href: "/shop" },

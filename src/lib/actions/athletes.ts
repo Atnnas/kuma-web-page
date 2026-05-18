@@ -12,10 +12,10 @@ export async function getEnrolledAthletes() {
     try {
         await connectDB();
         const athletes = await User.find({ "athleteProfile.isEnrolled": true }).sort({ "athleteProfile.beltRank": -1 }).lean();
-        return serializeAthletes(athletes);
-    } catch (error) {
+        return { success: true, data: serializeAthletes(athletes) };
+    } catch (error: any) {
         console.error("Error fetching athletes:", error);
-        return [];
+        return { success: false, error: error?.message || String(error) };
     }
 }
 

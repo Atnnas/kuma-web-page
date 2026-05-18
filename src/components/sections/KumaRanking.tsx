@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getEnrolledAthletes, updateAthletePhotoSelf } from "@/lib/actions/athletes";
-import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon } from "lucide-react";
+import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -30,39 +30,82 @@ interface Athlete {
     };
 }
 
-export function KumaRanking({ currentUser }: { currentUser?: any }) {
-    const [athletes, setAthletes] = useState<Athlete[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite">("Todos");
-    const [editingPhotoAthlete, setEditingPhotoAthlete] = useState<Athlete | null>(null);
-    const [celebratingAthlete, setCelebratingAthlete] = useState<Athlete | null>(null);
+export function KumaRanking({ currentUser, initialAthletes }: { currentUser?: any; initialAthletes?: Athlete[] }) {
+  const [athletes, setAthletes] = useState<Athlete[]>(initialAthletes || []);
+  const [isLoading, setIsLoading] = useState(!initialAthletes);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite">("Todos");
+  const [editingPhotoAthlete, setEditingPhotoAthlete] = useState<Athlete | null>(null);
+  const [celebratingAthlete, setCelebratingAthlete] = useState<Athlete | null>(null);
+  const [layoutMode, setLayoutMode] = useState<'ranking' | 'gallery'>('gallery');
 
-    const loadAthletes = async () => {
-        setIsLoading(true);
-        const data = await getEnrolledAthletes();
-        setAthletes(data);
-        setIsLoading(false);
-    };
+  const loadAthletes = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      // Determine correct base URL for both server‑side rendering and client‑side execution
+      let url: string;
+      if (typeof window !== "undefined") {
+        // Browser context – use the current origin
+        url = `${window.location.origin}/api/athletes`;
+      } else {
+        // Server context – fall back to env var or localhost
+        const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+        url = `${base}/api/athletes`;
+      }
+      const response = await fetch(url, { cache: "no-store" });
+      const res = await response.json();
+      if (!res || res.success === false) {
+        setError(res?.error || "No se recibieron datos de la base de datos.");
+        setAthletes([]);
+      } else {
+        setAthletes(res.data || []);
+      }
+    } catch (e: any) {
+      console.error("Error loading athletes:", e);
+      setError("Error al cargar los Kumas: " + (e.message || e));
+      setAthletes([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    useEffect(() => {
-        loadAthletes();
-    }, []);
+  useEffect(() => {
+    if (!initialAthletes) {
+      loadAthletes();
+    }
+  }, [initialAthletes]);
+
+
+
 
     // Filter and Sort athletes
-    const filteredAthletes = athletes
+    const filteredAthletes = (athletes || [])
         .filter(ath => {
-            const matchesSearch = ath.name?.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesSpec = selectedSpec === "Todos" || ath.athleteProfile.specialization === selectedSpec || ath.athleteProfile.specialization === "Ambos";
+            if (!ath || !ath.name || !ath.athleteProfile) return false;
+            const matchesSearch = ath.name.toLowerCase().includes((searchTerm || "").toLowerCase());
+            const specialization = ath.athleteProfile.specialization || "Ambos";
+            const matchesSpec = selectedSpec === "Todos" || specialization === selectedSpec || specialization === "Ambos";
             return matchesSearch && matchesSpec;
         })
         // Sort by OVR desc, then by name alphabetically
         .sort((a, b) => {
-            if (b.athleteProfile.stats.ovr !== a.athleteProfile.stats.ovr) {
-                return b.athleteProfile.stats.ovr - a.athleteProfile.stats.ovr;
+            const ovrA = a?.athleteProfile?.stats?.ovr ?? 0;
+            const ovrB = b?.athleteProfile?.stats?.ovr ?? 0;
+            if (ovrB !== ovrA) {
+                return ovrB - ovrA;
             }
-            return a.name.localeCompare(b.name);
+            return (a.name || "").localeCompare(b.name || "");
         });
+
+    console.log("KumaRanking render state:", {
+        athletesLength: athletes.length,
+        filteredLength: filteredAthletes.length,
+        isLoading,
+        error,
+        athletesList: athletes.map(a => ({ name: a.name }))
+    });
 
     const podium = filteredAthletes.slice(0, 3);
     const listAthletes = filteredAthletes.slice(3);
@@ -90,8 +133,8 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
 
 
             {/* Search and Filters */}
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-16 relative z-10">
-                <div className="relative w-full md:w-96">
+            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-16 relative z-10">
+                <div className="relative w-full lg:w-96">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 w-5 h-5" />
                     <input
                         type="text"
@@ -102,21 +145,24 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
                     />
                 </div>
 
-                <div className="flex gap-2 w-full md:w-auto overflow-x-auto no-scrollbar">
-                    {["Todos", "Kata", "Kumite"].map((spec) => (
-                        <button
-                            key={spec}
-                            onClick={() => setSelectedSpec(spec as any)}
-                            className={cn(
-                                "px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest border transition-all duration-300",
-                                selectedSpec === spec
-                                    ? "bg-kuma-gold border-kuma-gold text-black shadow-[0_0_20px_rgba(212,175,55,0.3)]"
-                                    : "bg-zinc-900/40 border-white/5 text-zinc-400 hover:border-zinc-700"
-                            )}
-                        >
-                            {spec === "Todos" ? "Todas Especialidades" : spec}
-                        </button>
-                    ))}
+                <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto items-center sm:justify-end">
+                    {/* Specialty filters */}
+                    <div className="flex gap-2 w-full sm:w-auto overflow-x-auto no-scrollbar justify-center sm:justify-start">
+                        {["Todos", "Kata", "Kumite"].map((spec) => (
+                            <button
+                                key={spec}
+                                onClick={() => setSelectedSpec(spec as any)}
+                                className={cn(
+                                    "px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest border transition-all duration-300 shrink-0",
+                                    selectedSpec === spec
+                                        ? "bg-kuma-gold border-kuma-gold text-black shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+                                        : "bg-zinc-900/40 border-white/5 text-zinc-400 hover:border-zinc-700"
+                                )}
+                            >
+                                {spec === "Todos" ? "Todas Especialidades" : spec}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -125,126 +171,152 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
                     <div className="w-12 h-12 border-4 border-t-kuma-gold border-white/10 rounded-full animate-spin mb-4" />
                     <p className="text-zinc-500 text-xs font-black uppercase tracking-widest">Cargando Ranking...</p>
                 </div>
+            ) : error ? (
+                <div className="text-center py-10 px-6 bg-red-950/20 rounded-3xl border border-red-500/20 backdrop-blur-sm max-w-xl mx-auto">
+                    <p className="text-red-400 text-sm font-bold mb-2">⚠ Error de Conexión de Base de Datos</p>
+                    <p className="text-zinc-400 text-xs">{error}</p>
+                    <p className="text-zinc-500 text-[10px] mt-4 font-mono">Tip: Verifica que tu servidor local tenga conexión a Internet y que tu IP pública esté autorizada en el Panel de MongoDB Atlas.</p>
+                </div>
             ) : filteredAthletes.length === 0 ? (
                 <div className="text-center py-20 bg-zinc-900/20 rounded-3xl border border-dashed border-white/5 backdrop-blur-sm">
                     <p className="text-zinc-500 text-sm">No se encontraron Kumas en esta categoría.</p>
                 </div>
             ) : (
-                <div className="space-y-20 relative z-10">
+                 <div className="space-y-20 relative z-10">
                     
-                    {/* PODIUM SECTION */}
-                    {podium.length > 0 && (
-                        <div className="flex flex-col md:flex-row gap-8 items-center justify-center max-w-5xl mx-auto pt-10 flex-wrap">
-                            
-                            {/* SECOND PLACE */}
-                            {podium[1] && (
-                                <div className="order-2 md:order-1 w-[275px] shrink-0 flex justify-center">
-                                    <PodiumCard athlete={podium[1]} position={2} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[1].athleteProfile.beltRank)} />
+                    {layoutMode === 'ranking' ? (
+                        <>
+                            {/* PODIUM SECTION */}
+                            {podium.length > 0 && (
+                                <div className="flex flex-col md:flex-row gap-8 items-center justify-center max-w-5xl mx-auto pt-10 flex-wrap">
+                                    
+                                    {/* SECOND PLACE */}
+                                    {podium[1] && (
+                                        <div className="order-2 md:order-1 w-[275px] shrink-0 flex justify-center">
+                                            <PodiumCard athlete={podium[1]} position={2} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[1].athleteProfile.beltRank)} />
+                                        </div>
+                                    )}
+
+                                    {/* FIRST PLACE */}
+                                    {podium[0] && (
+                                        <div className="order-1 md:order-2 w-[275px] shrink-0 flex justify-center">
+                                            <PodiumCard athlete={podium[0]} position={1} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[0].athleteProfile.beltRank)} />
+                                        </div>
+                                    )}
+
+                                    {/* THIRD PLACE */}
+                                    {podium[2] && (
+                                        <div className="order-3 w-[275px] shrink-0 flex justify-center">
+                                            <PodiumCard athlete={podium[2]} position={3} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[2].athleteProfile.beltRank)} />
+                                        </div>
+                                    )}
+
                                 </div>
                             )}
 
-                            {/* FIRST PLACE */}
-                            {podium[0] && (
-                                <div className="order-1 md:order-2 w-[275px] shrink-0 flex justify-center">
-                                    <PodiumCard athlete={podium[0]} position={1} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[0].athleteProfile.beltRank)} />
-                                </div>
-                            )}
-
-                            {/* THIRD PLACE */}
-                            {podium[2] && (
-                                <div className="order-3 w-[275px] shrink-0 flex justify-center">
-                                    <PodiumCard athlete={podium[2]} position={3} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[2].athleteProfile.beltRank)} />
-                                </div>
-                            )}
-
-                        </div>
-                    )}
-
-                    {/* GENERAL LEADERBOARD LIST */}
-                    {listAthletes.length > 0 && (
-                        <div className="max-w-5xl mx-auto">
-                            <h3 className="text-white font-serif font-black uppercase tracking-widest text-xl mb-6 flex items-center gap-3">
-                                <Activity className="w-5 h-5 text-red-500" /> Clasificación General
-                            </h3>
-                            
-                            <div className="space-y-3">
-                                {listAthletes.map((ath, idx) => {
-                                    const rankNum = idx + 4;
-                                    const beltStyle = getBeltStyles(ath.athleteProfile.beltRank);
-                                    return (
-                                        <motion.div
-                                            key={ath._id}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            whileInView={{ opacity: 1, y: 0 }}
-                                            viewport={{ once: true }}
-                                            className="glass hover:border-zinc-700/50 transition-all duration-300 p-4 flex items-center justify-between gap-4 rounded-2xl group"
-                                        >
-                                            <div 
-                                                onClick={() => setCelebratingAthlete(ath)}
-                                                className="flex items-center gap-4 cursor-pointer"
-                                            >
-                                                {/* Rank Number */}
-                                                <span className="w-8 text-center text-sm font-black italic text-zinc-600">
-                                                    #{rankNum}
-                                                </span>
-
-                                                {/* Avatar */}
-                                                <div className="relative h-12 w-12 rounded-full overflow-hidden bg-zinc-900 border border-white/10 shrink-0">
-                                                    {ath.image ? (
-                                                        <Image src={ath.image} alt={ath.name} fill className="object-cover" />
-                                                    ) : (
-                                                        <div className="h-full w-full flex items-center justify-center text-zinc-500 font-bold bg-zinc-950">
-                                                            {ath.name?.[0]}
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Name and Belt */}
-                                                <div>
-                                                    <h4 className="text-sm font-black text-white uppercase group-hover:text-kuma-gold transition-colors">{ath.name}</h4>
-                                                    <span className={cn("text-[9px] font-bold uppercase tracking-wider", beltStyle.text)}>
-                                                        <span className="flex items-center gap-1">
-                                                            <BeltSquare beltRank={ath.athleteProfile.beltRank} className="w-3.5 h-3.5" />
-                                                            <span>{ath.athleteProfile.beltRank}</span>
+                            {/* GENERAL LEADERBOARD LIST */}
+                            {listAthletes.length > 0 && (
+                                <div className="max-w-5xl mx-auto">
+                                    <h3 className="text-white font-serif font-black uppercase tracking-widest text-xl mb-6 flex items-center gap-3">
+                                        <Activity className="w-5 h-5 text-red-500" /> Clasificación General
+                                    </h3>
+                                    
+                                    <div className="space-y-3">
+                                        {listAthletes.map((ath, idx) => {
+                                            const rankNum = idx + 4;
+                                            const beltStyle = getBeltStyles(ath.athleteProfile.beltRank);
+                                            return (
+                                                <motion.div
+                                                    key={ath._id}
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    className="glass hover:border-zinc-700/50 transition-all duration-300 p-4 flex items-center justify-between gap-4 rounded-2xl group"
+                                                >
+                                                    <div 
+                                                        onClick={() => setCelebratingAthlete(ath)}
+                                                        className="flex items-center gap-4 cursor-pointer"
+                                                    >
+                                                        {/* Rank Number */}
+                                                        <span className="w-8 text-center text-sm font-black italic text-zinc-600">
+                                                            #{rankNum}
                                                         </span>
-                                                    </span>
-                                                </div>
-                                            </div>
 
-                                            {/* Stats Summary */}
-                                            <div className="flex items-center gap-6">
-                                                <div className="flex gap-4 items-center">
-                                                    <div className="text-center">
-                                                        <p className="text-[8px] font-bold text-zinc-600 uppercase">OVR</p>
-                                                        <p className="text-sm font-black text-white italic">{ath.athleteProfile.stats.ovr}</p>
-                                                    </div>
-                                                    <div className="h-6 w-[1px] bg-white/5 hidden sm:block" />
-                                                    <div className="text-center hidden sm:block">
-                                                        <p className="text-[8px] font-bold text-zinc-600 uppercase">ESP</p>
-                                                        <p className="text-xs font-bold text-zinc-400">{ath.athleteProfile.stats.esp}</p>
-                                                    </div>
-                                                </div>
+                                                        {/* Avatar */}
+                                                        <div className="relative h-12 w-12 rounded-full overflow-hidden bg-zinc-900 border border-white/10 shrink-0">
+                                                            {ath.image ? (
+                                                                <Image src={ath.image} alt={ath.name} fill className="object-cover" />
+                                                            ) : (
+                                                                <div className="h-full w-full flex items-center justify-center text-zinc-500 font-bold bg-zinc-950">
+                                                                    {ath.name?.[0]}
+                                                                </div>
+                                                            )}
+                                                        </div>
 
-                                                {/* Edit photo button */}
-                                                {currentUser?.email && ath.email && ath.email.toLowerCase().trim() === currentUser.email.toLowerCase().trim() && (
-                                                    <div className="flex items-center gap-2">
-                                                         <Button
-                                                             onClick={() => setEditingPhotoAthlete(ath)}
-                                                             className="h-9 w-9 p-0 rounded-xl bg-zinc-900 border border-white/5 hover:border-white/20 text-zinc-400 hover:text-white transition-all duration-200 flex items-center justify-center shrink-0"
-                                                             title="Editar mi foto"
-                                                         >
-                                                             <Camera className="w-4 h-4" />
-                                                         </Button>
+                                                        {/* Name and Belt */}
+                                                        <div>
+                                                            <h4 className="text-sm font-black text-white uppercase group-hover:text-kuma-gold transition-colors">{ath.name}</h4>
+                                                            <span className={cn("text-[9px] font-bold uppercase tracking-wider", beltStyle.text)}>
+                                                                <span className="flex items-center gap-1">
+                                                                    <BeltSquare beltRank={ath.athleteProfile.beltRank} className="w-3.5 h-3.5" />
+                                                                    <span>{ath.athleteProfile.beltRank}</span>
+                                                                </span>
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                )}
-                                            </div>
-                                        </motion.div>
-                                    );
-                                })}
-                            </div>
+
+                                                    {/* Stats Summary */}
+                                                    <div className="flex items-center gap-6">
+                                                        <div className="flex gap-4 items-center">
+                                                            <div className="text-center">
+                                                                <p className="text-[8px] font-bold text-zinc-600 uppercase">OVR</p>
+                                                                <p className="text-sm font-black text-white italic">{ath.athleteProfile.stats.ovr}</p>
+                                                            </div>
+                                                            <div className="h-6 w-[1px] bg-white/5" />
+                                                            <div className="text-center">
+                                                                <p className="text-[8px] font-bold text-zinc-600 uppercase">ESP</p>
+                                                                <p className="text-xs font-bold text-zinc-400">
+                                                                    {(ath.athleteProfile.specialization || "Ambos") === "Kata" ? "KA" :
+                                                                     (ath.athleteProfile.specialization || "Ambos") === "Kumite" ? "KU" : "KA/KU"}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Edit photo button */}
+                                                        {currentUser?.email && ath.email && ath.email.toLowerCase().trim() === currentUser.email.toLowerCase().trim() && (
+                                                            <div className="flex items-center gap-2">
+                                                                 <Button
+                                                                     onClick={() => setEditingPhotoAthlete(ath)}
+                                                                     className="h-9 w-9 p-0 rounded-xl bg-zinc-900 border border-white/5 hover:border-white/20 text-zinc-400 hover:text-white transition-all duration-200 flex items-center justify-center shrink-0"
+                                                                     title="Editar mi foto"
+                                                                 >
+                                                                     <Camera className="w-4 h-4" />
+                                                                 </Button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </motion.div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center max-w-7xl mx-auto pt-6">
+                            {filteredAthletes.map((ath, idx) => (
+                                <div key={ath._id} className="w-full flex justify-center">
+                                    <PodiumCard
+                                        athlete={ath}
+                                        position={idx + 1}
+                                        currentUser={currentUser}
+                                        onEditPhoto={setEditingPhotoAthlete}
+                                        onClickCard={setCelebratingAthlete}
+                                        style={getBeltStyles(ath.athleteProfile.beltRank)}
+                                    />
+                                </div>
+                            ))}
                         </div>
                     )}
-
                 </div>
             )}
 
@@ -268,7 +340,7 @@ export function KumaRanking({ currentUser }: { currentUser?: any }) {
 
 interface PodiumCardProps {
     athlete: Athlete;
-    position: 1 | 2 | 3;
+    position: number;
     currentUser?: any;
     onEditPhoto: (athlete: Athlete) => void;
     onClickCard: (athlete: Athlete) => void;
@@ -277,8 +349,8 @@ interface PodiumCardProps {
 
 function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }: PodiumCardProps) {
     const isFirst = position === 1;
-    const ovr = athlete.athleteProfile.stats.ovr;
-    const beltRank = athlete.athleteProfile.beltRank;
+    const ovr = athlete?.athleteProfile?.stats?.ovr ?? 50;
+    const beltRank = athlete?.athleteProfile?.beltRank ?? "Blanco";
 
     // FUT Card theme matcher strictly based on Rating (OVR)
     const getFUTStyles = (rating: number) => {
@@ -291,7 +363,7 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                 textColor: "#8d691e",
                 glowClass: "shadow-[0_15px_40px_rgba(212,175,55,0.35)]",
                 lightColor: "rgba(255, 255, 255, 0.45)",
-                diagonalStripe: "from-[#ffe894]/30 via-white/40 to-[#e5c060]/30"
+                diagonalStripe: "linear-gradient(90deg, rgba(255, 232, 148, 0.3) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(229, 192, 96, 0.3) 100%)"
             };
         }
         if (rating >= 65) {
@@ -303,7 +375,7 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                 textColor: "#475569",
                 glowClass: "shadow-[0_15px_40px_rgba(148,163,184,0.25)]",
                 lightColor: "rgba(255, 255, 255, 0.5)",
-                diagonalStripe: "from-slate-200/25 via-white/35 to-slate-400/25"
+                diagonalStripe: "linear-gradient(90deg, rgba(226, 232, 240, 0.25) 0%, rgba(255, 255, 255, 0.35) 50%, rgba(203, 213, 225, 0.25) 100%)"
             };
         }
         return {
@@ -314,7 +386,7 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
             textColor: "#78350f",
             glowClass: "shadow-[0_15px_40px_rgba(180,83,9,0.25)]",
             lightColor: "rgba(251, 191, 36, 0.35)",
-            diagonalStripe: "from-amber-900/30 via-orange-400/30 to-amber-950/30"
+            diagonalStripe: "linear-gradient(90deg, rgba(120, 53, 15, 0.3) 0%, rgba(251, 146, 60, 0.3) 50%, rgba(69, 26, 3, 0.3) 100%)"
         };
     };
 
@@ -328,10 +400,9 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
     return (
         <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: position * 0.1 }}
-            className="flex flex-col items-center gap-6 group"
+            className="flex flex-col items-center gap-6 group w-full max-w-[275px]"
         >
             {/* FIFA FUT CARD CONTAINER */}
             <div 
@@ -372,7 +443,7 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                             {/* Diagonal 3D Geometric Ribbon stripes */}
                             <div 
                                 className="absolute w-[220%] h-36 bg-gradient-to-r rotate-[-35deg] top-1/4 left-[-60%] pointer-events-none mix-blend-overlay opacity-60"
-                                style={{ backgroundImage: `linear-gradient(90deg, ${fut.diagonalStripe.split(' ')[1] || ''}, ${fut.diagonalStripe.split(' ')[3] || ''}, ${fut.diagonalStripe.split(' ')[5] || ''})` }}
+                                style={{ backgroundImage: fut.diagonalStripe }}
                             />
                             <div className="absolute w-[220%] h-6 bg-white/[0.07] rotate-[-35deg] top-[36%] left-[-60%] pointer-events-none" />
 
@@ -391,8 +462,9 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                             {/* FUT Shield Rank Badge */}
                             <div className={cn(
                                 "absolute top-5 left-5 h-6 w-6 rounded-full flex items-center justify-center font-serif font-black text-xs shadow-md z-20 border border-white/10",
-                                isFirst ? "bg-kuma-gold text-black shadow-[0_0_12px_rgba(212,175,55,0.4)]" :
-                                position === 2 ? "bg-zinc-300 text-black" : "bg-amber-700 text-white"
+                                position === 1 ? "bg-kuma-gold text-black shadow-[0_0_12px_rgba(212,175,55,0.4)]" :
+                                position === 2 ? "bg-zinc-300 text-black" :
+                                position === 3 ? "bg-amber-700 text-white" : "bg-zinc-800 text-zinc-300"
                             )}>
                                 {position}
                             </div>
@@ -412,8 +484,8 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                                     
                                     {/* Spec position abbreviation */}
                                     <div className="text-[12px] font-black tracking-wider leading-none mb-1.5 text-inherit">
-                                        {athlete.athleteProfile.specialization === "Kata" ? "KA" : 
-                                         athlete.athleteProfile.specialization === "Kumite" ? "KU" : "KA/KU"}
+                                        {(athlete?.athleteProfile?.specialization || "Ambos") === "Kata" ? "KA" : 
+                                         (athlete?.athleteProfile?.specialization || "Ambos") === "Kumite" ? "KU" : "KA/KU"}
                                     </div>
                                     
                                     <div className="h-[1.5px] w-6 bg-current opacity-60 mb-1.5" />
@@ -887,10 +959,10 @@ interface KumaCelebrationModalProps {
 }
 
 const getKumaHonorDetails = (ath: Athlete) => {
-    const spec = ath.athleteProfile.specialization;
-    const stats = ath.athleteProfile.stats;
-    const belt = ath.athleteProfile.beltRank.toLowerCase();
-    const ovr = stats.ovr;
+    const spec = ath?.athleteProfile?.specialization || "Ambos";
+    const stats = ath?.athleteProfile?.stats || { vel: 50, pot: 50, tec: 50, res: 50, esp: 50, ovr: 50 };
+    const belt = (ath?.athleteProfile?.beltRank || "Blanco").toLowerCase();
+    const ovr = stats.ovr || 50;
 
     // Custom overrides for specific athletes
     if (ath.name.toLowerCase().includes("kristel")) {
@@ -898,6 +970,14 @@ const getKumaHonorDetails = (ath: Athlete) => {
             badge: "🐍 CC : MAMBA NEGRA",
             desc: "Una competidora de agilidad excepcional y precisión técnica implacable en el tatami. Su enfoque de combate y disciplina constante la convierten en un referente de superación marcial.",
             ability: "kisame Tzuki"
+        };
+    }
+
+    if (ath.name.toLowerCase().includes("jimena") || ath.name.toLowerCase().includes("otoya")) {
+        return {
+            badge: "🦅 CC : MEME",
+            desc: "Una competidora destacada por su velocidad de reacción y estrategia inteligente de combate en el tatami. Su letal patada lateral es un referente de precisión y control técnico.",
+            ability: "Yoko Gueri"
         };
     }
 
@@ -955,11 +1035,11 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
 
     if (!isOpen || !athlete) return null;
 
-    const ovr = athlete.athleteProfile.stats.ovr;
-    const nameParts = athlete.name.split(" ");
+    const ovr = athlete?.athleteProfile?.stats?.ovr ?? 50;
+    const nameParts = (athlete?.name || "").split(" ");
     const displayFirstName = nameParts[0] || "";
     const displayLastName = nameParts[1] || "";
-    const beltRank = athlete.athleteProfile.beltRank;
+    const beltRank = athlete?.athleteProfile?.beltRank ?? "Blanco";
 
     const getFUTStyles = (rating: number) => {
         if (rating >= 75) {
@@ -1132,8 +1212,8 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
                                         </div>
                                         
                                         <div className="text-[13px] font-black tracking-wider leading-none mb-2 text-inherit">
-                                            {athlete.athleteProfile.specialization === "Kata" ? "KA" : 
-                                             athlete.athleteProfile.specialization === "Kumite" ? "KU" : "KA/KU"}
+                                            {(athlete?.athleteProfile?.specialization || "Ambos") === "Kata" ? "KA" : 
+                                             (athlete?.athleteProfile?.specialization || "Ambos") === "Kumite" ? "KU" : "KA/KU"}
                                         </div>
                                         
                                         <div className="h-[2px] w-8 bg-current opacity-60 mb-2" />

@@ -4,7 +4,6 @@ export const dynamic = "force-dynamic";
 import { TrainingSchedules } from "@/components/sections/TrainingSchedules";
 import { TrainingPrices } from "@/components/sections/TrainingPrices";
 import { TrainingVirtual } from "@/components/sections/TrainingVirtual";
-import { KumaRanking } from "@/components/sections/KumaRanking";
 
 import { AnimatedTabs } from "@/components/ui/animated-tabs";
 
@@ -22,11 +21,6 @@ export default async function TrainingPage() {
             id: "schedules",
             label: "Horarios",
             content: <TrainingSchedules />
-        },
-        {
-            id: "ranking",
-            label: "Kuma Ranking",
-            content: <KumaRanking currentUser={session?.user} />
         },
         {
             id: "planes",
