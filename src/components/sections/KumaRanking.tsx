@@ -32,7 +32,7 @@ interface Athlete {
 
 export function KumaRanking({ currentUser, initialAthletes }: { currentUser?: any; initialAthletes?: Athlete[] }) {
   const [athletes, setAthletes] = useState<Athlete[]>(initialAthletes || []);
-  const [isLoading, setIsLoading] = useState(!initialAthletes);
+  const [isLoading, setIsLoading] = useState(!initialAthletes || initialAthletes.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite">("Todos");
@@ -72,7 +72,7 @@ export function KumaRanking({ currentUser, initialAthletes }: { currentUser?: an
   };
 
   useEffect(() => {
-    if (!initialAthletes) {
+    if (!initialAthletes || initialAthletes.length === 0) {
       loadAthletes();
     }
   }, [initialAthletes]);

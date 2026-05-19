@@ -19,7 +19,7 @@ export default async function KumaCardsPage() {
   }
 
   // Server‑side fetch of athletes
-  let athletes: any[] = [];
+  let athletes: any[] | null = null;
   try {
     const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const res = await fetch(`${base}/api/athletes`, { cache: "no-store" });
@@ -63,7 +63,7 @@ export default async function KumaCardsPage() {
 
 
         {/* Kuma Ranking Component (Renders the Athlete Cards beautifully) */}
-        <KumaRanking currentUser={user} initialAthletes={athletes} />
+        <KumaRanking currentUser={user} initialAthletes={athletes || undefined} />
       </div>
     </main>
   );
