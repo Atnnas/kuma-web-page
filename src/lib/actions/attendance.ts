@@ -18,10 +18,15 @@ export async function getAthletesForAttendance() {
             .sort({ name: 1 })
             .lean();
             
-        // Get the current calendar month in YYYY-MM format
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, "0");
+        // Get the current calendar month in YYYY-MM format in America/Costa_Rica timezone
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'America/Costa_Rica',
+            year: 'numeric',
+            month: '2-digit'
+        });
+        const parts = formatter.formatToParts(new Date());
+        const year = parts.find(p => p.type === 'year')!.value;
+        const month = parts.find(p => p.type === 'month')!.value;
         const monthStr = `${year}-${month}`; // e.g. "2026-05"
         
         // Find all present/tarde logs for the current month
@@ -59,18 +64,19 @@ export async function getAthletesForAttendance() {
 }
 
 /**
- * Fetch attendance logs for a specific date and sessionName
+ * Fetch attendance logs for a specific date
  */
-export async function getAttendanceForSession(date: string, sessionName: string) {
+export async function getAttendanceForDate(date: string) {
     try {
         await requireSuperAdmin();
         await connectDB();
         
-        const logs = await AttendanceLog.find({ date, sessionName }).lean();
+        const logs = await AttendanceLog.find({ date }).lean();
         
         return JSON.parse(JSON.stringify(logs)).map((log: any) => ({
             userId: log.user.toString(),
             status: log.status,
+            sessions: log.sessions || [],
         }));
     } catch (error) {
         console.error("Error fetching attendance logs:", error);
@@ -79,26 +85,24 @@ export async function getAttendanceForSession(date: string, sessionName: string)
 }
 
 /**
- * Submit or update attendance records for a class session.
+ * Submit or update attendance records for a specific date.
  * Automatically increments/decrements workout statistics for present/tarde athletes.
  */
-export async function submitAttendanceSession(
+export async function submitAttendanceForDate(
     date: string,
-    sessionName: "Fuerza" | "Explosión" | "Técnica" | "Kata" | "Kumite",
-    records: { userId: string; status: "Presente" | "Tarde" | "Ausente" }[]
+    records: { userId: string; status: "Presente" | "Tarde" | "Ausente"; sessions: ("Fuerza" | "Explosión" | "Técnica" | "Kata" | "Kumite")[] }[]
 ) {
     try {
         await requireSuperAdmin();
         await connectDB();
 
         for (const record of records) {
-            const { userId, status } = record;
+            const { userId, status, sessions } = record;
 
-            // Find if there's an existing attendance log for this session/date/user
+            // Find if there's an existing attendance log for this date/user
             const existingLog = await AttendanceLog.findOne({
                 user: userId,
                 date,
-                sessionName,
             });
 
             if (status === "Presente" || status === "Tarde") {
@@ -107,8 +111,8 @@ export async function submitAttendanceSession(
                     await AttendanceLog.create({
                         user: userId,
                         date,
-                        sessionName,
                         status,
+                        sessions,
                         method: "Sensei_Manual",
                         checkInTime: new Date(date + "T12:00:00"),
                     });
@@ -118,9 +122,10 @@ export async function submitAttendanceSession(
                         $inc: { workoutCount: 1 },
                         $set: { lastWorkoutDate: new Date(date) },
                     });
-                } else if (existingLog.status !== status) {
-                    // Just update status if already exists but changed (e.g. Presente -> Tarde)
+                } else {
+                    // Update status and sessions if already exists
                     existingLog.status = status;
+                    existingLog.sessions = sessions;
                     await existingLog.save();
                 }
             } else if (status === "Ausente") {
@@ -146,7 +151,7 @@ export async function submitAttendanceSession(
 
         return { success: true };
     } catch (error) {
-        console.error("Error submitting attendance session:", error);
-        return { success: false, error: "Error al guardar la asistencia de la sesión." };
+        console.error("Error submitting attendance:", error);
+        return { success: false, error: "Error al guardar la asistencia." };
     }
 }

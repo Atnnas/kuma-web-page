@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IAttendanceLog extends Document {
     user: mongoose.Types.ObjectId;
-    sessionName: "Fuerza" | "Explosión" | "Técnica" | "Kata" | "Kumite";
+    sessions: ("Fuerza" | "Explosión" | "Técnica" | "Kata" | "Kumite")[];
     date: string;        // ISO Format YYYY-MM-DD for simple unique index checks
     checkInTime: Date;   // Actual timestamp
     status: "Presente" | "Tarde" | "Ausente";
@@ -18,10 +18,10 @@ const AttendanceLogSchema = new Schema<IAttendanceLog>(
             ref: "User",
             required: true,
         },
-        sessionName: {
-            type: String,
+        sessions: {
+            type: [String],
             enum: ["Fuerza", "Explosión", "Técnica", "Kata", "Kumite"],
-            required: true,
+            default: [],
         },
         date: {
             type: String,
@@ -48,8 +48,8 @@ const AttendanceLogSchema = new Schema<IAttendanceLog>(
     }
 );
 
-// Compound index to guarantee one athlete gets only one log per session per day
-AttendanceLogSchema.index({ user: 1, date: 1, sessionName: 1 }, { unique: true });
+// Compound index to guarantee one athlete gets only one log per day
+AttendanceLogSchema.index({ user: 1, date: 1 }, { unique: true });
 
 if (process.env.NODE_ENV !== "production") {
     delete (mongoose.models as any).AttendanceLog;

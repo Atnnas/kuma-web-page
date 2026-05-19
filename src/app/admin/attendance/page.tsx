@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
 // Actions
-import { getAthletesForAttendance, getAttendanceForSession, submitAttendanceSession } from "@/lib/actions/attendance";
+import { getAthletesForAttendance, getAttendanceForDate, submitAttendanceForDate } from "@/lib/actions/attendance";
 
 interface AttendanceRecord {
     userId: string;
@@ -17,19 +17,40 @@ interface AttendanceRecord {
 }
 
 export default function AdminAttendancePage() {
+    interface AthleteAttendanceState {
+        status: "Presente" | "Tarde" | "Ausente";
+        sessions: string[];
+    }
+
     const [athletes, setAthletes] = useState<any[]>([]);
-    const [attendanceMap, setAttendanceMap] = useState<Record<string, "Presente" | "Tarde" | "Ausente">>({});
+    const [attendanceMap, setAttendanceMap] = useState<Record<string, AthleteAttendanceState>>({});
+    const [globalSessions, setGlobalSessions] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    
-    // Filters
-    const [selectedDate, setSelectedDate] = useState(() => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
+    const [alertModal, setAlertModal] = useState<{
+        isOpen: boolean;
+        type: "success" | "error";
+        title: string;
+        message: string;
+    }>({
+        isOpen: false,
+        type: "success",
+        title: "",
+        message: "",
     });
     
-    // Session Selection - Correct spelling: "Fuerza", "Explosión", "Técnica", "Kata", "Kumite"
-    const [selectedSession, setSelectedSession] = useState<"Fuerza" | "Explosión" | "Técnica" | "Kata" | "Kumite">("Kata");
+    // Filters
+    const [selectedDate, setSelectedDate] = useState("");
+    
+    // Initialize to today's local date on mount to avoid hydration mismatch
+    useEffect(() => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+        setSelectedDate(`${year}-${month}-${day}`);
+    }, []);
+    
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite" | "Ambos">("Todos");
     
@@ -45,42 +66,113 @@ export default function AdminAttendancePage() {
         loadAthletes();
     }, []);
 
-    // Load attendance records for the active date + session
-    const loadSessionAttendance = useCallback(async () => {
-        if (!selectedDate || !selectedSession) return;
+    // Load attendance records for the active date
+    const loadDailyAttendance = useCallback(async () => {
+        if (!selectedDate) return;
         
         setIsLoading(true);
-        const logs = await getAttendanceForSession(selectedDate, selectedSession);
+        const logs = await getAttendanceForDate(selectedDate);
         
         // Build initial map, defaulting everyone else to Ausente
-        const newMap: Record<string, "Presente" | "Tarde" | "Ausente"> = {};
+        const newMap: Record<string, AthleteAttendanceState> = {};
         
-        // Map fetched logs
+        // Map fetched logs and collect existing sessions to populate global state
+        const uniqueSessions = new Set<string>();
         logs.forEach((log: any) => {
-            newMap[log.userId] = log.status;
+            newMap[log.userId] = {
+                status: log.status,
+                sessions: log.sessions || [],
+            };
+            if (log.sessions && (log.status === "Presente" || log.status === "Tarde")) {
+                log.sessions.forEach((s: string) => uniqueSessions.add(s));
+            }
         });
         
+        setGlobalSessions(Array.from(uniqueSessions));
         setAttendanceMap(newMap);
         setIsLoading(false);
-    }, [selectedDate, selectedSession]);
+    }, [selectedDate]);
 
     useEffect(() => {
-        loadSessionAttendance();
-    }, [selectedDate, selectedSession, loadSessionAttendance]);
+        loadDailyAttendance();
+    }, [selectedDate, loadDailyAttendance]);
 
     // Handle status change for an individual athlete
     const handleStatusChange = (userId: string, newStatus: "Presente" | "Tarde" | "Ausente") => {
-        setAttendanceMap((prev) => ({
-            ...prev,
-            [userId]: newStatus,
-        }));
+        setAttendanceMap((prev) => {
+            const existing = prev[userId] || { status: "Ausente", sessions: [] };
+            return {
+                ...prev,
+                [userId]: {
+                    status: newStatus,
+                    // If changing to present/tardy and sessions are empty, inherit global sessions
+                    sessions: newStatus === "Ausente" 
+                        ? [] 
+                        : (existing.sessions.length === 0 ? [...globalSessions] : existing.sessions),
+                }
+            };
+        });
+    };
+
+    // Toggle session selection for an individual athlete
+    const handleSessionToggle = (userId: string, session: string) => {
+        setAttendanceMap((prev) => {
+            const existing = prev[userId] || { status: "Presente", sessions: [] };
+            const hasSession = existing.sessions.includes(session);
+            const newSessions = hasSession
+                ? existing.sessions.filter((s) => s !== session)
+                : [...existing.sessions, session];
+            return {
+                ...prev,
+                [userId]: {
+                    ...existing,
+                    sessions: newSessions,
+                }
+            };
+        });
+    };
+
+    // Toggle global sessions and propagate to all present/tarde athletes
+    const handleGlobalSessionToggle = (session: string) => {
+        const isAdding = !globalSessions.includes(session);
+        const nextGlobal = isAdding 
+            ? [...globalSessions, session] 
+            : globalSessions.filter(s => s !== session);
+            
+        setGlobalSessions(nextGlobal);
+        
+        setAttendanceMap((prev) => {
+            const updated = { ...prev };
+            Object.keys(updated).forEach((userId) => {
+                const state = updated[userId];
+                if (state.status === "Presente" || state.status === "Tarde") {
+                    const hasSession = state.sessions.includes(session);
+                    if (isAdding && !hasSession) {
+                        updated[userId] = {
+                            ...state,
+                            sessions: [...state.sessions, session],
+                        };
+                    } else if (!isAdding && hasSession) {
+                        updated[userId] = {
+                            ...state,
+                            sessions: state.sessions.filter(s => s !== session),
+                        };
+                    }
+                }
+            });
+            return updated;
+        });
     };
 
     // Bulk actions
     const markAllPresent = () => {
         const updatedMap = { ...attendanceMap };
         filteredAthletes.forEach((ath) => {
-            updatedMap[ath._id] = "Presente";
+            const existing = updatedMap[ath._id] || { status: "Ausente", sessions: [] };
+            updatedMap[ath._id] = {
+                status: "Presente",
+                sessions: existing.sessions.length === 0 ? [...globalSessions] : existing.sessions,
+            };
         });
         setAttendanceMap(updatedMap);
     };
@@ -88,7 +180,10 @@ export default function AdminAttendancePage() {
     const markAllAbsent = () => {
         const updatedMap = { ...attendanceMap };
         filteredAthletes.forEach((ath) => {
-            updatedMap[ath._id] = "Ausente";
+            updatedMap[ath._id] = {
+                status: "Ausente",
+                sessions: [],
+            };
         });
         setAttendanceMap(updatedMap);
     };
@@ -98,12 +193,16 @@ export default function AdminAttendancePage() {
         setIsSaving(true);
         
         // Prepare records array
-        const records = athletes.map((ath) => ({
-            userId: ath._id,
-            status: attendanceMap[ath._id] || "Ausente",
-        }));
+        const records = athletes.map((ath) => {
+            const state = attendanceMap[ath._id] || { status: "Ausente", sessions: [] };
+            return {
+                userId: ath._id,
+                status: state.status,
+                sessions: state.sessions as any[],
+            };
+        });
 
-        const res = await submitAttendanceSession(selectedDate, selectedSession, records);
+        const res = await submitAttendanceForDate(selectedDate, records);
         setIsSaving(false);
 
         if (res.success) {
@@ -114,10 +213,20 @@ export default function AdminAttendancePage() {
                 origin: { y: 0.6 },
                 colors: ["#ffd700", "#10b981", "#ef4444", "#ffffff"],
             });
-            alert("¡Asistencia guardada con éxito! Se han actualizado las estadísticas de entrenamiento de los atletas.");
-            loadSessionAttendance();
+            setAlertModal({
+                isOpen: true,
+                type: "success",
+                title: "¡Guardado Exitoso!",
+                message: "La lista de asistencia del día se ha guardado con éxito. Se actualizaron los perfiles y estadísticas de Kaizen de los atletas.",
+            });
+            loadDailyAttendance();
         } else {
-            alert(res.error || "Ocurrió un error al guardar la asistencia.");
+            setAlertModal({
+                isOpen: true,
+                type: "error",
+                title: "Error de Guardado",
+                message: res.error || "Ocurrió un error inesperado al intentar guardar la asistencia del día.",
+            });
         }
     };
 
@@ -176,9 +285,9 @@ export default function AdminAttendancePage() {
     };
 
     // Counts for summary
-    const countPresent = filteredAthletes.filter(ath => attendanceMap[ath._id] === "Presente").length;
-    const countTarde = filteredAthletes.filter(ath => attendanceMap[ath._id] === "Tarde").length;
-    const countAusente = filteredAthletes.filter(ath => (attendanceMap[ath._id] || "Ausente") === "Ausente").length;
+    const countPresent = filteredAthletes.filter(ath => attendanceMap[ath._id]?.status === "Presente").length;
+    const countTarde = filteredAthletes.filter(ath => attendanceMap[ath._id]?.status === "Tarde").length;
+    const countAusente = filteredAthletes.filter(ath => (attendanceMap[ath._id]?.status || "Ausente") === "Ausente").length;
 
     return (
         <SwipeBackWrapper>
@@ -200,7 +309,7 @@ export default function AdminAttendancePage() {
                 <div className="bg-zinc-950/60 backdrop-blur-xl border border-white/5 rounded-2xl p-6 mb-8 shadow-2xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-48 h-48 bg-red-600/5 rounded-full blur-3xl pointer-events-none" />
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                         {/* Selector de Fecha */}
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
@@ -214,26 +323,29 @@ export default function AdminAttendancePage() {
                             />
                         </div>
 
-                        {/* Selector de Sesión - Fuerza, Explosión, Técnica, Kata, Kumite */}
+                        {/* Sesiones del Día (Global) */}
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                                <Sparkles className="w-3.5 h-3.5 text-kuma-gold" /> Tipo de Sesión
+                                <Sparkles className="w-3.5 h-3.5 text-kuma-gold" /> Sesiones del Día (Global)
                             </label>
-                            <div className="grid grid-cols-5 gap-1 bg-zinc-900 p-1 border border-zinc-800 rounded-xl">
-                                {["Fuerza", "Explosión", "Técnica", "Kata", "Kumite"].map((session) => (
-                                    <button
-                                        key={session}
-                                        onClick={() => setSelectedSession(session as any)}
-                                        className={cn(
-                                            "py-2 px-1 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all text-center leading-none flex items-center justify-center min-h-[36px]",
-                                            selectedSession === session
-                                                ? "bg-red-600 text-white shadow-md shadow-red-900/30"
-                                                : "text-zinc-500 hover:text-zinc-300"
-                                        )}
-                                    >
-                                        {session}
-                                    </button>
-                                ))}
+                            <div className="flex flex-wrap gap-1 bg-zinc-900 p-1 border border-zinc-800 rounded-xl min-h-[46px] items-center">
+                                {["Fuerza", "Explosión", "Técnica", "Kata", "Kumite"].map((sess) => {
+                                    const isChecked = globalSessions.includes(sess);
+                                    return (
+                                        <button
+                                            key={sess}
+                                            onClick={() => handleGlobalSessionToggle(sess)}
+                                            className={cn(
+                                                "py-1.5 px-2 text-[8px] font-black uppercase tracking-wider rounded-lg transition-all text-center cursor-pointer flex-1 min-h-[30px] flex items-center justify-center leading-none",
+                                                isChecked
+                                                    ? "bg-red-600 text-white shadow-md shadow-red-900/30"
+                                                    : "text-zinc-500 hover:text-zinc-350"
+                                            )}
+                                        >
+                                            {sess}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -324,7 +436,9 @@ export default function AdminAttendancePage() {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {filteredAthletes.map((ath) => {
-                            const currentStatus = attendanceMap[ath._id] || "Ausente";
+                            const athleteState = attendanceMap[ath._id] || { status: "Ausente", sessions: [] };
+                            const currentStatus = athleteState.status;
+                            const currentSessions = athleteState.sessions;
                             const fut = getFUTStyles(ath.athleteProfile.stats.ovr);
                             const beltColor = getBeltBadgeColor(ath.athleteProfile.beltRank);
 
@@ -409,6 +523,40 @@ export default function AdminAttendancePage() {
                                             </div>
                                         </div>
                                     </div>
+                                                        {/* Session Checkboxes - Unfolded and interactive by default */}
+                                    <AnimatePresence>
+                                        {(currentStatus === "Presente" || currentStatus === "Tarde") && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: "auto" }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                className="px-4 pb-4 w-full flex flex-col gap-2 border-t border-zinc-900 pt-3 text-left"
+                                            >
+                                                <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">
+                                                    Sesiones del día:
+                                                </p>
+                                                <div className="flex flex-wrap gap-1 mt-0.5">
+                                                    {["Fuerza", "Explosión", "Técnica", "Kata", "Kumite"].map((sess) => {
+                                                        const isChecked = currentSessions.includes(sess);
+                                                        return (
+                                                            <button
+                                                                key={sess}
+                                                                onClick={() => handleSessionToggle(ath._id, sess)}
+                                                                className={cn(
+                                                                    "px-2 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer leading-none min-h-[22px]",
+                                                                    isChecked
+                                                                        ? "bg-red-650 text-white border-red-500/30 shadow-sm"
+                                                                        : "bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-350"
+                                                                )}
+                                                            >
+                                                                {sess}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
 
                                     {/* Action Buttons Footer */}
                                     <div className="grid grid-cols-3 border-t border-zinc-900 bg-zinc-900/20 p-1.5 gap-1">
@@ -481,6 +629,81 @@ export default function AdminAttendancePage() {
                         </Button>
                     </div>
                 </div>
+
+                {/* Modal de Alerta Custom Premium */}
+                <AnimatePresence>
+                    {alertModal.isOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                            {/* Backdrop */}
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setAlertModal((prev) => ({ ...prev, isOpen: false }))}
+                                className="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"
+                            />
+                            
+                            {/* Content Container */}
+                            <motion.div
+                                initial={{ scale: 0.95, opacity: 0, y: 15 }}
+                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                exit={{ scale: 0.95, opacity: 0, y: 15 }}
+                                transition={{ type: "spring", duration: 0.4 }}
+                                className={cn(
+                                    "relative w-full max-w-sm overflow-hidden rounded-2xl border bg-zinc-950 p-6 text-center shadow-2xl z-10",
+                                    alertModal.type === "success" 
+                                        ? "border-emerald-500/30 shadow-emerald-500/10" 
+                                        : "border-red-500/30 shadow-red-500/10"
+                                )}
+                            >
+                                {/* Decorative Gradient Light */}
+                                <div className={cn(
+                                    "absolute -top-16 -left-16 w-32 h-32 rounded-full blur-3xl pointer-events-none opacity-20",
+                                    alertModal.type === "success" ? "bg-emerald-500" : "bg-red-500"
+                                )} />
+
+                                {/* Icon Indicator */}
+                                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-zinc-900 border border-zinc-800">
+                                    {alertModal.type === "success" ? (
+                                        <div className="relative">
+                                            <div className="absolute inset-0 animate-ping rounded-full bg-emerald-500/10" />
+                                            <CheckCircle className="h-8 w-8 text-emerald-500" />
+                                        </div>
+                                    ) : (
+                                        <div className="relative">
+                                            <div className="absolute inset-0 animate-ping rounded-full bg-red-500/10" />
+                                            <UserX className="h-8 w-8 text-red-500" />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Text Header & Body */}
+                                <h3 className={cn(
+                                    "text-lg font-serif font-black uppercase tracking-wider mb-2",
+                                    alertModal.type === "success" ? "text-emerald-400" : "text-red-500"
+                                )}>
+                                    {alertModal.title}
+                                </h3>
+                                <p className="text-zinc-400 text-xs leading-relaxed mb-6 font-medium">
+                                    {alertModal.message}
+                                </p>
+
+                                {/* Premium Action Button */}
+                                <button
+                                    onClick={() => setAlertModal((prev) => ({ ...prev, isOpen: false }))}
+                                    className={cn(
+                                        "w-full py-3 rounded-xl font-black uppercase text-xs tracking-widest cursor-pointer transition-all duration-300 shadow-md",
+                                        alertModal.type === "success"
+                                            ? "bg-gradient-to-r from-kuma-gold to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black shadow-lg shadow-kuma-gold/20"
+                                            : "bg-gradient-to-r from-red-700 to-red-800 text-white hover:from-red-600 hover:to-red-700 hover:shadow-red-500/20"
+                                    )}
+                                >
+                                    OK
+                                </button>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
 
             </div>
         </SwipeBackWrapper>

@@ -198,7 +198,7 @@ export async function POST(req: NextRequest) {
         // --- AUTOMATIC MONTHLY ATTENDANCE LOG INTEGRATION ---
         // Online routine completion automatically feeds the attendance log month-by-month
         try {
-            const todayStr = now.toISOString().split("T")[0];
+            const todayStr = today.toISOString().split("T")[0];
             
             // Map routine keywords to the corrected session categories
             let sessionName: "Fuerza" | "Explosión" | "Técnica" | "Kata" | "Kumite" = "Técnica";
@@ -220,18 +220,22 @@ export async function POST(req: NextRequest) {
             const AttendanceLog = (await import("@/models/AttendanceLog")).default;
             const existingAttendance = await AttendanceLog.findOne({
                 user: user._id,
-                date: todayStr,
-                sessionName
+                date: todayStr
             });
 
             if (!existingAttendance) {
                 await AttendanceLog.create({
                     user: user._id,
                     date: todayStr,
-                    sessionName,
+                    sessions: [sessionName],
                     status: "Presente",
                     method: "QR_Scan" // Scanned/completed self-service on device
                 });
+            } else {
+                if (!existingAttendance.sessions.includes(sessionName)) {
+                    existingAttendance.sessions.push(sessionName);
+                    await existingAttendance.save();
+                }
             }
         } catch (attendanceErr) {
             // Non-blocking error to ensure routine completion still succeeds
