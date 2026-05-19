@@ -83,15 +83,21 @@ export async function createAndEnrollAthlete(userData: { name: string, email: st
         await requireSuperAdmin();
         await connectDB();
 
+        let email = userData.email?.trim().toLowerCase();
+        if (!email) {
+            const tempId = Math.random().toString(36).substring(2, 9);
+            email = `pendiente_${tempId}@kumadojo.com`;
+        }
+
         // Check if user already exists
-        const exists = await User.findOne({ email: userData.email.toLowerCase() });
+        const exists = await User.findOne({ email });
         if (exists) {
             return { success: false, error: "Ya existe un usuario con este correo electrónico" };
         }
 
         const newUser = await User.create({
             ...userData,
-            email: userData.email.toLowerCase(),
+            email: email,
             password: "temp_password_kuma", // Simple placeholder, user should reset
             isActive: true,
             athleteProfile: {

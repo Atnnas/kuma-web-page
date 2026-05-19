@@ -42,9 +42,20 @@ export async function updateUser(userId: string, data: { name: string; email: st
         await requireSuperAdmin();
         await connectDB();
 
+        const user = await User.findById(userId);
+        let email = data.email?.trim().toLowerCase();
+        if (!email) {
+            if (user?.email?.startsWith("pendiente_")) {
+                email = user.email;
+            } else {
+                const tempId = Math.random().toString(36).substring(2, 9);
+                email = `pendiente_${tempId}@kumadojo.com`;
+            }
+        }
+
         await User.findByIdAndUpdate(userId, {
             name: data.name,
-            email: data.email,
+            email: email,
             role: data.role,
             isActive: data.isActive
         });

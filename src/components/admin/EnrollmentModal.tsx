@@ -122,7 +122,9 @@ export function EnrollmentModal({ isOpen, onClose, potentialUsers, onEnrollExist
                                                         </div>
                                                         <div>
                                                             <p className="text-sm font-bold text-white group-hover:text-kuma-gold transition-colors">{user.name}</p>
-                                                            <p className="text-[10px] text-zinc-500 uppercase font-black">{user.email}</p>
+                                                            <p className="text-[10px] text-zinc-500 uppercase font-black">
+                                                                {user.email?.startsWith("pendiente_") ? "Pendiente" : user.email}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                     <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-kuma-gold group-hover:translate-x-1 transition-all" />
@@ -153,15 +155,14 @@ export function EnrollmentModal({ isOpen, onClose, potentialUsers, onEnrollExist
 
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                                            <Mail className="w-3 h-3" /> Correo Electrónico
+                                            <Mail className="w-3 h-3" /> Correo Electrónico (Opcional)
                                         </label>
                                         <input 
                                             type="email"
-                                            required
                                             value={newData.email}
                                             onChange={(e) => setNewData({ ...newData, email: e.target.value })}
                                             className="w-full bg-zinc-900 border border-white/5 rounded-xl p-4 text-white outline-none focus:border-red-500/50"
-                                            placeholder="kuma@ejemplo.com"
+                                            placeholder="kuma@ejemplo.com (Dejar vacío si no tiene)"
                                         />
                                     </div>
 

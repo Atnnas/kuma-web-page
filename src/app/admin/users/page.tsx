@@ -103,7 +103,13 @@ export default function AdminUsersPage() {
                                                         </div>
                                                         <div className="min-w-0">
                                                             <p className="font-black text-white text-lg truncate">{user.name}</p>
-                                                            <p className="text-zinc-500 text-[10px] truncate max-w-[250px]">{user.email}</p>
+                                                            {user.email?.startsWith("pendiente_") ? (
+                                                                <span className="inline-block px-2 py-0.5 rounded bg-red-950/40 text-red-400 text-[9px] font-bold uppercase tracking-wider border border-red-900/30">
+                                                                    Correo Pendiente
+                                                                </span>
+                                                            ) : (
+                                                                <p className="text-zinc-500 text-[10px] truncate max-w-[250px]">{user.email}</p>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </td>
@@ -196,7 +202,13 @@ export default function AdminUsersPage() {
                                     <div className="space-y-3 pt-3 border-t border-zinc-800/50">
                                         <div className="flex justify-between items-center text-sm">
                                             <span className="text-zinc-500 font-medium">Email</span>
-                                            <span className="text-zinc-300 truncate max-w-[200px]">{user.email}</span>
+                                            {user.email?.startsWith("pendiente_") ? (
+                                                <span className="px-2 py-0.5 rounded bg-red-950/40 text-red-400 text-[9px] font-bold uppercase tracking-wider border border-red-900/30">
+                                                    Pendiente
+                                                </span>
+                                            ) : (
+                                                <span className="text-zinc-300 truncate max-w-[200px]">{user.email}</span>
+                                            )}
                                         </div>
 
                                         <div className="flex gap-3">

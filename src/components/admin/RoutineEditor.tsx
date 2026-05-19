@@ -358,7 +358,9 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                                     className="w-full p-3 text-left hover:bg-zinc-800 flex flex-col border-b border-white/5 last:border-0"
                                                 >
                                                     <span className="text-sm font-bold text-white">{user.name}</span>
-                                                    <span className="text-[10px] text-zinc-500">{user.email}</span>
+                                                    <span className="text-[10px] text-zinc-500">
+                                                        {user.email?.startsWith("pendiente_") ? "Pendiente" : user.email}
+                                                    </span>
                                                 </button>
                                             ))
                                         }

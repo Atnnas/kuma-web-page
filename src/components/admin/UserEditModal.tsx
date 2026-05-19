@@ -14,7 +14,10 @@ interface UserEditModalProps {
 
 export function UserEditModal({ isOpen, onClose, user, onSave }: UserEditModalProps) {
     const [name, setName] = useState(user?.name || "");
-    const [email, setEmail] = useState(user?.email || "");
+    const [email, setEmail] = useState(() => {
+        if (user?.email?.startsWith("pendiente_")) return "";
+        return user?.email || "";
+    });
     const [role, setRole] = useState(user?.role || "user");
     const [isActive, setIsActive] = useState(user?.isActive ?? true);
     const [isSaving, setIsSaving] = useState(false);
@@ -73,14 +76,14 @@ export function UserEditModal({ isOpen, onClose, user, onSave }: UserEditModalPr
                                 {/* Email */}
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-zinc-500 uppercase flex items-center gap-2">
-                                        <Mail className="w-3 h-3" /> Correo
+                                        <Mail className="w-3 h-3" /> Correo (Opcional)
                                     </label>
                                     <input
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none transition-colors"
-                                        required
+                                        placeholder="kuma@ejemplo.com (Dejar vacío si no tiene)"
                                     />
                                 </div>
 
