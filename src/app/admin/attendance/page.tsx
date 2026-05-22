@@ -20,6 +20,8 @@ export default function AdminAttendancePage() {
     interface AthleteAttendanceState {
         status: "Presente" | "Tarde" | "Ausente";
         sessions: string[];
+        performance?: "Standard" | "Destacado" | "Elite" | "1" | "2" | "3" | "4" | "5";
+        isMVP?: boolean;
     }
 
     const [athletes, setAthletes] = useState<any[]>([]);
@@ -90,6 +92,8 @@ export default function AdminAttendancePage() {
             newMap[log.userId] = {
                 status: log.status,
                 sessions: log.sessions || [],
+                performance: log.performance || "Standard",
+                isMVP: log.isMVP || false,
             };
             if (log.sessions && (log.status === "Presente" || log.status === "Tarde")) {
                 log.sessions.forEach((s: string) => uniqueSessions.add(s));
@@ -108,7 +112,7 @@ export default function AdminAttendancePage() {
     // Handle status change for an individual athlete
     const handleStatusChange = (userId: string, newStatus: "Presente" | "Tarde" | "Ausente") => {
         setAttendanceMap((prev) => {
-            const existing = prev[userId] || { status: "Ausente", sessions: [] };
+            const existing = prev[userId] || { status: "Ausente", sessions: [], performance: "Standard", isMVP: false };
             return {
                 ...prev,
                 [userId]: {
@@ -117,8 +121,47 @@ export default function AdminAttendancePage() {
                     sessions: newStatus === "Ausente" 
                         ? [] 
                         : (existing.sessions.length === 0 ? [...globalSessions] : existing.sessions),
+                    performance: existing.performance || "Standard",
+                    isMVP: newStatus === "Ausente" ? false : (existing.isMVP || false),
                 }
             };
+        });
+    };
+
+    // Handle performance change for an individual athlete
+    const handlePerformanceChange = (userId: string, newPerformance: AthleteAttendanceState["performance"]) => {
+        setAttendanceMap((prev) => {
+            const existing = prev[userId] || { status: "Presente", sessions: [], performance: "Standard", isMVP: false };
+            return {
+                ...prev,
+                [userId]: {
+                    ...existing,
+                    performance: newPerformance,
+                }
+            };
+        });
+    };
+
+    // Handle Daily MVP Toggle (max 1 MVP per day)
+    const handleMVPToggle = (userId: string) => {
+        setAttendanceMap((prev) => {
+            const updated = { ...prev };
+            const wasMVP = !!updated[userId]?.isMVP;
+            
+            // First, clear isMVP for everyone
+            Object.keys(updated).forEach((uid) => {
+                updated[uid] = {
+                    ...updated[uid],
+                    isMVP: false,
+                };
+            });
+            
+            // If it wasn't MVP before, set this athlete as MVP
+            if (!wasMVP && updated[userId]) {
+                updated[userId].isMVP = true;
+            }
+            
+            return updated;
         });
     };
 
@@ -176,10 +219,12 @@ export default function AdminAttendancePage() {
     const markAllPresent = () => {
         const updatedMap = { ...attendanceMap };
         filteredAthletes.forEach((ath) => {
-            const existing = updatedMap[ath._id] || { status: "Ausente", sessions: [] };
+            const existing = updatedMap[ath._id] || { status: "Ausente", sessions: [], performance: "Standard", isMVP: false };
             updatedMap[ath._id] = {
                 status: "Presente",
                 sessions: existing.sessions.length === 0 ? [...globalSessions] : existing.sessions,
+                performance: existing.performance || "Standard",
+                isMVP: existing.isMVP || false,
             };
         });
         setAttendanceMap(updatedMap);
@@ -191,6 +236,8 @@ export default function AdminAttendancePage() {
             updatedMap[ath._id] = {
                 status: "Ausente",
                 sessions: [],
+                performance: "Standard",
+                isMVP: false,
             };
         });
         setAttendanceMap(updatedMap);
@@ -202,11 +249,13 @@ export default function AdminAttendancePage() {
         
         // Prepare records array
         const records = athletes.map((ath) => {
-            const state = attendanceMap[ath._id] || { status: "Ausente", sessions: [] };
+            const state = attendanceMap[ath._id] || { status: "Ausente", sessions: [], performance: "Standard", isMVP: false };
             return {
                 userId: ath._id,
                 status: state.status,
                 sessions: state.sessions as any[],
+                performance: state.performance || "Standard",
+                isMVP: !!state.isMVP,
             };
         });
 
@@ -466,6 +515,17 @@ export default function AdminAttendancePage() {
                                     {/* Status Badge overlays on top */}
                                     <div className="absolute top-3 right-3 z-10 flex gap-1">
                                         <AnimatePresence mode="wait">
+                                            {athleteState.isMVP && (
+                                                <motion.span
+                                                    initial={{ scale: 0, rotate: -15 }}
+                                                    animate={{ scale: 1, rotate: 0 }}
+                                                    exit={{ scale: 0 }}
+                                                    className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black p-1 rounded-full text-xs shadow-lg shadow-yellow-500/40 flex items-center justify-center w-5 h-5 border border-yellow-300"
+                                                    title="Daily MVP"
+                                                >
+                                                    👑
+                                                </motion.span>
+                                            )}
                                             {currentStatus === "Presente" && (
                                                 <motion.span
                                                     initial={{ scale: 0 }}
@@ -553,7 +613,7 @@ export default function AdminAttendancePage() {
                                                                 className={cn(
                                                                     "px-2 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer leading-none min-h-[22px]",
                                                                     isChecked
-                                                                        ? "bg-red-650 text-white border-red-500/30 shadow-sm"
+                                                                        ? "bg-red-600 text-white border-red-500/30 shadow-sm"
                                                                         : "bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-350"
                                                                 )}
                                                             >
@@ -561,6 +621,84 @@ export default function AdminAttendancePage() {
                                                             </button>
                                                         );
                                                     })}
+                                                </div>
+                                                <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mt-2">
+                                                    Calidad de Entrenamiento (1 a 5 Estrellas):
+                                                </p>
+                                                <div className="flex items-center gap-1 bg-zinc-900 py-1.5 px-3 rounded-lg border border-zinc-800 justify-between">
+                                                    <div className="flex items-center gap-1">
+                                                        {[1, 2, 3, 4, 5].map((starVal) => {
+                                                            const starStr = starVal.toString();
+                                                            let isSelected = false;
+                                                            const currentPerf = athleteState.performance || "Standard";
+                                                            if (currentPerf === "Standard") {
+                                                                isSelected = starVal <= 3;
+                                                            } else if (currentPerf === "Destacado") {
+                                                                isSelected = starVal <= 4;
+                                                            } else if (currentPerf === "Elite") {
+                                                                isSelected = starVal <= 5;
+                                                            } else {
+                                                                isSelected = starVal <= parseInt(currentPerf);
+                                                            }
+                                                            
+                                                            const labels = [
+                                                                "Bajo Rendimiento (0.4x)",
+                                                                "Esfuerzo Parcial (0.7x)",
+                                                                "Entrenamiento Estándar (1.0x)",
+                                                                "Destacado - Buen Esfuerzo (1.5x)",
+                                                                "Rendimiento Élite (2.0x)"
+                                                            ];
+
+                                                            return (
+                                                                <button
+                                                                    key={starVal}
+                                                                    type="button"
+                                                                    onClick={() => handlePerformanceChange(ath._id, starStr as any)}
+                                                                    className="transition-transform active:scale-95 hover:scale-125 focus:outline-none cursor-pointer"
+                                                                    title={labels[starVal - 1]}
+                                                                >
+                                                                    <span className={cn(
+                                                                        "text-base transition-colors leading-none",
+                                                                        isSelected 
+                                                                            ? "text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.6)] font-bold" 
+                                                                            : "text-zinc-700 hover:text-zinc-500"
+                                                                    )}>
+                                                                        ★
+                                                                    </span>
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                    <span className="text-[8px] font-black text-kuma-gold uppercase tracking-wider">
+                                                        {(() => {
+                                                            const currentPerf = athleteState.performance || "Standard";
+                                                            if (currentPerf === "Standard" || currentPerf === "3") return "Estándar (1.0x)";
+                                                            if (currentPerf === "Destacado" || currentPerf === "4") return "Destacado (1.5x)";
+                                                            if (currentPerf === "Elite" || currentPerf === "5") return "Elite (2.0x)";
+                                                            if (currentPerf === "1") return "Bajo (0.4x)";
+                                                            if (currentPerf === "2") return "Parcial (0.7x)";
+                                                            return `${currentPerf}★`;
+                                                        })()}
+                                                    </span>
+                                                </div>
+
+                                                <div className="flex items-center justify-between mt-2 pt-2 border-t border-zinc-900/60">
+                                                    <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">
+                                                        MVP de la Clase (Bono):
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleMVPToggle(ath._id)}
+                                                        className={cn(
+                                                            "px-2.5 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer flex items-center gap-1 leading-none min-h-[22px]",
+                                                            athleteState.isMVP
+                                                                ? "bg-gradient-to-r from-yellow-400 to-amber-500 text-black border-yellow-300 shadow-[0_0_10px_rgba(250,204,21,0.4)]"
+                                                                : "bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-350"
+                                                        )}
+                                                    >
+                                                        <span>👑</span>
+                                                        <span>{athleteState.isMVP ? "MVP Activo" : "Marcar MVP"}</span>
+                                                    </button>
                                                 </div>
                                             </motion.div>
                                         )}

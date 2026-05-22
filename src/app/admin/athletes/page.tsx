@@ -17,6 +17,18 @@ import { createAndEnrollAthlete } from "@/lib/actions/athletes";
 import { deleteUser } from "@/lib/actions/users";
 import { KumaCelebrationModal, getKumaHonorDetails } from "@/components/sections/KumaRanking";
 
+const renderDeltaArrow = (currentVal: number, lastVal?: number) => {
+    if (lastVal === undefined || lastVal === null) return null;
+    const curRound = Math.round(currentVal);
+    const lastRound = Math.round(lastVal);
+    if (curRound > lastRound) {
+        return <span className="text-green-500 font-extrabold text-[9px] ml-0.5 select-none" title={`Subió desde ${lastRound}`}>▲</span>;
+    } else if (curRound < lastRound) {
+        return <span className="text-red-500 font-extrabold text-[9px] ml-0.5 select-none" title={`Bajó desde ${lastRound}`}>▼</span>;
+    }
+    return null;
+};
+
 export default function AdminAthletesPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -147,7 +159,7 @@ export default function AdminAthletesPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {filteredUsers.map((user) => {
                             const isEnrolled = user.athleteProfile?.isEnrolled;
-                            const ovr = user.athleteProfile?.stats?.ovr || 0;
+                            const ovr = Math.round(user.athleteProfile?.stats?.ovr || 0);
                             const beltRank = user.athleteProfile?.beltRank || "Blanco";
                             const specialization = user.athleteProfile?.specialization || "Kata";
 
@@ -298,12 +310,20 @@ export default function AdminAthletesPage() {
                                                         {/* FUT Player Attributes Panel */}
                                                         <div className="flex flex-col items-center pl-4 pt-1 text-center select-none shrink-0" style={{ color: fut.textColor }}>
                                                             {/* OVR Rating */}
-                                                            <div className={cn(
-                                                                "text-[38px] font-serif font-black tracking-normal leading-none mb-2 px-1 filter drop-shadow-[0_3px_5px_rgba(0,0,0,0.85)] transition-transform duration-300 group-hover:scale-105",
-                                                                !isEnrolled ? "text-zinc-600" :
-                                                                ovr >= 75 ? "text-[#fde047]" : ovr >= 65 ? "text-white" : "text-[#fb923c]"
-                                                            )}>
-                                                                {isEnrolled ? ovr : "--"}
+                                                            <div className="relative flex items-center justify-center">
+                                                                <span className={cn(
+                                                                    "text-[40px] font-serif font-black tracking-normal leading-none mb-2 px-1 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-transform duration-300 group-hover:scale-105",
+                                                                    !isEnrolled ? "text-zinc-600" :
+                                                                    ovr >= 75 ? "text-[#fde047]" :
+                                                                    ovr >= 65 ? "text-white" : "text-[#fb923c]"
+                                                                )}>
+                                                                    {isEnrolled ? ovr : "--"}
+                                                                </span>
+                                                                {isEnrolled && user.athleteProfile?.statsLastMonth && (
+                                                                    <span className="absolute -right-2 top-0">
+                                                                        {renderDeltaArrow(user.athleteProfile.stats.ovr, user.athleteProfile.statsLastMonth.ovr)}
+                                                                    </span>
+                                                                )}
                                                             </div>
                                                             
                                                             {/* Spec position abbreviation */}
@@ -362,26 +382,41 @@ export default function AdminAthletesPage() {
                                                         {/* Left Column */}
                                                         <div className="flex flex-col gap-0.5 pr-2.5 border-r border-white/10">
                                                             <div className="flex justify-between items-center">
-                                                                <span className="text-white font-black text-[10px] drop-shadow">{isEnrolled ? user.athleteProfile.stats.vel : "--"}</span>
+                                                                <span className="text-white font-black text-[10px] drop-shadow">
+                                                                    {isEnrolled ? Math.round(user.athleteProfile.stats.vel) : "--"}
+                                                                    {isEnrolled && renderDeltaArrow(user.athleteProfile.stats.vel, user.athleteProfile.statsLastMonth?.vel)}
+                                                                </span>
                                                                 <span className="text-white/50 uppercase tracking-widest text-[7px]">VEL</span>
                                                             </div>
                                                             <div className="flex justify-between items-center">
-                                                                <span className="text-white font-black text-[10px] drop-shadow">{isEnrolled ? user.athleteProfile.stats.tec : "--"}</span>
+                                                                <span className="text-white font-black text-[10px] drop-shadow">
+                                                                    {isEnrolled ? Math.round(user.athleteProfile.stats.tec) : "--"}
+                                                                    {isEnrolled && renderDeltaArrow(user.athleteProfile.stats.tec, user.athleteProfile.statsLastMonth?.tec)}
+                                                                </span>
                                                                 <span className="text-white/50 uppercase tracking-widest text-[7px]">TEC</span>
                                                             </div>
                                                             <div className="flex justify-between items-center">
-                                                                <span className="text-white font-black text-[10px] drop-shadow">{isEnrolled ? user.athleteProfile.stats.pot : "--"}</span>
+                                                                <span className="text-white font-black text-[10px] drop-shadow">
+                                                                    {isEnrolled ? Math.round(user.athleteProfile.stats.pot) : "--"}
+                                                                    {isEnrolled && renderDeltaArrow(user.athleteProfile.stats.pot, user.athleteProfile.statsLastMonth?.pot)}
+                                                                </span>
                                                                 <span className="text-white/50 uppercase tracking-widest text-[7px]">POT</span>
                                                             </div>
                                                         </div>
                                                         {/* Right Column */}
                                                         <div className="flex flex-col gap-0.5 pl-1">
                                                             <div className="flex justify-between items-center">
-                                                                <span className="text-white font-black text-[10px] drop-shadow">{isEnrolled ? user.athleteProfile.stats.res : "--"}</span>
+                                                                <span className="text-white font-black text-[10px] drop-shadow">
+                                                                    {isEnrolled ? Math.round(user.athleteProfile.stats.res) : "--"}
+                                                                    {isEnrolled && renderDeltaArrow(user.athleteProfile.stats.res, user.athleteProfile.statsLastMonth?.res)}
+                                                                </span>
                                                                 <span className="text-white/50 uppercase tracking-widest text-[7px]">RES</span>
                                                             </div>
                                                             <div className="flex justify-between items-center">
-                                                                <span className="text-white font-black text-[10px] drop-shadow">{isEnrolled ? user.athleteProfile.stats.esp : "--"}</span>
+                                                                <span className="text-white font-black text-[10px] drop-shadow">
+                                                                    {isEnrolled ? Math.round(user.athleteProfile.stats.esp) : "--"}
+                                                                    {isEnrolled && renderDeltaArrow(user.athleteProfile.stats.esp, user.athleteProfile.statsLastMonth?.esp)}
+                                                                </span>
                                                                 <span className="text-white/50 uppercase tracking-widest text-[7px]">ESP</span>
                                                             </div>
                                                             <div className="flex justify-between items-center opacity-0 pointer-events-none">

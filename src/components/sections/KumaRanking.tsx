@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { BeltSquare, MartialArtsBeltIcon, getBeltColor } from "@/components/admin/AthleteEditModal";
+import { WeeklyMVPSection } from "./WeeklyMVPSection";
 
 interface Athlete {
     _id: string;
@@ -29,10 +30,31 @@ interface Athlete {
         };
         cc?: string;
         habilidadSecreta?: string;
+        statsLastMonth?: {
+            vel: number;
+            pot: number;
+            tec: number;
+            res: number;
+            esp: number;
+            ovr: number;
+        };
+        mvpCount?: number;
     };
 }
 
-export function KumaRanking({ currentUser, initialAthletes }: { currentUser?: any; initialAthletes?: Athlete[] }) {
+export function KumaRanking({ 
+  currentUser, 
+  initialAthletes,
+  weeklyMvp
+}: { 
+  currentUser?: any; 
+  initialAthletes?: Athlete[];
+  weeklyMvp?: {
+    athletes: any[];
+    count: number;
+    weekRange: { start: string; end: string };
+  };
+}) {
   const [athletes, setAthletes] = useState<Athlete[]>(initialAthletes || []);
   const [isLoading, setIsLoading] = useState(!initialAthletes || initialAthletes.length === 0);
   const [error, setError] = useState<string | null>(null);
@@ -132,7 +154,10 @@ export function KumaRanking({ currentUser, initialAthletes }: { currentUser?: an
             {/* Top decorative element */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
 
-
+            {/* Weekly MVP Section */}
+            {weeklyMvp && weeklyMvp.athletes && weeklyMvp.athletes.length > 0 && (
+                <WeeklyMVPSection data={weeklyMvp as any} onClickCard={setCelebratingAthlete} />
+            )}
 
             {/* Search and Filters */}
             <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-16 relative z-10">
@@ -256,7 +281,14 @@ export function KumaRanking({ currentUser, initialAthletes }: { currentUser?: an
 
                                                         {/* Name and Belt */}
                                                         <div>
-                                                            <h4 className="text-sm font-black text-white uppercase group-hover:text-kuma-gold transition-colors">{ath.name}</h4>
+                                                            <h4 className="text-sm font-black text-white uppercase group-hover:text-kuma-gold transition-colors flex items-center gap-1.5">
+                                                                <span>{ath.name}</span>
+                                                                {ath.athleteProfile?.mvpCount && ath.athleteProfile.mvpCount > 0 ? (
+                                                                    <span className="text-[10px] font-black text-yellow-400 bg-yellow-400/10 px-1.5 py-0.5 rounded border border-yellow-400/25 flex items-center gap-0.5 shrink-0" title={`${ath.athleteProfile.mvpCount} veces MVP del Día`}>
+                                                                        👑 {ath.athleteProfile.mvpCount}
+                                                                    </span>
+                                                                ) : null}
+                                                            </h4>
                                                             <span className={cn("text-[9px] font-bold uppercase tracking-wider", beltStyle.text)}>
                                                                 <span className="flex items-center gap-1">
                                                                     <BeltSquare beltRank={ath.athleteProfile.beltRank} className="w-3.5 h-3.5" />
@@ -349,9 +381,21 @@ interface PodiumCardProps {
     style: { border: string; glow: string; bg: string; text: string };
 }
 
+const renderDeltaArrow = (currentVal: number, lastVal?: number) => {
+    if (lastVal === undefined || lastVal === null) return null;
+    const curRound = Math.round(currentVal);
+    const lastRound = Math.round(lastVal);
+    if (curRound > lastRound) {
+        return <span className="text-green-500 font-extrabold text-[10px] ml-0.5 select-none" title={`Subió desde ${lastRound}`}>▲</span>;
+    } else if (curRound < lastRound) {
+        return <span className="text-red-500 font-extrabold text-[10px] ml-0.5 select-none" title={`Bajó desde ${lastRound}`}>▼</span>;
+    }
+    return null;
+};
+
 function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }: PodiumCardProps) {
     const isFirst = position === 1;
-    const ovr = athlete?.athleteProfile?.stats?.ovr ?? 50;
+    const ovr = Math.round(athlete?.athleteProfile?.stats?.ovr ?? 50);
     const beltRank = athlete?.athleteProfile?.beltRank ?? "Blanco";
 
     // FUT Card theme matcher strictly based on Rating (OVR)
@@ -471,17 +515,35 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                                 {position}
                             </div>
 
+                            {/* Crown / Daily MVP Count Badge */}
+                            {athlete.athleteProfile?.mvpCount && athlete.athleteProfile.mvpCount > 0 ? (
+                                <div 
+                                    className="absolute top-5 right-5 h-6 px-2 rounded-full flex items-center justify-center bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-black text-[10px] shadow-md z-20 border border-yellow-300 gap-0.5"
+                                    title={`MVP del Día: ${athlete.athleteProfile.mvpCount} veces`}
+                                >
+                                    <span>👑</span>
+                                    <span>{athlete.athleteProfile.mvpCount}</span>
+                                </div>
+                            ) : null}
+
                             {/* Upper half details: Rating / Position / Belt & Player Portrait */}
                             <div className="flex justify-between items-start h-[48%] relative z-10">
                                 
                                 {/* FUT Player Attributes Panel */}
                                 <div className="flex flex-col items-center pl-5 pt-1 text-center select-none shrink-0" style={{ color: fut.textColor }}>
                                     {/* OVR Rating */}
-                                    <div className={cn(
-                                        "text-[46px] font-serif font-black tracking-normal leading-none mb-2.5 px-1 filter drop-shadow-[0_3px_5px_rgba(0,0,0,0.85)] transition-transform duration-300 group-hover:scale-105",
-                                        ovr >= 75 ? "text-[#fde047]" : ovr >= 65 ? "text-white" : "text-[#fb923c]"
-                                    )}>
-                                        {ovr}
+                                    <div className="relative flex items-center justify-center">
+                                        <span className={cn(
+                                            "text-[46px] font-serif font-black tracking-normal leading-none mb-2.5 px-1 filter drop-shadow-[0_3px_5px_rgba(0,0,0,0.85)] transition-transform duration-300 group-hover:scale-105",
+                                            ovr >= 75 ? "text-[#fde047]" : ovr >= 65 ? "text-white" : "text-[#fb923c]"
+                                        )}>
+                                            {ovr}
+                                        </span>
+                                        {athlete.athleteProfile.statsLastMonth && (
+                                            <span className="absolute -right-2 top-0">
+                                                {renderDeltaArrow(athlete.athleteProfile.stats.ovr, athlete.athleteProfile.statsLastMonth.ovr)}
+                                            </span>
+                                        )}
                                     </div>
                                     
                                     {/* Spec position abbreviation */}
@@ -539,26 +601,41 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                                 {/* Left Column */}
                                 <div className="flex flex-col gap-1 pr-3.5 border-r border-white/10">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-white font-black text-[11px] drop-shadow">{athlete.athleteProfile.stats.vel}</span>
+                                        <span className="text-white font-black text-[11px] drop-shadow">
+                                            {Math.round(athlete.athleteProfile.stats.vel)}
+                                            {renderDeltaArrow(athlete.athleteProfile.stats.vel, athlete.athleteProfile.statsLastMonth?.vel)}
+                                        </span>
                                         <span className="text-white/60 uppercase tracking-widest text-[8px]">VEL</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-white font-black text-[11px] drop-shadow">{athlete.athleteProfile.stats.tec}</span>
+                                        <span className="text-white font-black text-[11px] drop-shadow">
+                                            {Math.round(athlete.athleteProfile.stats.tec)}
+                                            {renderDeltaArrow(athlete.athleteProfile.stats.tec, athlete.athleteProfile.statsLastMonth?.tec)}
+                                        </span>
                                         <span className="text-white/60 uppercase tracking-widest text-[8px]">TEC</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-white font-black text-[11px] drop-shadow">{athlete.athleteProfile.stats.pot}</span>
+                                        <span className="text-white font-black text-[11px] drop-shadow">
+                                            {Math.round(athlete.athleteProfile.stats.pot)}
+                                            {renderDeltaArrow(athlete.athleteProfile.stats.pot, athlete.athleteProfile.statsLastMonth?.pot)}
+                                        </span>
                                         <span className="text-white/60 uppercase tracking-widest text-[8px]">POT</span>
                                     </div>
                                 </div>
                                 {/* Right Column */}
                                 <div className="flex flex-col gap-1 pl-1">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-white font-black text-[11px] drop-shadow">{athlete.athleteProfile.stats.res}</span>
+                                        <span className="text-white font-black text-[11px] drop-shadow">
+                                            {Math.round(athlete.athleteProfile.stats.res)}
+                                            {renderDeltaArrow(athlete.athleteProfile.stats.res, athlete.athleteProfile.statsLastMonth?.res)}
+                                        </span>
                                         <span className="text-white/60 uppercase tracking-widest text-[8px]">RES</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-white font-black text-[11px] drop-shadow">{athlete.athleteProfile.stats.esp}</span>
+                                        <span className="text-white font-black text-[11px] drop-shadow">
+                                            {Math.round(athlete.athleteProfile.stats.esp)}
+                                            {renderDeltaArrow(athlete.athleteProfile.stats.esp, athlete.athleteProfile.statsLastMonth?.esp)}
+                                        </span>
                                         <span className="text-white/60 uppercase tracking-widest text-[8px]">ESP</span>
                                     </div>
                                     <div className="flex justify-between items-center opacity-0 pointer-events-none">
@@ -1025,7 +1102,7 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
 
     if (!isOpen || !athlete) return null;
 
-    const ovr = athlete?.athleteProfile?.stats?.ovr ?? 50;
+    const ovr = Math.round(athlete?.athleteProfile?.stats?.ovr ?? 50);
     const nameParts = (athlete?.name || "").split(" ");
     const displayFirstName = nameParts[0] || "";
     const displayLastName = nameParts[1] || "";
@@ -1192,13 +1269,31 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
                                     <div className={cn("absolute inset-0 bg-gradient-to-br transform -skew-y-12 scale-150", fut.diagonalStripe)} />
                                 </div>
 
+                                {/* Crown / Daily MVP Count Badge */}
+                                {athlete.athleteProfile?.mvpCount && athlete.athleteProfile.mvpCount > 0 ? (
+                                    <div 
+                                        className="absolute top-5 right-5 h-6 px-2 rounded-full flex items-center justify-center bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-black text-[10px] shadow-md z-30 border border-yellow-300 gap-0.5"
+                                        title={`MVP del Día: ${athlete.athleteProfile.mvpCount} veces`}
+                                    >
+                                        <span>👑</span>
+                                        <span>{athlete.athleteProfile.mvpCount}</span>
+                                    </div>
+                                ) : null}
+
                                 <div className="flex justify-between items-start h-[48%] relative z-10">
-                                    <div className="flex flex-col items-center pl-5 pt-2 text-center select-none shrink-0" style={{ color: fut.textColor }}>
-                                        <div className={cn(
-                                            "text-[52px] font-serif font-black tracking-normal leading-none mb-3 px-1 filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.85)]",
-                                            ovr >= 75 ? "text-[#fde047]" : ovr >= 65 ? "text-white" : "text-[#fb923c]"
-                                        )}>
-                                            {ovr}
+                                    <div className="flex flex-col items-center pl-5 pt-2 text-center select-none shrink-0 relative" style={{ color: fut.textColor }}>
+                                        <div className="relative flex items-center justify-center">
+                                            <span className={cn(
+                                                "text-[52px] font-serif font-black tracking-normal leading-none mb-3 px-1 filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.85)]",
+                                                ovr >= 75 ? "text-[#fde047]" : ovr >= 65 ? "text-white" : "text-[#fb923c]"
+                                            )}>
+                                                {ovr}
+                                            </span>
+                                            {athlete.athleteProfile.statsLastMonth && (
+                                                <span className="absolute -right-3 top-0">
+                                                    {renderDeltaArrow(athlete.athleteProfile.stats.ovr, athlete.athleteProfile.statsLastMonth.ovr)}
+                                                </span>
+                                            )}
                                         </div>
                                         
                                         <div className="text-[13px] font-black tracking-wider leading-none mb-2 text-inherit">
@@ -1246,19 +1341,42 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
                                     <div className="grid grid-cols-2 gap-x-5 gap-y-1 w-full max-w-[210px] justify-center text-[11px] font-black uppercase tracking-wider select-none text-zinc-200 mt-2 px-2 filter drop-shadow-[0_2px_3px_rgba(0,0,0,0.9)]">
                                         <div className="flex justify-between items-center border-b border-white/5 pb-0.5">
                                             <span className="text-[9px] text-zinc-400 font-extrabold">VEL</span>
-                                            <span className="font-black text-white">{athlete.athleteProfile.stats.vel}</span>
+                                            <span className="font-black text-white">
+                                                {Math.round(athlete.athleteProfile.stats.vel)}
+                                                {renderDeltaArrow(athlete.athleteProfile.stats.vel, athlete.athleteProfile.statsLastMonth?.vel)}
+                                            </span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-0.5">
                                             <span className="text-[9px] text-zinc-400 font-extrabold">TEC</span>
-                                            <span className="font-black text-white">{athlete.athleteProfile.stats.tec}</span>
+                                            <span className="font-black text-white">
+                                                {Math.round(athlete.athleteProfile.stats.tec)}
+                                                {renderDeltaArrow(athlete.athleteProfile.stats.tec, athlete.athleteProfile.statsLastMonth?.tec)}
+                                            </span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-0.5">
                                             <span className="text-[9px] text-zinc-400 font-extrabold">POT</span>
-                                            <span className="font-black text-white">{athlete.athleteProfile.stats.pot}</span>
+                                            <span className="font-black text-white">
+                                                {Math.round(athlete.athleteProfile.stats.pot)}
+                                                {renderDeltaArrow(athlete.athleteProfile.stats.pot, athlete.athleteProfile.statsLastMonth?.pot)}
+                                            </span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-0.5">
                                             <span className="text-[9px] text-zinc-400 font-extrabold">RES</span>
-                                            <span className="font-black text-white">{athlete.athleteProfile.stats.res}</span>
+                                            <span className="font-black text-white">
+                                                {Math.round(athlete.athleteProfile.stats.res)}
+                                                {renderDeltaArrow(athlete.athleteProfile.stats.res, athlete.athleteProfile.statsLastMonth?.res)}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-0.5">
+                                            <span className="text-[9px] text-zinc-400 font-extrabold">ESP</span>
+                                            <span className="font-black text-white">
+                                                {Math.round(athlete.athleteProfile.stats.esp)}
+                                                {renderDeltaArrow(athlete.athleteProfile.stats.esp, athlete.athleteProfile.statsLastMonth?.esp)}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-0.5 opacity-0 pointer-events-none">
+                                            <span className="text-[9px] text-zinc-400 font-extrabold">-</span>
+                                            <span className="font-black text-white">0</span>
                                         </div>
                                     </div>
 
@@ -1301,6 +1419,13 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
                                 <span className="text-zinc-500 font-extrabold uppercase">Habilidad Secreta:</span>
                                 <span className="text-kuma-gold font-black uppercase tracking-wider">{humor.ability}</span>
                             </div>
+
+                            {athlete.athleteProfile?.mvpCount && athlete.athleteProfile.mvpCount > 0 ? (
+                                <div className="mt-2 pt-2 border-t border-white/5 flex justify-between items-center text-xs">
+                                    <span className="text-zinc-500 font-extrabold uppercase">MVP del Día (Clases):</span>
+                                    <span className="text-kuma-gold font-black uppercase tracking-wider flex items-center gap-1">👑 {athlete.athleteProfile.mvpCount}</span>
+                                </div>
+                            ) : null}
                         </div>
 
 

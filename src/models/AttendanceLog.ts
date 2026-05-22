@@ -6,6 +6,8 @@ export interface IAttendanceLog extends Document {
     date: string;        // ISO Format YYYY-MM-DD for simple unique index checks
     checkInTime: Date;   // Actual timestamp
     status: "Presente" | "Tarde" | "Ausente";
+    performance?: "Standard" | "Destacado" | "Elite" | "1" | "2" | "3" | "4" | "5";
+    isMVP?: boolean;
     method: "Sensei_Manual" | "QR_Scan";
     createdAt: Date;
     updatedAt: Date;
@@ -36,6 +38,15 @@ const AttendanceLogSchema = new Schema<IAttendanceLog>(
             type: String,
             enum: ["Presente", "Tarde", "Ausente"],
             default: "Presente",
+        },
+        performance: {
+            type: String,
+            enum: ["Standard", "Destacado", "Elite", "1", "2", "3", "4", "5"],
+            default: "Standard",
+        },
+        isMVP: {
+            type: Boolean,
+            default: false,
         },
         method: {
             type: String,

@@ -2,6 +2,7 @@
 
 import connectDB from "@/lib/db";
 import User from "@/models/User";
+import AttendanceLog from "@/models/AttendanceLog";
 import { revalidatePath } from "next/cache";
 import { requireSuperAdmin } from "@/lib/auth-utils";
 
@@ -12,7 +13,26 @@ export async function getEnrolledAthletes() {
     try {
         await connectDB();
         const athletes = await User.find({ "athleteProfile.isEnrolled": true }).sort({ "athleteProfile.beltRank": -1 }).lean();
-        return { success: true, data: serializeAthletes(athletes) };
+        
+        // Fetch and map MVP counts
+        const mvpLogs = await AttendanceLog.find({ isMVP: true }).lean();
+        const mvpCountsMap: Record<string, number> = {};
+        for (const log of mvpLogs) {
+            const uid = log.user.toString();
+            mvpCountsMap[uid] = (mvpCountsMap[uid] || 0) + 1;
+        }
+
+        const serialized = JSON.parse(JSON.stringify(athletes)).map((user: any) => {
+            if (user.athleteProfile) {
+                user.athleteProfile.mvpCount = mvpCountsMap[user._id.toString()] || 0;
+            }
+            return {
+                ...user,
+                _id: user._id.toString(),
+            };
+        });
+
+        return { success: true, data: serialized };
     } catch (error: any) {
         console.error("Error fetching athletes:", error);
         return { success: false, error: error?.message || String(error) };

@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { KumaRanking } from "@/components/sections/KumaRanking";
+import { getWeeklyMVP } from "@/lib/actions/attendance";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,14 @@ export default async function KumaCardsPage() {
     }
   } catch (e) {
     console.error("Failed to fetch athletes:", e);
+  }
+
+  // Fetch weekly MVP
+  let weeklyMvp = null;
+  try {
+    weeklyMvp = await getWeeklyMVP();
+  } catch (e) {
+    console.error("Failed to fetch weekly MVP:", e);
   }
 
   return (
@@ -63,7 +72,7 @@ export default async function KumaCardsPage() {
 
 
         {/* Kuma Ranking Component (Renders the Athlete Cards beautifully) */}
-        <KumaRanking currentUser={user} initialAthletes={athletes || undefined} />
+        <KumaRanking currentUser={user} initialAthletes={athletes || undefined} weeklyMvp={weeklyMvp || undefined} />
       </div>
     </main>
   );
