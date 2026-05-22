@@ -39,6 +39,11 @@ interface Athlete {
             ovr: number;
         };
         mvpCount?: number;
+        dojo?: {
+            _id: string;
+            name: string;
+            logo: string;
+        } | null;
     };
 }
 
@@ -647,10 +652,10 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
 
                             {/* Small Dojo Logo at Bottom */}
                             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center select-none pointer-events-none z-20">
-                                <div className="w-7 h-7 rounded-full border border-white/30 overflow-hidden shadow-lg filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
+                                <div className="w-7 h-7 rounded-full border border-white/30 overflow-hidden shadow-lg filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] bg-zinc-950 flex items-center justify-center">
                                     <img 
-                                        src="/images/kuma-logo.jpg" 
-                                        alt="Kuma Dojo" 
+                                        src={athlete.athleteProfile?.dojo?.logo || "/images/kuma-logo.jpg"} 
+                                        alt={athlete.athleteProfile?.dojo?.name || "Kuma Dojo"} 
                                         className="w-full h-full object-cover scale-105" 
                                     />
                                 </div>
@@ -1035,6 +1040,8 @@ interface KumaCelebrationModalProps {
     isOpen: boolean;
     onClose: () => void;
     athlete: Athlete | null;
+    customTitle?: React.ReactNode;
+    customSubtitle?: string;
 }
 
 export const getKumaHonorDetails = (ath: any) => {
@@ -1097,7 +1104,13 @@ export const getKumaHonorDetails = (ath: any) => {
     return { badge, desc, ability };
 };
 
-export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrationModalProps) {
+export function KumaCelebrationModal({ 
+    isOpen, 
+    onClose, 
+    athlete,
+    customTitle,
+    customSubtitle
+}: KumaCelebrationModalProps) {
     const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, glossX: 50, glossY: 50, scale: 1 });
 
     if (!isOpen || !athlete) return null;
@@ -1381,10 +1394,10 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
                                     </div>
 
                                     <div className="flex items-center justify-center mt-2 pb-2 select-none">
-                                        <div className="w-8 h-8 rounded-full border border-white/85 shadow-[0_3px_8px_rgba(0,0,0,0.5)] overflow-hidden shrink-0 bg-white">
+                                        <div className="w-8 h-8 rounded-full border border-white/85 shadow-[0_3px_8px_rgba(0,0,0,0.5)] overflow-hidden shrink-0 bg-zinc-950 flex items-center justify-center">
                                             <img 
-                                                src="/images/kuma-logo.jpg" 
-                                                alt="Kuma Dojo" 
+                                                src={athlete.athleteProfile?.dojo?.logo || "/images/kuma-logo.jpg"} 
+                                                alt={athlete.athleteProfile?.dojo?.name || "Kuma Dojo"} 
                                                 className="w-full h-full object-cover scale-110"
                                             />
                                         </div>
@@ -1401,10 +1414,10 @@ export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrati
                             </div>
 
                             <h3 className="text-3xl font-serif font-black text-white leading-tight mb-2">
-                                ¡Felicidades, <span className="text-kuma-gold">{athlete.name}</span>!
+                                {customTitle || <>¡Felicidades, <span className="text-kuma-gold">{athlete.name}</span>!</>}
                             </h3>
                             <p className="text-zinc-500 text-xs font-black uppercase tracking-widest mb-4">
-                                Rango Oficial de Combate del Dojo
+                                {customSubtitle || "Rango Oficial de Combate del Dojo"}
                             </p>
                             
                             <div className="h-[2px] w-20 bg-red-600 mb-4 mx-auto md:mx-0" />

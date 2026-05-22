@@ -108,6 +108,7 @@ export const {
                     token.id = dbUser._id.toString();
                     token.role = dbUser.role;
                     token.isActive = dbUser.isActive;
+                    token.dojo = dbUser.dojo ? dbUser.dojo.toString() : null;
                 }
             } catch (error) {
                 console.error("Error fetching user data for JWT:", error);
@@ -121,6 +122,7 @@ export const {
                 session.user.role = token.role as string;
                 // @ts-ignore - Extending default session type on the fly or need to update types
                 session.user.isActive = token.isActive as boolean;
+                session.user.dojo = token.dojo as string | null;
             }
             return session;
         },

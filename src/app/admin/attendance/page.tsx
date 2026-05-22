@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useSession } from "next-auth/react";
 import { SwipeBackWrapper } from "@/components/admin/AdminNavigation";
 import { Button } from "@/components/ui/Button";
-import { Loader2, Search, User, ClipboardCheck, Calendar, Info, Check, Clock, UserX, Sparkles, CheckCircle } from "lucide-react";
+import { Loader2, Search, User, ClipboardCheck, Calendar, Info, Check, Clock, UserX, Sparkles, CheckCircle, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -17,6 +18,8 @@ interface AttendanceRecord {
 }
 
 export default function AdminAttendancePage() {
+    const { data: session } = useSession();
+
     interface AthleteAttendanceState {
         status: "Presente" | "Tarde" | "Ausente";
         sessions: string[];
@@ -63,6 +66,14 @@ export default function AdminAttendancePage() {
         return () => clearTimeout(timer);
     }, [searchTerm]);
     const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite" | "Ambos">("Todos");
+    const [selectedDojo, setSelectedDojo] = useState<string>("Todos");
+
+    // Force select dojo if logged in user is a Dojo admin
+    useEffect(() => {
+        if (session?.user?.role === "admin" && session?.user?.dojo) {
+            setSelectedDojo(session.user.dojo);
+        }
+    }, [session]);
     
     // Load initial athletes
     const loadAthletes = async () => {
@@ -295,8 +306,12 @@ export default function AdminAttendancePage() {
         const matchesSpec = selectedSpec === "Todos" ||
                             ath.athleteProfile.specialization === selectedSpec ||
                             ath.athleteProfile.specialization === "Ambos";
+
+        const dojo = ath.athleteProfile?.dojo;
+        const dojoId = dojo?._id || "6a10ba00936f06f14847fd05";
+        const matchesDojo = selectedDojo === "Todos" || dojoId === selectedDojo;
                             
-        return matchesSearch && matchesSpec;
+        return matchesSearch && matchesSpec && matchesDojo;
     });
 
     // Helper for OVR Card color themes
@@ -341,10 +356,48 @@ export default function AdminAttendancePage() {
         return "border-zinc-600 text-zinc-300 bg-zinc-800/40 border";
     };
 
-    // Counts for summary
-    const countPresent = filteredAthletes.filter(ath => attendanceMap[ath._id]?.status === "Presente").length;
-    const countTarde = filteredAthletes.filter(ath => attendanceMap[ath._id]?.status === "Tarde").length;
-    const countAusente = filteredAthletes.filter(ath => (attendanceMap[ath._id]?.status || "Ausente") === "Ausente").length;
+    interface DojoSummaryItem {
+        _id: string;
+        name: string;
+        logo?: string;
+        present: number;
+        tarde: number;
+        absent: number;
+    }
+
+    // Calculate attendance summary grouped by Dojo
+    const dojoSummaryMap = athletes.reduce<Record<string, DojoSummaryItem>>((acc, ath) => {
+        const dojo = ath.athleteProfile?.dojo;
+        const dojoId = dojo?._id || "6a10ba00936f06f14847fd05";
+        const dojoName = dojo?.name || "DOJO KUMA";
+        const dojoLogo = dojo?.logo || "/images/kuma-logo.jpg";
+        const state = attendanceMap[ath._id] || { status: "Ausente" };
+        
+        if (!acc[dojoId]) {
+            acc[dojoId] = {
+                _id: dojoId,
+                name: dojoName,
+                logo: dojoLogo,
+                present: 0,
+                tarde: 0,
+                absent: 0,
+            };
+        }
+        
+        if (state.status === "Presente") {
+            acc[dojoId].present += 1;
+        } else if (state.status === "Tarde") {
+            acc[dojoId].tarde += 1;
+        } else {
+            acc[dojoId].absent += 1;
+        }
+        
+        return acc;
+    }, {});
+
+    const dojoSummary: DojoSummaryItem[] = Object.values(dojoSummaryMap).sort((a: DojoSummaryItem, b: DojoSummaryItem) => 
+        a.name.localeCompare(b.name)
+    );
 
     return (
         <SwipeBackWrapper>
@@ -406,21 +459,86 @@ export default function AdminAttendancePage() {
                             </div>
                         </div>
 
-                        {/* Summary Badges */}
-                        <div className="flex gap-3 justify-between items-center bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-3 h-[46px]">
-                            <div className="text-center flex-1">
-                                <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider">Presentes</p>
-                                <p className="text-sm font-black text-emerald-500">{countPresent}</p>
-                            </div>
-                            <div className="h-6 w-px bg-zinc-800" />
-                            <div className="text-center flex-1">
-                                <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider">Tardes</p>
-                                <p className="text-sm font-black text-amber-500">{countTarde}</p>
-                            </div>
-                            <div className="h-6 w-px bg-zinc-800" />
-                            <div className="text-center flex-1">
-                                <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider">Faltas</p>
-                                <p className="text-sm font-black text-zinc-400">{countAusente}</p>
+                        {/* Selector de Dojo y Resumen */}
+                        <div className="space-y-2 col-span-1">
+                            <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                                <ClipboardCheck className="w-3.5 h-3.5 text-kuma-gold" /> Resumen Por Dojo
+                            </label>
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                {/* Combo Box Selector */}
+                                <div className="relative flex-1">
+                                    <select
+                                        value={selectedDojo}
+                                        onChange={(e) => setSelectedDojo(e.target.value)}
+                                        disabled={session?.user?.role === "admin" && !!session?.user?.dojo}
+                                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white text-sm focus:border-red-500 focus:outline-none transition-all shadow-inner appearance-none pr-10 font-bold cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                                    >
+                                        {!(session?.user?.role === "admin" && session?.user?.dojo) && (
+                                            <option value="Todos">Todos los Dojos</option>
+                                        )}
+                                        {dojoSummary.map((ds) => (
+                                            <option key={ds._id} value={ds._id}>
+                                                {ds.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-500">
+                                        <ChevronDown className="w-4 h-4" />
+                                    </div>
+                                </div>
+
+                                {/* Resumen del Dojo Seleccionado */}
+                                <div className="flex items-center gap-2 bg-zinc-900/65 border border-zinc-800/80 rounded-xl px-3 py-2 text-xs font-bold min-h-[46px] sm:min-w-[170px] justify-center sm:justify-start">
+                                    {selectedDojo === "Todos" ? (
+                                        <div className="flex items-center gap-2 w-full">
+                                            <div className="w-6 h-6 rounded-full bg-kuma-gold/10 flex items-center justify-center border border-kuma-gold/20 text-kuma-gold font-serif font-black text-[10px]">
+                                                K
+                                            </div>
+                                            <div className="flex flex-col flex-1">
+                                                <span className="text-[8px] text-zinc-400 uppercase tracking-widest font-black leading-none">Global</span>
+                                                <div className="flex items-center gap-1.5 mt-0.5 text-[11px] font-extrabold leading-none">
+                                                    <span className="text-emerald-500" title="Presentes">
+                                                        {athletes.filter(a => (attendanceMap[a._id]?.status || "Ausente") === "Presente").length} OK
+                                                    </span>
+                                                    <span className="text-zinc-650">/</span>
+                                                    <span className="text-amber-500" title="Tardes">
+                                                        {athletes.filter(a => (attendanceMap[a._id]?.status || "Ausente") === "Tarde").length} T
+                                                    </span>
+                                                    <span className="text-zinc-650">/</span>
+                                                    <span className="text-zinc-400" title="Faltas">
+                                                        {athletes.filter(a => (attendanceMap[a._id]?.status || "Ausente") === "Ausente").length} F
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        (() => {
+                                            const ds = dojoSummary.find(d => d._id === selectedDojo);
+                                            if (!ds) return null;
+                                            return (
+                                                <div className="flex items-center gap-2 w-full">
+                                                    <img 
+                                                        src={ds.logo || "/images/kuma-logo.jpg"} 
+                                                        alt={ds.name} 
+                                                        className="w-6 h-6 rounded-full object-cover border border-zinc-800" 
+                                                    />
+                                                    <div className="flex flex-col flex-1">
+                                                        <span className="text-[8px] text-zinc-400 uppercase tracking-widest font-black leading-none truncate max-w-[100px]" title={ds.name}>
+                                                            {ds.name}
+                                                        </span>
+                                                        <div className="flex items-center gap-1.5 mt-0.5 text-[11px] font-extrabold leading-none">
+                                                            <span className="text-emerald-500" title="Presentes">{ds.present} OK</span>
+                                                            <span className="text-zinc-650">/</span>
+                                                            <span className="text-amber-500" title="Tardes">{ds.tarde} T</span>
+                                                            <span className="text-zinc-650">/</span>
+                                                            <span className="text-zinc-400" title="Faltas">{ds.absent} F</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -576,6 +694,24 @@ export default function AdminAttendancePage() {
                                             </p>
                                             {/* Badge / Stats Panel */}
                                             <div className="flex gap-1.5 items-center mt-1 flex-wrap justify-center">
+                                                {(() => {
+                                                    const dojo = ath.athleteProfile?.dojo;
+                                                    const dojoName = dojo?.name || "DOJO KUMA";
+                                                    const dojoLogo = dojo?.logo || "/images/kuma-logo.jpg";
+                                                    return (
+                                                        <span 
+                                                            className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest bg-zinc-900/60 text-zinc-300 border border-zinc-800 flex items-center gap-1"
+                                                            title={`Dojo: ${dojoName}`}
+                                                        >
+                                                            <img 
+                                                                src={dojoLogo || "/images/kuma-logo.jpg"} 
+                                                                alt={dojoName} 
+                                                                className="w-3 h-3 rounded-full object-cover" 
+                                                            />
+                                                            {dojoName}
+                                                        </span>
+                                                    );
+                                                })()}
                                                 <span className={cn("text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest border border-zinc-850", beltColor)}>
                                                     {ath.athleteProfile.beltRank}
                                                 </span>
@@ -751,11 +887,29 @@ export default function AdminAttendancePage() {
                 {/* Floating/Sticky Save Panel */}
                 <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-full max-w-lg px-4">
                     <div className="bg-zinc-950/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-between gap-4">
-                        <div className="hidden sm:block">
-                            <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Resumen Asistencia</p>
-                            <p className="text-xs text-zinc-100 font-bold mt-0.5">
-                                <span className="text-emerald-500">{countPresent} Presentes</span>, <span className="text-amber-500">{countTarde} Tardes</span>
+                        <div className="hidden sm:flex flex-col gap-1 flex-1">
+                            <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">
+                                {selectedDojo === "Todos" ? "Resumen por Dojo" : "Resumen Dojo Seleccionado"}
                             </p>
+                            <div className="flex flex-col gap-1 max-h-[50px] overflow-y-auto no-scrollbar">
+                                {dojoSummary
+                                    .filter((ds) => selectedDojo === "Todos" || ds._id === selectedDojo)
+                                    .map((ds) => (
+                                        <div key={ds._id} className="flex items-center gap-1.5 text-[10px] font-black whitespace-nowrap">
+                                            <img 
+                                                src={ds.logo || "/images/kuma-logo.jpg"} 
+                                                alt={ds.name} 
+                                                className="w-3.5 h-3.5 rounded-full object-cover border border-zinc-800/80" 
+                                            />
+                                            <span className="text-zinc-300 truncate max-w-[80px]" title={ds.name}>{ds.name}:</span>
+                                            <span className="text-emerald-500">{ds.present} OK</span>
+                                            <span className="text-zinc-650">/</span>
+                                            <span className="text-amber-500">{ds.tarde} T</span>
+                                            <span className="text-zinc-650">/</span>
+                                            <span className="text-zinc-400">{ds.absent} F</span>
+                                        </div>
+                                    ))}
+                            </div>
                         </div>
                         
                         <Button

@@ -61,6 +61,9 @@ const NewsSchema = new Schema<INews>(
     }
 );
 
+// Define schema indexes
+NewsSchema.index({ category: 1, date: -1 });
+
 // Prevent recompilation
 const News: Model<INews> = mongoose.models.News || mongoose.model<INews>("News", NewsSchema);
 

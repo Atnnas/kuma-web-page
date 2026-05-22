@@ -42,6 +42,9 @@ const VisitSchema = new Schema<IVisit>(
     }
 );
 
+// Define schema indexes
+VisitSchema.index({ timestamp: -1 });
+
 // Prevent recompilation
 const Visit: Model<IVisit> = mongoose.models.Visit || mongoose.model<IVisit>("Visit", VisitSchema);
 

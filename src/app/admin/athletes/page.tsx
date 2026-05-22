@@ -428,10 +428,10 @@ export default function AdminAthletesPage() {
 
                                                     {/* Small Dojo Logo at Bottom */}
                                                     <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center select-none pointer-events-none z-20">
-                                                        <div className="w-7 h-7 rounded-full border border-white/30 overflow-hidden shadow-lg filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
+                                                        <div className="w-7 h-7 rounded-full border border-white/30 overflow-hidden shadow-lg filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] bg-zinc-950 flex items-center justify-center">
                                                             <img 
-                                                                src="/images/kuma-logo.jpg" 
-                                                                alt="Kuma Dojo" 
+                                                                src={user.athleteProfile?.dojo?.logo || "/images/kuma-logo.jpg"} 
+                                                                alt={user.athleteProfile?.dojo?.name || "Kuma Dojo"} 
                                                                 className="w-full h-full object-cover scale-105" 
                                                             />
                                                         </div>

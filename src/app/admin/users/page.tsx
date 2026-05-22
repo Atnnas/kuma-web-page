@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getAllUsers, updateUser, deleteUser } from "@/lib/actions/users";
+import { getDojos } from "@/lib/actions/dojos";
 import { SwipeBackWrapper } from "@/components/admin/AdminNavigation";
 import { UserEditModal } from "@/components/admin/UserEditModal";
 import { Button } from "@/components/ui/Button";
@@ -10,6 +11,7 @@ import Image from "next/image";
 
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<any[]>([]);
+    const [dojos, setDojos] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [editingUser, setEditingUser] = useState<any | null>(null);
@@ -18,6 +20,10 @@ export default function AdminUsersPage() {
         setIsLoading(true);
         const data = await getAllUsers();
         setUsers(data);
+        const dojosRes = await getDojos();
+        if (dojosRes.success) {
+            setDojos(dojosRes.data || []);
+        }
         setIsLoading(false);
     };
 
@@ -25,7 +31,7 @@ export default function AdminUsersPage() {
         fetchData();
     }, []);
 
-    const handleUpdateUser = async (userId: string, data: { name: string; email: string; role: string; isActive?: boolean }) => {
+    const handleUpdateUser = async (userId: string, data: { name: string; email: string; role: string; isActive?: boolean; dojo?: string | null }) => {
         // Optimistic update
         setUsers(prev => prev.map(u =>
             u._id === userId ? { ...u, ...data } : u
@@ -120,7 +126,11 @@ export default function AdminUsersPage() {
                                                     <div className="flex justify-center">
                                                         {user.role === "super_admin" ? (
                                                             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-900/30 text-red-400 text-[10px] font-bold uppercase border border-red-900/50">
-                                                                <ShieldAlert className="w-3 h-3" /> Admin
+                                                                <ShieldAlert className="w-3 h-3" /> Super Admin
+                                                            </span>
+                                                        ) : user.role === "admin" ? (
+                                                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-orange-900/30 text-orange-400 text-[10px] font-bold uppercase border border-orange-900/50" title={user.dojo?.name ? `Dojo: ${user.dojo.name}` : undefined}>
+                                                                🏢 Admin: {user.dojo?.name || "Sin Dojo"}
                                                             </span>
                                                         ) : user.role === "editor" ? (
                                                             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-900/30 text-amber-400 text-[10px] font-bold uppercase border border-amber-900/50">
@@ -180,10 +190,14 @@ export default function AdminUsersPage() {
                                                     {user.name}
                                                     <span className={`w-2 h-2 rounded-full ${user.isActive !== false ? "bg-green-500" : "bg-red-600"}`} />
                                                 </p>
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-2 flex-wrap">
                                                     {user.role === "super_admin" ? (
                                                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-900/30 text-red-400 text-[10px] font-bold uppercase border border-red-900/50">
-                                                            <ShieldAlert className="w-3 h-3" /> Admin
+                                                            <ShieldAlert className="w-3 h-3" /> Super Admin
+                                                        </span>
+                                                    ) : user.role === "admin" ? (
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-900/30 text-orange-400 text-[10px] font-bold uppercase border border-orange-900/50">
+                                                            🏢 Admin: {user.dojo?.name || "Sin Dojo"}
                                                         </span>
                                                     ) : user.role === "editor" ? (
                                                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-900/30 text-amber-400 text-[10px] font-bold uppercase border border-amber-900/50">
@@ -239,6 +253,7 @@ export default function AdminUsersPage() {
                         onClose={() => setEditingUser(null)}
                         user={editingUser}
                         onSave={handleUpdateUser}
+                        dojos={dojos}
                     />
                 )}
 

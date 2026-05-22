@@ -21,6 +21,7 @@ export interface IUser extends Document {
     verificationToken?: string;
     verificationTokenExpires?: Date;
     timezone?: string;
+    dojo?: any; // To associate administrators with a Dojo
     
     // Kuma Karate Card & Profile
     athleteProfile?: {
@@ -46,6 +47,7 @@ export interface IUser extends Document {
         isEnrolled: boolean;
         cc?: string;
         habilidadSecreta?: string;
+        dojo?: any;
         statsLastMonth?: {
             vel: number;
             pot: number;
@@ -94,6 +96,11 @@ const UserSchema = new Schema<IUser>(
             type: String,
             enum: ["super_admin", "admin", "editor", "user"],
             default: "user",
+        },
+        dojo: {
+            type: Schema.Types.ObjectId,
+            ref: "Dojo",
+            default: null,
         },
         isActive: {
             type: Boolean,
@@ -194,6 +201,7 @@ const UserSchema = new Schema<IUser>(
             isEnrolled: { type: Boolean, default: false },
             cc: { type: String, default: "" },
             habilidadSecreta: { type: String, default: "" },
+            dojo: { type: Schema.Types.ObjectId, ref: "Dojo", default: null },
             statsLastMonth: {
                 vel: { type: Number, default: 10 },
                 pot: { type: Number, default: 10 },
@@ -209,10 +217,15 @@ const UserSchema = new Schema<IUser>(
     }
 );
 
+// Define schema indexes
+UserSchema.index({ "athleteProfile.isEnrolled": 1 });
+UserSchema.index({ "athleteProfile.dojo": 1 });
+UserSchema.index({ dojo: 1 });
+
 // Force recreation of the model in development to apply schema updates
-if (mongoose.models && mongoose.models.User) {
+if (process.env.NODE_ENV !== "production" && mongoose.models && mongoose.models.User) {
     delete (mongoose.models as any).User;
 }
-const User: Model<IUser> = mongoose.model<IUser>("User", UserSchema);
+const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
 
 export default User;

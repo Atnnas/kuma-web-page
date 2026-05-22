@@ -74,6 +74,7 @@ const RoutineLogSchema = new Schema<IRoutineLog>(
 
 // TTL Index: Delete documents at the time specified by expiresAt
 RoutineLogSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+RoutineLogSchema.index({ user: 1, completed: 1 });
 
 // Prevent recompilation
 const RoutineLog: Model<IRoutineLog> = mongoose.models.RoutineLog || mongoose.model<IRoutineLog>("RoutineLog", RoutineLogSchema);

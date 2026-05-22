@@ -2,9 +2,10 @@
 
 import connectDB from "@/lib/db";
 import User from "@/models/User";
+import Dojo from "@/models/Dojo";
 import AttendanceLog from "@/models/AttendanceLog";
 import { revalidatePath } from "next/cache";
-import { requireSuperAdmin } from "@/lib/auth-utils";
+import { requireSuperAdmin, getCurrentUser } from "@/lib/auth-utils";
 import { calculateStatIncrements, updateStatsObject } from "@/lib/utils/progression";
 
 /**
@@ -12,10 +13,17 @@ import { calculateStatIncrements, updateStatsObject } from "@/lib/utils/progress
  */
 export async function getAthletesForAttendance() {
     try {
-        await requireSuperAdmin();
+        const currentUser = await requireSuperAdmin();
         await connectDB();
         
-        const athletes = await User.find({ "athleteProfile.isEnrolled": true })
+        const isDojoAdmin = currentUser.role === "admin" && currentUser.dojo;
+        const query: any = { "athleteProfile.isEnrolled": true };
+        if (isDojoAdmin) {
+            query["athleteProfile.dojo"] = currentUser.dojo;
+        }
+        
+        const athletes = await User.find(query)
+            .populate("athleteProfile.dojo")
             .sort({ name: 1 })
             .lean();
             
@@ -51,7 +59,7 @@ export async function getAthletesForAttendance() {
             mvpCountsMap[uid] = (mvpCountsMap[uid] || 0) + 1;
         }
             
-        return JSON.parse(JSON.stringify(athletes)).map((user: any) => ({
+        return athletes.map((user: any) => ({
             _id: user._id.toString(),
             name: user.name,
             email: user.email,
@@ -65,6 +73,11 @@ export async function getAthletesForAttendance() {
                 workoutCount: user.workoutCount || 0,
                 monthlyAttendanceCount: attendanceCountsMap[user._id.toString()] || 0,
                 mvpCount: mvpCountsMap[user._id.toString()] || 0,
+                dojo: user.athleteProfile?.dojo ? {
+                    _id: user.athleteProfile.dojo._id.toString(),
+                    name: user.athleteProfile.dojo.name,
+                    logo: user.athleteProfile.dojo.logo,
+                } : null
             }
         }));
     } catch (error) {
@@ -78,12 +91,22 @@ export async function getAthletesForAttendance() {
  */
 export async function getAttendanceForDate(date: string) {
     try {
-        await requireSuperAdmin();
+        const currentUser = await requireSuperAdmin();
         await connectDB();
         
-        const logs = await AttendanceLog.find({ date }).lean();
+        const isDojoAdmin = currentUser.role === "admin" && currentUser.dojo;
+        const query: any = { date };
+        if (isDojoAdmin) {
+            const athleteIds = await User.find({
+                "athleteProfile.isEnrolled": true,
+                "athleteProfile.dojo": currentUser.dojo
+            }).distinct("_id");
+            query.user = { $in: athleteIds };
+        }
         
-        return JSON.parse(JSON.stringify(logs)).map((log: any) => ({
+        const logs = await AttendanceLog.find(query).lean();
+        
+        return logs.map((log: any) => ({
             userId: log.user.toString(),
             status: log.status,
             sessions: log.sessions || [],
@@ -111,8 +134,60 @@ export async function submitAttendanceForDate(
     }[]
 ) {
     try {
-        await requireSuperAdmin();
+        const currentUser = await requireSuperAdmin();
         await connectDB();
+
+        const isDojoAdmin = currentUser.role === "admin" && currentUser.dojo;
+        if (isDojoAdmin) {
+            const athleteIds = await User.find({
+                "athleteProfile.isEnrolled": true,
+                "athleteProfile.dojo": currentUser.dojo
+            }).distinct("_id");
+            const athleteIdStrings = athleteIds.map(id => id.toString());
+            
+            const hasUnauthorized = records.some(r => !athleteIdStrings.includes(r.userId));
+            if (hasUnauthorized) {
+                throw new Error("No autorizado para guardar asistencia de atletas de otro dojo");
+            }
+        }
+
+        // Check if any record in this submission is manually designated as MVP
+        const manualMvpExists = records.some(r => r.isMVP === true);
+
+        // If no MVP was manually set, auto-calculate the best candidate
+        if (!manualMvpExists) {
+            const eligibleRecords = records.filter(r => r.status === "Presente" || r.status === "Tarde");
+            if (eligibleRecords.length > 0) {
+                let bestRecordIndex = -1;
+                let highestScore = -1;
+
+                const perfMap: Record<string, number> = {
+                    "Elite": 5, "5": 5,
+                    "Destacado": 4, "4": 4,
+                    "Standard": 3, "3": 3,
+                    "2": 2, "1": 1
+                };
+
+                for (const rec of eligibleRecords) {
+                    const userProfile = await User.findById(rec.userId).lean();
+                    const ovr = userProfile?.athleteProfile?.stats?.ovr || 50;
+                    const perfStars = perfMap[rec.performance || "Standard"] || 3;
+                    const sessionCount = rec.sessions?.length || 0;
+                    
+                    // Algorithm: Performance (stars) * 100 + Session Count * 10 + OVR
+                    const score = perfStars * 100 + sessionCount * 10 + ovr;
+
+                    if (score > highestScore) {
+                        highestScore = score;
+                        bestRecordIndex = records.findIndex(r => r.userId === rec.userId);
+                    }
+                }
+
+                if (bestRecordIndex !== -1) {
+                    records[bestRecordIndex].isMVP = true;
+                }
+            }
+        }
 
         for (const record of records) {
             const { userId, status, sessions, performance = "Standard", isMVP = false } = record;
@@ -228,6 +303,96 @@ export async function submitAttendanceForDate(
 }
 
 /**
+ * Get the latest class's MVP (Daily MVP Entry Celebration)
+ * Returns the date and athlete details of the most recent MVP(s).
+ * Enforces that the current logged-in user must be an enrolled athlete.
+ */
+export async function getLatestMvp() {
+    try {
+        await connectDB();
+
+        // Verify the currently logged-in user is enrolled
+        const currentUser = await getCurrentUser();
+        if (!currentUser || !currentUser.id) {
+            return null; // Not logged in
+        }
+
+        const dbUser = await User.findById(currentUser.id).lean();
+        if (!dbUser || !dbUser.athleteProfile?.isEnrolled) {
+            return null; // Not enrolled
+        }
+
+        // Find the latest attendance log with isMVP: true
+        const latestMvpLog = await AttendanceLog.findOne({ isMVP: true })
+            .sort({ date: -1 })
+            .lean();
+
+        if (!latestMvpLog) {
+            return null;
+        }
+
+        const targetDate = latestMvpLog.date;
+
+        // Find all MVP logs on that specific date
+        const logs = await AttendanceLog.find({ date: targetDate, isMVP: true })
+            .populate({
+                path: "user",
+                populate: { path: "athleteProfile.dojo" }
+            })
+            .lean();
+
+        if (logs.length === 0) {
+            return null;
+        }
+
+        // Get total MVP counts for each of these users to display on their FUT card
+        const userIds = logs.map(l => l.user._id.toString());
+        const allMvpLogs = await AttendanceLog.find({ user: { $in: userIds }, isMVP: true }).lean();
+        const mvpCountsMap: Record<string, number> = {};
+        for (const log of allMvpLogs) {
+            const uid = log.user.toString();
+            mvpCountsMap[uid] = (mvpCountsMap[uid] || 0) + 1;
+        }
+
+        const athletes = logs.map((log: any) => {
+            const user = log.user;
+            if (!user) return null;
+
+            return {
+                _id: user._id.toString(),
+                name: user.name,
+                email: user.email,
+                image: user.image,
+                athleteProfile: {
+                    weight: user.athleteProfile?.weight || 0,
+                    height: user.athleteProfile?.height || 0,
+                    beltRank: user.athleteProfile?.beltRank || "Blanco",
+                    specialization: user.athleteProfile?.specialization || "Ambos",
+                    stats: user.athleteProfile?.stats || { vel: 50, pot: 50, tec: 50, res: 50, esp: 50, ovr: 50 },
+                    cc: user.athleteProfile?.cc || "",
+                    habilidadSecreta: user.athleteProfile?.habilidadSecreta || "",
+                    statsLastMonth: user.athleteProfile?.statsLastMonth || user.athleteProfile?.stats,
+                    mvpCount: mvpCountsMap[user._id.toString()] || 0,
+                    dojo: user.athleteProfile?.dojo ? {
+                        _id: user.athleteProfile.dojo._id.toString(),
+                        name: user.athleteProfile.dojo.name,
+                        logo: user.athleteProfile.dojo.logo,
+                    } : null
+                }
+            };
+        }).filter(Boolean);
+
+        return {
+            date: targetDate,
+            athletes
+        };
+    } catch (error) {
+        console.error("Error in getLatestMvp:", error);
+        return null;
+    }
+}
+
+/**
  * Get the Weekly MVP (Guerrero de la Semana)
  * Returns the athlete(s) with the highest check-ins in the current calendar week.
  */
@@ -321,7 +486,7 @@ export async function getWeeklyMVP() {
             mvpCountsMap[uid] = (mvpCountsMap[uid] || 0) + 1;
         }
 
-        const formattedAthletes = JSON.parse(JSON.stringify(mvpUsers)).map((user: any) => ({
+        const formattedAthletes = mvpUsers.map((user: any) => ({
             _id: user._id.toString(),
             name: user.name,
             email: user.email,

@@ -9,23 +9,30 @@ interface UserEditModalProps {
     isOpen: boolean;
     onClose: () => void;
     user: any;
-    onSave: (userId: string, data: { name: string; email: string; role: string; isActive: boolean }) => Promise<void>;
+    onSave: (userId: string, data: { name: string; email: string; role: string; isActive: boolean; dojo?: string | null }) => Promise<void>;
+    dojos: any[];
 }
 
-export function UserEditModal({ isOpen, onClose, user, onSave }: UserEditModalProps) {
+export function UserEditModal({ isOpen, onClose, user, onSave, dojos }: UserEditModalProps) {
     const [name, setName] = useState(user?.name || "");
     const [email, setEmail] = useState(() => {
         if (user?.email?.startsWith("pendiente_")) return "";
         return user?.email || "";
     });
     const [role, setRole] = useState(user?.role || "user");
+    const [selectedDojoId, setSelectedDojoId] = useState(() => {
+        if (typeof user?.dojo === "object" && user?.dojo !== null) {
+            return user.dojo._id?.toString() || "";
+        }
+        return user?.dojo || "";
+    });
     const [isActive, setIsActive] = useState(user?.isActive ?? true);
     const [isSaving, setIsSaving] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
-        await onSave(user._id, { name, email, role, isActive });
+        await onSave(user._id, { name, email, role, isActive, dojo: role === "admin" ? selectedDojoId : null });
         setIsSaving(false);
         onClose();
     };
@@ -92,22 +99,49 @@ export function UserEditModal({ isOpen, onClose, user, onSave }: UserEditModalPr
                                     <label className="text-xs font-bold text-zinc-500 uppercase flex items-center gap-2">
                                         <Shield className="w-3 h-3" /> Rol / Permisos
                                     </label>
-                                    <div className="grid grid-cols-3 gap-2">
-                                        {['user', 'editor', 'super_admin'].map((option) => (
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                        {['user', 'editor', 'admin', 'super_admin'].map((option) => (
                                             <button
                                                 key={option}
                                                 type="button"
-                                                onClick={() => setRole(option)}
+                                                onClick={() => {
+                                                    setRole(option);
+                                                    if (option !== "admin") {
+                                                        setSelectedDojoId("");
+                                                    }
+                                                }}
                                                 className={`py-3 px-2 rounded-lg text-xs font-bold uppercase transition-all border ${role === option
                                                     ? "bg-red-900/20 border-red-600 text-red-500"
                                                     : "bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700"
                                                     }`}
                                             >
-                                                {option === 'super_admin' ? 'Admin' : option === 'user' ? 'Usuario' : 'Editor'}
+                                                {option === 'super_admin' ? 'Super Admin' : option === 'admin' ? 'Admin Dojo' : option === 'user' ? 'Usuario' : 'Editor'}
                                             </button>
                                         ))}
                                     </div>
                                 </div>
+
+                                {/* Dojo Selector (Only shown if role is 'admin') */}
+                                {role === "admin" && (
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-zinc-500 uppercase flex items-center gap-2">
+                                            🏢 Dojo Asignado
+                                        </label>
+                                        <select
+                                            value={selectedDojoId}
+                                            onChange={(e) => setSelectedDojoId(e.target.value)}
+                                            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none transition-colors font-bold cursor-pointer"
+                                            required
+                                        >
+                                            <option value="">-- Selecciona un Dojo --</option>
+                                            {dojos.map((dojo) => (
+                                                <option key={dojo._id} value={dojo._id}>
+                                                    {dojo.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
 
                                 {/* Status Toggle */}
                                 <div className="space-y-2">

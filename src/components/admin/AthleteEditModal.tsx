@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Save, Shield, Ruler, Weight, Calendar, Phone, HeartPulse, Trophy, Zap, Target, Flame, Activity } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { getDojos } from "@/lib/actions/dojos";
 
 export const getBeltColor = (beltRank: string) => {
     const rank = (beltRank || "").toLowerCase().trim();
@@ -72,6 +73,23 @@ interface AthleteEditModalProps {
 
 export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditModalProps) {
     const [isSaving, setIsSaving] = useState(false);
+    const [dojos, setDojos] = useState<any[]>([]);
+    const [isLoadingDojos, setIsLoadingDojos] = useState(false);
+
+    useEffect(() => {
+        const loadDojos = async () => {
+            setIsLoadingDojos(true);
+            const res = await getDojos();
+            if (res.success && res.data) {
+                setDojos(res.data);
+            }
+            setIsLoadingDojos(false);
+        };
+        if (isOpen) {
+            loadDojos();
+        }
+    }, [isOpen]);
+
     const [profile, setProfile] = useState(() => {
         const p = user?.athleteProfile || {};
         return {
@@ -89,6 +107,7 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
             specialization: p.specialization || "Ambos",
             cc: p.cc || "",
             habilidadSecreta: p.habilidadSecreta || "",
+            dojo: p.dojo?._id || p.dojo || "6a10ba00936f06f14847fd05",
             stats: {
                 vel: p.stats?.vel ?? 50,
                 pot: p.stats?.pot ?? 50,
@@ -319,6 +338,44 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                                                 <option value="Marrón I">🟫 － Marrón I</option>
                                             </select>
                                             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500 text-xs">▼</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Dojo Selector Segment */}
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Dojo de Procedencia</label>
+                                        <div className="flex items-center gap-3">
+                                            <div className="relative flex-1">
+                                                <select
+                                                    value={profile.dojo}
+                                                    onChange={(e) => {
+                                                        setProfile({ ...profile, dojo: e.target.value });
+                                                    }}
+                                                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-4 pr-10 text-white focus:border-red-500 outline-none appearance-none cursor-pointer text-xs"
+                                                >
+                                                    {dojos.map((d) => (
+                                                        <option key={d._id} value={d._id}>
+                                                            🥋 {d.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500 text-xs">▼</div>
+                                            </div>
+
+                                            {/* Selected Dojo Logo Preview on the right side */}
+                                            <div className="w-10 h-10 rounded-full border border-white/10 bg-zinc-950 overflow-hidden shrink-0 flex items-center justify-center shadow-lg">
+                                                {(() => {
+                                                    const selectedDojo = dojos.find(d => d._id === profile.dojo);
+                                                    const logoSrc = selectedDojo?.logo || "/images/kuma-logo.jpg";
+                                                    return (
+                                                        <img 
+                                                            src={logoSrc} 
+                                                            alt="Logo Dojo" 
+                                                            className="w-full h-full object-cover scale-105" 
+                                                        />
+                                                    );
+                                                })()}
+                                            </div>
                                         </div>
                                     </div>
 

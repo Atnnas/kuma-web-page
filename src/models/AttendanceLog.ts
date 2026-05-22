@@ -61,6 +61,8 @@ const AttendanceLogSchema = new Schema<IAttendanceLog>(
 
 // Compound index to guarantee one athlete gets only one log per day
 AttendanceLogSchema.index({ user: 1, date: 1 }, { unique: true });
+AttendanceLogSchema.index({ date: 1 });
+AttendanceLogSchema.index({ isMVP: 1 });
 
 if (process.env.NODE_ENV !== "production") {
     delete (mongoose.models as any).AttendanceLog;

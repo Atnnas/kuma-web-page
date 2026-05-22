@@ -29,10 +29,13 @@ export async function getNews() {
         await connectDB();
         // Sort by date descending
         const news = await News.find({}).sort({ date: -1 }).lean();
-        return JSON.parse(JSON.stringify(news)).map((item: any) => ({
+        return news.map((item) => ({
             ...item,
             id: item._id.toString(),
             _id: item._id.toString(),
+            date: item.date ? new Date(item.date).toISOString() : new Date().toISOString(),
+            createdAt: item.createdAt ? new Date(item.createdAt).toISOString() : undefined,
+            updatedAt: item.updatedAt ? new Date(item.updatedAt).toISOString() : undefined,
         }));
     } catch (error) {
         console.error("Error fetching news:", error);

@@ -114,9 +114,15 @@ export async function getDetailedAnalytics(from?: Date, to?: Date) {
         // Calculate simple stats based on the filtered data
         const uniqueVisitors = new Set(visits.map((v: any) => v.geo?.ip || v.visitorId)).size;
 
+        const serializedVisits = visits.map((visit: any) => ({
+            ...visit,
+            _id: visit._id.toString(),
+            timestamp: visit.timestamp ? new Date(visit.timestamp).toISOString() : undefined,
+        }));
+
         return {
             success: true,
-            data: JSON.parse(JSON.stringify(visits)), // Serialize for client
+            data: serializedVisits,
             stats: {
                 total: visits.length,
                 unique: uniqueVisitors

@@ -7,6 +7,7 @@ import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 import { AuthStatusHandler } from "@/components/auth/AuthStatusHandler";
 import { Suspense } from "react";
+import MvpCelebrationTrigger from "@/components/sections/MvpCelebrationTrigger";
 
 import "./globals.css";
 
@@ -73,6 +74,7 @@ export default async function RootLayout({
           <Suspense fallback={null}>
             <AuthStatusHandler />
           </Suspense>
+          <MvpCelebrationTrigger currentUser={session?.user} />
           {children}
         </Providers>
       </body>

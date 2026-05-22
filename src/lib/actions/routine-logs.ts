@@ -107,9 +107,7 @@ export async function getUnfinishedRoutineLog(routineId: string) {
             expiresAt: { $gt: new Date() }
         }).sort({ updatedAt: -1 });
 
-        if (!log) return { success: true, log: null };
-
-        return { success: true, log: JSON.parse(JSON.stringify(log)) };
+        return { success: true, log: serializeRoutineLog(log) };
     } catch (error) {
         console.error("Error getting unfinished log:", error);
         return { success: false, error: "Failed to fetch log" };
@@ -204,11 +202,24 @@ export async function getAnyUnfinishedLog() {
             expiresAt: { $gt: new Date() }
         }).sort({ updatedAt: -1 });
 
-        if (!log) return { success: true, log: null };
-
-        return { success: true, log: JSON.parse(JSON.stringify(log)) };
+        return { success: true, log: serializeRoutineLog(log) };
     } catch (error) {
         console.error("Error getting any unfinished log:", error);
         return { success: false, error: "Failed to fetch log" };
     }
+}
+
+function serializeRoutineLog(log: any) {
+    if (!log) return null;
+    const rawLog = typeof log.toObject === "function" ? log.toObject() : log;
+    return {
+        ...rawLog,
+        _id: rawLog._id.toString(),
+        user: rawLog.user ? rawLog.user.toString() : null,
+        startTime: rawLog.startTime ? new Date(rawLog.startTime).toISOString() : undefined,
+        endTime: rawLog.endTime ? new Date(rawLog.endTime).toISOString() : undefined,
+        expiresAt: rawLog.expiresAt ? new Date(rawLog.expiresAt).toISOString() : undefined,
+        createdAt: rawLog.createdAt ? new Date(rawLog.createdAt).toISOString() : undefined,
+        updatedAt: rawLog.updatedAt ? new Date(rawLog.updatedAt).toISOString() : undefined,
+    };
 }

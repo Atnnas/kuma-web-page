@@ -2,6 +2,7 @@
 
 import connectDB from "@/lib/db";
 import User from "@/models/User";
+import Dojo from "@/models/Dojo";
 import AttendanceLog from "@/models/AttendanceLog";
 import { revalidatePath } from "next/cache";
 import { requireSuperAdmin } from "@/lib/auth-utils";
@@ -12,7 +13,10 @@ import { requireSuperAdmin } from "@/lib/auth-utils";
 export async function getEnrolledAthletes() {
     try {
         await connectDB();
-        const athletes = await User.find({ "athleteProfile.isEnrolled": true }).sort({ "athleteProfile.beltRank": -1 }).lean();
+        const athletes = await User.find({ "athleteProfile.isEnrolled": true })
+            .sort({ "athleteProfile.beltRank": -1 })
+            .populate("athleteProfile.dojo")
+            .lean();
         
         // Fetch and map MVP counts
         const mvpLogs = await AttendanceLog.find({ isMVP: true }).lean();
@@ -22,15 +26,7 @@ export async function getEnrolledAthletes() {
             mvpCountsMap[uid] = (mvpCountsMap[uid] || 0) + 1;
         }
 
-        const serialized = JSON.parse(JSON.stringify(athletes)).map((user: any) => {
-            if (user.athleteProfile) {
-                user.athleteProfile.mvpCount = mvpCountsMap[user._id.toString()] || 0;
-            }
-            return {
-                ...user,
-                _id: user._id.toString(),
-            };
-        });
+        const serialized = athletes.map((user: any) => serializeAthlete(user, mvpCountsMap));
 
         return { success: true, data: serialized };
     } catch (error: any) {
@@ -45,7 +41,10 @@ export async function getEnrolledAthletes() {
 export async function getAllPotentialAthletes() {
     try {
         await connectDB();
-        const users = await User.find({}).sort({ name: 1 }).lean();
+        const users = await User.find({})
+            .sort({ name: 1 })
+            .populate("athleteProfile.dojo")
+            .lean();
         return serializeAthletes(users);
     } catch (error) {
         console.error("Error fetching potential athletes:", error);
@@ -62,7 +61,8 @@ export async function updateAthleteProfile(userId: string, profileData: any) {
         await connectDB();
 
         const user = await User.findById(userId);
-        const existingProfile = user?.athleteProfile ? JSON.parse(JSON.stringify(user.athleteProfile)) : {};
+        const userObj = user ? user.toObject() : null;
+        const existingProfile = userObj?.athleteProfile || {};
 
         // Ensure OVR is calculated if not provided
         if (profileData.stats && !profileData.stats.ovr) {
@@ -71,6 +71,10 @@ export async function updateAthleteProfile(userId: string, profileData: any) {
         }
 
         const { image, ...profileFields } = profileData;
+        
+        if (!profileFields.dojo) {
+            profileFields.dojo = "6a10ba00936f06f14847fd05";
+        }
 
         const updateFields: any = {
             athleteProfile: {
@@ -123,6 +127,7 @@ export async function createAndEnrollAthlete(userData: { name: string, email: st
             athleteProfile: {
                 isEnrolled: true,
                 beltRank: "Blanco",
+                dojo: "6a10ba00936f06f14847fd05",
                 stats: { vel: 50, pot: 50, tec: 50, res: 50, esp: 50, ovr: 50 }
             }
         }) as any;
@@ -135,11 +140,43 @@ export async function createAndEnrollAthlete(userData: { name: string, email: st
     }
 }
 
-function serializeAthletes(users: any[]) {
-    return JSON.parse(JSON.stringify(users)).map((user: any) => ({
+function serializeAthlete(user: any, mvpCountsMap?: Record<string, number>) {
+    if (!user) return null;
+    
+    const serializedUser = {
         ...user,
         _id: user._id.toString(),
-    }));
+        createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : undefined,
+        updatedAt: user.updatedAt ? new Date(user.updatedAt).toISOString() : undefined,
+        dojo: user.dojo ? user.dojo.toString() : null,
+        favoriteRoutines: user.favoriteRoutines?.map((id: any) => id.toString()) || [],
+    };
+
+    if (serializedUser.athleteProfile) {
+        const dojoPopulated = serializedUser.athleteProfile.dojo;
+        serializedUser.athleteProfile = {
+            ...serializedUser.athleteProfile,
+            birthDate: serializedUser.athleteProfile.birthDate ? new Date(serializedUser.athleteProfile.birthDate).toISOString() : undefined,
+            dojo: dojoPopulated ? (
+                typeof dojoPopulated === "object" && "_id" in dojoPopulated
+                    ? {
+                        _id: dojoPopulated._id.toString(),
+                        name: dojoPopulated.name,
+                        logo: dojoPopulated.logo,
+                        createdAt: dojoPopulated.createdAt ? new Date(dojoPopulated.createdAt).toISOString() : undefined,
+                        updatedAt: dojoPopulated.updatedAt ? new Date(dojoPopulated.updatedAt).toISOString() : undefined,
+                      }
+                    : dojoPopulated.toString()
+            ) : null,
+            mvpCount: mvpCountsMap ? (mvpCountsMap[serializedUser._id] || 0) : undefined,
+        };
+    }
+
+    return serializedUser;
+}
+
+function serializeAthletes(users: any[]) {
+    return users.map((user: any) => serializeAthlete(user));
 }
 
 /**

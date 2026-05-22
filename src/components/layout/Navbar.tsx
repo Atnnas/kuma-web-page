@@ -38,7 +38,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
         { name: "Calendario de Eventos", href: "/calendar" },
         { name: "Noticias", href: "/news" },
         { name: "Tienda", href: "/shop" },
-        ...(user?.role === "super_admin" ? [{ name: "Herramientas", href: "/admin/news" }] : []),
+        ...(user?.role === "super_admin" || user?.role === "admin" ? [{ name: "Herramientas", href: "/admin/news" }] : []),
     ];
 
     const onLogout = async () => {

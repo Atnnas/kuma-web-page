@@ -8,10 +8,23 @@ import { requireSuperAdmin } from "@/lib/auth-utils";
 export async function getAllUsers() {
     try {
         await connectDB();
-        const users = await User.find({}).sort({ createdAt: -1 }).lean();
-        return JSON.parse(JSON.stringify(users)).map((user: any) => ({
+        const users = await User.find({}).populate("dojo").sort({ createdAt: -1 }).lean();
+        return users.map((user) => ({
             ...user,
             _id: user._id.toString(),
+            dojo: user.dojo ? {
+                _id: user.dojo._id.toString(),
+                name: user.dojo.name,
+                logo: user.dojo.logo,
+            } : null,
+            favoriteRoutines: user.favoriteRoutines?.map((id: any) => id.toString()) || [],
+            createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : undefined,
+            updatedAt: user.updatedAt ? new Date(user.updatedAt).toISOString() : undefined,
+            athleteProfile: user.athleteProfile ? {
+                ...user.athleteProfile,
+                birthDate: user.athleteProfile.birthDate ? new Date(user.athleteProfile.birthDate).toISOString() : undefined,
+                dojo: user.athleteProfile.dojo ? user.athleteProfile.dojo.toString() : null,
+            } : undefined,
         }));
     } catch (error) {
         console.error("Error fetching users:", error);
@@ -37,7 +50,7 @@ export async function toggleUserRole(userId: string, currentRole: string) {
     }
 }
 
-export async function updateUser(userId: string, data: { name: string; email: string; role: string; isActive?: boolean }) {
+export async function updateUser(userId: string, data: { name: string; email: string; role: string; isActive?: boolean; dojo?: string | null }) {
     try {
         await requireSuperAdmin();
         await connectDB();
@@ -57,7 +70,8 @@ export async function updateUser(userId: string, data: { name: string; email: st
             name: data.name,
             email: email,
             role: data.role,
-            isActive: data.isActive
+            isActive: data.isActive,
+            dojo: data.dojo || null
         });
 
         revalidatePath("/admin/users");
