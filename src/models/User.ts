@@ -44,6 +44,8 @@ export interface IUser extends Document {
             ovr: number;
         };
         isEnrolled: boolean;
+        cc?: string;
+        habilidadSecreta?: string;
     };
 
     achievements?: {
@@ -181,7 +183,9 @@ const UserSchema = new Schema<IUser>(
                 esp: { type: Number, default: 10 },
                 ovr: { type: Number, default: 10 }
             },
-            isEnrolled: { type: Boolean, default: false }
+            isEnrolled: { type: Boolean, default: false },
+            cc: { type: String, default: "" },
+            habilidadSecreta: { type: String, default: "" }
         },
     },
     {

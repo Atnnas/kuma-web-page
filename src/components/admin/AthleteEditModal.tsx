@@ -87,6 +87,8 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
             },
             medicalConditions: p.medicalConditions || "",
             specialization: p.specialization || "Ambos",
+            cc: p.cc || "",
+            habilidadSecreta: p.habilidadSecreta || "",
             stats: {
                 vel: p.stats?.vel ?? 50,
                 pot: p.stats?.pot ?? 50,
@@ -337,6 +339,29 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                                                     {spec}
                                                 </button>
                                             ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 pt-2">
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Conocido Como (CC)</label>
+                                            <input
+                                                type="text"
+                                                value={profile.cc}
+                                                onChange={(e) => setProfile({ ...profile, cc: e.target.value })}
+                                                placeholder="Ej: 🐍 CC : MAMBA NEGRA"
+                                                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-4 text-white focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none placeholder:text-zinc-600 text-xs transition-all"
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Habilidad Secreta</label>
+                                            <input
+                                                type="text"
+                                                value={profile.habilidadSecreta}
+                                                onChange={(e) => setProfile({ ...profile, habilidadSecreta: e.target.value })}
+                                                placeholder="Ej: Kisame Zuki"
+                                                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-4 text-white focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none placeholder:text-zinc-600 text-xs transition-all"
+                                            />
                                         </div>
                                     </div>
                                 </div>

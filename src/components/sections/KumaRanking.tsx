@@ -27,6 +27,8 @@ interface Athlete {
             esp: number;
             ovr: number;
         };
+        cc?: string;
+        habilidadSecreta?: string;
     };
 }
 
@@ -958,76 +960,64 @@ interface KumaCelebrationModalProps {
     athlete: Athlete | null;
 }
 
-const getKumaHonorDetails = (ath: Athlete) => {
+export const getKumaHonorDetails = (ath: any) => {
     const spec = ath?.athleteProfile?.specialization || "Ambos";
     const stats = ath?.athleteProfile?.stats || { vel: 50, pot: 50, tec: 50, res: 50, esp: 50, ovr: 50 };
     const belt = (ath?.athleteProfile?.beltRank || "Blanco").toLowerCase();
     const ovr = stats.ovr || 50;
 
+    let badge = "";
+    let desc = "";
+    let ability = "";
+
     // Custom overrides for specific athletes
     if (ath.name.toLowerCase().includes("kristel")) {
-        return {
-            badge: "🐍 CC : MAMBA NEGRA",
-            desc: "Una competidora de agilidad excepcional y precisión técnica implacable en el tatami. Su enfoque de combate y disciplina constante la convierten en un referente de superación marcial.",
-            ability: "kisame Tzuki"
-        };
+        badge = "🐍 CC : MAMBA NEGRA";
+        desc = "Una competidora de agilidad excepcional y precisión técnica implacable en el tatami. Su enfoque de combate y disciplina constante la convierten en un referente de superación marcial.";
+        ability = "kisame Tzuki";
+    } else if (ath.name.toLowerCase().includes("jimena") || ath.name.toLowerCase().includes("otoya")) {
+        badge = "🦅 CC : MEME";
+        desc = "Una competidora destacada por su velocidad de reacción y estrategia inteligente de combate en el tatami. Su letal patada lateral es un referente de precisión y control técnico.";
+        ability = "Yoko Gueri";
+    } else if (ovr >= 80) {
+        badge = "🏆 KUMA SENPAI DE ÉLITE";
+        desc = "Un exponente de perseverancia y maestría técnica. Su disciplina inspira a las nuevas generaciones del Dojo a superarse en cada entrenamiento bajo los valores tradicionales del Bushido.";
+        ability = "Kiai Concentrado";
+    } else if (belt.includes("negro")) {
+        badge = "🥋 LEYENDA DEL BUDO";
+        desc = "Portador de cinturón negro, reflejo del camino del Karate-Do. Destaca por su impecable etiqueta, precisión marcial y la búsqueda constante del perfeccionamiento del carácter.";
+        ability = "Zanshin Absoluto";
+    } else if (spec === "Kata") {
+        badge = "✨ EXCELENCIA EN KATA";
+        desc = "Su enfoque se centra en la belleza del movimiento, el ritmo dinámico y la alineación geométrica. Cada Kata ejecutado demuestra un alto nivel de concentración y control físico.";
+        ability = "Embusen Perfecto";
+    } else if (spec === "Kumite") {
+        badge = "🥊 BALUARTE DE KUMITE";
+        desc = "Especialista en combate, destaca por su excelente timing, distancia técnica impecable y un espíritu inquebrantable. Demuestra respeto absoluto en cada intercambio de técnicas.";
+        ability = "Sen-no-sen";
+    } else if (stats.vel >= 70) {
+        badge = "⚡ VELOCIDAD EXPLOSIVA";
+        desc = "Destaca por una explosividad y capacidad de anticipación extraordinarias. Su velocidad de ataque le permite ejecutar técnicas precisas y efectivas con gran agilidad.";
+        ability = "Sun-dome Preciso";
+    } else if (stats.pot >= 70) {
+        badge = "💪 FUERZA Y KIME";
+        desc = "Posee un dominio excepcional del Kime (fuerza de impacto concentrada). Su técnica logra canalizar la energía de todo el cuerpo con máxima firmeza y estabilidad.";
+        ability = "Kime Devastador";
+    } else {
+        badge = "🌱 PROMESA DEL KUMA DOJO";
+        desc = "Practicante dedicado que avanza con constancia y humildad en el aprendizaje del Karate tradicional. Su gran espíritu y deseo de aprender son la base de su constante crecimiento.";
+        ability = "Espíritu de Lucha";
     }
 
-    if (ath.name.toLowerCase().includes("jimena") || ath.name.toLowerCase().includes("otoya")) {
-        return {
-            badge: "🦅 CC : MEME",
-            desc: "Una competidora destacada por su velocidad de reacción y estrategia inteligente de combate en el tatami. Su letal patada lateral es un referente de precisión y control técnico.",
-            ability: "Yoko Gueri"
-        };
+    // Custom overrides from athleteProfile (if edited via admin panel)
+    if (ath?.athleteProfile?.cc) {
+        badge = ath.athleteProfile.cc;
+    }
+    if (ath?.athleteProfile?.habilidadSecreta) {
+        ability = ath.athleteProfile.habilidadSecreta;
     }
 
-    if (ovr >= 80) {
-        return {
-            badge: "🏆 KUMA SENPAI DE ÉLITE",
-            desc: "Un exponente de perseverancia y maestría técnica. Su disciplina inspira a las nuevas generaciones del Dojo a superarse en cada entrenamiento bajo los valores tradicionales del Bushido.",
-            ability: "Kiai Concentrado"
-        };
-    }
-    if (belt.includes("negro")) {
-        return {
-            badge: "🥋 LEYENDA DEL BUDO",
-            desc: "Portador de cinturón negro, reflejo del camino del Karate-Do. Destaca por su impecable etiqueta, precisión marcial y la búsqueda constante del perfeccionamiento del carácter.",
-            ability: "Zanshin Absoluto"
-        };
-    }
-    if (spec === "Kata") {
-        return {
-            badge: "✨ EXCELENCIA EN KATA",
-            desc: "Su enfoque se centra en la belleza del movimiento, el ritmo dinámico y la alineación geométrica. Cada Kata ejecutado demuestra un alto nivel de concentración y control físico.",
-            ability: "Embusen Perfecto"
-        };
-    }
-    if (spec === "Kumite") {
-        return {
-            badge: "🥊 BALUARTE DE KUMITE",
-            desc: "Especialista en combate, destaca por su excelente timing, distancia técnica impecable y un espíritu inquebrantable. Demuestra respeto absoluto en cada intercambio de técnicas.",
-            ability: "Sen-no-sen"
-        };
-    }
-    if (stats.vel >= 70) {
-        return {
-            badge: "⚡ VELOCIDAD EXPLOSIVA",
-            desc: "Destaca por una explosividad y capacidad de anticipación extraordinarias. Su velocidad de ataque le permite ejecutar técnicas precisas y efectivas con gran agilidad.",
-            ability: "Sun-dome Preciso"
-        };
-    }
-    if (stats.pot >= 70) {
-        return {
-            badge: "💪 FUERZA Y KIME",
-            desc: "Posee un dominio excepcional del Kime (fuerza de impacto concentrada). Su técnica logra canalizar la energía de todo el cuerpo con máxima firmeza y estabilidad.",
-            ability: "Kime Devastador"
-        };
-    }
-    return {
-        badge: "🌱 PROMESA DEL KUMA DOJO",
-        desc: "Practicante dedicado que avanza con constancia y humildad en el aprendizaje del Karate tradicional. Su gran espíritu y deseo de aprender son la base de su constante crecimiento.",
-        ability: "Espíritu de Lucha"
-    };
+    return { badge, desc, ability };
 };
 
 export function KumaCelebrationModal({ isOpen, onClose, athlete }: KumaCelebrationModalProps) {

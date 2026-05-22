@@ -15,7 +15,7 @@ import { EnrollmentModal } from "@/components/admin/EnrollmentModal";
 import { Trash2, Plus, UserMinus } from "lucide-react";
 import { createAndEnrollAthlete } from "@/lib/actions/athletes";
 import { deleteUser } from "@/lib/actions/users";
-import { KumaCelebrationModal } from "@/components/sections/KumaRanking";
+import { KumaCelebrationModal, getKumaHonorDetails } from "@/components/sections/KumaRanking";
 
 export default function AdminAthletesPage() {
     const [users, setUsers] = useState<any[]>([]);
@@ -206,6 +206,7 @@ export default function AdminAthletesPage() {
                              const nameParts = user.name?.split(" ") || [""];
                              const displayFirstName = nameParts[0] || "";
                              const displayLastName = nameParts[1] || "";
+                             const honor = isEnrolled ? getKumaHonorDetails(user) : null;
 
                             return (
                                 <motion.div 
@@ -404,6 +405,30 @@ export default function AdminAthletesPage() {
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* CC & HABILIDAD SECRETA PANEL */}
+                                    {isEnrolled && honor && (
+                                        <div className="w-full bg-black/45 border border-white/5 rounded-2xl p-3.5 space-y-2 text-xs">
+                                            <div className="flex justify-between items-center gap-2">
+                                                <span className="text-[9px] text-zinc-500 font-extrabold uppercase tracking-widest shrink-0">Conocido Como</span>
+                                                <span className={cn(
+                                                    "text-[10px] font-black tracking-wide truncate max-w-[160px] text-right",
+                                                    user.athleteProfile?.cc ? "text-kuma-gold" : "text-zinc-500"
+                                                )}>
+                                                    {honor.badge}
+                                                </span>
+                                            </div>
+                                            <div className="flex justify-between items-center gap-2">
+                                                <span className="text-[9px] text-zinc-500 font-extrabold uppercase tracking-widest shrink-0">Hab. Secreta</span>
+                                                <span className={cn(
+                                                    "text-[10px] font-black uppercase tracking-wider truncate max-w-[160px] text-right",
+                                                    user.athleteProfile?.habilidadSecreta ? "text-red-500" : "text-zinc-500"
+                                                )}>
+                                                    {honor.ability}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* ADMIN ACTIONS TOOLBAR */}
                                     <div className="w-full flex items-center justify-between gap-2 mt-2 pt-4 border-t border-white/5">
