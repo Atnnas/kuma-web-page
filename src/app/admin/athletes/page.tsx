@@ -12,8 +12,9 @@ import { motion } from "framer-motion";
 
 import { AdminFloatingButton } from "@/components/admin/AdminFloatingButton";
 import { EnrollmentModal } from "@/components/admin/EnrollmentModal";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, UserMinus } from "lucide-react";
 import { createAndEnrollAthlete } from "@/lib/actions/athletes";
+import { deleteUser } from "@/lib/actions/users";
 import { KumaCelebrationModal } from "@/components/sections/KumaRanking";
 
 export default function AdminAthletesPage() {
@@ -50,6 +51,19 @@ export default function AdminAthletesPage() {
         if (confirm("¿Estás seguro de que quieres desvincular este atleta? Sus estadísticas se mantendrán pero no aparecerá en el ranking.")) {
             const res = await updateAthleteProfile(userId, { isEnrolled: false });
             if (res.success) fetchData();
+        }
+    };
+
+    const handleDeleteUser = async (userId: string, userName: string) => {
+        if (confirm(`¿Estás seguro de que deseas eliminar permanentemente a ${userName}? Esta acción no se puede deshacer y borrará toda su información de la base de datos.`)) {
+            // Optimistic update
+            setUsers(prev => prev.filter(u => u._id !== userId));
+
+            const res = await deleteUser(userId);
+            if (!res.success) {
+                alert("Error al eliminar el Kuma");
+                fetchData(); // Revert on error
+            }
         }
     };
 
@@ -410,13 +424,34 @@ export default function AdminAthletesPage() {
                                         </div>
 
                                         <div className="flex gap-1.5 shrink-0">
-                                            {isEnrolled && (
+                                            {isEnrolled ? (
+                                                <>
+                                                    <Button
+                                                        onClick={() => handleUnenroll(user._id)}
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-9 w-9 p-0 text-zinc-500 hover:text-amber-500 hover:bg-amber-500/10 rounded-xl"
+                                                        title="Desvincular del Ranking (Mantener en base de datos)"
+                                                    >
+                                                        <UserMinus className="w-3.5 h-3.5" />
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => handleDeleteUser(user._id, user.name)}
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-9 w-9 p-0 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-xl"
+                                                        title="Eliminar permanentemente de la Base de Datos"
+                                                    >
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </Button>
+                                                </>
+                                            ) : (
                                                 <Button
-                                                    onClick={() => handleUnenroll(user._id)}
+                                                    onClick={() => handleDeleteUser(user._id, user.name)}
                                                     variant="ghost"
                                                     size="sm"
                                                     className="h-9 w-9 p-0 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-xl"
-                                                    title="Desvincular del Ranking"
+                                                    title="Eliminar permanentemente de la Base de Datos"
                                                 >
                                                     <Trash2 className="w-3.5 h-3.5" />
                                                 </Button>
