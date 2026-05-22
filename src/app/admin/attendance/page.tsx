@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { SwipeBackWrapper } from "@/components/admin/AdminNavigation";
 import { Button } from "@/components/ui/Button";
 import { Loader2, Search, User, ClipboardCheck, Calendar, Info, Check, Clock, UserX, Sparkles, CheckCircle } from "lucide-react";
@@ -52,6 +52,14 @@ export default function AdminAttendancePage() {
     }, []);
     
     const [searchTerm, setSearchTerm] = useState("");
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+    // Debounce search input — avoids blocking the main thread on every keystroke
+    // by delaying the expensive grid re-render (Framer Motion layout on N cards)
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 200);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
     const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite" | "Ambos">("Todos");
     
     // Load initial athletes
@@ -232,8 +240,8 @@ export default function AdminAttendancePage() {
 
     // Filter athletes in client side
     const filteredAthletes = athletes.filter((ath) => {
-        const matchesSearch = ath.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              ath.email?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = ath.name?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) || 
+                              ath.email?.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
         
         const matchesSpec = selectedSpec === "Todos" ||
                             ath.athleteProfile.specialization === selectedSpec ||
