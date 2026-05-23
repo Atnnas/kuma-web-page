@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-
+import "./Dojo";
 export interface IUser extends Document {
     name: string;
     email: string;

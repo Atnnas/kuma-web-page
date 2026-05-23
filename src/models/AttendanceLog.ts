@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-
+import "./User";
 export interface IAttendanceLog extends Document {
     user: mongoose.Types.ObjectId;
     sessions: ("Fuerza" | "Explosión" | "Técnica" | "Kata" | "Kumite")[];
