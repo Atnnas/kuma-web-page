@@ -20,6 +20,17 @@ export async function getAllUsers() {
             favoriteRoutines: user.favoriteRoutines?.map((id: any) => id.toString()) || [],
             createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : undefined,
             updatedAt: user.updatedAt ? new Date(user.updatedAt).toISOString() : undefined,
+            lastWorkoutDate: user.lastWorkoutDate ? new Date(user.lastWorkoutDate).toISOString() : undefined,
+            lastStreakShownDate: user.lastStreakShownDate ? new Date(user.lastStreakShownDate).toISOString() : undefined,
+            lastStreakLossShownDate: user.lastStreakLossShownDate ? new Date(user.lastStreakLossShownDate).toISOString() : undefined,
+            lastTrainingResetDate: user.lastTrainingResetDate ? new Date(user.lastTrainingResetDate).toISOString() : undefined,
+            emailVerified: user.emailVerified ? new Date(user.emailVerified).toISOString() : undefined,
+            verificationTokenExpires: user.verificationTokenExpires ? new Date(user.verificationTokenExpires).toISOString() : undefined,
+            achievements: user.achievements?.map((ach: any) => ({
+                ...ach,
+                _id: ach._id ? ach._id.toString() : undefined,
+                earnedAt: ach.earnedAt ? new Date(ach.earnedAt).toISOString() : undefined,
+            })),
             athleteProfile: user.athleteProfile ? {
                 ...user.athleteProfile,
                 birthDate: user.athleteProfile.birthDate ? new Date(user.athleteProfile.birthDate).toISOString() : undefined,
