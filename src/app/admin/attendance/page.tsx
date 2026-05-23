@@ -30,7 +30,9 @@ export default function AdminAttendancePage() {
     const [athletes, setAthletes] = useState<any[]>([]);
     const [attendanceMap, setAttendanceMap] = useState<Record<string, AthleteAttendanceState>>({});
     const [globalSessions, setGlobalSessions] = useState<string[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingAthletes, setIsLoadingAthletes] = useState(true);
+    const [isLoadingAttendance, setIsLoadingAttendance] = useState(true);
+    const isLoading = isLoadingAthletes || isLoadingAttendance;
     const [isSaving, setIsSaving] = useState(false);
     const [alertModal, setAlertModal] = useState<{
         isOpen: boolean;
@@ -77,10 +79,10 @@ export default function AdminAttendancePage() {
     
     // Load initial athletes
     const loadAthletes = async () => {
-        setIsLoading(true);
+        setIsLoadingAthletes(true);
         const data = await getAthletesForAttendance();
         setAthletes(data);
-        setIsLoading(false);
+        setIsLoadingAthletes(false);
     };
 
     useEffect(() => {
@@ -91,7 +93,7 @@ export default function AdminAttendancePage() {
     const loadDailyAttendance = useCallback(async () => {
         if (!selectedDate) return;
         
-        setIsLoading(true);
+        setIsLoadingAttendance(true);
         const logs = await getAttendanceForDate(selectedDate);
         
         // Build initial map, defaulting everyone else to Ausente
@@ -113,7 +115,7 @@ export default function AdminAttendancePage() {
         
         setGlobalSessions(Array.from(uniqueSessions));
         setAttendanceMap(newMap);
-        setIsLoading(false);
+        setIsLoadingAttendance(false);
     }, [selectedDate]);
 
     useEffect(() => {
