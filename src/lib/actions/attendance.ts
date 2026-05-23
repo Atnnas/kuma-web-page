@@ -73,11 +73,15 @@ export async function getAthletesForAttendance() {
                 workoutCount: user.workoutCount || 0,
                 monthlyAttendanceCount: attendanceCountsMap[user._id.toString()] || 0,
                 mvpCount: mvpCountsMap[user._id.toString()] || 0,
-                dojo: user.athleteProfile?.dojo ? {
-                    _id: user.athleteProfile.dojo._id.toString(),
-                    name: user.athleteProfile.dojo.name,
-                    logo: user.athleteProfile.dojo.logo,
-                } : null
+                dojo: user.athleteProfile?.dojo ? (
+                    typeof user.athleteProfile.dojo === "object" && "_id" in user.athleteProfile.dojo
+                        ? {
+                            _id: user.athleteProfile.dojo._id.toString(),
+                            name: user.athleteProfile.dojo.name,
+                            logo: user.athleteProfile.dojo.logo,
+                        }
+                        : user.athleteProfile.dojo.toString()
+                ) : null
             }
         }));
     } catch (error) {
