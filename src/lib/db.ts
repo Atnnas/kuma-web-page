@@ -37,6 +37,7 @@ async function connectDB() {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
       family: 4, // Force IPv4 to avoid some IPv6 issues
+      autoIndex: process.env.NODE_ENV !== "production", // Prevent index thrashing on serverless cold starts
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
