@@ -22,14 +22,24 @@ export default function MvpCelebrationTrigger({ currentUser }: MvpCelebrationTri
                 if (!data || !data.athletes || data.athletes.length === 0) return;
 
                 // Check localStorage to see if the user already saw the celebration for this date
-                const storageKey = `kuma_mvp_seen_${data.date}_by_${currentUserId}`;
-                const hasSeen = localStorage.getItem(storageKey);
-                if (!hasSeen) {
+                // or if they have already seen ANY daily celebration today (calendar-wise)
+                const todayStr = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD
+                const calendarKey = `kuma_mvp_seen_calendar_${todayStr}_by_${currentUserId}`;
+                const dateKey = `kuma_mvp_seen_${data.date}_by_${currentUserId}`;
+
+                const hasSeenToday = localStorage.getItem(calendarKey);
+                const hasSeenDate = localStorage.getItem(dateKey);
+
+                if (!hasSeenToday && !hasSeenDate) {
                     // If multiple MVPs exist, prioritize showing the logged-in user if they are one of them
                     const athleteToShow = data.athletes.find((a: any) => a && a._id === currentUserId) || data.athletes[0];
 
                     setMvpDate(data.date);
                     setSelectedMvp(athleteToShow);
+
+                    // Mark as seen immediately (in case they close the page or reload)
+                    localStorage.setItem(calendarKey, "true");
+                    localStorage.setItem(dateKey, "true");
                 }
             } catch (err) {
                 console.error("Failed to check daily MVP celebration:", err);
@@ -44,9 +54,12 @@ export default function MvpCelebrationTrigger({ currentUser }: MvpCelebrationTri
     const handleClose = () => {
         const currentUserId = currentUser?.id;
         if (currentUserId && mvpDate) {
-            // Mark as seen in localStorage
-            const storageKey = `kuma_mvp_seen_${mvpDate}_by_${currentUserId}`;
-            localStorage.setItem(storageKey, "true");
+            const todayStr = new Date().toLocaleDateString("sv-SE");
+            const calendarKey = `kuma_mvp_seen_calendar_${todayStr}_by_${currentUserId}`;
+            const dateKey = `kuma_mvp_seen_${mvpDate}_by_${currentUserId}`;
+            
+            localStorage.setItem(calendarKey, "true");
+            localStorage.setItem(dateKey, "true");
         }
         setSelectedMvp(null);
     };
