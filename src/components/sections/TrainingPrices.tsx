@@ -95,7 +95,7 @@ export const TrainingPrices = ({ user, mode = "default" }: TrainingPricesProps) 
 
                                 return (
                                     <motion.div
-                                        key={plan._id}
+                                        key={`${plan._id}-${index}`}
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         viewport={{ once: true }}

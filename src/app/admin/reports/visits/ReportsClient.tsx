@@ -227,7 +227,7 @@ export default function ReportsClient({ initialData, initialStats, from, to }: R
                                 </tr>
                             ) : (
                                 initialData.map((visit: any, index: number) => (
-                                    <tr key={visit._id} className="group hover:bg-zinc-900/80 transition-colors border-b border-white/5 last:border-none">
+                                    <tr key={`${visit._id}-${index}`} className="group hover:bg-zinc-900/80 transition-colors border-b border-white/5 last:border-none">
                                         <td className="p-6 whitespace-nowrap">
                                             <div className="flex flex-col">
                                                 <span className="text-white font-bold flex items-center gap-2 text-lg">

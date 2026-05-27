@@ -259,7 +259,7 @@ export function KumaRanking({
                                             const beltStyle = getBeltStyles(ath.athleteProfile.beltRank);
                                             return (
                                                 <motion.div
-                                                    key={ath._id}
+                                                    key={`${ath._id}-${idx}`}
                                                     initial={{ opacity: 0, y: 10 }}
                                                     animate={{ opacity: 1, y: 0 }}
                                                     className="glass hover:border-zinc-700/50 transition-all duration-300 p-4 flex items-center justify-between gap-4 rounded-2xl group"
@@ -343,7 +343,7 @@ export function KumaRanking({
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center max-w-7xl mx-auto pt-6">
                             {filteredAthletes.map((ath, idx) => (
-                                <div key={ath._id} className="w-full flex justify-center">
+                                <div key={`${ath._id}-${idx}`} className="w-full flex justify-center">
                                     <PodiumCard
                                         athlete={ath}
                                         position={idx + 1}
@@ -1113,6 +1113,26 @@ export function KumaCelebrationModal({
 }: KumaCelebrationModalProps) {
     const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, glossX: 50, glossY: 50, scale: 1 });
 
+    // Bloquear scroll de la página de fondo y capturar tecla Escape
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const originalStyle = window.getComputedStyle(document.body).overflow;
+        document.body.style.overflow = "hidden";
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                onClose();
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.body.style.overflow = originalStyle;
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [isOpen, onClose]);
+
     if (!isOpen || !athlete) return null;
 
     const ovr = Math.round(athlete?.athleteProfile?.stats?.ovr ?? 50);
@@ -1194,7 +1214,10 @@ export function KumaCelebrationModal({
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overflow-x-hidden bg-black/95 backdrop-blur-2xl">
+            <div 
+                onClick={onClose}
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overflow-x-hidden bg-black/95 backdrop-blur-2xl cursor-pointer"
+            >
                 
                 <CelebrationCanvas />
 
@@ -1227,21 +1250,31 @@ export function KumaCelebrationModal({
                     ))}
                 </div>
 
+                {/* Botón de cerrar fijo para móviles (fuera de motion.div para evitar límites de transform) */}
+                <button
+                    onClick={onClose}
+                    className="fixed top-4 right-4 p-2.5 rounded-full bg-zinc-900/90 border border-white/10 hover:border-white/30 hover:bg-zinc-800 text-zinc-400 hover:text-white transition-all z-50 shadow-lg backdrop-blur-md md:hidden cursor-pointer"
+                >
+                    <X className="w-5 h-5" />
+                </button>
+
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9, y: 30 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 30 }}
                     transition={{ type: "spring", damping: 25, stiffness: 220 }}
-                    className="relative max-w-4xl w-full glass rounded-3xl border border-white/10 p-6 sm:p-8 md:p-10 flex flex-col md:flex-row gap-8 items-center justify-between z-10 shadow-[0_0_80px_rgba(0,0,0,0.8)] overflow-hidden"
+                    onClick={(e) => e.stopPropagation()}
+                    className="relative max-w-4xl w-full glass rounded-3xl border border-white/10 p-6 sm:p-8 md:p-10 flex flex-col md:flex-row gap-8 items-center justify-between z-10 shadow-[0_0_80px_rgba(0,0,0,0.8)] overflow-hidden cursor-default"
                 >
                     <div 
                         className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full blur-[100px] pointer-events-none opacity-40"
                         style={{ backgroundColor: fut.lightColor }}
                     />
 
+                    {/* Botón de cerrar absoluto para pantallas medianas/grandes */}
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full bg-zinc-900 border border-white/5 hover:border-white/20 hover:bg-zinc-800 text-zinc-400 hover:text-white transition-all z-50 shadow-md"
+                        className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full bg-zinc-900 border border-white/5 hover:border-white/20 hover:bg-zinc-800 text-zinc-400 hover:text-white transition-all z-50 shadow-md hidden md:block cursor-pointer"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -1253,7 +1286,7 @@ export function KumaCelebrationModal({
                             onMouseMove={handleMouseMove}
                             onMouseLeave={handleMouseLeave}
                             className={cn(
-                                "relative w-[280px] sm:w-[310px] aspect-[1/1.48] transition-all duration-300 ease-out select-none",
+                                "relative w-[230px] sm:w-[300px] md:w-[310px] aspect-[1/1.48] transition-all duration-300 ease-out select-none",
                                 fut.glowClass
                             )}
                             style={{
@@ -1441,7 +1474,13 @@ export function KumaCelebrationModal({
                             ) : null}
                         </div>
 
-
+                        {/* Botón de acción táctil inferior para móviles */}
+                        <button
+                            onClick={onClose}
+                            className="md:hidden w-full max-w-md py-3 px-6 rounded-xl bg-gradient-to-b from-kuma-gold to-amber-500 text-black font-black uppercase text-xs tracking-wider shadow-[0_4px_12px_rgba(212,175,55,0.2)] active:scale-98 hover:brightness-110 active:translate-y-0.5 transition-all cursor-pointer"
+                        >
+                            Entendido
+                        </button>
 
                         <div className="text-[10px] text-zinc-600 flex items-center gap-1.5 justify-center md:justify-start">
                             <Sparkles className="w-3.5 h-3.5 text-kuma-gold" />

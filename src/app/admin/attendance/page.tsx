@@ -478,8 +478,8 @@ export default function AdminAttendancePage() {
                                         {!(session?.user?.role === "admin" && session?.user?.dojo) && (
                                             <option value="Todos">Todos los Dojos</option>
                                         )}
-                                        {dojoSummary.map((ds) => (
-                                            <option key={ds._id} value={ds._id}>
+                                        {dojoSummary.map((ds, index) => (
+                                            <option key={`${ds._id}-${index}`} value={ds._id}>
                                                 {ds.name}
                                             </option>
                                         ))}
@@ -612,7 +612,7 @@ export default function AdminAttendancePage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {filteredAthletes.map((ath) => {
+                        {filteredAthletes.map((ath, idx) => {
                             const athleteState = attendanceMap[ath._id] || { status: "Ausente", sessions: [] };
                             const currentStatus = athleteState.status;
                             const currentSessions = athleteState.sessions;
@@ -621,7 +621,7 @@ export default function AdminAttendancePage() {
 
                             return (
                                 <motion.div
-                                    key={ath._id}
+                                    key={`${ath._id}-${idx}`}
                                     layout
                                     className={cn(
                                         "relative flex flex-col bg-zinc-950 rounded-2xl overflow-hidden border transition-all duration-300 select-none",
@@ -896,8 +896,8 @@ export default function AdminAttendancePage() {
                             <div className="flex flex-col gap-1 max-h-[50px] overflow-y-auto no-scrollbar">
                                 {dojoSummary
                                     .filter((ds) => selectedDojo === "Todos" || ds._id === selectedDojo)
-                                    .map((ds) => (
-                                        <div key={ds._id} className="flex items-center gap-1.5 text-[10px] font-black whitespace-nowrap">
+                                    .map((ds, index) => (
+                                        <div key={`${ds._id}-${index}`} className="flex items-center gap-1.5 text-[10px] font-black whitespace-nowrap">
                                             <img 
                                                 src={ds.logo || "/images/kuma-logo.jpg"} 
                                                 alt={ds.name} 

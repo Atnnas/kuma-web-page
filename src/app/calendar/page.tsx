@@ -53,9 +53,9 @@ export default async function CalendarPage() {
                     )}
 
                     <div className="space-y-8 max-w-4xl 2xl:max-w-6xl mx-auto">
-                        {upcomingEvents.map((event: any) => (
+                        {upcomingEvents.map((event: any, idx: number) => (
                             <EventCard
-                                key={event._id}
+                                key={`${event._id || ''}-${idx}`}
                                 event={event}
                                 userId={userId}
                             />
@@ -67,8 +67,8 @@ export default async function CalendarPage() {
                         <div className="mt-24 opacity-60">
                             <h3 className="text-2xl 2xl:text-4xl font-bold text-zinc-600 uppercase tracking-widest text-center mb-8 pb-4 border-b border-zinc-800">Eventos Anteriores</h3>
                             <div className="space-y-6 max-w-4xl 2xl:max-w-6xl mx-auto grayscale hover:grayscale-0 transition-all duration-500">
-                                {pastEvents.map((event: any) => (
-                                    <div key={event._id} className="flex gap-4 md:gap-8 items-center p-4 rounded-xl hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-800 bg-black/20 backdrop-blur-sm">
+                                {pastEvents.map((event: any, idx: number) => (
+                                    <div key={`${event._id || ''}-${idx}`} className="flex gap-4 md:gap-8 items-center p-4 rounded-xl hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-800 bg-black/20 backdrop-blur-sm">
                                         <div className="text-zinc-500 font-bold text-right min-w-[80px]">
                                             <div className="text-2xl">{new Date(event.startDate).getDate()}</div>
                                             <div className="text-xs uppercase">{new Date(event.startDate).toLocaleString('es-ES', { month: 'short' })}</div>

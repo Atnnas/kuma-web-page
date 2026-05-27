@@ -35,6 +35,7 @@ export function MobileMenu({
         <AnimatePresence>
             {isOpen && (
                 <motion.div
+                    key="mobile-menu-backdrop"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -44,6 +45,7 @@ export function MobileMenu({
             )}
             {isOpen && (
                 <motion.div
+                    key="mobile-menu-content"
                     initial={{ x: "-100%" }}
                     animate={{ x: 0 }}
                     exit={{ x: "-100%" }}
@@ -65,7 +67,7 @@ export function MobileMenu({
                             const isExpanded = expandedIndex === index;
 
                             return (
-                                <div key={item.name} className="border-b border-white/5 last:border-0">
+                                <div key={`${item.name}-${index}`} className="border-b border-white/5 last:border-0">
                                     <div className="flex items-center justify-between">
                                         <Link
                                             href={item.href}
@@ -92,9 +94,9 @@ export function MobileMenu({
                                                 exit={{ opacity: 0, height: 0 }}
                                                 className="overflow-hidden bg-white/5 rounded-lg mb-2"
                                             >
-                                                {item.subItems!.map((sub) => (
+                                                {item.subItems!.map((sub, subIdx) => (
                                                     <Link
-                                                        key={sub.name}
+                                                        key={`${sub.name}-${subIdx}`}
                                                         href={sub.href}
                                                         onClick={onClose}
                                                         className="flex items-center gap-2 pl-6 pr-4 py-3 text-xs font-bold text-zinc-400 hover:text-white transition-colors uppercase tracking-[0.1em] border-t border-white/5 first:border-0"

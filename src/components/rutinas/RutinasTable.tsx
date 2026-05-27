@@ -506,7 +506,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                             const isFav = favorites.includes(routine._id);
                             return (
                                 <motion.div
-                                    key={routine._id}
+                                    key={`${routine._id}-${idx}`}
                                     layout
                                     transition={{ type: "spring", duration: 0.5, delay: idx * 0.05 }}
                                     className="group relative"
@@ -596,7 +596,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                     const isFav = favorites.includes(routine._id);
                                     return (
                                         <motion.tr
-                                            key={routine._id}
+                                            key={`${routine._id}-${idx}`}
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: idx * 0.04 }}

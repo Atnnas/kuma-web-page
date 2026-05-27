@@ -95,9 +95,9 @@ export default function AdminRutinasPage() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 gap-4">
-                            {routines.map((routine) => (
+                            {routines.map((routine, idx) => (
                                 <div
-                                    key={routine._id}
+                                    key={`${routine._id || ''}-${idx}`}
                                     className="relative glass border border-white/5 rounded-2xl p-6 hover:border-kuma-gold/30 transition-all group backdrop-blur-md flex flex-col md:flex-row items-center gap-6"
                                 >
                                     <div className="w-12 h-12 rounded-full bg-kuma-gold/10 flex items-center justify-center text-kuma-gold shrink-0">

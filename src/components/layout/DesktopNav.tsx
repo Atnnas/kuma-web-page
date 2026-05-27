@@ -95,7 +95,7 @@ export function DesktopNav({
 
                         return (
                             <div
-                                key={item.name}
+                                key={`${item.name}-${index}`}
                                 className="relative group"
                                 onMouseEnter={() => onSetHoveredIndex(index)}
                                 onMouseLeave={() => onSetHoveredIndex(null)}
@@ -169,9 +169,9 @@ export function DesktopNav({
                                             className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-48 z-50"
                                         >
                                             <div className="bg-zinc-950 border border-white/10 rounded-xl overflow-hidden shadow-2xl backdrop-blur-3xl">
-                                                {item.subItems!.map((sub) => (
+                                                {item.subItems!.map((sub, subIdx) => (
                                                     <Link
-                                                        key={sub.name}
+                                                        key={`${sub.name}-${subIdx}`}
                                                         href={sub.href}
                                                         className="block px-6 py-3 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 transition-colors uppercase tracking-[0.1em] relative group/sub"
                                                     >

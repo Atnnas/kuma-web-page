@@ -86,8 +86,8 @@ export const RitmoLibrary = ({
 
                         {/* Lista de Ritmos */}
                         <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {rhythms.map((r) => (
-                                <div key={r._id} className="group bg-zinc-950/50 border border-white/5 rounded-3xl p-6 hover:border-kuma-gold/30 transition-all relative overflow-hidden">
+                            {rhythms.map((r, idx) => (
+                                <div key={`${r._id}-${idx}`} className="group bg-zinc-950/50 border border-white/5 rounded-3xl p-6 hover:border-kuma-gold/30 transition-all relative overflow-hidden">
                                     <div className="flex items-start justify-between relative z-10">
                                         <div className="flex flex-col gap-1">
                                             <div className="flex items-center gap-2">

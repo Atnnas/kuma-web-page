@@ -92,12 +92,12 @@ export default function AdminEventsPage() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 gap-4">
-                            {events.map((event) => {
+                            {events.map((event, idx) => {
                                 const isNewEvent = isNew(event.createdAt || event.updatedAt); // Assuming createdAt exists on IEvent, fallback to a heuristic if needed
 
                                 return (
                                     <div
-                                        key={event._id as unknown as string}
+                                        key={`${(event._id as unknown as string) || ''}-${idx}`}
                                         className="relative glass border border-white/5 rounded-2xl p-0 overflow-hidden hover:border-red-500/30 hover:shadow-[0_0_30px_rgba(220,38,38,0.1)] transition-all group backdrop-blur-md flex flex-col md:flex-row"
                                     >
                                         {/* STATUS STRIP */}

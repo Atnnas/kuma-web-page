@@ -353,8 +353,8 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                                                     }}
                                                     className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2.5 px-4 pr-10 text-white focus:border-red-500 outline-none appearance-none cursor-pointer text-xs"
                                                 >
-                                                    {dojos.map((d) => (
-                                                        <option key={d._id} value={d._id}>
+                                                    {dojos.map((d, idx) => (
+                                                        <option key={`${d._id}-${idx}`} value={d._id}>
                                                             🥋 {d.name}
                                                         </option>
                                                     ))}

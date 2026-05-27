@@ -135,9 +135,9 @@ export function StrictCombobox({ value, onChange, onSelectFull, placeholder = "S
                                     <span className="text-[10px]">Intenta con "Sentadilla" o "Flexiones"</span>
                                 </div>
                             ) : (
-                                options.map((option) => (
+                                options.map((option, idx) => (
                                     <button
-                                        key={option.value}
+                                        key={`${option.value}-${idx}`}
                                         type="button"
                                         onClick={() => handleSelect(option)}
                                         className={cn(

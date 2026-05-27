@@ -108,9 +108,9 @@ export default function AdminNewsPage() {
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-1 gap-4">
-                                        {filteredNews.map((item) => (
+                                        {filteredNews.map((item, idx) => (
                                             <motion.div
-                                                key={item._id}
+                                                key={`${item._id}-${idx}`}
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 className="glass border border-white/5 rounded-xl p-4 flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-center hover:border-red-500/30 transition-all group backdrop-blur-md"

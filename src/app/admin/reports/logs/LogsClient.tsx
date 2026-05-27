@@ -134,8 +134,8 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
                             className="block w-full pl-10 pr-10 py-2.5 text-sm bg-zinc-900 border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 appearance-none transition-all hover:bg-zinc-800 cursor-pointer font-medium"
                         >
                             <option value="">Todos los Usuarios</option>
-                            {users.map((user) => (
-                                <option key={user._id} value={user._id}>
+                            {users.map((user, idx) => (
+                                <option key={`${user._id}-${idx}`} value={user._id}>
                                     {user.name}
                                 </option>
                             ))}
@@ -194,7 +194,7 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {initialLogs.map((log: any) => {
+                            {initialLogs.map((log: any, idx: number) => {
                                 const user = log.user || { name: "Usuario Eliminado", email: "N/A" };
                                 const startTime = new Date(log.startTime);
                                 const endTime = log.endTime ? new Date(log.endTime) : null;
@@ -212,7 +212,7 @@ export default function LogsClient({ initialLogs, users }: LogsClientProps) {
                                 const isSelected = selectedIds.includes(log._id);
 
                                 return (
-                                    <tr key={log._id.toString()} className={`group hover:bg-zinc-900/80 transition-colors border-b border-white/5 last:border-none ${isSelected ? 'bg-cyan-500/5' : ''}`}>
+                                    <tr key={`${log._id.toString()}-${idx}`} className={`group hover:bg-zinc-900/80 transition-colors border-b border-white/5 last:border-none ${isSelected ? 'bg-cyan-500/5' : ''}`}>
                                         <td className="p-6">
                                             <button
                                                 onClick={() => toggleSelect(log._id)}

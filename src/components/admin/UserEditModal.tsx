@@ -134,8 +134,8 @@ export function UserEditModal({ isOpen, onClose, user, onSave, dojos }: UserEdit
                                             required
                                         >
                                             <option value="">-- Selecciona un Dojo --</option>
-                                            {dojos.map((dojo) => (
-                                                <option key={dojo._id} value={dojo._id}>
+                                            {dojos.map((dojo, idx) => (
+                                                <option key={`${dojo._id}-${idx}`} value={dojo._id}>
                                                     {dojo.name}
                                                 </option>
                                             ))}

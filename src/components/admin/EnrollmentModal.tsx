@@ -110,9 +110,9 @@ export function EnrollmentModal({ isOpen, onClose, potentialUsers, onEnrollExist
 
                                     <div className="space-y-2">
                                         {filteredUsers.length > 0 ? (
-                                            filteredUsers.map(user => (
+                                            filteredUsers.map((user, idx) => (
                                                 <button
-                                                    key={user._id}
+                                                    key={`${user._id}-${idx}`}
                                                     onClick={() => onEnrollExisting(user)}
                                                     className="w-full group flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-transparent hover:border-kuma-gold/30 hover:bg-kuma-gold/5 transition-all"
                                                 >

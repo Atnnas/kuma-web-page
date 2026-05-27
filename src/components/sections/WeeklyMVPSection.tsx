@@ -114,13 +114,13 @@ export function WeeklyMVPSection({ data, onClickCard }: WeeklyMVPSectionProps) {
 
                     {/* MVP List */}
                     <div className="flex flex-wrap justify-center items-stretch gap-6 w-full max-w-3xl">
-                        {athletes.map((athlete) => {
+                        {athletes.map((athlete, index) => {
                             const beltStyle = getBeltColor(athlete.athleteProfile.beltRank);
                             const ovr = Math.round(athlete.athleteProfile.stats.ovr);
                             
                             return (
                                 <motion.div
-                                    key={athlete._id}
+                                    key={`${athlete._id}-${index}`}
                                     whileHover={{ scale: 1.02, y: -2 }}
                                     onClick={() => onClickCard(athlete)}
                                     className="flex-1 min-w-[260px] max-w-[340px] bg-zinc-950/70 border border-white/5 hover:border-amber-500/30 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 shadow-lg cursor-pointer group"

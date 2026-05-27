@@ -48,7 +48,7 @@ export function StreakLeaderboard() {
             <div className="bg-zinc-900/50 backdrop-blur-sm border border-white/5 rounded-2xl overflow-hidden">
                 {leaders.map((user, index) => (
                     <div
-                        key={user._id}
+                        key={`${user._id}-${index}`}
                         className={`flex items-center justify-between p-3 border-b border-white/5 last:border-0 ${index === 0 ? "bg-gradient-to-r from-orange-900/10 to-transparent" : ""}`}
                     >
                         <div className="flex items-center gap-3">

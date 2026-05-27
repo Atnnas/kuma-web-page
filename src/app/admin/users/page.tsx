@@ -94,8 +94,8 @@ export default function AdminUsersPage() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {filteredUsers.map((user) => (
-                                            <tr key={user._id} className="border-b border-zinc-800/50 hover:bg-zinc-800/20 transition-colors">
+                                        {filteredUsers.map((user, idx) => (
+                                            <tr key={`${user._id}-${idx}`} className="border-b border-zinc-800/50 hover:bg-zinc-800/20 transition-colors">
                                                 <td className="p-4">
                                                     <div className="flex items-center gap-3">
                                                         <div className="relative h-10 w-10 rounded-full overflow-hidden bg-zinc-800 shrink-0">
@@ -172,8 +172,8 @@ export default function AdminUsersPage() {
 
                         {/* Mobile Card View */}
                         <div className="md:hidden space-y-4">
-                            {filteredUsers.map((user) => (
-                                <div key={user._id} className="glass border border-white/5 rounded-xl p-4 flex flex-col gap-4 backdrop-blur-md">
+                            {filteredUsers.map((user, idx) => (
+                                <div key={`${user._id}-${idx}`} className="glass border border-white/5 rounded-xl p-4 flex flex-col gap-4 backdrop-blur-md">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
                                             <div className="relative h-12 w-12 rounded-full overflow-hidden bg-zinc-800 shrink-0 border border-zinc-700">

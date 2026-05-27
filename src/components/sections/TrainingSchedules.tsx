@@ -121,7 +121,7 @@ export const TrainingSchedules = ({ mode = "default" }: TrainingSchedulesProps) 
                                 <div className="grid grid-cols-1 gap-6">
                                     {schedules.map((daySchedule, idx) => (
                                         <motion.div
-                                            key={daySchedule._id}
+                                            key={`${daySchedule._id}-${idx}`}
                                             initial={{ opacity: 0, y: 30 }}
                                             whileInView={{ opacity: 1, y: 0 }}
                                             transition={{ delay: idx * 0.1 }}

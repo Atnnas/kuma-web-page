@@ -307,10 +307,10 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                         <div className="space-y-4">
                             <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Asignar a Alumnos Específicos</label>
                             <div className="flex flex-wrap gap-2 mb-2">
-                                {formData.allowedUsers.map(userId => {
+                                {formData.allowedUsers.map((userId, idx) => {
                                     const user = allUsers.find(u => u._id === userId);
                                     return (
-                                        <span key={userId} className="flex items-center gap-2 bg-zinc-950 text-kuma-gold border border-kuma-gold/20 pl-3 pr-1 py-1 rounded-full text-xs font-bold shadow-lg group/badge">
+                                        <span key={`${userId}-${idx}`} className="flex items-center gap-2 bg-zinc-950 text-kuma-gold border border-kuma-gold/20 pl-3 pr-1 py-1 rounded-full text-xs font-bold shadow-lg group/badge">
                                             {user?.name || userId}
                                             <button
                                                 type="button"
@@ -347,9 +347,9 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                                     u.email.toLowerCase().includes(userSearch.toLowerCase())) &&
                                                 !formData.allowedUsers.some(id => id.toString() === u._id.toString())
                                             )
-                                            .map(user => (
+                                            .map((user, idx) => (
                                                 <button
-                                                    key={user._id}
+                                                    key={`${user._id}-${idx}`}
                                                     type="button"
                                                     onClick={() => {
                                                         setFormData(d => ({ ...d, allowedUsers: [...d.allowedUsers, user._id.toString()] }));
