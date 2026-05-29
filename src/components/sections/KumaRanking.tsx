@@ -142,7 +142,7 @@ export function KumaRanking({
     // Get belt styles to style card border / accents
     const getBeltStyles = (beltRank: string) => {
         const rank = beltRank.toLowerCase();
-        if (rank.includes("negro")) return { border: "border-zinc-300", glow: "shadow-zinc-500/20", bg: "from-zinc-900 via-zinc-800 to-black", text: "text-zinc-200" };
+        if (rank.includes("negro") || rank.includes("shodan") || rank.includes("nidan") || rank.includes("sandan") || rank.includes("yondan")) return { border: "border-zinc-300", glow: "shadow-zinc-500/20", bg: "from-zinc-900 via-zinc-800 to-black", text: "text-zinc-200" };
         if (rank.includes("marrón") || rank.includes("marron")) return { border: "border-amber-850", glow: "shadow-amber-900/25", bg: "from-zinc-950 via-amber-950/60 to-zinc-950", text: "text-amber-500" };
         if (rank.includes("morado con línea") || rank.includes("morado con linea")) return { border: "border-purple-500", glow: "shadow-purple-500/20", bg: "from-zinc-950 via-purple-950/50 to-zinc-950", text: "text-purple-400" };
         if (rank.includes("morado")) return { border: "border-purple-600", glow: "shadow-purple-500/20", bg: "from-zinc-950 via-purple-950/30 to-zinc-950", text: "text-purple-500" };

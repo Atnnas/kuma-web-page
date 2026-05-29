@@ -425,10 +425,9 @@ export default function AdminAttendancePage() {
         };
     };
 
-    // Helper for belt names
     const getBeltBadgeColor = (belt: string) => {
         const rank = belt.toLowerCase();
-        if (rank.includes("negro")) return "border-zinc-300 text-white bg-zinc-900 border";
+        if (rank.includes("negro") || rank.includes("shodan") || rank.includes("nidan") || rank.includes("sandan") || rank.includes("yondan")) return "border-zinc-300 text-white bg-zinc-900 border";
         if (rank.includes("marrón") || rank.includes("marron")) return "border-amber-800 text-amber-500 bg-amber-950/40 border";
         if (rank.includes("morado")) return "border-purple-600 text-purple-400 bg-purple-950/40 border";
         if (rank.includes("azul")) return "border-blue-600 text-blue-400 bg-blue-950/40 border";

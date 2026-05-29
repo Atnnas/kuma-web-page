@@ -19,6 +19,14 @@ export const getBeltColor = (beltRank: string) => {
     if (rank.includes("marrón iii") || rank.includes("marron iii")) return { hex: "#78350f", stripes: 3, border: "border-amber-800/40 text-amber-600" };
     if (rank.includes("marrón ii") || rank.includes("marron ii")) return { hex: "#78350f", stripes: 2, border: "border-amber-800/40 text-amber-600" };
     if (rank.includes("marrón i") || rank.includes("marron i")) return { hex: "#78350f", stripes: 1, border: "border-amber-800/40 text-amber-600" };
+    
+    // Black Belts / Dans
+    if (rank.includes("yondan")) return { hex: "#18181b", stripes: 4, stripeColorClass: "bg-amber-400", border: "border-zinc-300 text-white" };
+    if (rank.includes("sandan")) return { hex: "#18181b", stripes: 3, stripeColorClass: "bg-amber-400", border: "border-zinc-300 text-white" };
+    if (rank.includes("nidan")) return { hex: "#18181b", stripes: 2, stripeColorClass: "bg-amber-400", border: "border-zinc-300 text-white" };
+    if (rank.includes("shodan")) return { hex: "#18181b", stripes: 1, stripeColorClass: "bg-amber-400", border: "border-zinc-300 text-white" };
+    if (rank.includes("negro")) return { hex: "#18181b", border: "border-zinc-300 text-white" };
+
     return { hex: "#a1a1aa", border: "border-zinc-600/40 text-zinc-400" };
 };
 
@@ -56,7 +64,7 @@ export function BeltSquare({ beltRank, className }: { beltRank: string; classNam
             {colorData.stripes && (
                 <div className="absolute inset-y-0 right-1 flex gap-[1px] py-[1px]">
                     {Array.from({ length: colorData.stripes }).map((_, i) => (
-                        <div key={i} className="w-[1.5px] h-full bg-white/80" />
+                        <div key={i} className={cn("w-[1.5px] h-full", colorData.stripeColorClass || "bg-white/80")} />
                     ))}
                 </div>
             )}
@@ -168,7 +176,11 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
         "Morado con línea",
         "Marrón III",
         "Marrón II",
-        "Marrón I"
+        "Marrón I",
+        "Negro - Shodan",
+        "Negro - Nidan",
+        "Negro - Sandan",
+        "Negro - Yondan"
     ];
 
     return (
@@ -336,6 +348,10 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                                                 <option value="Marrón III">🟫 ☰ Marrón III</option>
                                                 <option value="Marrón II">🟫 ＝ Marrón II</option>
                                                 <option value="Marrón I">🟫 － Marrón I</option>
+                                                <option value="Negro - Shodan">⬛ － Negro - Shodan (1er Dan)</option>
+                                                <option value="Negro - Nidan">⬛ ＝ Negro - Nidan (2do Dan)</option>
+                                                <option value="Negro - Sandan">⬛ ☰ Negro - Sandan (3er Dan)</option>
+                                                <option value="Negro - Yondan">⬛ ≣ Negro - Yondan (4to Dan)</option>
                                             </select>
                                             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500 text-xs">▼</div>
                                         </div>
