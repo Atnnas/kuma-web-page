@@ -34,6 +34,7 @@ export default function AdminAttendancePage() {
     const [isLoadingAttendance, setIsLoadingAttendance] = useState(true);
     const isLoading = isLoadingAthletes || isLoadingAttendance;
     const [isSaving, setIsSaving] = useState(false);
+    const [pressingUserId, setPressingUserId] = useState<string | null>(null);
     const [alertModal, setAlertModal] = useState<{
         isOpen: boolean;
         type: "success" | "error";
@@ -174,10 +175,12 @@ export default function AdminAttendancePage() {
         lastTapRef.current = { time: now, userId };
 
         // --- Long Press Detection ---
+        setPressingUserId(userId);
         longPressTimeoutRef.current = setTimeout(() => {
             isLongPressActiveRef.current = true;
             handleStatusChange(userId, currentStatus === "Presente" ? "Ausente" : "Presente");
             triggerHapticFeedback();
+            setPressingUserId(null);
         }, 500); // 500ms
     };
 
@@ -205,6 +208,7 @@ export default function AdminAttendancePage() {
             clearTimeout(longPressTimeoutRef.current);
             longPressTimeoutRef.current = null;
         }
+        setPressingUserId(null);
     };
 
     const triggerHapticFeedback = () => {
@@ -703,6 +707,7 @@ export default function AdminAttendancePage() {
                                     onTouchStart={(e) => handleTouchStart(ath._id, currentStatus, e)}
                                     onTouchMove={handleTouchMove}
                                     onTouchEnd={handleTouchEnd}
+                                    onTouchCancel={handleTouchEnd}
                                     className={cn(
                                         "relative flex flex-col bg-zinc-950 rounded-2xl overflow-hidden border transition-all duration-300 select-none cursor-pointer",
                                         currentStatus === "Ausente"
@@ -713,6 +718,18 @@ export default function AdminAttendancePage() {
                                     )}
                                     title="Doble clic o mantener presionado para alternar asistencia OK"
                                 >
+                                    {/* Charging/Glow overlay when long-pressed on touch screens */}
+                                    <AnimatePresence>
+                                        {pressingUserId === ath._id && (
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                transition={{ duration: 0.5, ease: "linear" }}
+                                                className="absolute inset-0 z-20 pointer-events-none rounded-2xl border-2 border-emerald-500 shadow-[inset_0_0_30px_rgba(16,185,129,0.5),_0_0_30px_rgba(16,185,129,0.5)]"
+                                            />
+                                        )}
+                                    </AnimatePresence>
                                     {/* Status Badge overlays on top */}
                                     <div className="absolute top-3 right-3 z-10 flex gap-1">
                                         <AnimatePresence mode="wait">
