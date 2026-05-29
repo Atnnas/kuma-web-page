@@ -623,14 +623,16 @@ export default function AdminAttendancePage() {
                                 <motion.div
                                     key={`${ath._id}-${idx}`}
                                     layout
+                                    onDoubleClick={() => handleStatusChange(ath._id, currentStatus === "Presente" ? "Ausente" : "Presente")}
                                     className={cn(
-                                        "relative flex flex-col bg-zinc-950 rounded-2xl overflow-hidden border transition-all duration-300 select-none",
+                                        "relative flex flex-col bg-zinc-950 rounded-2xl overflow-hidden border transition-all duration-300 select-none cursor-pointer",
                                         currentStatus === "Ausente"
                                             ? "border-zinc-800/50 opacity-45 grayscale"
                                             : currentStatus === "Presente"
                                             ? "border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.25)] ring-1 ring-emerald-500/20"
                                             : "border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.25)] ring-1 ring-amber-500/20"
                                     )}
+                                    title="Doble clic para alternar asistencia OK"
                                 >
                                     {/* Status Badge overlays on top */}
                                     <div className="absolute top-3 right-3 z-10 flex gap-1">
@@ -748,6 +750,7 @@ export default function AdminAttendancePage() {
                                                             <button
                                                                 key={sess}
                                                                 onClick={() => handleSessionToggle(ath._id, sess)}
+                                                                onDoubleClick={(e) => e.stopPropagation()}
                                                                 className={cn(
                                                                     "px-2 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer leading-none min-h-[22px]",
                                                                     isChecked
@@ -792,6 +795,7 @@ export default function AdminAttendancePage() {
                                                                     key={starVal}
                                                                     type="button"
                                                                     onClick={() => handlePerformanceChange(ath._id, starStr as any)}
+                                                                    onDoubleClick={(e) => e.stopPropagation()}
                                                                     className="transition-transform active:scale-95 hover:scale-125 focus:outline-none cursor-pointer"
                                                                     title={labels[starVal - 1]}
                                                                 >
@@ -827,6 +831,7 @@ export default function AdminAttendancePage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => handleMVPToggle(ath._id)}
+                                                        onDoubleClick={(e) => e.stopPropagation()}
                                                         className={cn(
                                                             "px-2.5 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer flex items-center gap-1 leading-none min-h-[22px]",
                                                             athleteState.isMVP
@@ -846,6 +851,7 @@ export default function AdminAttendancePage() {
                                     <div className="grid grid-cols-3 border-t border-zinc-900 bg-zinc-900/20 p-1.5 gap-1">
                                         <button
                                             onClick={() => handleStatusChange(ath._id, "Ausente")}
+                                            onDoubleClick={(e) => e.stopPropagation()}
                                             className={cn(
                                                 "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
                                                 currentStatus === "Ausente"
@@ -858,6 +864,7 @@ export default function AdminAttendancePage() {
                                         
                                         <button
                                             onClick={() => handleStatusChange(ath._id, "Tarde")}
+                                            onDoubleClick={(e) => e.stopPropagation()}
                                             className={cn(
                                                 "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
                                                 currentStatus === "Tarde"
@@ -870,6 +877,7 @@ export default function AdminAttendancePage() {
 
                                         <button
                                             onClick={() => handleStatusChange(ath._id, "Presente")}
+                                            onDoubleClick={(e) => e.stopPropagation()}
                                             className={cn(
                                                 "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
                                                 currentStatus === "Presente"
