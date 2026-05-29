@@ -141,6 +141,82 @@ export default function AdminAttendancePage() {
         });
     };
 
+    // Refs to track touch gestures (Double Tap & Long Press)
+    const lastTapRef = useRef<{ time: number; userId: string }>({ time: 0, userId: "" });
+    const longPressTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const touchStartPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+    const isLongPressActiveRef = useRef<boolean>(false);
+
+    const handleTouchStart = (userId: string, currentStatus: "Presente" | "Tarde" | "Ausente", e: React.TouchEvent) => {
+        // Prevent starting long press on multi-touch
+        if (e.touches.length > 1) {
+            cancelLongPress();
+            return;
+        }
+
+        const touch = e.touches[0];
+        touchStartPosRef.current = { x: touch.clientX, y: touch.clientY };
+        isLongPressActiveRef.current = false;
+
+        // --- Double Tap Detection ---
+        const now = Date.now();
+        const DOUBLE_TAP_DELAY = 300;
+        const lastTap = lastTapRef.current;
+
+        if (lastTap.userId === userId && (now - lastTap.time) < DOUBLE_TAP_DELAY) {
+            handleStatusChange(userId, currentStatus === "Presente" ? "Ausente" : "Presente");
+            triggerHapticFeedback();
+            lastTapRef.current = { time: 0, userId: "" };
+            cancelLongPress();
+            return;
+        }
+
+        lastTapRef.current = { time: now, userId };
+
+        // --- Long Press Detection ---
+        longPressTimeoutRef.current = setTimeout(() => {
+            isLongPressActiveRef.current = true;
+            handleStatusChange(userId, currentStatus === "Presente" ? "Ausente" : "Presente");
+            triggerHapticFeedback();
+        }, 500); // 500ms
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (!longPressTimeoutRef.current) return;
+        
+        const touch = e.touches[0];
+        const deltaX = Math.abs(touch.clientX - touchStartPosRef.current.x);
+        const deltaY = Math.abs(touch.clientY - touchStartPosRef.current.y);
+
+        if (deltaX > 10 || deltaY > 10) {
+            cancelLongPress();
+        }
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (isLongPressActiveRef.current) {
+            e.preventDefault();
+        }
+        cancelLongPress();
+    };
+
+    const cancelLongPress = () => {
+        if (longPressTimeoutRef.current) {
+            clearTimeout(longPressTimeoutRef.current);
+            longPressTimeoutRef.current = null;
+        }
+    };
+
+    const triggerHapticFeedback = () => {
+        if (typeof window !== "undefined" && window.navigator && window.navigator.vibrate) {
+            try {
+                window.navigator.vibrate(50);
+            } catch (err) {
+                // Ignore vibration errors
+            }
+        }
+    };
+
     // Handle performance change for an individual athlete
     const handlePerformanceChange = (userId: string, newPerformance: AthleteAttendanceState["performance"]) => {
         setAttendanceMap((prev) => {
@@ -624,6 +700,9 @@ export default function AdminAttendancePage() {
                                     key={`${ath._id}-${idx}`}
                                     layout
                                     onDoubleClick={() => handleStatusChange(ath._id, currentStatus === "Presente" ? "Ausente" : "Presente")}
+                                    onTouchStart={(e) => handleTouchStart(ath._id, currentStatus, e)}
+                                    onTouchMove={handleTouchMove}
+                                    onTouchEnd={handleTouchEnd}
                                     className={cn(
                                         "relative flex flex-col bg-zinc-950 rounded-2xl overflow-hidden border transition-all duration-300 select-none cursor-pointer",
                                         currentStatus === "Ausente"
@@ -632,7 +711,7 @@ export default function AdminAttendancePage() {
                                             ? "border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.25)] ring-1 ring-emerald-500/20"
                                             : "border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.25)] ring-1 ring-amber-500/20"
                                     )}
-                                    title="Doble clic para alternar asistencia OK"
+                                    title="Doble clic o mantener presionado para alternar asistencia OK"
                                 >
                                     {/* Status Badge overlays on top */}
                                     <div className="absolute top-3 right-3 z-10 flex gap-1">
@@ -751,6 +830,9 @@ export default function AdminAttendancePage() {
                                                                 key={sess}
                                                                 onClick={() => handleSessionToggle(ath._id, sess)}
                                                                 onDoubleClick={(e) => e.stopPropagation()}
+                                                                onTouchStart={(e) => e.stopPropagation()}
+                                                                onTouchMove={(e) => e.stopPropagation()}
+                                                                onTouchEnd={(e) => e.stopPropagation()}
                                                                 className={cn(
                                                                     "px-2 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer leading-none min-h-[22px]",
                                                                     isChecked
@@ -796,6 +878,9 @@ export default function AdminAttendancePage() {
                                                                     type="button"
                                                                     onClick={() => handlePerformanceChange(ath._id, starStr as any)}
                                                                     onDoubleClick={(e) => e.stopPropagation()}
+                                                                    onTouchStart={(e) => e.stopPropagation()}
+                                                                    onTouchMove={(e) => e.stopPropagation()}
+                                                                    onTouchEnd={(e) => e.stopPropagation()}
                                                                     className="transition-transform active:scale-95 hover:scale-125 focus:outline-none cursor-pointer"
                                                                     title={labels[starVal - 1]}
                                                                 >
@@ -832,6 +917,9 @@ export default function AdminAttendancePage() {
                                                         type="button"
                                                         onClick={() => handleMVPToggle(ath._id)}
                                                         onDoubleClick={(e) => e.stopPropagation()}
+                                                        onTouchStart={(e) => e.stopPropagation()}
+                                                        onTouchMove={(e) => e.stopPropagation()}
+                                                        onTouchEnd={(e) => e.stopPropagation()}
                                                         className={cn(
                                                             "px-2.5 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer flex items-center gap-1 leading-none min-h-[22px]",
                                                             athleteState.isMVP
@@ -852,6 +940,9 @@ export default function AdminAttendancePage() {
                                         <button
                                             onClick={() => handleStatusChange(ath._id, "Ausente")}
                                             onDoubleClick={(e) => e.stopPropagation()}
+                                            onTouchStart={(e) => e.stopPropagation()}
+                                            onTouchMove={(e) => e.stopPropagation()}
+                                            onTouchEnd={(e) => e.stopPropagation()}
                                             className={cn(
                                                 "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
                                                 currentStatus === "Ausente"
@@ -865,6 +956,9 @@ export default function AdminAttendancePage() {
                                         <button
                                             onClick={() => handleStatusChange(ath._id, "Tarde")}
                                             onDoubleClick={(e) => e.stopPropagation()}
+                                            onTouchStart={(e) => e.stopPropagation()}
+                                            onTouchMove={(e) => e.stopPropagation()}
+                                            onTouchEnd={(e) => e.stopPropagation()}
                                             className={cn(
                                                 "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
                                                 currentStatus === "Tarde"
@@ -878,6 +972,9 @@ export default function AdminAttendancePage() {
                                         <button
                                             onClick={() => handleStatusChange(ath._id, "Presente")}
                                             onDoubleClick={(e) => e.stopPropagation()}
+                                            onTouchStart={(e) => e.stopPropagation()}
+                                            onTouchMove={(e) => e.stopPropagation()}
+                                            onTouchEnd={(e) => e.stopPropagation()}
                                             className={cn(
                                                 "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
                                                 currentStatus === "Presente"
