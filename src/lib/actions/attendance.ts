@@ -7,6 +7,7 @@ import AttendanceLog from "@/models/AttendanceLog";
 import { revalidatePath } from "next/cache";
 import { requireSuperAdmin, getCurrentUser } from "@/lib/auth-utils";
 import { calculateStatIncrements, updateStatsObject } from "@/lib/utils/progression";
+import { getMidnightInTimezone } from "@/lib/date-utils";
 
 /**
  * Fetch all users that are enrolled as athletes for attendance roll call
@@ -216,9 +217,9 @@ export async function submitAttendanceForDate(
             // Check if month changed to update the monthly snapshot
             if (user.lastWorkoutDate) {
                 const lastDateObj = new Date(user.lastWorkoutDate);
-                const incomingDateObj = new Date(date);
-                const lastMonthStr = `${lastDateObj.getFullYear()}-${String(lastDateObj.getMonth() + 1).padStart(2, '0')}`;
-                const incomingMonthStr = `${incomingDateObj.getFullYear()}-${String(incomingDateObj.getMonth() + 1).padStart(2, '0')}`;
+                const incomingDateObj = new Date(date + "T12:00:00Z");
+                const lastMonthStr = `${lastDateObj.getUTCFullYear()}-${String(lastDateObj.getUTCMonth() + 1).padStart(2, '0')}`;
+                const incomingMonthStr = `${incomingDateObj.getUTCFullYear()}-${String(incomingDateObj.getUTCMonth() + 1).padStart(2, '0')}`;
                 
                 if (lastMonthStr !== incomingMonthStr) {
                     // Month changed! Snapshot current stats to statsLastMonth
@@ -245,7 +246,52 @@ export async function submitAttendanceForDate(
                     user.athleteProfile.stats = updateStatsObject(user.athleteProfile.stats as any, increments, false);
                     
                     user.workoutCount = (user.workoutCount || 0) + 1;
-                    user.lastWorkoutDate = new Date(date);
+
+                    // --- STREAK LOGIC ---
+                    const userTimezone = user.timezone || "America/Costa_Rica";
+                    const trainingDate = getMidnightInTimezone(new Date(date + "T12:00:00Z"), userTimezone);
+                    let lastWorkoutKuma = user.lastWorkoutDate ? getMidnightInTimezone(new Date(user.lastWorkoutDate), userTimezone) : null;
+
+                    // If never trained, streak = 1
+                    if (!lastWorkoutKuma) {
+                        user.streakDays = 1;
+                    } else {
+                        const diffTime = trainingDate.getTime() - lastWorkoutKuma.getTime();
+                        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+                        if (diffDays === 1) {
+                            // Trained yesterday, increment streak
+                            const oldStreak = user.streakDays || 0;
+                            user.streakDays = oldStreak + 1;
+
+                            // Award 1 rest day every 5 days of streak
+                            if (user.streakDays % 5 === 0) {
+                                user.restDays = (user.restDays || 0) + 1;
+                            }
+                        } else if (diffDays > 1) {
+                            // Missed day(s)
+                            const missedDays = diffDays - 1;
+                            const availableRestDays = user.restDays || 0;
+
+                            if (availableRestDays >= missedDays) {
+                                // Protected by rest days!
+                                user.restDays = availableRestDays - missedDays;
+                            } else {
+                                // Not enough rest days, reset streak
+                                user.streakDays = 1;
+                                user.restDays = 0;
+                            }
+                        }
+                        // If diffDays === 0 (already trained today), count stays same
+                        // If diffDays < 0 (historical log), we don't modify the streak
+                    }
+
+                    // Only update lastWorkoutDate if the new training date is newer than the stored one
+                    const incomingDate = new Date(date + "T12:00:00Z");
+                    if (!user.lastWorkoutDate || incomingDate.getTime() > new Date(user.lastWorkoutDate).getTime()) {
+                        user.lastWorkoutDate = incomingDate;
+                    }
+
                     user.markModified("athleteProfile.stats");
                     await user.save();
                 } else {
