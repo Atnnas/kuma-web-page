@@ -1643,11 +1643,12 @@ export default function DojoVirtual() {
                 {/* Hidden video element for MediaPipe input */}
                 <video 
                   ref={videoRef}
-                  style={{ display: "none" }}
+                  style={{ position: "absolute", width: "1px", height: "1px", opacity: 0, pointerEvents: "none" }}
                   width="640"
                   height="480"
                   playsInline
                   muted
+                  autoPlay
                 />
 
                 {/* Main Overlay Canvas */}

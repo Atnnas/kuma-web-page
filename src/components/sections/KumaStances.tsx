@@ -29,6 +29,17 @@ export default function KumaStances() {
   const [tolerance, setTolerance] = useState<number>(15);
   const [analysisMode, setAnalysisMode] = useState<"superior" | "inferior" | "completo">("completo");
   
+  // Local capture stance (to freeze user's own posture on screen)
+  const [localCapture, setLocalCapture] = useState<{
+    landmarks: PoseLandmark[];
+    angles: { left: number; right: number; leftKnee?: number; rightKnee?: number };
+    mode: "superior" | "inferior" | "completo";
+  } | null>(null);
+  const localCaptureRef = useRef<typeof localCapture>(null);
+  useEffect(() => {
+    localCaptureRef.current = localCapture;
+  }, [localCapture]);
+
   // App state
   const [isConnecting, setIsConnecting] = useState(true);
   const [connectionError, setConnectionError] = useState("");
@@ -486,15 +497,29 @@ export default function KumaStances() {
     let targetRight: number | null = null;
     let targetLeftKnee: number | null = null;
     let targetRightKnee: number | null = null;
+    let referenceLandmarks: PoseLandmark[] | null = null;
+    let isUsingLocalCapture = false;
 
+    const cap = localCaptureRef.current;
     const activePreset = currentPresetRef.current;
-    if (activePreset) {
+
+    if (cap) {
+      targetLeft = cap.angles.left;
+      targetRight = cap.angles.right;
+      if (mode === "completo") {
+        targetLeftKnee = cap.angles.leftKnee || cap.angles.left;
+        targetRightKnee = cap.angles.rightKnee || cap.angles.right;
+      }
+      referenceLandmarks = cap.landmarks;
+      isUsingLocalCapture = true;
+    } else if (activePreset) {
       targetLeft = activePreset.angles.left;
       targetRight = activePreset.angles.right;
       if (mode === "completo") {
         targetLeftKnee = activePreset.angles.leftKnee || activePreset.angles.left;
         targetRightKnee = activePreset.angles.rightKnee || activePreset.angles.right;
       }
+      referenceLandmarks = activePreset.landmarks;
     }
 
     let leftColor = "rgba(255, 0, 0, 0.8)";
@@ -506,7 +531,7 @@ export default function KumaStances() {
     let score = 0;
     let aligned = false;
 
-    if (activePreset && targetLeft !== null && targetRight !== null) {
+    if (referenceLandmarks && targetLeft !== null && targetRight !== null) {
       // Evaluation
       const diffL = Math.abs(currentAngles.left - targetLeft);
       const diffR = Math.abs(currentAngles.right - targetRight);
@@ -549,10 +574,11 @@ export default function KumaStances() {
       setAlignmentMetrics({ score: 0, aligned: false });
     }
 
-    // 1. Draw reference ghost
-    if (activePreset) {
-      const normalizedLms = normalizeReferenceLandmarks(landmarks, activePreset.landmarks);
-      drawGhostSkeleton(ctx, normalizedLms, width, height, "rgba(6, 182, 212, 0.45)", 5);
+    // 1. Draw reference ghost (either local capture in yellow/gold or official preset in cyan)
+    if (referenceLandmarks) {
+      const normalizedLms = normalizeReferenceLandmarks(landmarks, referenceLandmarks);
+      const ghostColor = isUsingLocalCapture ? "rgba(250, 204, 21, 0.5)" : "rgba(6, 182, 212, 0.45)";
+      drawGhostSkeleton(ctx, normalizedLms, width, height, ghostColor, 5);
     }
 
     // 2. Draw user skeleton
@@ -616,6 +642,8 @@ export default function KumaStances() {
   // Handle dropdown selection change
   const handlePresetChange = (presetId: string) => {
     setSelectedPresetId(presetId);
+    setLocalCapture(null);
+    localCaptureRef.current = null;
     const found = presets.find((p) => p._id === presetId);
     if (found) {
       setCurrentPreset(found);
@@ -666,11 +694,12 @@ export default function KumaStances() {
               
               <video 
                 ref={videoRef}
-                style={{ display: "none" }}
+                style={{ position: "absolute", width: "1px", height: "1px", opacity: 0, pointerEvents: "none" }}
                 width="640"
                 height="480"
                 playsInline
                 muted
+                autoPlay
               />
 
               <div className="relative w-full max-w-[960px] aspect-[4/3] bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden shadow-xl">
@@ -795,8 +824,68 @@ export default function KumaStances() {
                         </div>
                       )}
                     </div>
+                  ) : localCapture ? (
+                    <div className="space-y-2">
+                      <p className="font-impact-condensed text-base text-amber-500 tracking-wide">
+                        Captura Local Activa
+                      </p>
+                      <p className="font-body text-[11px] text-amber-500/80 font-light leading-relaxed">
+                        Has congelado tu propia postura como referencia. Intenta replicar la silueta dorada en pantalla.
+                      </p>
+                    </div>
                   ) : (
                     <p className="font-body text-[11px] text-zinc-500 italic">Selecciona una postura del catálogo superior para comenzar.</p>
+                  )}
+                </div>
+
+                {/* Local Capture Section */}
+                <div className="bg-zinc-950/60 border border-white/5 p-4 rounded-2xl space-y-3">
+                  <h3 className="text-[10px] font-bold uppercase text-kuma-gold tracking-wider">
+                    Capturar Posición
+                  </h3>
+                  <p className="font-body text-[11px] text-zinc-400 font-light leading-relaxed">
+                    Congela tu postura actual detectada en la cámara como silueta guía dorada.
+                  </p>
+                  
+                  {localCapture ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        localCaptureRef.current = null;
+                        setLocalCapture(null);
+                        hasTriggeredAlignRef.current = false;
+                        speak("Captura de referencia limpia.");
+                      }}
+                      className="w-full bg-zinc-800 text-white border border-white/10 rounded-xl text-xs font-bold tracking-widest py-3 flex items-center justify-center gap-2 hover:bg-zinc-700 transition-all cursor-pointer"
+                    >
+                      Limpiar Captura
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={!cameraActive || !latestPoseLandmarksRef.current}
+                      onClick={() => {
+                        if (latestPoseLandmarksRef.current && latestPoseLandmarksRef.current.length > 0) {
+                          const mode = analysisMode;
+                          const angles = calculateCurrentAngles(latestPoseLandmarksRef.current, mode);
+                          const captured = {
+                            landmarks: [...latestPoseLandmarksRef.current],
+                            angles: { ...angles },
+                            mode: mode
+                          };
+                          setSelectedPresetId("");
+                          setCurrentPreset(null);
+                          currentPresetRef.current = null;
+                          localCaptureRef.current = captured;
+                          setLocalCapture(captured);
+                          hasTriggeredAlignRef.current = false;
+                          speak("Posición capturada. Intenta replicar la silueta dorada.");
+                        }
+                      }}
+                      className="w-full bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-white rounded-xl text-xs font-bold tracking-widest py-3 flex items-center justify-center gap-2 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)] cursor-pointer"
+                    >
+                      CAPTURAR POSICIÓN
+                    </button>
                   )}
                 </div>
 
