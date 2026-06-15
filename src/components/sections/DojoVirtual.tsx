@@ -1537,7 +1537,7 @@ export default function DojoVirtual() {
                       placeholder="Ej: AB12XY" 
                       value={studentInputCode}
                       onChange={(e) => setStudentInputCode(e.target.value.toUpperCase())}
-                      className="w-full px-4 py-3 border border-white/10 rounded-none bg-white font-body text-sm font-semibold tracking-widest text-white focus:outline-none focus:border-[#E52B34] focus:ring-1 focus:ring-[#E52B34]"
+                      className="w-full px-4 py-3 border border-white/10 rounded-2xl bg-zinc-950 font-body text-sm font-semibold tracking-widest text-white placeholder-zinc-500 focus:outline-none focus:border-kuma-gold/50 focus:ring-1 focus:ring-kuma-gold/50 transition-all"
                     />
                   </div>
 
