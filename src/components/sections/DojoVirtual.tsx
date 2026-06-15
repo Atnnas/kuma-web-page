@@ -1123,8 +1123,10 @@ export default function DojoVirtual() {
           // Handle session capture from Sensei (ghost overlay for this session)
           if (data.sessionCapture !== undefined) {
             if (data.sessionCapture && data.sessionCapture.landmarks && data.sessionCapture.landmarks.length > 0) {
+              sessionCaptureRef.current = data.sessionCapture;
               setSessionCapture(data.sessionCapture);
             } else {
+              sessionCaptureRef.current = null;
               setSessionCapture(null);
             }
           }
@@ -1184,6 +1186,17 @@ export default function DojoVirtual() {
           if (data.meetLink !== undefined) {
             setMeetLink(data.meetLink);
             setMeetLinkInput(data.meetLink);
+          }
+
+          // Handle session capture state for Instructor (persists on refresh)
+          if (data.sessionCapture !== undefined) {
+            if (data.sessionCapture && data.sessionCapture.landmarks && data.sessionCapture.landmarks.length > 0) {
+              sessionCaptureRef.current = data.sessionCapture;
+              setSessionCapture(data.sessionCapture);
+            } else {
+              sessionCaptureRef.current = null;
+              setSessionCapture(null);
+            }
           }
 
           if (data.poseSaved) {
@@ -1979,6 +1992,7 @@ export default function DojoVirtual() {
                         <button
                           type="button"
                           onClick={() => {
+                            sessionCaptureRef.current = null;
                             setSessionCapture(null);
                             updateSenseiControls({ command: "clear_session_capture" });
                           }}
@@ -2001,6 +2015,7 @@ export default function DojoVirtual() {
                               angles: { ...angles },
                               mode: mode
                             };
+                            sessionCaptureRef.current = captured;
                             setSessionCapture(captured);
                             // Send to student via sync
                             updateSenseiControls({ command: "session_capture", sessionCaptureLandmarks: JSON.stringify(captured) });
