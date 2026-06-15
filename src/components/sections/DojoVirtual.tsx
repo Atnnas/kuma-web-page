@@ -1474,9 +1474,8 @@ export default function DojoVirtual() {
 
       <div className="relative z-20 w-full max-w-[99vw] mx-auto px-2 sm:px-4 md:px-6 lg:px-8 flex flex-col justify-start items-center pt-0">
         
-        {/* Page Header */}
-        {/* Back to Applications button */}
-        <div className="w-full flex justify-start mb-6">
+        {/* Compact Navigation and Title Bar */}
+        <div className="w-full flex justify-between items-center mb-8 border-b border-white/5 pb-4">
           <Link
             href="/resources/aplicaciones"
             className="flex items-center gap-2 text-zinc-500 hover:text-kuma-gold transition-all duration-300 group px-3 py-2 rounded-xl hover:bg-white/5 active:scale-95"
@@ -1484,19 +1483,9 @@ export default function DojoVirtual() {
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="font-black uppercase tracking-widest text-[10px]">Volver a Aplicaciones</span>
           </Link>
-        </div>
-
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-kuma-gold font-bold uppercase tracking-[0.2em] text-xs mb-3 block drop-shadow-md">
-            Recursos Kuma
+          <span className="text-kuma-gold font-bold uppercase tracking-[0.2em] text-xs drop-shadow-md flex items-center gap-2 font-serif">
+            道場 <span className="text-white/60">Dojo Virtual</span>
           </span>
-          <PrimalTitle className="text-4xl sm:text-5xl md:text-7xl uppercase tracking-widest leading-[1.1]">
-            Dojo Virtual
-          </PrimalTitle>
-          <div className="w-24 h-1 bg-kuma-gold mt-6 mx-auto rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)] mb-6" />
-          <p className="font-body text-zinc-400 font-light leading-relaxed text-sm sm:text-base max-w-2xl mx-auto">
-            El Sensei evalúa la postura y guarda posiciones remotamente mientras el alumno entrena frente a la cámara en tiempo real.
-          </p>
         </div>
 
         {/* LOBBY: Choice between joining as student or creating as instructor */}
@@ -1507,7 +1496,7 @@ export default function DojoVirtual() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
-              className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 bg-zinc-900/40 border border-white/10 shadow-2xl rounded-[2.5rem] p-6 sm:p-8 md:p-10 backdrop-blur-md transition-all hover:border-white/15"
+              className="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 bg-zinc-900/40 border border-white/10 shadow-2xl rounded-[2.5rem] p-6 sm:p-8 md:p-10 backdrop-blur-md transition-all hover:border-white/15"
             >
               {/* Left Side: JOIN AS STUDENT (Lobby) */}
               <div className="space-y-6 flex flex-col justify-between border-b md:border-b-0 md:border-r border-white/5 pb-8 md:pb-0 md:pr-8">
@@ -1650,7 +1639,7 @@ export default function DojoVirtual() {
                   ref={canvasRef}
                   width="640"
                   height="480"
-                  className="w-full max-w-[640px] aspect-[4/3] bg-neutral-900 border border-neutral-800"
+                  className="w-full max-w-[960px] aspect-[4/3] bg-neutral-900 border border-white/10 rounded-2xl shadow-xl"
                 />
 
                 {!cameraActive && (
@@ -1798,12 +1787,12 @@ export default function DojoVirtual() {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
-              className="w-full flex flex-col xl:flex-row gap-8 bg-white/65 border border-neutral-200/90 shadow-lg rounded-none p-6 sm:p-8 md:p-10 min-h-[580px] backdrop-blur-md"
+              className="w-full flex flex-col xl:flex-row gap-8 bg-zinc-900/40 border border-white/10 shadow-2xl rounded-[2.5rem] p-6 sm:p-8 md:p-10 min-h-[580px] backdrop-blur-md"
             >
               {/* Left Panel: Real-Time Wireframe Canvas rendering student skeleton */}
               <div className="flex-1 flex flex-col items-center justify-center bg-[#0c0f12] border border-neutral-800 p-4 relative min-h-[480px]">
                 
-                <div className="relative w-full max-w-[640px] aspect-[4/3] bg-[#0c0f12] border border-neutral-800 overflow-hidden">
+                <div className="relative w-full max-w-[960px] aspect-[4/3] bg-[#0c0f12] border border-white/10 rounded-2xl overflow-hidden shadow-xl">
                   {/* Real-Time Student Video Stream — ALWAYS mounted to prevent DOM flicker */}
                   <video
                     ref={senseiVideoElRef}
@@ -1845,11 +1834,11 @@ export default function DojoVirtual() {
                   <div className="border-b border-neutral-100 pb-4 flex items-center justify-between">
                     <div>
                       <div className="flex gap-1.5 items-center">
-                        <span className="text-[9px] font-bold font-title-serif uppercase px-2 py-0.5 border border-amber-500/30 text-amber-600 bg-amber-50">
+                        <span className="text-[9px] font-bold font-title-serif uppercase px-2 py-0.5 border border-amber-500/30 text-amber-400 bg-amber-950/30 rounded-lg">
                           MONITOR ACTIVADO
                         </span>
                         {isP2PConnected ? (
-                          <span className="text-[9px] font-bold font-title-serif uppercase px-2 py-0.5 border border-cyan-500/30 text-cyan-600 bg-cyan-50 flex items-center gap-1">
+                          <span className="text-[9px] font-bold font-title-serif uppercase px-2 py-0.5 border border-cyan-500/30 text-cyan-400 bg-cyan-950/30 rounded-lg flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></span> EN VIVO P2P
                           </span>
                         ) : (
@@ -1916,7 +1905,7 @@ export default function DojoVirtual() {
                           className={`flex-1 px-2 py-2.5 text-center transition-all cursor-pointer ${
                             analysisMode === opt.value
                               ? "bg-[#E52B34] text-white"
-                              : "bg-white text-zinc-400 hover:bg-neutral-50"
+                              : "bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-white"
                           }`}
                         >
                           <span className="block text-[10px] font-bold font-title-serif uppercase tracking-wider">

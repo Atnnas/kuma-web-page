@@ -8,7 +8,7 @@ export default function DojoVirtualPage() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-kuma-gold/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-red-600/5 blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="relative z-10 px-6 max-w-7xl mx-auto">
+      <div className="relative z-10 px-2 sm:px-4 w-full max-w-[96vw] mx-auto">
         <Suspense fallback={
           <div className="w-full min-h-[60vh] flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
