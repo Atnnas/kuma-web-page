@@ -57,15 +57,15 @@ export const RitmoLibrary = ({
                         </div>
 
                         {/* Filtros */}
-                        <div className="p-6 bg-zinc-950/30 flex flex-col md:flex-row gap-4 border-b border-white/5">
+                        <div className="p-6 bg-zinc-950/40 flex flex-col md:flex-row gap-4 border-b border-white/10">
                             <div className="relative flex-1">
-                                <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={20} />
+                                <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
                                 <input
                                     type="text"
                                     placeholder="Buscar Kata o Técnica..."
                                     value={search}
                                     onChange={(e) => onSearch(e.target.value)}
-                                    className="w-full bg-zinc-900 border border-white/5 rounded-2xl py-3 pl-12 pr-4 text-white placeholder:text-zinc-600 focus:border-kuma-gold/50 outline-none transition-all"
+                                    className="w-full bg-zinc-900 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder:text-zinc-500 focus:border-kuma-gold focus:ring-1 focus:ring-kuma-gold outline-none transition-all text-sm"
                                 />
                             </div>
                             <div className="flex gap-2">
@@ -74,8 +74,10 @@ export const RitmoLibrary = ({
                                         key={art}
                                         onClick={() => onFilterArt(art)}
                                         className={cn(
-                                            "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all",
-                                            filterArt === art ? "bg-kuma-gold text-black border-kuma-gold" : "bg-zinc-900 text-zinc-500 border-white/5 hover:border-white/20"
+                                            "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer",
+                                            filterArt === art 
+                                                ? "bg-kuma-gold text-black border-kuma-gold shadow-[0_2px_10px_rgba(234,179,8,0.25)]" 
+                                                : "bg-zinc-800 text-zinc-300 border-white/10 hover:bg-zinc-700 hover:text-white"
                                         )}
                                     >
                                         {art === "all" ? "Todos" : art}
@@ -87,39 +89,44 @@ export const RitmoLibrary = ({
                         {/* Lista de Ritmos */}
                         <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                             {rhythms.map((r, idx) => (
-                                <div key={`${r._id}-${idx}`} className="group bg-zinc-950/50 border border-white/5 rounded-3xl p-6 hover:border-kuma-gold/30 transition-all relative overflow-hidden">
+                                <div 
+                                    key={`${r._id}-${idx}`} 
+                                    className="group bg-zinc-900/90 border border-white/10 rounded-3xl p-6 hover:border-kuma-gold/50 hover:bg-zinc-950 transition-all duration-300 relative overflow-hidden shadow-lg flex flex-col justify-between"
+                                >
                                     <div className="flex items-start justify-between relative z-10">
-                                        <div className="flex flex-col gap-1">
+                                        <div className="flex flex-col gap-1.5">
                                             <div className="flex items-center gap-2">
-                                                <span className="px-2 py-0.5 rounded-md bg-zinc-800 text-[8px] font-black uppercase text-zinc-400 border border-white/5">
+                                                <span className="px-2.5 py-0.5 rounded-md bg-zinc-800 text-[9px] font-black uppercase text-zinc-350 border border-white/10">
                                                     {r.martialArt}
                                                 </span>
-                                                <span className="text-zinc-600 text-[10px] font-bold italic">{r.style}</span>
+                                                <span className="text-kuma-gold/90 text-[10px] font-black tracking-widest uppercase">{r.style}</span>
                                             </div>
-                                            <h3 className="text-xl font-black text-white uppercase group-hover:text-kuma-gold transition-colors">{r.name}</h3>
+                                            <h3 className="text-xl font-black text-white uppercase group-hover:text-kuma-gold transition-colors mt-1">{r.name}</h3>
                                         </div>
                                         <div className="flex flex-col items-end gap-1">
-                                            <span className="text-[10px] font-mono text-zinc-500">{r.points.length} puntos</span>
+                                            <span className="px-2 py-0.5 rounded-md bg-zinc-800 text-[10px] font-mono text-zinc-300 border border-white/5 font-bold">{r.points.length} PUNTOS</span>
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-2 mt-6 relative z-10">
+                                    <div className="flex gap-3 mt-6 relative z-10">
                                         <button
                                             onClick={() => onLoad(r)}
-                                            className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border border-white/5 transition-all"
+                                            className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white py-3 rounded-xl text-xs font-black uppercase tracking-widest border border-white/10 transition-all duration-200 active:scale-95 shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
                                         >
+                                            <Scroll weight="bold" className="w-4 h-4 text-zinc-400" />
                                             Cargar
                                         </button>
                                         <button
                                             onClick={() => onLoadAndPlay(r)}
-                                            className="flex-1 bg-kuma-gold/10 hover:bg-kuma-gold text-kuma-gold hover:text-black py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border border-kuma-gold/20 transition-all flex items-center justify-center gap-2"
+                                            className="flex-1 bg-kuma-gold hover:bg-amber-400 text-black py-3 rounded-xl text-xs font-black uppercase tracking-widest border border-transparent transition-all duration-200 active:scale-95 shadow-[0_4px_15px_rgba(234,179,8,0.25)] flex items-center justify-center gap-1.5 cursor-pointer"
                                         >
-                                            <Play weight="fill" size={14} />
+                                            <Play weight="fill" className="w-4 h-4" />
                                             Play
                                         </button>
                                         <button
                                             onClick={() => onDelete(r)}
-                                            className="p-3 bg-red-900/10 hover:bg-red-600 text-red-500 hover:text-white rounded-xl border border-red-900/20 transition-all"
+                                            className="p-3 bg-red-950/40 hover:bg-red-600 text-red-400 hover:text-white rounded-xl border border-red-500/20 hover:border-red-650 transition-all duration-200 active:scale-95 flex items-center justify-center cursor-pointer"
+                                            title="Eliminar del catálogo"
                                         >
                                             <Trash weight="bold" size={16} />
                                         </button>
