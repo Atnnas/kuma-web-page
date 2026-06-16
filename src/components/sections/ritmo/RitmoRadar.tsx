@@ -1,4 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
+import { motion } from "framer-motion";
 
 interface RitmoRadarProps {
     theme: "dragon-ball" | "tactical-hud";
@@ -114,6 +115,28 @@ export const RitmoRadar = forwardRef(({ theme, timerRef, puntosRef, status }: Ri
                 height={400}
                 className="absolute inset-0 w-full h-full"
             />
+
+            {/* Goku Flotando en el Radar (Solo Dragon Ball) */}
+            {theme === "dragon-ball" && (
+                <motion.div
+                    initial={{ x: "10%", y: "-5%" }}
+                    animate={{
+                        y: ["-5%", "5%"],
+                        x: ["10%", "12%"]
+                    }}
+                    transition={{
+                        y: { duration: 2.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" },
+                        x: { duration: 6, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }
+                    }}
+                    className="absolute pointer-events-none z-20 w-32 h-32 md:w-48 md:h-48"
+                >
+                    <img
+                        src="/images/kuma-goku-nube-voladora.png"
+                        alt="Goku en Nube Voladora"
+                        className="w-full h-full object-contain filter drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]"
+                    />
+                </motion.div>
+            )}
         </div>
     );
 });
