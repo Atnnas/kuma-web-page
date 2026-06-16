@@ -279,6 +279,7 @@ export const RitmoKatas = ({ onBack }: { onBack: () => void }) => {
                     const res = await deleteRhythm(r._id);
                     if (res.success) setRhythms(prev => prev.filter(item => item._id !== r._id));
                 }}
+                isAdmin={isAdmin}
             />
 
             <RitmoSaveModal
