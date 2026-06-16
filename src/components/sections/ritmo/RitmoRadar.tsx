@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface RitmoRadarProps {
     theme: "dragon-ball" | "tactical-hud";
@@ -116,27 +116,32 @@ export const RitmoRadar = forwardRef(({ theme, timerRef, puntosRef, status }: Ri
                 className="absolute inset-0 w-full h-full"
             />
 
-            {/* Goku Flotando en el Radar (Solo Dragon Ball) */}
-            {theme === "dragon-ball" && (
-                <motion.div
-                    initial={{ x: "10%", y: "-5%" }}
-                    animate={{
-                        y: ["-5%", "5%"],
-                        x: ["10%", "12%"]
-                    }}
-                    transition={{
-                        y: { duration: 2.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" },
-                        x: { duration: 6, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }
-                    }}
-                    className="absolute pointer-events-none z-20 w-32 h-32 md:w-48 md:h-48"
-                >
-                    <img
-                        src="/images/kuma-goku-nube-voladora.png"
-                        alt="Goku en Nube Voladora"
-                        className="w-full h-full object-contain filter drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]"
-                    />
-                </motion.div>
-            )}
+            {/* Goku Flotando en el Radar (Solo Dragon Ball cuando está activo, ej. reproduciendo o grabando) */}
+            <AnimatePresence>
+                {theme === "dragon-ball" && (status === "reproduciendo" || status === "grabando") && (
+                    <motion.div
+                        initial={{ x: "10%", y: "-5%", opacity: 0 }}
+                        animate={{
+                            y: ["-5%", "5%"],
+                            x: ["10%", "12%"],
+                            opacity: 1
+                        }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                            y: { duration: 2.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" },
+                            x: { duration: 6, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" },
+                            opacity: { duration: 0.5 }
+                        }}
+                        className="absolute pointer-events-none z-20 w-32 h-32 md:w-48 md:h-48"
+                    >
+                        <img
+                            src="/images/kuma-goku-nube-voladora.png"
+                            alt="Goku en Nube Voladora"
+                            className="w-full h-full object-contain filter drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]"
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 });
