@@ -167,6 +167,29 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
     } catch {}
   };
 
+  // Play a pleasant soft chime when depth is achieved
+  const playDepthBeep = () => {
+    if (!audioEnabledRef.current) return;
+    try {
+      const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
+      const audioCtx = new AudioContextClass();
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5 note (pleasant, clear but not harsh)
+      
+      gainNode.gain.setValueAtTime(0.07, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+      
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.25);
+    } catch {}
+  };
+
   // Stance geometry 2D calculations
   const calculate2DAngle = (ptA: any, ptB: any, ptC: any) => {
     if (!ptA || !ptB || !ptC) return 180;
@@ -392,6 +415,9 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
       setInstructionMsg("Flexiona tus piernas para la sentadilla");
     } else if (angle <= 95) {
       if (isReadyToStartRef.current) {
+        if (!hasReachedDepthRef.current) {
+          playDepthBeep();
+        }
         hasReachedDepthRef.current = true;
         wasBendingRef.current = true;
         setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
