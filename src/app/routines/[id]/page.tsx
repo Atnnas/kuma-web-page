@@ -1,5 +1,6 @@
 import { RoutinePlayer } from "@/components/rutinas/RoutinePlayer";
 import { SquatRevisorClient } from "@/components/rutinas/SquatRevisorClient";
+import { PushupRevisorClient } from "@/components/rutinas/PushupRevisorClient";
 import connectDB from "@/lib/db";
 import Routine from "@/models/Routine";
 import User from "@/models/User";
@@ -72,6 +73,8 @@ export default async function RoutinePlayerPage({ params }: { params: Promise<{ 
 
             {routine.slug === "squat-revisor" ? (
                 <SquatRevisorClient user={user} routine={routine as any} />
+            ) : routine.slug === "pushup-revisor" ? (
+                <PushupRevisorClient user={user} routine={routine as any} />
             ) : (
                 <RoutinePlayer routine={routine as any} />
             )}

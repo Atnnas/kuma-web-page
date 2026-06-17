@@ -32,6 +32,33 @@ async function ensureSquatRevisorRoutine() {
     }
 }
 
+async function ensurePushupRevisorRoutine() {
+    const existing = await Routine.findOne({ slug: "pushup-revisor" });
+    if (!existing) {
+        await Routine.create({
+            title: "Revisor de Push Ups",
+            slug: "pushup-revisor",
+            description: "Revisa tu técnica de pechadas / lagartijas de perfil usando la cámara y visión artificial de MediaPipe. Flexiona los codos al ángulo correcto para contar tus repeticiones.",
+            difficulty: "Intermedio",
+            estimated_duration: 5,
+            equipment_types: ["peso_corporal"],
+            blocks: [
+                {
+                    type: "exercise",
+                    exercise_name: "Push Ups con MediaPipe",
+                    sets: 1,
+                    reps: 10,
+                    rest_seconds: 0,
+                    measure_type: "reps",
+                    notes: "Colócate de perfil / medio lado frente a la cámara en posición de plancha."
+                }
+            ],
+            active: true,
+            allowedUsers: []
+        });
+    }
+}
+
 // GET /api/routines
 // Public (or protected if needed) list of active routines
 // GET /api/routines
@@ -40,6 +67,7 @@ export async function GET(req: NextRequest) {
     await connectDB();
     try {
         await ensureSquatRevisorRoutine();
+        await ensurePushupRevisorRoutine();
 
         const session = await auth();
         if (!session) {
@@ -54,8 +82,8 @@ export async function GET(req: NextRequest) {
         const isSuperAdmin = session.user?.role === "super_admin" || session.user?.role === "admin";
 
         if (isAdmin && isSuperAdmin) {
-            // Admin Panel Mode: see absolute everything (active + inactive) EXCEPT squat-revisor
-            query = { slug: { $ne: "squat-revisor" } };
+            // Admin Panel Mode: see absolute everything (active + inactive) EXCEPT squat-revisor and pushup-revisor
+            query = { slug: { $nin: ["squat-revisor", "pushup-revisor"] } };
         } else if (isSuperAdmin) {
             // Admin Listing Mode: see all active routines regardless of targeting
             query = { active: true };

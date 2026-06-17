@@ -23,6 +23,7 @@ import { toggleFavoriteRoutine, getFavoriteRoutines } from "@/lib/actions/favori
 
 interface IRoutineSummary {
     _id: string;
+    slug?: string;
     title: string;
     description: string;
     difficulty: "Principiante" | "Intermedio" | "Avanzado";
@@ -504,6 +505,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                     >
                         {filteredData.map((routine, idx) => {
                             const isFav = favorites.includes(routine._id);
+                            const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor";
                             return (
                                 <motion.div
                                     key={`${routine._id}-${idx}`}
@@ -511,8 +513,12 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                     transition={{ type: "spring", duration: 0.5, delay: idx * 0.05 }}
                                     className="group relative"
                                 >
-                                    <div className="h-full relative bg-zinc-900 border border-white/5 rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-300 group-hover:border-cyan-500/30 group-hover:shadow-[0_0_40px_-10px_rgba(6,182,212,0.3)]">
-                                        <div className={`absolute inset-0 bg-gradient-to-br opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-60 ${routine.difficulty === "Principiante" ? "from-green-900 to-black" : routine.difficulty === "Intermedio" ? "from-yellow-900 to-black" : "from-red-900 to-black"}`} />
+                                    <div className={`h-full relative bg-zinc-900 border rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-300 ${isRevisor ? "border-yellow-500/20 group-hover:border-yellow-500/50 group-hover:shadow-[0_0_40px_-10px_rgba(234,179,8,0.35)]" : "border-white/5 group-hover:border-cyan-500/30 group-hover:shadow-[0_0_40px_-10px_rgba(6,182,212,0.3)]"}`}>
+                                        {isRevisor ? (
+                                            <div className="absolute inset-0 bg-gradient-to-br from-yellow-950/20 via-zinc-900 to-black opacity-60 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-85" />
+                                        ) : (
+                                            <div className={`absolute inset-0 bg-gradient-to-br opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-60 ${routine.difficulty === "Principiante" ? "from-green-900 to-black" : routine.difficulty === "Intermedio" ? "from-yellow-900 to-black" : "from-red-900 to-black"}`} />
+                                        )}
                                         <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-10" />
 
                                         {/* Favorite star badge */}
@@ -526,13 +532,20 @@ export function RutinasTable({ data }: RutinasTableProps) {
 
                                         <div className="relative p-8 flex flex-col h-full min-h-[320px]">
                                             <div className="flex justify-between items-start mb-6">
-                                                <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-md text-zinc-400 group-hover:text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
+                                                <div className={`w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-md transition-colors ${isRevisor ? "text-yellow-400 group-hover:text-yellow-300 group-hover:bg-yellow-500/20" : "text-zinc-400 group-hover:text-cyan-400 group-hover:bg-cyan-500/20"}`}>
                                                     <Barbell className="w-8 h-8" weight="duotone" />
                                                 </div>
-                                                {getDifficultyBadge(routine.difficulty)}
+                                                <div className="flex flex-col items-end gap-1.5">
+                                                    {getDifficultyBadge(routine.difficulty)}
+                                                    {isRevisor && (
+                                                        <span className="px-2 py-0.5 rounded text-[8px] uppercase font-black tracking-wider bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                                                            Visión IA
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
                                             <div className="mb-auto">
-                                                <h3 className="text-2xl font-black text-white leading-tight mb-2 uppercase italic tracking-tight group-hover:text-cyan-200 transition-colors">{routine.title}</h3>
+                                                <h3 className={`text-2xl font-black text-white leading-tight mb-2 uppercase italic tracking-tight transition-colors ${isRevisor ? "group-hover:text-yellow-200" : "group-hover:text-cyan-200"}`}>{routine.title}</h3>
                                                 <p className="text-sm text-zinc-400 font-medium leading-relaxed line-clamp-2">{routine.description}</p>
                                             </div>
                                             <div className="mt-8 pt-6 border-t border-white/5 grid grid-cols-2 gap-4">
@@ -560,7 +573,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                                     <Heart className="w-4 h-4" weight={isFav ? "fill" : "regular"} />
                                                 </button>
                                                 <Link href={`/routines/${routine._id}`} className="flex-1">
-                                                    <button className="w-full h-10 bg-transparent hover:bg-white text-white hover:text-black border border-white/20 hover:border-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-1">
+                                                    <button className={`w-full h-10 bg-transparent text-white border text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-1 ${isRevisor ? "hover:bg-yellow-500 hover:text-black border-yellow-500/30 hover:border-yellow-500" : "hover:bg-white hover:text-black border-white/20 hover:border-white"}`}>
                                                         <PlayCircle className="w-4 h-4" weight="duotone" />
                                                         Iniciar
                                                     </button>
@@ -594,6 +607,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                             <tbody className="divide-y divide-white/5">
                                 {filteredData.map((routine, idx) => {
                                     const isFav = favorites.includes(routine._id);
+                                    const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor";
                                     return (
                                         <motion.tr
                                             key={`${routine._id}-${idx}`}
@@ -606,16 +620,22 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                                 <div className="flex items-center gap-4">
                                                     {/* Neon difficulty bar */}
                                                     <div className={`w-1 h-12 rounded-full shadow-[0_0_10px_2px_currentColor] transition-colors duration-300
-                                                        ${routine.difficulty === "Principiante" ? "text-green-500 bg-green-500" :
+                                                        ${isRevisor ? "text-yellow-500 bg-yellow-500" :
+                                                            routine.difficulty === "Principiante" ? "text-green-500 bg-green-500" :
                                                             routine.difficulty === "Intermedio" ? "text-yellow-500 bg-yellow-500" :
                                                                 "text-red-600 bg-red-600"}`}
                                                     />
                                                     <div>
                                                         <div className="flex items-center gap-2">
-                                                            <h3 className="text-lg font-black text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-cyan-200 transition-all uppercase italic">
+                                                            <h3 className={`text-lg font-black text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r transition-all uppercase italic ${isRevisor ? "group-hover:from-white group-hover:to-yellow-200" : "group-hover:from-white group-hover:to-cyan-200"}`}>
                                                                 {routine.title}
                                                             </h3>
                                                             {isFav && <Heart className="w-4 h-4 text-red-400" weight="fill" />}
+                                                            {isRevisor && (
+                                                                <span className="px-1.5 py-0.5 rounded text-[8px] font-black tracking-wider bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 uppercase">
+                                                                    IA
+                                                                </span>
+                                                            )}
                                                         </div>
                                                         <p className="text-xs text-zinc-500 font-medium max-w-md truncate group-hover:text-zinc-400">
                                                             {routine.description}
@@ -655,7 +675,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                                     </button>
                                                     {/* Start button */}
                                                     <Link href={`/routines/${routine._id}`}>
-                                                        <button className="bg-transparent hover:bg-white text-white hover:text-black border border-white/20 hover:border-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] flex items-center gap-2 group/btn">
+                                                        <button className={`bg-transparent text-white border px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg flex items-center gap-2 group/btn ${isRevisor ? "hover:bg-yellow-500 hover:text-black border-yellow-500/30 hover:border-yellow-500 hover:shadow-[0_0_20px_rgba(234,179,8,0.4)]" : "hover:bg-white hover:text-black border-white/20 hover:border-white hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]"}`}>
                                                             <PlayCircle className="w-5 h-5 group-hover/btn:fill-black" weight="duotone" />
                                                             Iniciar
                                                         </button>
