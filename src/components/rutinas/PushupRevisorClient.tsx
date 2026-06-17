@@ -355,19 +355,22 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
     const shoulderIdx = isLeftProfile ? 11 : 12;
     const elbowIdx = isLeftProfile ? 13 : 14;
     const wristIdx = isLeftProfile ? 15 : 16;
+    const hipIdx = isLeftProfile ? 23 : 24;
 
     const shoulder = landmarks[shoulderIdx];
     const elbow = landmarks[elbowIdx];
     const wrist = landmarks[wristIdx];
+    const hip = landmarks[hipIdx];
 
-    // Check visibility
+    // Check visibility (including hip to verify plank position)
     const minVisibility = 0.45;
     if (
       (shoulder?.visibility || 0) < minVisibility || 
       (elbow?.visibility || 0) < minVisibility || 
-      (wrist?.visibility || 0) < minVisibility
+      (wrist?.visibility || 0) < minVisibility ||
+      (hip?.visibility || 0) < minVisibility
     ) {
-      setFeedbackMsg("Aléjate un poco más para captar tus brazos");
+      setFeedbackMsg("Aléjate un poco más para captar tus brazos y cadera");
       drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.2)");
       return;
     }
@@ -376,48 +379,70 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
     const angle = calculate2DAngle(shoulder, elbow, wrist);
     setElbowAngle(angle);
 
-    // Push Up state machine
-    if (angle > 160) {
-      if (hasReachedDepthRef.current) {
-        // Success push up completed!
-        repsCountRef.current += 1;
-        setRepsCount(repsCountRef.current);
-        
-        playBeep();
-        speak(repsCountRef.current.toString());
-        
-        hasReachedDepthRef.current = false;
-        wasBendingRef.current = false;
-        setFeedbackMsg("¡Push up correcto!");
-        
-        if (repsCountRef.current >= targetRepsRef.current) {
-          completeWorkout();
+    // Calculate torso inclination relative to horizontal
+    let isStanding = false;
+    if (shoulder && hip) {
+      const dx = Math.abs(shoulder.x - hip.x);
+      const dy = Math.abs(shoulder.y - hip.y);
+      if (dx + dy > 0.02) {
+        const torsoInclination = Math.atan2(dy, dx) * (180 / Math.PI);
+        // If torso is tilted > 50 degrees from horizontal, user is standing/too vertical
+        if (torsoInclination > 50) {
+          isStanding = true;
         }
-      } else if (wasBendingRef.current) {
-        // Did not go deep enough before extending
-        playWarningBeep();
-        setFeedbackMsg("¡Flexión incompleta!");
-        speak("Baja más");
-        wasBendingRef.current = false;
       }
-      isReadyToStartRef.current = true;
-      setInstructionMsg("Flexiona los brazos para descender");
-    } else if (angle <= 95) {
-      if (isReadyToStartRef.current) {
-        if (!hasReachedDepthRef.current) {
-          playDepthBeep();
+    }
+
+    if (isStanding) {
+      setFeedbackMsg("Cuerpo vertical no permitido. Ponte en el suelo.");
+      setInstructionMsg("Debes estar en posición horizontal de plancha");
+      hasReachedDepthRef.current = false;
+      wasBendingRef.current = false;
+      isReadyToStartRef.current = false;
+    } else {
+      // Push Up state machine
+      if (angle > 160) {
+        if (hasReachedDepthRef.current) {
+          // Success push up completed!
+          repsCountRef.current += 1;
+          setRepsCount(repsCountRef.current);
+          
+          playBeep();
+          speak(repsCountRef.current.toString());
+          
+          hasReachedDepthRef.current = false;
+          wasBendingRef.current = false;
+          setFeedbackMsg("¡Push up correcto!");
+          
+          if (repsCountRef.current >= targetRepsRef.current) {
+            completeWorkout();
+          }
+        } else if (wasBendingRef.current) {
+          // Did not go deep enough before extending
+          playWarningBeep();
+          setFeedbackMsg("¡Flexión incompleta!");
+          speak("Baja más");
+          wasBendingRef.current = false;
         }
-        hasReachedDepthRef.current = true;
-        wasBendingRef.current = true;
-        setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
-        setInstructionMsg("Estira tus brazos por completo");
-      }
-    } else if (angle < 135) {
-      if (isReadyToStartRef.current) {
-        wasBendingRef.current = true;
-        if (!hasReachedDepthRef.current) {
-          setFeedbackMsg("¡Baja un poco más!");
-          setInstructionMsg("Aproxima el pecho al suelo...");
+        isReadyToStartRef.current = true;
+        setInstructionMsg("Flexiona los brazos para descender");
+      } else if (angle <= 95) {
+        if (isReadyToStartRef.current) {
+          if (!hasReachedDepthRef.current) {
+            playDepthBeep();
+          }
+          hasReachedDepthRef.current = true;
+          wasBendingRef.current = true;
+          setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
+          setInstructionMsg("Estira tus brazos por completo");
+        }
+      } else if (angle < 135) {
+        if (isReadyToStartRef.current) {
+          wasBendingRef.current = true;
+          if (!hasReachedDepthRef.current) {
+            setFeedbackMsg("¡Baja un poco más!");
+            setInstructionMsg("Aproxima el pecho al suelo...");
+          }
         }
       }
     }
