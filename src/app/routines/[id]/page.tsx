@@ -1,4 +1,5 @@
 import { RoutinePlayer } from "@/components/rutinas/RoutinePlayer";
+import { SquatRevisorClient } from "@/components/rutinas/SquatRevisorClient";
 import connectDB from "@/lib/db";
 import Routine from "@/models/Routine";
 import User from "@/models/User";
@@ -69,7 +70,11 @@ export default async function RoutinePlayerPage({ params }: { params: Promise<{ 
                 <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-[0.03]" />
             </div>
 
-            <RoutinePlayer routine={routine as any} />
+            {routine.slug === "squat-revisor" ? (
+                <SquatRevisorClient user={user} routine={routine as any} />
+            ) : (
+                <RoutinePlayer routine={routine as any} />
+            )}
         </main>
     );
 }

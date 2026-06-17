@@ -5,6 +5,33 @@ import Exercise from "@/models/Exercise";
 import User from "@/models/User";
 import { auth } from "@/auth";
 
+async function ensureSquatRevisorRoutine() {
+    const existing = await Routine.findOne({ slug: "squat-revisor" });
+    if (!existing) {
+        await Routine.create({
+            title: "Revisor de Sentadilla",
+            slug: "squat-revisor",
+            description: "Revisa tu técnica de sentadilla de perfil usando la cámara y visión artificial de MediaPipe. Flexiona las piernas al ángulo correcto para contar tus repeticiones.",
+            difficulty: "Intermedio",
+            estimated_duration: 5,
+            equipment_types: ["peso_corporal"],
+            blocks: [
+                {
+                    type: "exercise",
+                    exercise_name: "Sentadillas con MediaPipe",
+                    sets: 1,
+                    reps: 10,
+                    rest_seconds: 0,
+                    measure_type: "reps",
+                    notes: "Ponte de perfil / medio lado frente a la cámara."
+                }
+            ],
+            active: true,
+            allowedUsers: []
+        });
+    }
+}
+
 // GET /api/routines
 // Public (or protected if needed) list of active routines
 // GET /api/routines
@@ -12,6 +39,8 @@ import { auth } from "@/auth";
 export async function GET(req: NextRequest) {
     await connectDB();
     try {
+        await ensureSquatRevisorRoutine();
+
         const session = await auth();
         if (!session) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -25,8 +54,8 @@ export async function GET(req: NextRequest) {
         const isSuperAdmin = session.user?.role === "super_admin" || session.user?.role === "admin";
 
         if (isAdmin && isSuperAdmin) {
-            // Admin Panel Mode: see absolute everything (active + inactive)
-            query = {};
+            // Admin Panel Mode: see absolute everything (active + inactive) EXCEPT squat-revisor
+            query = { slug: { $ne: "squat-revisor" } };
         } else if (isSuperAdmin) {
             // Admin Listing Mode: see all active routines regardless of targeting
             query = { active: true };
