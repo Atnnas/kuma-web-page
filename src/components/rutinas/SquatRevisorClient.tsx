@@ -34,7 +34,13 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
 
   // Stats
   const [repsCount, setRepsCount] = useState(0);
-  const [targetReps] = useState(10);
+  const [targetReps, setTargetReps] = useState(10);
+  const targetRepsRef = useRef(10);
+
+  useEffect(() => {
+    targetRepsRef.current = targetReps;
+  }, [targetReps]);
+
   const [kneeAngle, setKneeAngle] = useState<number>(180);
   const [feedbackMsg, setFeedbackMsg] = useState("Ponte de perfil para iniciar");
   const [instructionMsg, setInstructionMsg] = useState("Párate derecho frente a la cámara");
@@ -401,7 +407,7 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
         wasBendingRef.current = false;
         setFeedbackMsg("¡Sentadilla correcta!");
         
-        if (repsCountRef.current >= targetReps) {
+        if (repsCountRef.current >= targetRepsRef.current) {
           completeWorkout();
         }
       } else if (wasBendingRef.current) {
@@ -664,10 +670,25 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
             </p>
           </div>
 
-          <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 grid grid-cols-3 gap-4">
-            <div>
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block">Objetivo</span>
-              <span className="text-lg text-white font-black">{targetReps} Sentadillas</span>
+          <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 grid grid-cols-3 gap-4 items-center">
+            <div className="flex flex-col">
+              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-1">Objetivo (Reps)</span>
+              <input
+                type="number"
+                min="1"
+                max="999"
+                value={targetReps || ""}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  setTargetReps(isNaN(val) ? 0 : val);
+                }}
+                onBlur={() => {
+                  if (!targetReps || targetReps < 1) {
+                    setTargetReps(10);
+                  }
+                }}
+                className="w-full bg-zinc-950/80 border border-white/10 focus:border-kuma-gold/50 rounded-xl px-2 py-1.5 text-center text-base text-white font-black focus:outline-none focus:ring-1 focus:ring-kuma-gold/30 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
             </div>
             <div>
               <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block">Ángulo</span>
