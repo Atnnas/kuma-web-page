@@ -404,10 +404,6 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
     // Draw active arm highlight
     ctx.save();
     ctx.lineCap = "round";
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = jointColor;
-    ctx.strokeStyle = jointColor;
-    ctx.lineWidth = 6;
 
     const drawBone = (ptA: any, ptB: any) => {
       ctx.beginPath();
@@ -416,8 +412,42 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
       ctx.stroke();
     };
 
-    drawBone(shoulder, elbow);
-    drawBone(elbow, wrist);
+    const isCorrectDepth = angle <= 95 || hasReachedDepthRef.current;
+
+    if (isCorrectDepth) {
+      // Radiant incandescent bloom (light-saber style glow)
+      // 1. Thick outer soft glow
+      ctx.shadowBlur = 30;
+      ctx.shadowColor = "rgba(34, 197, 94, 0.9)";
+      ctx.strokeStyle = "rgba(74, 222, 128, 0.25)";
+      ctx.lineWidth = 18;
+      drawBone(shoulder, elbow);
+      drawBone(elbow, wrist);
+
+      // 2. Medium core glow
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = "rgba(34, 197, 94, 0.9)";
+      ctx.strokeStyle = "rgba(34, 197, 94, 0.85)";
+      ctx.lineWidth = 9;
+      drawBone(shoulder, elbow);
+      drawBone(elbow, wrist);
+
+      // 3. Ultra-bright white hot filament core
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = "#ffffff";
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 3;
+      drawBone(shoulder, elbow);
+      drawBone(elbow, wrist);
+    } else {
+      // Standard highlight for other positions
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = jointColor;
+      ctx.strokeStyle = jointColor;
+      ctx.lineWidth = 6;
+      drawBone(shoulder, elbow);
+      drawBone(elbow, wrist);
+    }
 
     // Joint Points
     const drawJoint = (pt: any, color: string, radius = 8) => {

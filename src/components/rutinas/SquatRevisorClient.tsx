@@ -421,10 +421,6 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
     // Draw active leg with highlight
     ctx.save();
     ctx.lineCap = "round";
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = jointColor;
-    ctx.strokeStyle = jointColor;
-    ctx.lineWidth = 6;
 
     const drawBone = (ptA: any, ptB: any) => {
       ctx.beginPath();
@@ -433,8 +429,42 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
       ctx.stroke();
     };
 
-    drawBone(hip, knee);
-    drawBone(knee, ankle);
+    const isCorrectDepth = angle <= 95 || hasReachedDepthRef.current;
+
+    if (isCorrectDepth) {
+      // Radiant incandescent bloom (light-saber style glow)
+      // 1. Thick outer soft glow
+      ctx.shadowBlur = 30;
+      ctx.shadowColor = "rgba(34, 197, 94, 0.9)";
+      ctx.strokeStyle = "rgba(74, 222, 128, 0.25)";
+      ctx.lineWidth = 18;
+      drawBone(hip, knee);
+      drawBone(knee, ankle);
+
+      // 2. Medium core glow
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = "rgba(34, 197, 94, 0.9)";
+      ctx.strokeStyle = "rgba(34, 197, 94, 0.85)";
+      ctx.lineWidth = 9;
+      drawBone(hip, knee);
+      drawBone(knee, ankle);
+
+      // 3. Ultra-bright white hot filament core
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = "#ffffff";
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 3;
+      drawBone(hip, knee);
+      drawBone(knee, ankle);
+    } else {
+      // Standard highlight for other positions
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = jointColor;
+      ctx.strokeStyle = jointColor;
+      ctx.lineWidth = 6;
+      drawBone(hip, knee);
+      drawBone(knee, ankle);
+    }
 
     // Draw Joint Points
     const drawJoint = (pt: any, color: string, radius = 8) => {
