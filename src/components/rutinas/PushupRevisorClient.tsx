@@ -379,23 +379,32 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
     const angle = calculate2DAngle(shoulder, elbow, wrist);
     setElbowAngle(angle);
 
-    // Calculate torso inclination relative to horizontal
-    let isStanding = false;
+    // Validate horizontal plank posture:
+    // 1. Torso (Shoulder-to-Hip) must be nearly parallel to ground (inclination <= 30 degrees)
+    // 2. Hands (wrists) must be below shoulders (wrist.y >= shoulder.y)
+    let isCorrectPosture = true;
+    let postureFeedback = "";
+
     if (shoulder && hip) {
       const dx = Math.abs(shoulder.x - hip.x);
       const dy = Math.abs(shoulder.y - hip.y);
       if (dx + dy > 0.02) {
         const torsoInclination = Math.atan2(dy, dx) * (180 / Math.PI);
-        // If torso is tilted > 50 degrees from horizontal, user is standing/too vertical
-        if (torsoInclination > 50) {
-          isStanding = true;
+        if (torsoInclination > 30) {
+          isCorrectPosture = false;
+          postureFeedback = "Alinea tu espalda paralela al suelo.";
         }
       }
     }
 
-    if (isStanding) {
-      setFeedbackMsg("Cuerpo vertical no permitido. Ponte en el suelo.");
-      setInstructionMsg("Debes estar en posición horizontal de plancha");
+    if (wrist && shoulder && wrist.y < shoulder.y) {
+      isCorrectPosture = false;
+      postureFeedback = "Posición incorrecta. Manos sobre los hombros.";
+    }
+
+    if (!isCorrectPosture) {
+      setFeedbackMsg(postureFeedback || "Colócate en posición de plancha.");
+      setInstructionMsg("Tu espalda debe estar paralela al suelo");
       hasReachedDepthRef.current = false;
       wasBendingRef.current = false;
       isReadyToStartRef.current = false;
