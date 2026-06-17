@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Routine not found" }, { status: 404 });
         }
 
-        if (user.role !== "super_admin") {
+        if (user.role !== "super_admin" && user.role !== "admin") {
             const isPublic = !targetRoutine.allowedUsers || targetRoutine.allowedUsers.length === 0;
             const isAssignedToUser = targetRoutine.allowedUsers?.some((uid: any) => uid.toString() === user._id.toString());
 

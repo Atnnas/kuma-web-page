@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
         }
 
         // --- Targeted Routines Permission Check ---
-        if (session.user?.role !== "super_admin") {
+        if (session.user?.role !== "super_admin" && session.user?.role !== "admin") {
             const user = await User.findOne({ email: session.user.email });
             if (!user) {
                 return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -49,7 +49,7 @@ export async function PUT(req: NextRequest, props: { params: Promise<{ id: strin
         const params = await props.params;
         const session = await auth();
 
-        if (session?.user?.role !== "super_admin") {
+        if (session?.user?.role !== "super_admin" && session?.user?.role !== "admin") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
@@ -73,7 +73,7 @@ export async function DELETE(req: NextRequest, props: { params: Promise<{ id: st
         const params = await props.params;
         const session = await auth();
 
-        if (session?.user?.role !== "super_admin") {
+        if (session?.user?.role !== "super_admin" && session?.user?.role !== "admin") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 

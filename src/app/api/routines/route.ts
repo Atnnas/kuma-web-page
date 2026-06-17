@@ -18,11 +18,11 @@ export async function GET(req: NextRequest) {
         }
 
         const { searchParams } = new URL(req.url);
-        const isAdmin = searchParams.get("super_admin") === "true";
+        const isAdmin = searchParams.get("super_admin") === "true" || searchParams.get("admin") === "true";
 
         let query: any = { active: true };
 
-        const isSuperAdmin = session.user?.role === "super_admin";
+        const isSuperAdmin = session.user?.role === "super_admin" || session.user?.role === "admin";
 
         if (isAdmin && isSuperAdmin) {
             // Admin Panel Mode: see absolute everything (active + inactive)
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     try {
         const session = await auth();
 
-        if (session?.user?.role !== "super_admin") {
+        if (session?.user?.role !== "super_admin" && session?.user?.role !== "admin") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
