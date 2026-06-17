@@ -118,20 +118,8 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
       });
   };
 
-  // Speak voice feedback
-  const speak = (text: string) => {
-    if (!audioEnabledRef.current) return;
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    try {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "es-MX";
-      utterance.rate = 1.15;
-      window.speechSynthesis.speak(utterance);
-    } catch (err) {
-      console.error("Speech synthesis error:", err);
-    }
-  };
+  // Speak voice feedback (disabled per user request)
+  const speak = (text: string) => {};
 
   // Play success beep
   const playBeep = () => {
