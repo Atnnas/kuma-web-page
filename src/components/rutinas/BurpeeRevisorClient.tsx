@@ -64,11 +64,8 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
   const cameraInstanceRef = useRef<any>(null);
 
   // State machine refs for burpee
-  // 0: standing (De pie)
-  // 1: pushup_down (Fondo de plancha / Pecho al suelo)
-  // 2: jumping (Salto final con manos arriba)
-  const burpeeStateRef = useRef<number>(0);
-  const [burpeeState, setBurpeeStateState] = useState<number>(0);
+  const hasReachedBottomRef = useRef<boolean>(false);
+  const [hasReachedBottom, setHasReachedBottom] = useState<boolean>(false);
   const repsCountRef = useRef(0);
 
   // Achievement Overlay
@@ -220,8 +217,8 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
     setStatus("active");
     setRepsCount(0);
     repsCountRef.current = 0;
-    burpeeStateRef.current = 0;
-    setBurpeeStateState(0);
+    hasReachedBottomRef.current = false;
+    setHasReachedBottom(false);
     setStartTime(Date.now());
     setElapsedTime(0);
     setCameraActive(true);
@@ -386,48 +383,19 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
     setTorsoAngle(currentTorsoAngle);
 
     // Burpee State Machine:
-    // State 0: Standing upright (Torso vertical > 60 deg, knees extended > 150 deg)
-    // State 1: Plank Down / Chest to Floor (Torso horizontal < 40 deg, elbows bent <= 105 deg)
-    // State 2: Plank Up / Extension (Torso horizontal < 40 deg, elbows extended > 150 deg)
-    // State 3: Jump! (Torso vertical > 60 deg, wrists above shoulders wrist.y < shoulder.y) -> Trigger Rep
-    
-    const currentState = burpeeStateRef.current;
-
-    if (currentState === 0) {
-      // Must start standing
-      const isUpright = currentTorsoAngle > 60 && calculate2DAngle(hip, knee, ankle) > 145;
-      if (isUpright) {
-        setInstructionMsg("Baja al suelo y haz una lagartija");
-        setFeedbackMsg("Pase 1: Haz la flexión en el suelo");
-      }
-      
-      // Transition to State 1 (chest to floor in plank)
+    // 1. Detect bottom of pushup (chest to floor): torso horizontal (< 40 deg) and elbows bent (<= 105 deg)
+    if (!hasReachedBottomRef.current) {
       const isPlank = currentTorsoAngle < 40;
       const isElbowBent = currentElbowAngle <= 105;
       if (isPlank && isElbowBent) {
+        hasReachedBottomRef.current = true;
+        setHasReachedBottom(true);
         playDepthBeep();
-        burpeeStateRef.current = 1;
-        setBurpeeStateState(1);
-        setFeedbackMsg("¡Pecho abajo logrado! Sube a plancha alta.");
+        setFeedbackMsg("¡Pecho abajo logrado! Ahora levántate y SALTA.");
+        setInstructionMsg("Regresa de pie y salta con manos arriba");
       }
-    } else if (currentState === 1) {
-      // Must push up to extension
-      const isPlank = currentTorsoAngle < 40;
-      const isElbowExtended = currentElbowAngle > 150;
-      if (isPlank && isElbowExtended) {
-        burpeeStateRef.current = 2;
-        setBurpeeStateState(2);
-        setFeedbackMsg("¡Plancha alta lograda! ¡Recoge pies y SALTA!");
-      }
-      // Fail safe: if they stand up without pushing up, reset
-      if (currentTorsoAngle > 65 && currentElbowAngle > 140) {
-        playWarningBeep();
-        burpeeStateRef.current = 0;
-        setBurpeeStateState(0);
-        setFeedbackMsg("Burpee incompleto. Haz la lagartija.");
-      }
-    } else if (currentState === 2) {
-      // Must jump and raise hands
+    } else {
+      // 2. Detect the jump: torso vertical (> 60 deg) and hands above shoulders (wrist.y < shoulder.y)
       const isUpright = currentTorsoAngle > 60;
       const isHandsRaised = wrist.y < shoulder.y;
       if (isUpright && isHandsRaised) {
@@ -436,33 +404,23 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
         setRepsCount(repsCountRef.current);
         playBeep();
         
-        burpeeStateRef.current = 0;
-        setBurpeeStateState(0);
+        hasReachedBottomRef.current = false;
+        setHasReachedBottom(false);
         setFeedbackMsg("¡Burpee correcto!");
-        setInstructionMsg("Regresa de pie para iniciar el siguiente");
+        setInstructionMsg("Baja al suelo para el siguiente burpee");
 
         if (repsCountRef.current >= targetRepsRef.current) {
           completeWorkout();
         }
       }
-      
-      // Fail safe: if they remain in plank too long or drift
-      // (No reset needed unless they drop back down)
-      if (currentTorsoAngle < 35 && currentElbowAngle <= 110) {
-        burpeeStateRef.current = 1;
-        setBurpeeStateState(1);
-      }
     }
 
     // Feedback joint color
-    let jointColor = "rgba(239, 68, 68, 0.85)"; // Red
-    const isInflexion = burpeeStateRef.current === 1;
-    const isSuccessState = burpeeStateRef.current === 2;
-    
-    if (isInflexion || isSuccessState) {
-      jointColor = "rgba(34, 197, 94, 0.9)"; // Green
+    let jointColor = "rgba(239, 68, 68, 0.85)"; // Red (Default)
+    if (hasReachedBottomRef.current) {
+      jointColor = "rgba(34, 197, 94, 0.9)"; // Green (Bottom achieved)
     } else if (currentTorsoAngle < 45) {
-      jointColor = "rgba(250, 204, 21, 0.85)"; // Yellow
+      jointColor = "rgba(250, 204, 21, 0.85)"; // Yellow (Descending)
     }
 
     // Draw Skeleton background
@@ -479,7 +437,7 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
       ctx.stroke();
     };
 
-    const isGlowingActive = isInflexion || isSuccessState;
+    const isGlowingActive = hasReachedBottomRef.current;
 
     if (isGlowingActive) {
       // Radiant incandescent bloom (light-saber style glow)
@@ -659,17 +617,14 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
     return `${m}:${s < 10 ? "0" : ""}${s}`;
   };
 
-  const getPhaseColor = (state: number) => {
-    if (state === 1) return "bg-yellow-400 shadow-[0_0_15px_#facc15]";
-    if (state === 2) return "bg-emerald-500 shadow-[0_0_15px_#10b981]";
+  const getPhaseColor = (hasBottom: boolean) => {
+    if (hasBottom) return "bg-emerald-500 shadow-[0_0_15px_#10b981]";
     return "bg-rose-500 shadow-[0_0_15px_#f43f5e]";
   };
 
-  const getPhaseName = (state: number) => {
-    if (state === 0) return "DE PIE (INICIO)";
-    if (state === 1) return "PECHO AL SUELO";
-    if (state === 2) return "SALTO Y PALMAS";
-    return "DETECTANDO";
+  const getPhaseName = (hasBottom: boolean) => {
+    if (hasBottom) return "¡SALTA Y DA PALMAS!";
+    return "BAJA AL SUELO";
   };
 
   // 1. INTRO VIEW
@@ -895,9 +850,9 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
             {/* Depth Indicator Bar */}
             <div className="absolute right-4 top-1/2 -translate-y-1/2 h-[70%] w-3 bg-zinc-900/60 rounded-full border border-white/5 overflow-hidden flex flex-col justify-end">
               <div 
-                className={`w-full transition-all duration-150 rounded-full ${getPhaseColor(burpeeState)}`}
+                className={`w-full transition-all duration-150 rounded-full ${getPhaseColor(hasReachedBottom)}`}
                 style={{ 
-                  height: `${burpeeState === 0 ? 30 : burpeeState === 1 ? 65 : 100}%` 
+                  height: `${hasReachedBottom ? 100 : 35}%` 
                 }}
               />
             </div>
@@ -905,7 +860,7 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
             {/* Active profile hud */}
             <div className="absolute top-4 left-4 bg-zinc-950/80 border border-white/10 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5 backdrop-blur-sm shadow-md">
               <Activity className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Fase: <strong className="text-white uppercase">{getPhaseName(burpeeState)}</strong></span>
+              <span>Fase: <strong className="text-white uppercase">{getPhaseName(hasReachedBottom)}</strong></span>
             </div>
 
             {/* Live Angle HUD */}
