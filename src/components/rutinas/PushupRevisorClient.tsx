@@ -390,7 +390,7 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
       const dy = Math.abs(shoulder.y - hip.y);
       if (dx + dy > 0.02) {
         const torsoInclination = Math.atan2(dy, dx) * (180 / Math.PI);
-        if (torsoInclination > 30) {
+        if (torsoInclination > 40) {
           isCorrectPosture = false;
           postureFeedback = "Alinea tu espalda paralela al suelo.";
         }
