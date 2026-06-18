@@ -648,7 +648,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                                     <Heart className="w-4 h-4" weight={isFav ? "fill" : "regular"} />
                                                 </button>
                                                 <Link href={`/routines/${routine._id}`} className="flex-1">
-                                                    <button className={`w-full h-10 bg-transparent text-white border text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-1 ${isRevisor ? "hover:bg-yellow-500 hover:text-black border-yellow-500/30 hover:border-yellow-500" : "hover:bg-white hover:text-black border-white/20 hover:border-white"}`}>
+                                                    <button className={`w-full h-10 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-1.5 border active:scale-95 shadow-md ${isRevisor ? "bg-yellow-500 text-black border-yellow-500 hover:bg-yellow-400 hover:border-yellow-400 shadow-yellow-500/20" : "bg-white text-black border-white hover:bg-zinc-200 hover:border-zinc-200 shadow-white/10"}`}>
                                                         <PlayCircle className="w-4 h-4" weight="duotone" />
                                                         Iniciar
                                                     </button>
@@ -777,7 +777,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                                     </button>
                                                     {/* Start button */}
                                                     <Link href={`/routines/${routine._id}`}>
-                                                        <button className={`bg-transparent text-white border px-4 py-2.5 lg:px-6 lg:py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all shadow-lg flex items-center gap-1.5 lg:gap-2 group/btn flex-shrink-0 ${isRevisor ? "hover:bg-yellow-500 hover:text-black border-yellow-500/30 hover:border-yellow-500 hover:shadow-[0_0_20px_rgba(234,179,8,0.4)]" : "hover:bg-white hover:text-black border-white/20 hover:border-white hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]"}`}>
+                                                        <button className={`px-4 py-2.5 lg:px-6 lg:py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all shadow-lg flex items-center gap-1.5 lg:gap-2 group/btn flex-shrink-0 border active:scale-95 ${isRevisor ? "bg-yellow-500 text-black border-yellow-500 hover:bg-yellow-400 hover:border-yellow-400 shadow-yellow-500/20" : "bg-white text-black border-white hover:bg-zinc-200 hover:border-zinc-200 shadow-white/10"}`}>
                                                             <PlayCircle className="w-4 h-4 lg:w-5 lg:h-5 group-hover/btn:fill-black" weight="duotone" />
                                                             Iniciar
                                                         </button>

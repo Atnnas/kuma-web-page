@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Camera, X, Volume2, VolumeX, Award, Zap, Loader2, ArrowLeft, Play, RefreshCw, Trophy, Activity, CheckCircle, AlertCircle, Flame
+  Camera, X, Volume2, VolumeX, Award, Zap, Loader2, ArrowLeft, Play, RefreshCw, Trophy, Activity, CheckCircle, AlertCircle, Flame, Plus, Minus
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { AchievementOverlay } from "../gamification/AchievementOverlay";
@@ -707,23 +707,39 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
 
           <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 grid grid-cols-3 gap-4 items-center">
             <div className="flex flex-col">
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-1">Objetivo (Reps)</span>
-              <input
-                type="number"
-                min="1"
-                max="999"
-                value={targetReps || ""}
-                onChange={(e) => {
-                  const val = parseInt(e.target.value, 10);
-                  setTargetReps(isNaN(val) ? 0 : val);
-                }}
-                onBlur={() => {
-                  if (!targetReps || targetReps < 1) {
-                    setTargetReps(10);
-                  }
-                }}
-                className="w-full bg-zinc-950/80 border border-white/10 focus:border-kuma-gold/50 rounded-xl px-2 py-1.5 text-center text-base text-white font-black focus:outline-none focus:ring-1 focus:ring-kuma-gold/30 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
+              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-1 text-center lg:text-left">Objetivo (Reps)</span>
+              <div className="flex items-center bg-zinc-950/80 border border-white/10 rounded-xl overflow-hidden p-0.5 w-full">
+                <button
+                  type="button"
+                  onClick={() => setTargetReps(prev => Math.max(1, prev - 1))}
+                  className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95 transition-all rounded-lg"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  max="999"
+                  value={targetReps || ""}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10);
+                    setTargetReps(isNaN(val) ? 0 : val);
+                  }}
+                  onBlur={() => {
+                    if (!targetReps || targetReps < 1) {
+                      setTargetReps(10);
+                    }
+                  }}
+                  className="flex-1 min-w-0 bg-transparent border-none text-center text-base text-white font-black focus:outline-none focus:ring-0 px-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setTargetReps(prev => Math.min(999, prev + 1))}
+                  className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95 transition-all rounded-lg"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
             <div>
               <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block">Ángulo</span>
