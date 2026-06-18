@@ -1586,9 +1586,56 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                                 <span className="text-lg font-black text-kuma-gold font-mono">{repsCount} / {activeBlock.reps}</span>
                                             </div>
                                             
-                                            {/* Active side indicator */}
+                                            {/* Active side/phase indicator */}
                                             <div className="absolute top-4 right-4 bg-black/60 backdrop-blur px-3 py-1.5 rounded-full border border-white/5 text-[10px] uppercase font-bold tracking-widest text-zinc-400">
-                                                Lado: <span className="text-cyan-400 font-bold">{activeSide}</span>
+                                                {isBurpeeActive ? "Fase: " : "Lado: "}
+                                                <span className="text-cyan-400 font-bold">
+                                                    {isBurpeeActive ? (hasReachedBottom ? "SALTO Y PALMADA" : "PECHO AL SUELO") : activeSide}
+                                                </span>
+                                            </div>
+
+                                            {/* Depth Indicator Bar (Cyber HUD Style) */}
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 h-[65%] w-3 bg-zinc-900/60 rounded-full border border-white/5 overflow-hidden flex flex-col justify-end">
+                                                <div 
+                                                    className={cn(
+                                                        "w-full transition-all duration-150 rounded-full",
+                                                        isSquatActive
+                                                            ? (kneeAngle <= 95 ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : kneeAngle < 135 ? "bg-yellow-400 shadow-[0_0_15px_#facc15]" : "bg-rose-500 shadow-[0_0_15px_#f43f5e]")
+                                                            : isPushupActive
+                                                            ? (elbowAngle <= 95 ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : elbowAngle < 135 ? "bg-yellow-400 shadow-[0_0_15px_#facc15]" : "bg-rose-500 shadow-[0_0_15px_#f43f5e]")
+                                                            : (hasReachedBottom ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : "bg-rose-500 shadow-[0_0_15px_#f43f5e]")
+                                                    )}
+                                                    style={{ 
+                                                        height: `${Math.max(0, Math.min(100, 
+                                                            isSquatActive
+                                                                ? ((180 - kneeAngle) / (180 - 80)) * 100
+                                                                : isPushupActive
+                                                                ? ((180 - elbowAngle) / (180 - 80)) * 100
+                                                                : (hasReachedBottom ? 100 : 35)
+                                                        ))}%` 
+                                                    }}
+                                                />
+                                                {/* Depth Threshold line (only for squats and pushups) */}
+                                                {(isSquatActive || isPushupActive) && (
+                                                    <div className="absolute bottom-[85%] left-0 right-0 h-px bg-white/40 border-t border-dashed" title="Meta paralela" />
+                                                )}
+                                            </div>
+
+                                            {/* Live Angle / Phase HUD */}
+                                            <div className="absolute bottom-4 left-4 bg-zinc-950/80 border border-white/10 p-3 rounded-xl backdrop-blur-sm shadow-md text-left z-20">
+                                                <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider block">
+                                                    {isSquatActive ? "Ángulo Rodilla" : isPushupActive ? "Ángulo Codo" : "Fase Burpee"}
+                                                </span>
+                                                <span className="text-xl font-black font-mono text-white tabular-nums flex items-baseline gap-1">
+                                                    {isSquatActive ? `${kneeAngle}°` : isPushupActive ? `${elbowAngle}°` : (hasReachedBottom ? "SALTO" : "SUELO")}
+                                                    <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                                                        {isSquatActive 
+                                                            ? (kneeAngle <= 95 ? "(PROFUNDO)" : "(ERGUIDO)") 
+                                                            : isPushupActive 
+                                                            ? (elbowAngle <= 95 ? "(PROFUNDO)" : "(EXTENDIDO)")
+                                                            : (hasReachedBottom ? "(JUMP)" : "(PECHO)")}
+                                                    </span>
+                                                </span>
                                             </div>
                                         </div>
 
@@ -1600,35 +1647,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                             <p className="text-zinc-400 text-sm font-bold">
                                                 {instructionMsg}
                                             </p>
-                                        </div>
-
-                                        {/* Angle Indicator Gauge bar */}
-                                        <div className="w-full mt-4 flex items-center gap-3">
-                                            <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest shrink-0">Ángulo</span>
-                                            <div className="flex-1 h-3 bg-zinc-950 rounded-full border border-white/5 overflow-hidden relative">
-                                                <div 
-                                                    className={cn(
-                                                        "h-full rounded-full transition-all duration-100",
-                                                        isSquatActive
-                                                            ? (kneeAngle <= 95 ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : kneeAngle < 135 ? "bg-yellow-400 shadow-[0_0_15px_#facc15]" : "bg-rose-500")
-                                                            : isPushupActive
-                                                            ? (elbowAngle <= 95 ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : elbowAngle < 135 ? "bg-yellow-400 shadow-[0_0_15px_#facc15]" : "bg-rose-500")
-                                                            : "bg-rose-500"
-                                                    )}
-                                                    style={{ 
-                                                        width: `${Math.min(100, Math.max(0, 
-                                                            isSquatActive
-                                                                ? (180 - kneeAngle) / (180 - 80) * 100
-                                                                : isPushupActive
-                                                                ? (180 - elbowAngle) / (180 - 80) * 100
-                                                                : torsoAngle // Burpee torso angle
-                                                        ))}%` 
-                                                    }}
-                                                />
-                                            </div>
-                                            <span className="text-xs font-bold font-mono text-white shrink-0">
-                                                {isSquatActive ? `${kneeAngle}°` : isPushupActive ? `${elbowAngle}°` : `${torsoAngle}°`}
-                                            </span>
                                         </div>
                                     </div>
                                 </motion.div>
