@@ -110,7 +110,7 @@ export function RutinasClientPage({ user }: RutinasClientPageProps) {
             </header>
 
             {/* Content */}
-            <section className="relative z-20 px-4 max-w-7xl mx-auto pt-12">
+            <section className="relative z-20 px-4 md:px-8 xl:px-12 w-full max-w-[95vw] 2xl:max-w-[1800px] mx-auto pt-12">
 
                 {/* Leaderboard */}
                 {user && (

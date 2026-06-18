@@ -667,24 +667,24 @@ export function RutinasTable({ data }: RutinasTableProps) {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 20 }}
-                        className="rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl overflow-hidden shadow-2xl"
+                        className="rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent shadow-2xl"
                     >
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-white/10 bg-white/5 text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-black">
-                                    <th className="p-6 cursor-pointer hover:text-white hover:bg-white/5 transition-colors" onClick={() => requestSort("title")}>
+                                    <th className="py-5 px-4 lg:px-6 cursor-pointer hover:text-white hover:bg-white/5 transition-colors" onClick={() => requestSort("title")}>
                                         <div className="flex items-center gap-2">
                                             {activeTab === "ejercicios" ? "Ejercicio IA" : "Rutina"} {getSortIcon("title")}
                                         </div>
                                     </th>
-                                    <th className="p-6 cursor-pointer hover:text-white hover:bg-white/5 transition-colors" onClick={() => requestSort("difficulty")}><div className="flex items-center gap-2">Nivel {getSortIcon("difficulty")}</div></th>
-                                    <th className="p-6 cursor-pointer hover:text-white hover:bg-white/5 transition-colors" onClick={() => requestSort("estimated_duration")}><div className="flex items-center gap-2">Tiempo {getSortIcon("estimated_duration")}</div></th>
-                                    <th className="p-6 hidden md:table-cell">Equipo</th>
-                                    <th className="p-6 hidden lg:table-cell">Ejercicios</th>
-                                    <th className="p-6 text-right">Acciones</th>
+                                    <th className="py-5 px-4 lg:px-6 cursor-pointer hover:text-white hover:bg-white/5 transition-colors" onClick={() => requestSort("difficulty")}><div className="flex items-center gap-2">Nivel {getSortIcon("difficulty")}</div></th>
+                                    <th className="py-5 px-4 lg:px-6 cursor-pointer hover:text-white hover:bg-white/5 transition-colors" onClick={() => requestSort("estimated_duration")}><div className="flex items-center gap-2">Tiempo {getSortIcon("estimated_duration")}</div></th>
+                                    <th className="py-5 px-4 lg:px-6 hidden md:table-cell">Equipo</th>
+                                    <th className="py-5 px-4 lg:px-6 hidden lg:table-cell">Ejercicios</th>
+                                    <th className="py-5 px-4 lg:px-6 text-right">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-white/15">
                                 {filteredData.map((routine, idx) => {
                                     const isFav = favorites.includes(routine._id);
                                     const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor" || routine.slug === "burpee-revisor";
@@ -696,7 +696,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                             transition={{ delay: idx * 0.04 }}
                                             className="group hover:bg-white/[0.03] transition-colors relative"
                                         >
-                                            <td className="p-6">
+                                            <td className="py-5 px-4 lg:px-6">
                                                 <div className="flex items-center gap-4">
                                                     {/* Neon difficulty bar */}
                                                     <div className={`w-1 h-12 rounded-full shadow-[0_0_10px_2px_currentColor] transition-colors duration-300
@@ -723,17 +723,17 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="p-6">{getDifficultyBadge(routine.difficulty)}</td>
-                                            <td className="p-6">
+                                            <td className="py-5 px-4 lg:px-6">{getDifficultyBadge(routine.difficulty)}</td>
+                                            <td className="py-5 px-4 lg:px-6">
                                                 <div className="flex items-center gap-2 text-zinc-400 font-bold tabular-nums">
                                                     <Timer className="w-5 h-5 text-zinc-600 group-hover:text-cyan-500 transition-colors" weight="duotone" />
                                                     {routine.estimated_duration} min
                                                 </div>
                                             </td>
-                                            <td className="p-6 hidden md:table-cell">
+                                            <td className="py-5 px-4 lg:px-6 hidden md:table-cell">
                                                 {getEquipmentBadge(routine.equipment_types)}
                                             </td>
-                                            <td className="p-6 hidden lg:table-cell max-w-xs xl:max-w-md">
+                                            <td className="py-5 px-4 lg:px-6 hidden lg:table-cell max-w-xs xl:max-w-md">
                                                 <div className="flex flex-wrap gap-1.5 max-h-16 overflow-y-auto pr-1">
                                                     {routine.blocks && routine.blocks.length > 0 ? (
                                                         routine.blocks
@@ -755,12 +755,12 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="p-6 text-right">
-                                                <div className="flex items-center justify-end gap-2">
+                                            <td className="py-5 px-4 lg:px-6 text-right">
+                                                <div className="flex items-center justify-end gap-1.5 md:gap-2">
                                                     {/* Favorite button */}
                                                     <button
                                                         onClick={() => handleToggleFavorite(routine._id)}
-                                                        className={`p-2 rounded-lg border transition-all ${isFav
+                                                        className={`p-2 rounded-lg border transition-all flex-shrink-0 ${isFav
                                                             ? "bg-red-500/20 border-red-500/30 text-red-400"
                                                             : "bg-white/5 border-white/10 text-zinc-600 hover:text-red-400 hover:border-red-500/30"
                                                             }`}
@@ -771,14 +771,14 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                                     {/* Preview button */}
                                                     <button
                                                         onClick={() => setPreviewRoutine(routine)}
-                                                        className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 text-xs font-black uppercase tracking-widest transition-all"
+                                                        className="px-3 py-2 lg:px-4 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all flex-shrink-0"
                                                     >
                                                         Vista Previa
                                                     </button>
                                                     {/* Start button */}
                                                     <Link href={`/routines/${routine._id}`}>
-                                                        <button className={`bg-transparent text-white border px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg flex items-center gap-2 group/btn ${isRevisor ? "hover:bg-yellow-500 hover:text-black border-yellow-500/30 hover:border-yellow-500 hover:shadow-[0_0_20px_rgba(234,179,8,0.4)]" : "hover:bg-white hover:text-black border-white/20 hover:border-white hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]"}`}>
-                                                            <PlayCircle className="w-5 h-5 group-hover/btn:fill-black" weight="duotone" />
+                                                        <button className={`bg-transparent text-white border px-4 py-2.5 lg:px-6 lg:py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all shadow-lg flex items-center gap-1.5 lg:gap-2 group/btn flex-shrink-0 ${isRevisor ? "hover:bg-yellow-500 hover:text-black border-yellow-500/30 hover:border-yellow-500 hover:shadow-[0_0_20px_rgba(234,179,8,0.4)]" : "hover:bg-white hover:text-black border-white/20 hover:border-white hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]"}`}>
+                                                            <PlayCircle className="w-4 h-4 lg:w-5 lg:h-5 group-hover/btn:fill-black" weight="duotone" />
                                                             Iniciar
                                                         </button>
                                                     </Link>
