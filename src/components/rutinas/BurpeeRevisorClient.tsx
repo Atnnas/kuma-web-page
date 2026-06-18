@@ -62,6 +62,21 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const poseInstanceRef = useRef<any>(null);
   const cameraInstanceRef = useRef<any>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  const getAudioContext = () => {
+    if (typeof window === "undefined") return null;
+    if (!audioCtxRef.current) {
+      const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
+      if (AudioContextClass) {
+        audioCtxRef.current = new AudioContextClass();
+      }
+    }
+    if (audioCtxRef.current && audioCtxRef.current.state === "suspended") {
+      audioCtxRef.current.resume().catch(() => {});
+    }
+    return audioCtxRef.current;
+  };
 
   // State machine refs for burpee
   const hasReachedBottomRef = useRef<boolean>(false);
@@ -78,6 +93,16 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
   useEffect(() => {
     audioEnabledRef.current = audioEnabled;
   }, [audioEnabled]);
+
+  useEffect(() => {
+    return () => {
+      if (audioCtxRef.current) {
+        try {
+          audioCtxRef.current.close();
+        } catch {}
+      }
+    };
+  }, []);
 
   // Keep track of training time
   useEffect(() => {
@@ -131,8 +156,8 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
   const playBeep = () => {
     if (!audioEnabledRef.current) return;
     try {
-      const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
-      const audioCtx = new AudioContextClass();
+      const audioCtx = getAudioContext();
+      if (!audioCtx) return;
       const osc = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
       
@@ -154,8 +179,8 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
   const playWarningBeep = () => {
     if (!audioEnabledRef.current) return;
     try {
-      const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
-      const audioCtx = new AudioContextClass();
+      const audioCtx = getAudioContext();
+      if (!audioCtx) return;
       const osc = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
       
@@ -177,8 +202,8 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
   const playDepthBeep = () => {
     if (!audioEnabledRef.current) return;
     try {
-      const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
-      const audioCtx = new AudioContextClass();
+      const audioCtx = getAudioContext();
+      if (!audioCtx) return;
       const osc = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
       
@@ -780,11 +805,20 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
             </div>
           )}
 
-          <Link href="/routines" className="block w-full">
-            <button className="w-full h-14 bg-white hover:bg-kuma-gold text-black rounded-2xl font-black text-sm uppercase tracking-widest transition-colors">
-              Volver al Dojo
+          <div className="space-y-3">
+            <button
+              onClick={startTraining}
+              className="w-full h-14 bg-white hover:bg-kuma-gold hover:text-black text-black rounded-2xl font-black text-sm uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" /> Repetir Entrenamiento ({targetReps} reps)
             </button>
-          </Link>
+
+            <Link href="/routines" className="block w-full">
+              <button className="w-full h-14 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-colors">
+                Volver al Dojo
+              </button>
+            </Link>
+          </div>
         </motion.div>
       </div>
     );
