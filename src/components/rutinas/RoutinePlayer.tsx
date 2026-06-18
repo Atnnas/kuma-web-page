@@ -1557,7 +1557,15 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                     className="flex-1 flex flex-col relative perspective-[2000px]"
                                 >
                                     <div className="flex-1 bg-zinc-900/60 backdrop-blur-xl rounded-[3rem] border border-white/10 p-6 flex flex-col items-center justify-between relative overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] lg:h-[70vh] lg:min-h-[600px] z-10">
-                                        <video ref={videoRef} className="hidden" playsInline muted />
+                                        <video
+                                            ref={videoRef}
+                                            style={{ position: "absolute", width: "1px", height: "1px", opacity: 0, pointerEvents: "none" }}
+                                            width="640"
+                                            height="480"
+                                            playsInline
+                                            muted
+                                            autoPlay
+                                        />
                                         
                                         <div className="w-full flex-1 flex items-center justify-center relative min-h-[280px]">
                                             <canvas ref={canvasRef} width={640} height={480} className="w-full h-full lg:max-h-[520px] max-h-[420px] object-cover rounded-3xl border border-white/10 bg-black shadow-2xl" />
