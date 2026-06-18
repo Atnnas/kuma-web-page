@@ -30,6 +30,7 @@ export interface IRoutineData {
     blocks: IBlock[];
     active: boolean;
     allowedUsers: string[];
+    isAiRoutine?: boolean;
 }
 
 interface RoutineEditorProps {
@@ -49,6 +50,7 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
         blocks: initialData?.blocks || [],
         active: initialData?.active ?? true,
         allowedUsers: (initialData?.allowedUsers || []).map(id => id.toString()),
+        isAiRoutine: initialData?.isAiRoutine ?? false,
     });
 
     const [allUsers, setAllUsers] = useState<{ _id: string, name: string, email: string }[]>([]);
@@ -298,6 +300,28 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                 </span>
                             </div>
                         </div>
+
+                        {/* Toggle isAiRoutine */}
+                        <div className="col-span-1 md:col-span-2 space-y-2 mt-4">
+                            <label className="flex items-center gap-4 bg-zinc-950 border border-zinc-800 rounded-xl p-4 cursor-pointer hover:border-zinc-700 transition-colors">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.isAiRoutine || false}
+                                    onChange={(e) => {
+                                        const isChecked = e.target.checked;
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            isAiRoutine: isChecked
+                                        }));
+                                    }}
+                                    className="w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-kuma-gold focus:ring-kuma-gold cursor-pointer"
+                                />
+                                <div className="flex flex-col">
+                                    <span className="text-sm text-white font-bold uppercase tracking-wider">¿Es una Rutina de Visión por Cámara (IA)?</span>
+                                    <span className="text-xs text-zinc-500 mt-1">Si se activa, el selector de ejercicios mostrará únicamente ejercicios interactivos que usan la cámara e inteligencia artificial para contar las repeticiones (Sentadillas, Push Ups, Burpees con MediaPipe).</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     {/* --- VISIBILITY & TARGETING --- */}
@@ -458,6 +482,7 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                                         onChange={(val) => updateBlock(idx, "exercise_name", val)}
                                                         placeholder="Buscar en BD..."
                                                         className="z-50"
+                                                        isAiOnly={formData.isAiRoutine}
                                                     />
                                                 </div>
                                                 <div>

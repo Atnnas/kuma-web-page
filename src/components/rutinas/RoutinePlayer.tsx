@@ -50,6 +50,7 @@ interface IRoutineData {
     estimated_duration: number;
     equipment_types: string[];
     blocks: IBlock[];
+    isAiRoutine?: boolean;
 }
 
 // --- UTILS ---
@@ -115,6 +116,31 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const [currentLogId, setCurrentLogId] = useState<string | null>(null);
     const wakeLockRef = useRef<any>(null);
 
+    // Camera / AI routine states
+    const [useCamera, setUseCamera] = useState(false);
+    const [showCameraPrompt, setShowCameraPrompt] = useState(false);
+    const [scriptsLoaded, setScriptsLoaded] = useState(false);
+    const [cameraError, setCameraError] = useState<string | null>(null);
+    const [repsCount, setRepsCount] = useState(0);
+
+    // AI Tracking feedback states
+    const [feedbackMsg, setFeedbackMsg] = useState("Alineando cuerpo...");
+    const [instructionMsg, setInstructionMsg] = useState("Ponte de perfil para iniciar");
+    const [activeSide, setActiveSide] = useState<"izquierdo" | "derecho" | "detectando">("detectando");
+    const [kneeAngle, setKneeAngle] = useState(180);
+    const [elbowAngle, setElbowAngle] = useState(180);
+    const [torsoAngle, setTorsoAngle] = useState(0);
+    const [hasReachedBottom, setHasReachedBottom] = useState(false);
+
+    // Refs for AI detection
+    const videoRef = useRef<HTMLVideoElement | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const repsCountRef = useRef(0);
+    const hasReachedDepthRef = useRef(false);
+    const isReadyToStartRef = useRef(false);
+    const wasBendingRef = useRef(false);
+    const hasReachedBottomRef = useRef(false);
+
     // Haptic Helper
     const vibrate = (pattern: number | number[] = 100) => {
         if (typeof navigator !== "undefined" && navigator.vibrate) {
@@ -173,6 +199,16 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             setExerciseTimeLeft(activeBlock.reps);
             setIsTimerRunning(false);
         }
+
+        // Reset AI reps and state machines
+        repsCountRef.current = 0;
+        setRepsCount(0);
+        hasReachedDepthRef.current = false;
+        isReadyToStartRef.current = false;
+        wasBendingRef.current = false;
+        hasReachedBottomRef.current = false;
+        setFeedbackMsg("Alineando cuerpo de perfil...");
+        setInstructionMsg("Ponte de perfil para iniciar");
 
         // Auto-skip loop markers
         if (activeBlock && (activeBlock.type === "loop_start" || activeBlock.type === "loop_end")) {
@@ -298,6 +334,570 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         window.addEventListener("beforeunload", handleBeforeUnload);
         return () => window.removeEventListener("beforeunload", handleBeforeUnload);
     }, [status]);
+
+    const speak = (text: string) => {};
+
+    const calculate2DAngle = (ptA: any, ptB: any, ptC: any) => {
+        if (!ptA || !ptB || !ptC) return 180;
+        const vecBA = { x: ptA.x - ptB.x, y: ptA.y - ptB.y };
+        const vecBC = { x: ptC.x - ptB.x, y: ptC.y - ptB.y };
+        const dot = vecBA.x * vecBC.x + vecBA.y * vecBC.y;
+        const lenA = Math.sqrt(vecBA.x * vecBA.x + vecBA.y * vecBA.y);
+        const lenC = Math.sqrt(vecBC.x * vecBC.x + vecBC.y * vecBC.y);
+        if (lenA === 0 || lenC === 0) return 180;
+        const cosTheta = Math.min(1, Math.max(-1, dot / (lenA * lenC)));
+        return Math.round(Math.acos(cosTheta) * (180.0 / Math.PI));
+    };
+
+    // Load scripts
+    const loadScripts = () => {
+        if (scriptsLoaded) return;
+        const loadScript = (src: string): Promise<void> => {
+            return new Promise((resolve, reject) => {
+                if (document.querySelector(`script[src="${src}"]`)) {
+                    resolve();
+                    return;
+                }
+                const script = document.createElement("script");
+                script.src = src;
+                script.onload = () => resolve();
+                script.onerror = () => reject();
+                document.body.appendChild(script);
+            });
+        };
+
+        Promise.all([
+            loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"),
+            loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js")
+        ])
+        .then(() => {
+            setScriptsLoaded(true);
+        })
+        .catch((err) => {
+            console.error("Error loading MediaPipe scripts:", err);
+            setCameraError("No se pudieron cargar las librerías de visión artificial.");
+        });
+    };
+
+    // Audio beeps
+    const playBeep = () => {
+        try {
+            const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
+            const audioCtx = new AudioContextClass();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+        } catch {}
+    };
+
+    const playDepthBeep = () => {
+        try {
+            const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
+            const audioCtx = new AudioContextClass();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.07, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.25);
+        } catch {}
+    };
+
+    const playWarningBeep = () => {
+        try {
+            const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
+            const audioCtx = new AudioContextClass();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        } catch {}
+    };
+
+    // Auto-prompt on mount if IA routine
+    useEffect(() => {
+        if (routine.isAiRoutine) {
+            setShowCameraPrompt(true);
+        }
+    }, [routine.isAiRoutine]);
+
+    // Setup MediaPipe camera and pose on active AI set
+    useEffect(() => {
+        if (!useCamera || !scriptsLoaded || status !== "active" || isResting) return;
+        if (!activeBlock) return;
+
+        const isAiExercise = ["Sentadillas con MediaPipe", "Push Ups con MediaPipe", "Burpees con MediaPipe"].includes(activeBlock.exercise_name);
+        if (!isAiExercise) return;
+
+        let active = true;
+        let cameraInstance: any = null;
+        let poseInstance: any = null;
+
+        const initCamera = async () => {
+            if (!videoRef.current || !canvasRef.current) return;
+
+            const PoseClass = (window as any).Pose;
+            const CameraClass = (window as any).Camera;
+            if (!PoseClass || !CameraClass) return;
+
+            poseInstance = new PoseClass({
+                locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+            });
+
+            poseInstance.setOptions({
+                modelComplexity: 1,
+                smoothLandmarks: true,
+                minDetectionConfidence: 0.65,
+                minTrackingConfidence: 0.5
+            });
+
+            poseInstance.onResults((results: any) => {
+                if (active) {
+                    handlePoseResults(results);
+                }
+            });
+
+            cameraInstance = new CameraClass(videoRef.current, {
+                onFrame: async () => {
+                    if (videoRef.current && poseInstance && active) {
+                        try {
+                            await poseInstance.send({ image: videoRef.current });
+                        } catch (e) {
+                            console.error("Frame processing error:", e);
+                        }
+                    }
+                },
+                width: 640,
+                height: 480
+            });
+
+            try {
+                await cameraInstance.start();
+                setCameraError(null);
+            } catch (err) {
+                console.error("Failed to start camera:", err);
+                setCameraError("No se pudo iniciar la cámara. Verifica los permisos en tu navegador.");
+            }
+        };
+
+        // Small timeout to let elements mount properly
+        const t = setTimeout(() => {
+            initCamera();
+        }, 300);
+
+        return () => {
+            active = false;
+            clearTimeout(t);
+            if (cameraInstance) {
+                try { cameraInstance.stop(); } catch {}
+            }
+            if (poseInstance) {
+                try { poseInstance.close(); } catch {}
+            }
+        };
+    }, [useCamera, scriptsLoaded, status, isResting, currentBlockIndex, currentSet]);
+
+    const handlePoseResults = (results: any) => {
+        if (!canvasRef.current || !canvasRef.current.getContext) return;
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        const width = canvas.width;
+        const height = canvas.height;
+
+        ctx.save();
+        ctx.clearRect(0, 0, width, height);
+
+        if (results.image) {
+            ctx.translate(width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(results.image, 0, 0, width, height);
+            ctx.restore();
+        }
+
+        const landmarks = results.poseLandmarks;
+        if (!landmarks || landmarks.length < 33) {
+            setFeedbackMsg("Alineando cuerpo de perfil...");
+            return;
+        }
+
+        let isLeftProfile = true;
+        const isSquat = activeBlock?.exercise_name === "Sentadillas con MediaPipe";
+        const isPushup = activeBlock?.exercise_name === "Push Ups con MediaPipe";
+        const isBurpee = activeBlock?.exercise_name === "Burpees con MediaPipe";
+
+        if (isSquat) {
+            const leftVisibility = (landmarks[23]?.visibility || 0) + (landmarks[25]?.visibility || 0) + (landmarks[27]?.visibility || 0);
+            const rightVisibility = (landmarks[24]?.visibility || 0) + (landmarks[26]?.visibility || 0) + (landmarks[28]?.visibility || 0);
+            isLeftProfile = leftVisibility > rightVisibility;
+        } else {
+            const leftVisibility = (landmarks[11]?.visibility || 0) + (landmarks[13]?.visibility || 0) + (landmarks[15]?.visibility || 0);
+            const rightVisibility = (landmarks[12]?.visibility || 0) + (landmarks[14]?.visibility || 0) + (landmarks[16]?.visibility || 0);
+            isLeftProfile = leftVisibility > rightVisibility;
+        }
+        
+        setActiveSide(isLeftProfile ? "izquierdo" : "derecho");
+
+        const shoulderIdx = isLeftProfile ? 11 : 12;
+        const elbowIdx = isLeftProfile ? 13 : 14;
+        const wristIdx = isLeftProfile ? 15 : 16;
+        const hipIdx = isLeftProfile ? 23 : 24;
+        const kneeIdx = isLeftProfile ? 25 : 26;
+        const ankleIdx = isLeftProfile ? 27 : 28;
+
+        const shoulder = landmarks[shoulderIdx];
+        const elbow = landmarks[elbowIdx];
+        const wrist = landmarks[wristIdx];
+        const hip = landmarks[hipIdx];
+        const knee = landmarks[kneeIdx];
+        const ankle = landmarks[ankleIdx];
+
+        const minVisibility = 0.45;
+
+        const drawSkeletonSkeleton = (c: CanvasRenderingContext2D, lms: any[], w: number, h: number, color: string) => {
+            c.save();
+            c.strokeStyle = color;
+            c.lineWidth = 2;
+            c.lineCap = "round";
+            const drawLine = (idxA: number, idxB: number) => {
+                const ptA = lms[idxA];
+                const ptB = lms[idxB];
+                if (ptA && ptB) {
+                    c.beginPath();
+                    c.moveTo((1 - ptA.x) * w, ptA.y * h);
+                    c.lineTo((1 - ptB.x) * w, ptB.y * h);
+                    c.stroke();
+                }
+            };
+            drawLine(11, 12); drawLine(11, 23); drawLine(12, 24); drawLine(23, 24);
+            drawLine(11, 13); drawLine(13, 15); drawLine(12, 14); drawLine(14, 16);
+            drawLine(23, 25); drawLine(25, 27); drawLine(24, 26); drawLine(26, 28);
+            c.restore();
+        };
+
+        const drawBone = (ptA: any, ptB: any, color: string, widthVal: number, blurVal = 0, shadowCol = "") => {
+            ctx.save();
+            ctx.lineCap = "round";
+            if (blurVal > 0) {
+                ctx.shadowBlur = blurVal;
+                ctx.shadowColor = shadowCol;
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = widthVal;
+            ctx.beginPath();
+            ctx.moveTo((1 - ptA.x) * width, ptA.y * height);
+            ctx.lineTo((1 - ptB.x) * width, ptB.y * height);
+            ctx.stroke();
+            ctx.restore();
+        };
+
+        const drawJoint = (pt: any, color: string, radius = 8) => {
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.arc((1 - pt.x) * width, pt.y * height, radius, 0, 2 * Math.PI);
+            ctx.fill();
+        };
+
+        if (isSquat) {
+            if (!hip || !knee || !ankle || hip.visibility < minVisibility || knee.visibility < minVisibility || ankle.visibility < minVisibility) {
+                setFeedbackMsg("Aléjate un poco más para ver tus piernas");
+                drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.2)");
+                return;
+            }
+
+            const angle = calculate2DAngle(hip, knee, ankle);
+            setKneeAngle(angle);
+
+            if (angle > 165) {
+                if (hasReachedDepthRef.current) {
+                    repsCountRef.current += 1;
+                    setRepsCount(repsCountRef.current);
+                    playBeep();
+                    hasReachedDepthRef.current = false;
+                    wasBendingRef.current = false;
+                    setFeedbackMsg("¡Sentadilla correcta!");
+                    
+                    if (repsCountRef.current >= (activeBlock?.reps || 10)) {
+                        finishSet();
+                        return;
+                    }
+                } else if (wasBendingRef.current) {
+                    playWarningBeep();
+                    setFeedbackMsg("¡Sentadilla incompleta!");
+                    wasBendingRef.current = false;
+                }
+                isReadyToStartRef.current = true;
+                setInstructionMsg("Flexiona tus piernas para la sentadilla");
+            } else if (angle <= 95) {
+                if (isReadyToStartRef.current) {
+                    if (!hasReachedDepthRef.current) {
+                        playDepthBeep();
+                    }
+                    hasReachedDepthRef.current = true;
+                    wasBendingRef.current = true;
+                    setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
+                    setInstructionMsg("Regresa a la posición inicial erguido");
+                }
+            } else if (angle < 135) {
+                if (isReadyToStartRef.current) {
+                    wasBendingRef.current = true;
+                    if (!hasReachedDepthRef.current) {
+                        setFeedbackMsg("¡Baja un poco más!");
+                        setInstructionMsg("Flexiona un poco más profundo...");
+                    }
+                }
+            }
+
+            let jointColor = "rgba(239, 68, 68, 0.85)";
+            if (angle <= 95 || hasReachedDepthRef.current) {
+                jointColor = "rgba(34, 197, 94, 0.9)";
+            } else if (angle < 135) {
+                jointColor = "rgba(250, 204, 21, 0.85)";
+            }
+
+            drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.15)");
+            
+            const isCorrectDepth = angle <= 95 || hasReachedDepthRef.current;
+            if (isCorrectDepth) {
+                drawBone(hip, knee, "rgba(74, 222, 128, 0.25)", 18, 30, "rgba(34, 197, 94, 0.9)");
+                drawBone(knee, ankle, "rgba(74, 222, 128, 0.25)", 18, 30, "rgba(34, 197, 94, 0.9)");
+                drawBone(hip, knee, "rgba(34, 197, 94, 0.85)", 9, 15, "rgba(34, 197, 94, 0.9)");
+                drawBone(knee, ankle, "rgba(34, 197, 94, 0.85)", 9, 15, "rgba(34, 197, 94, 0.9)");
+                drawBone(hip, knee, "#ffffff", 3, 6, "#ffffff");
+                drawBone(knee, ankle, "#ffffff", 3, 6, "#ffffff");
+            } else {
+                drawBone(hip, knee, jointColor, 6, 12, jointColor);
+                drawBone(knee, ankle, jointColor, 6, 12, jointColor);
+            }
+
+            drawJoint(hip, "rgba(255,255,255,0.9)", 5);
+            drawJoint(ankle, "rgba(255,255,255,0.9)", 5);
+            drawJoint(knee, jointColor, 10);
+            drawJoint(knee, "#ffffff", 5);
+
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = "black";
+            ctx.font = "bold 15px monospace";
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(`${angle}°`, (1 - knee.x) * width + 15, knee.y * height + 5);
+
+        } else if (isPushup) {
+            if (!shoulder || !elbow || !wrist || !hip || shoulder.visibility < minVisibility || elbow.visibility < minVisibility || wrist.visibility < minVisibility || hip.visibility < minVisibility) {
+                setFeedbackMsg("Aléjate un poco más para captar tus brazos y cadera");
+                drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.2)");
+                return;
+            }
+
+            const angle = calculate2DAngle(shoulder, elbow, wrist);
+            setElbowAngle(angle);
+
+            let isCorrectPosture = true;
+            let postureFeedback = "";
+            const dx = Math.abs(shoulder.x - hip.x);
+            const dy = Math.abs(shoulder.y - hip.y);
+            if (dx + dy > 0.02) {
+                const torsoInclination = Math.atan2(dy, dx) * (180 / Math.PI);
+                if (torsoInclination > 40) {
+                    isCorrectPosture = false;
+                    postureFeedback = "Alinea tu espalda paralela al suelo.";
+                }
+            }
+            if (wrist.y < shoulder.y) {
+                isCorrectPosture = false;
+                postureFeedback = "Posición incorrecta. Manos sobre los hombros.";
+            }
+
+            if (!isCorrectPosture) {
+                setFeedbackMsg(postureFeedback || "Colócate en posición de plancha.");
+                setInstructionMsg("Tu espalda debe estar paralela al suelo");
+                hasReachedDepthRef.current = false;
+                wasBendingRef.current = false;
+                isReadyToStartRef.current = false;
+            } else {
+                if (angle > 160) {
+                    if (hasReachedDepthRef.current) {
+                        repsCountRef.current += 1;
+                        setRepsCount(repsCountRef.current);
+                        playBeep();
+                        hasReachedDepthRef.current = false;
+                        wasBendingRef.current = false;
+                        setFeedbackMsg("¡Push up correcto!");
+
+                        if (repsCountRef.current >= (activeBlock?.reps || 10)) {
+                            finishSet();
+                            return;
+                        }
+                    } else if (wasBendingRef.current) {
+                        playWarningBeep();
+                        setFeedbackMsg("¡Flexión incompleta!");
+                        wasBendingRef.current = false;
+                    }
+                    isReadyToStartRef.current = true;
+                    setInstructionMsg("Flexiona los brazos para descender");
+                } else if (angle <= 95) {
+                    if (isReadyToStartRef.current) {
+                        if (!hasReachedDepthRef.current) {
+                            playDepthBeep();
+                        }
+                        hasReachedDepthRef.current = true;
+                        wasBendingRef.current = true;
+                        setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
+                        setInstructionMsg("Estira tus brazos por completo");
+                    }
+                } else if (angle < 135) {
+                    if (isReadyToStartRef.current) {
+                        wasBendingRef.current = true;
+                        if (!hasReachedDepthRef.current) {
+                            setFeedbackMsg("¡Baja un poco más!");
+                            setInstructionMsg("Aproxima el pecho al suelo...");
+                        }
+                    }
+                }
+            }
+
+            let jointColor = "rgba(239, 68, 68, 0.85)";
+            if (angle <= 95 || hasReachedDepthRef.current) {
+                jointColor = "rgba(34, 197, 94, 0.9)";
+            } else if (angle < 135) {
+                jointColor = "rgba(250, 204, 21, 0.85)";
+            }
+
+            drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.15)");
+            
+            const isCorrectDepth = angle <= 95 || hasReachedDepthRef.current;
+            if (isCorrectDepth && isCorrectPosture) {
+                drawBone(shoulder, elbow, "rgba(74, 222, 128, 0.25)", 18, 30, "rgba(34, 197, 94, 0.9)");
+                drawBone(elbow, wrist, "rgba(74, 222, 128, 0.25)", 18, 30, "rgba(34, 197, 94, 0.9)");
+                drawBone(shoulder, elbow, "rgba(34, 197, 94, 0.85)", 9, 15, "rgba(34, 197, 94, 0.9)");
+                drawBone(elbow, wrist, "rgba(34, 197, 94, 0.85)", 9, 15, "rgba(34, 197, 94, 0.9)");
+                drawBone(shoulder, elbow, "#ffffff", 3, 6, "#ffffff");
+                drawBone(elbow, wrist, "#ffffff", 3, 6, "#ffffff");
+            } else {
+                drawBone(shoulder, elbow, jointColor, 6, 12, jointColor);
+                drawBone(elbow, wrist, jointColor, 6, 12, jointColor);
+            }
+
+            drawJoint(shoulder, "rgba(255,255,255,0.9)", 5);
+            drawJoint(wrist, "rgba(255,255,255,0.9)", 5);
+            drawJoint(elbow, jointColor, 10);
+            drawJoint(elbow, "#ffffff", 5);
+
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = "black";
+            ctx.font = "bold 15px monospace";
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(`${angle}°`, (1 - elbow.x) * width + 15, elbow.y * height + 5);
+
+        } else if (isBurpee) {
+            if (!shoulder || !elbow || !wrist || !hip || !knee || !ankle || 
+                shoulder.visibility < minVisibility || elbow.visibility < minVisibility || wrist.visibility < minVisibility || 
+                hip.visibility < minVisibility || knee.visibility < minVisibility || ankle.visibility < minVisibility) {
+                setFeedbackMsg("Aléjate más para captar tu cuerpo completo");
+                drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.2)");
+                return;
+            }
+
+            const currentElbowAngle = calculate2DAngle(shoulder, elbow, wrist);
+            setElbowAngle(currentElbowAngle);
+
+            const dx = Math.abs(shoulder.x - hip.x);
+            const dy = Math.abs(shoulder.y - hip.y);
+            const currentTorsoAngle = Math.round(Math.atan2(dy, dx) * (180 / Math.PI));
+            setTorsoAngle(currentTorsoAngle);
+
+            if (!hasReachedBottomRef.current) {
+                const isPlank = currentTorsoAngle < 40;
+                const isElbowBent = currentElbowAngle <= 105;
+                if (isPlank && isElbowBent) {
+                    hasReachedBottomRef.current = true;
+                    setHasReachedBottom(true);
+                    playDepthBeep();
+                    setFeedbackMsg("¡Pecho abajo! Levántate y salta.");
+                    setInstructionMsg("Regresa de pie y salta estirando los brazos");
+                } else {
+                    setFeedbackMsg("Baja al suelo en posición de flexión");
+                    setInstructionMsg("Pecho al suelo...");
+                }
+            } else {
+                const isUpright = currentTorsoAngle > 60;
+                const isHandsRaised = wrist.y < shoulder.y;
+                if (isUpright && isHandsRaised) {
+                    repsCountRef.current += 1;
+                    setRepsCount(repsCountRef.current);
+                    playBeep();
+                    hasReachedBottomRef.current = false;
+                    setHasReachedBottom(false);
+                    setFeedbackMsg("¡Burpee correcto!");
+                    setInstructionMsg("Baja al suelo para el siguiente burpee");
+
+                    if (repsCountRef.current >= (activeBlock?.reps || 10)) {
+                        finishSet();
+                        return;
+                    }
+                }
+            }
+
+            let jointColor = "rgba(239, 68, 68, 0.85)";
+            if (hasReachedBottomRef.current) {
+                jointColor = "rgba(34, 197, 94, 0.9)";
+            } else if (currentTorsoAngle < 45) {
+                jointColor = "rgba(250, 204, 21, 0.85)";
+            }
+
+            drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.15)");
+
+            if (hasReachedBottomRef.current) {
+                drawBone(shoulder, elbow, "rgba(74, 222, 128, 0.25)", 18, 30, "rgba(34, 197, 94, 0.9)");
+                drawBone(elbow, wrist, "rgba(74, 222, 128, 0.25)", 18, 30, "rgba(34, 197, 94, 0.9)");
+                drawBone(shoulder, hip, "rgba(74, 222, 128, 0.25)", 18, 30, "rgba(34, 197, 94, 0.9)");
+                drawBone(hip, knee, "rgba(74, 222, 128, 0.25)", 18, 30, "rgba(34, 197, 94, 0.9)");
+                drawBone(knee, ankle, "rgba(74, 222, 128, 0.25)", 18, 30, "rgba(34, 197, 94, 0.9)");
+
+                drawBone(shoulder, elbow, "rgba(34, 197, 94, 0.85)", 9, 15, "rgba(34, 197, 94, 0.9)");
+                drawBone(elbow, wrist, "rgba(34, 197, 94, 0.85)", 9, 15, "rgba(34, 197, 94, 0.9)");
+                drawBone(shoulder, hip, "rgba(34, 197, 94, 0.85)", 9, 15, "rgba(34, 197, 94, 0.9)");
+                drawBone(hip, knee, "rgba(34, 197, 94, 0.85)", 9, 15, "rgba(34, 197, 94, 0.9)");
+                drawBone(knee, ankle, "rgba(34, 197, 94, 0.85)", 9, 15, "rgba(34, 197, 94, 0.9)");
+
+                drawBone(shoulder, elbow, "#ffffff", 3, 6, "#ffffff");
+                drawBone(elbow, wrist, "#ffffff", 3, 6, "#ffffff");
+                drawBone(shoulder, hip, "#ffffff", 3, 6, "#ffffff");
+                drawBone(hip, knee, "#ffffff", 3, 6, "#ffffff");
+                drawBone(knee, ankle, "#ffffff", 3, 6, "#ffffff");
+            } else {
+                drawBone(shoulder, elbow, jointColor, 6, 12, jointColor);
+                drawBone(elbow, wrist, jointColor, 6, 12, jointColor);
+                drawBone(shoulder, hip, jointColor, 6, 12, jointColor);
+                drawBone(hip, knee, jointColor, 6, 12, jointColor);
+                drawBone(knee, ankle, jointColor, 6, 12, jointColor);
+            }
+
+            drawJoint(shoulder, "rgba(255,255,255,0.9)", 5);
+            drawJoint(wrist, "rgba(255,255,255,0.9)", 5);
+            drawJoint(hip, "rgba(255,255,255,0.9)", 5);
+            drawJoint(ankle, "rgba(255,255,255,0.9)", 5);
+            drawJoint(elbow, jointColor, 8);
+            drawJoint(knee, jointColor, 8);
+        }
+    };
 
     // --- ACTIONS ---
 
@@ -926,19 +1526,102 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 <div className="flex-1 flex flex-col p-6 lg:p-0 lg:col-span-8 lg:h-full justify-center">
                     <AnimatePresence mode="wait">
                         {!isResting ? (
-                            <motion.div
-                                key="active-stage"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 1.05 }}
-                                // Tap Anywhere logic (Recommendation #3)
-                                onClick={() => {
-                                    if (activeBlock.measure_type !== "time" || exerciseTimeLeft === 0) {
-                                        finishSet();
-                                    }
-                                }}
-                                className="flex-1 flex flex-col relative perspective-[2000px] cursor-pointer"
-                            >
+                            useCamera && activeBlock && ["Sentadillas con MediaPipe", "Push Ups con MediaPipe", "Burpees con MediaPipe"].includes(activeBlock.exercise_name) ? (
+                                <motion.div
+                                    key="active-stage-camera"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 1.05 }}
+                                    className="flex-1 flex flex-col relative perspective-[2000px]"
+                                >
+                                    <div className="flex-1 bg-zinc-900/60 backdrop-blur-xl rounded-[3rem] border border-white/10 p-6 flex flex-col items-center justify-between relative overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] lg:h-[70vh] lg:min-h-[600px] z-10">
+                                        <video ref={videoRef} className="hidden" playsInline muted />
+                                        
+                                        <div className="w-full flex-1 flex items-center justify-center relative min-h-[280px]">
+                                            <canvas ref={canvasRef} width={640} height={480} className="w-full h-full max-h-[420px] object-cover rounded-3xl border border-white/10 bg-black shadow-2xl" />
+                                            
+                                            {cameraError ? (
+                                                <div className="absolute inset-0 bg-zinc-950 flex flex-col items-center justify-center p-6 text-center rounded-3xl border border-red-500/20 z-50">
+                                                    <WarningCircle className="w-12 h-12 text-red-500 mb-3" weight="bold" />
+                                                    <span className="text-sm font-bold text-white uppercase tracking-wider">Error de Cámara</span>
+                                                    <p className="text-zinc-500 text-xs mt-1 max-w-xs">{cameraError}</p>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setCameraError(null);
+                                                            loadScripts();
+                                                        }}
+                                                        className="mt-4 px-4 py-2 bg-zinc-900 border border-white/10 text-white rounded-xl text-xs font-bold hover:bg-zinc-800"
+                                                    >
+                                                        Reintentar
+                                                    </button>
+                                                </div>
+                                            ) : null}
+
+                                            {/* Live Reps / Gauge Overlay */}
+                                            <div className="absolute top-4 left-4 bg-black/60 backdrop-blur px-4 py-2 rounded-2xl border border-white/5 flex items-center gap-2">
+                                                <span className="text-xs font-bold text-zinc-400">Reps:</span>
+                                                <span className="text-lg font-black text-kuma-gold font-mono">{repsCount} / {activeBlock.reps}</span>
+                                            </div>
+                                            
+                                            {/* Active side indicator */}
+                                            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur px-3 py-1.5 rounded-full border border-white/5 text-[10px] uppercase font-bold tracking-widest text-zinc-400">
+                                                Lado: <span className="text-cyan-400 font-bold">{activeSide}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Live Messages & Instructions */}
+                                        <div className="w-full text-center space-y-2 mt-4 z-10">
+                                            <div className="bg-black/30 backdrop-blur px-4 py-1.5 rounded-full border border-white/5 inline-block text-xs font-bold tracking-wider text-kuma-gold uppercase animate-pulse">
+                                                {feedbackMsg}
+                                            </div>
+                                            <p className="text-zinc-400 text-sm font-bold">
+                                                {instructionMsg}
+                                            </p>
+                                        </div>
+
+                                        {/* Angle Indicator Gauge bar */}
+                                        <div className="w-full mt-4 flex items-center gap-3">
+                                            <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest shrink-0">Ángulo</span>
+                                            <div className="flex-1 h-3 bg-zinc-950 rounded-full border border-white/5 overflow-hidden relative">
+                                                <div 
+                                                    className={cn(
+                                                        "h-full rounded-full transition-all duration-100",
+                                                        activeBlock.exercise_name === "Sentadillas con MediaPipe"
+                                                            ? (kneeAngle <= 95 ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : kneeAngle < 135 ? "bg-yellow-400 shadow-[0_0_15px_#facc15]" : "bg-rose-500")
+                                                            : (elbowAngle <= 95 ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : elbowAngle < 135 ? "bg-yellow-400 shadow-[0_0_15px_#facc15]" : "bg-rose-500")
+                                                    )}
+                                                    style={{ 
+                                                        width: `${Math.min(100, Math.max(0, 
+                                                            activeBlock.exercise_name === "Sentadillas con MediaPipe"
+                                                                ? (180 - kneeAngle) / (180 - 80) * 100
+                                                                : activeBlock.exercise_name === "Push Ups con MediaPipe"
+                                                                ? (180 - elbowAngle) / (180 - 80) * 100
+                                                                : torsoAngle // Burpee torso angle
+                                                        ))}%` 
+                                                    }}
+                                                />
+                                            </div>
+                                            <span className="text-xs font-bold font-mono text-white shrink-0">
+                                                {activeBlock.exercise_name === "Sentadillas con MediaPipe" ? `${kneeAngle}°` : activeBlock.exercise_name === "Push Ups con MediaPipe" ? `${elbowAngle}°` : `${torsoAngle}°`}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="active-stage"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 1.05 }}
+                                    // Tap Anywhere logic (Recommendation #3)
+                                    onClick={() => {
+                                        if (activeBlock.measure_type !== "time" || exerciseTimeLeft === 0) {
+                                            finishSet();
+                                        }
+                                    }}
+                                    className="flex-1 flex flex-col relative perspective-[2000px] cursor-pointer"
+                                >
                                 {/* 3D WRAPPER FOR FLOATING EFFECT */}
                                 <motion.div
                                     animate={impact ? {
@@ -1074,7 +1757,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                     </div>
                                 </motion.div>
                             </motion.div>
-                        ) : (
+                        ) ) : (
                             <motion.div
                                 key="rest-stage"
                                 initial={{ opacity: 0 }}
@@ -1268,6 +1951,60 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                     </AnimatePresence>
                 </div>
             </div>
+            
+            {/* Modal de confirmación para uso de cámara */}
+            <AnimatePresence>
+                {showCameraPrompt && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[150] flex items-center justify-center bg-black/80 backdrop-blur-md p-6"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            className="bg-zinc-950 border border-kuma-gold/30 p-8 rounded-3xl max-w-md w-full text-center space-y-6 shadow-[0_0_50px_rgba(234,179,8,0.25)]"
+                        >
+                            <div className="w-16 h-16 mx-auto bg-kuma-gold/10 border border-kuma-gold/30 rounded-2xl flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#eab308" viewBox="0 0 256 256">
+                                    <path d="M152,128a24,24,0,1,1-24-24A24,24,0,0,1,152,128Zm80-24H208a8,8,0,0,0,0,16h24a8,8,0,0,1,8,8V200a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V128a8,8,0,0,1,8-8h24a8,8,0,0,0,0-16H32a24,24,0,0,0-24,24V200a24,24,0,0,0,24,24H224a24,24,0,0,0,24-24V128A24,24,0,0,0,232,104Zm-104,88a64,64,0,1,0-64-64A64.07,64.07,0,0,0,128,192Zm0-112a48,48,0,1,1-48,48A48.05,48.05,0,0,1,128,80ZM72,64A8,8,0,0,1,80,56h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,64Z"></path>
+                                </svg>
+                            </div>
+                            <div className="space-y-2">
+                                <h3 className="text-2xl font-serif font-black text-white uppercase tracking-wider">¿Activar Cámara IA?</h3>
+                                <p className="text-zinc-400 text-sm leading-relaxed">
+                                    Esta rutina tiene soporte para visión artificial. Si activas la cámara, la IA evaluará tu técnica y contará tus repeticiones automáticamente en tiempo real.
+                                </p>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setUseCamera(true);
+                                        setShowCameraPrompt(false);
+                                        loadScripts();
+                                    }}
+                                    className="w-full py-4 rounded-2xl bg-gradient-to-b from-kuma-gold to-amber-500 text-black font-black uppercase tracking-wider border-b-4 border-amber-700 shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all text-sm font-bold animate-pulse"
+                                >
+                                    Sí, activar cámara
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setUseCamera(false);
+                                        setShowCameraPrompt(false);
+                                    }}
+                                    className="w-full py-4 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 font-bold uppercase tracking-wider text-xs border border-white/5 transition-all"
+                                >
+                                    No, entrenar manual
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div >
     );
 }

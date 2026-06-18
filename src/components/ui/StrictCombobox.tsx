@@ -18,9 +18,10 @@ interface StrictComboboxProps {
     onSelectFull?: (option: Option) => void;
     placeholder?: string;
     className?: string;
+    isAiOnly?: boolean;
 }
 
-export function StrictCombobox({ value, onChange, onSelectFull, placeholder = "Seleccionar ejercicio...", className }: StrictComboboxProps) {
+export function StrictCombobox({ value, onChange, onSelectFull, placeholder = "Seleccionar ejercicio...", className, isAiOnly }: StrictComboboxProps) {
     const [open, setOpen] = React.useState(false);
     const [search, setSearch] = React.useState("");
     const [options, setOptions] = React.useState<Option[]>([]);
@@ -30,6 +31,22 @@ export function StrictCombobox({ value, onChange, onSelectFull, placeholder = "S
 
     // Initial load + search debounce
     React.useEffect(() => {
+        if (isAiOnly) {
+            const aiOptions = [
+                { value: "Sentadillas con MediaPipe", label: "Sentadillas con MediaPipe", description: "Intermedio", category: "Visión IA" },
+                { value: "Push Ups con MediaPipe", label: "Push Ups con MediaPipe", description: "Intermedio", category: "Visión IA" },
+                { value: "Burpees con MediaPipe", label: "Burpees con MediaPipe", description: "Avanzado", category: "Visión IA" }
+            ];
+            // Filter by search text if any
+            if (search) {
+                setOptions(aiOptions.filter(opt => opt.label.toLowerCase().includes(search.toLowerCase())));
+            } else {
+                setOptions(aiOptions);
+            }
+            setLoading(false);
+            return;
+        }
+
         const fetchOptions = async () => {
             setLoading(true);
             try {
@@ -55,7 +72,7 @@ export function StrictCombobox({ value, onChange, onSelectFull, placeholder = "S
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [search, open]);
+    }, [search, open, isAiOnly]);
 
     // Close on click outside
     React.useEffect(() => {

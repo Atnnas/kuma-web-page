@@ -22,6 +22,7 @@ export interface IRoutine extends Document {
     active: boolean;
     allowedUsers: mongoose.Types.ObjectId[];
     thumbnail?: string;
+    isAiRoutine?: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -90,6 +91,10 @@ const RoutineSchema = new Schema<IRoutine>(
         thumbnail: {
             type: String,
             required: false
+        },
+        isAiRoutine: {
+            type: Boolean,
+            default: false
         }
     },
     {
