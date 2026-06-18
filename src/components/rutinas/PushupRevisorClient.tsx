@@ -28,6 +28,12 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
 
   // Statuses: 'intro' | 'loading' | 'active' | 'completed'
   const [status, setStatus] = useState<"intro" | "loading" | "active" | "completed">("intro");
+  const [mode, setMode] = useState<"estricto" | "regular">("estricto");
+  const modeRef = useRef<"estricto" | "regular">("estricto");
+
+  useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
@@ -387,15 +393,18 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
     const wrist = landmarks[wristIdx];
     const hip = landmarks[hipIdx];
 
-    // Check visibility (including hip to verify plank position)
+    // Check visibility (including hip to verify plank position if strict mode)
     const minVisibility = 0.45;
+    const isStrict = modeRef.current === "estricto";
+    const isHipRequired = isStrict;
+
     if (
       (shoulder?.visibility || 0) < minVisibility || 
       (elbow?.visibility || 0) < minVisibility || 
       (wrist?.visibility || 0) < minVisibility ||
-      (hip?.visibility || 0) < minVisibility
+      (isHipRequired && (hip?.visibility || 0) < minVisibility)
     ) {
-      setFeedbackMsg("Aléjate un poco más para captar tus brazos y cadera");
+      setFeedbackMsg(isStrict ? "Aléjate un poco más para captar tus brazos y cadera" : "Alinea tu brazo y muñeca con la cámara");
       drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.2)");
       return;
     }
@@ -404,27 +413,27 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
     const angle = calculate2DAngle(shoulder, elbow, wrist);
     setElbowAngle(angle);
 
-    // Validate horizontal plank posture:
-    // 1. Torso (Shoulder-to-Hip) must be nearly parallel to ground (inclination <= 30 degrees)
-    // 2. Hands (wrists) must be below shoulders (wrist.y >= shoulder.y)
+    // Validate horizontal plank posture (only in strict mode)
     let isCorrectPosture = true;
     let postureFeedback = "";
 
-    if (shoulder && hip) {
-      const dx = Math.abs(shoulder.x - hip.x);
-      const dy = Math.abs(shoulder.y - hip.y);
-      if (dx + dy > 0.02) {
-        const torsoInclination = Math.atan2(dy, dx) * (180 / Math.PI);
-        if (torsoInclination > 40) {
-          isCorrectPosture = false;
-          postureFeedback = "Alinea tu espalda paralela al suelo.";
+    if (isStrict) {
+      if (shoulder && hip) {
+        const dx = Math.abs(shoulder.x - hip.x);
+        const dy = Math.abs(shoulder.y - hip.y);
+        if (dx + dy > 0.02) {
+          const torsoInclination = Math.atan2(dy, dx) * (180 / Math.PI);
+          if (torsoInclination > 40) {
+            isCorrectPosture = false;
+            postureFeedback = "Alinea tu espalda paralela al suelo.";
+          }
         }
       }
-    }
 
-    if (wrist && shoulder && wrist.y < shoulder.y) {
-      isCorrectPosture = false;
-      postureFeedback = "Posición incorrecta. Manos sobre los hombros.";
+      if (wrist && shoulder && wrist.y < shoulder.y) {
+        isCorrectPosture = false;
+        postureFeedback = "Posición incorrecta. Manos sobre los hombros.";
+      }
     }
 
     if (!isCorrectPosture) {
@@ -435,7 +444,10 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
       isReadyToStartRef.current = false;
     } else {
       // Push Up state machine
-      if (angle > 160) {
+      const depthThreshold = isStrict ? 95 : 110;
+      const extensionThreshold = isStrict ? 160 : 150;
+
+      if (angle > extensionThreshold) {
         if (hasReachedDepthRef.current) {
           // Success push up completed!
           repsCountRef.current += 1;
@@ -460,7 +472,7 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
         }
         isReadyToStartRef.current = true;
         setInstructionMsg("Flexiona los brazos para descender");
-      } else if (angle <= 95) {
+      } else if (angle <= depthThreshold) {
         if (isReadyToStartRef.current) {
           if (!hasReachedDepthRef.current) {
             playDepthBeep();
@@ -470,7 +482,7 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
           setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
           setInstructionMsg("Estira tus brazos por completo");
         }
-      } else if (angle < 135) {
+      } else if (angle < (depthThreshold + 40)) {
         if (isReadyToStartRef.current) {
           wasBendingRef.current = true;
           if (!hasReachedDepthRef.current) {
@@ -667,8 +679,9 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
   };
 
   const getAngleColor = (angle: number) => {
-    if (angle <= 95) return "bg-emerald-500 shadow-[0_0_15px_#10b981]";
-    if (angle < 135) return "bg-yellow-400 shadow-[0_0_15px_#facc15]";
+    const targetFlex = mode === "estricto" ? 95 : 110;
+    if (angle <= targetFlex) return "bg-emerald-500 shadow-[0_0_15px_#10b981]";
+    if (angle < (targetFlex + 40)) return "bg-yellow-400 shadow-[0_0_15px_#facc15]";
     return "bg-rose-500 shadow-[0_0_15px_#f43f5e]";
   };
 
@@ -705,49 +718,72 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
             </p>
           </div>
 
-          <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 grid grid-cols-3 gap-4 items-center">
-            <div className="flex flex-col">
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-1 text-center lg:text-left">Objetivo (Reps)</span>
-              <div className="flex items-center bg-zinc-950/80 border border-white/10 rounded-xl overflow-hidden p-0.5 w-full">
-                <button
-                  type="button"
-                  onClick={() => setTargetReps(prev => Math.max(1, prev - 1))}
-                  className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95 transition-all rounded-lg"
-                >
-                  <Minus className="w-3.5 h-3.5" />
-                </button>
-                <input
-                  type="number"
-                  min="1"
-                  max="999"
-                  value={targetReps || ""}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value, 10);
-                    setTargetReps(isNaN(val) ? 0 : val);
-                  }}
-                  onBlur={() => {
-                    if (!targetReps || targetReps < 1) {
-                      setTargetReps(10);
-                    }
-                  }}
-                  className="flex-1 min-w-0 bg-transparent border-none text-center text-base text-white font-black focus:outline-none focus:ring-0 px-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => setTargetReps(prev => Math.min(999, prev + 1))}
-                  className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95 transition-all rounded-lg"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
+          <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 space-y-4">
+            <div className="grid grid-cols-3 gap-4 items-center">
+              <div className="flex flex-col">
+                <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-1 text-center lg:text-left">Objetivo (Reps)</span>
+                <div className="flex items-center bg-zinc-950/80 border border-white/10 rounded-xl overflow-hidden p-0.5 w-full">
+                  <button
+                    type="button"
+                    onClick={() => setTargetReps(prev => Math.max(1, prev - 1))}
+                    className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95 transition-all rounded-lg"
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+                  <input
+                    type="number"
+                    min="1"
+                    max="999"
+                    value={targetReps || ""}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      setTargetReps(isNaN(val) ? 0 : val);
+                    }}
+                    onBlur={() => {
+                      if (!targetReps || targetReps < 1) {
+                        setTargetReps(10);
+                      }
+                    }}
+                    className="flex-1 min-w-0 bg-transparent border-none text-center text-base text-white font-black focus:outline-none focus:ring-0 px-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setTargetReps(prev => Math.min(999, prev + 1))}
+                    className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95 transition-all rounded-lg"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+              <div>
+                <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block">Ángulo flexión</span>
+                <span className="text-sm text-white font-black">{mode === "estricto" ? "<= 95° (Profundo)" : "<= 110° (Permisivo)"}</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block">Dificultad</span>
+                <span className="text-sm text-kuma-gold font-black">{mode === "estricto" ? routine.difficulty : "Flexible"}</span>
               </div>
             </div>
-            <div>
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block">Ángulo</span>
-              <span className="text-lg text-white font-black">&lt;= 95° (90 Grados)</span>
-            </div>
-            <div>
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block">Dificultad</span>
-              <span className="text-lg text-kuma-gold font-black">{routine.difficulty}</span>
+
+            {/* Mode Selector */}
+            <div className="pt-3 border-t border-white/5">
+              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-2">Modo de Revisión</span>
+              <div className="grid grid-cols-2 gap-2 bg-zinc-950/60 p-1 rounded-xl border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setMode("estricto")}
+                  className={`py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${mode === "estricto" ? "bg-kuma-gold text-black shadow-md shadow-kuma-gold/15" : "text-zinc-500 hover:text-white"}`}
+                >
+                  Estricto (Alineación + Profundo)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("regular")}
+                  className={`py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${mode === "regular" ? "bg-white text-black shadow-md shadow-white/15" : "text-zinc-500 hover:text-white"}`}
+                >
+                  Regular (Permisivo / Solo Brazos)
+                </button>
+              </div>
             </div>
           </div>
 
@@ -925,13 +961,19 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
                   height: `${Math.max(0, Math.min(100, ((180 - elbowAngle) / (180 - 80)) * 100))}%` 
                 }}
               />
-              <div className="absolute bottom-[85%] left-0 right-0 h-px bg-white/40 border-t border-dashed" title="Meta paralela" />
+              <div 
+                className="absolute left-0 right-0 h-px bg-white/40 border-t border-dashed" 
+                style={{ bottom: `${((180 - (mode === "estricto" ? 95 : 110)) / (180 - 80)) * 100}%` }}
+                title={mode === "estricto" ? "Meta paralela estricta" : "Meta regular"} 
+              />
             </div>
 
             {/* Active profile hud */}
             <div className="absolute top-4 left-4 bg-zinc-950/80 border border-white/10 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5 backdrop-blur-sm shadow-md">
               <Activity className="w-3.5 h-3.5 text-cyan-400" />
               <span>Perfil: <strong className="text-white uppercase">{activeSide}</strong></span>
+              <span className="text-zinc-600">|</span>
+              <span>Modo: <strong className={mode === "estricto" ? "text-red-400 animate-pulse" : "text-cyan-400"}>{mode === "estricto" ? "ESTRICTO" : "REGULAR"}</strong></span>
             </div>
 
             {/* Live Angle HUD */}
