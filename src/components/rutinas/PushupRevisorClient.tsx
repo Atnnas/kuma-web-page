@@ -1025,6 +1025,27 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
               </p>
             </div>
 
+            {/* Live Mode Toggle during Workout */}
+            <div className="bg-zinc-950/60 p-2 border border-white/5 rounded-2xl space-y-1.5">
+              <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider block text-center">Modo de Revisión Activo</span>
+              <div className="grid grid-cols-2 gap-1 bg-black/60 p-0.5 rounded-xl border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setMode("estricto")}
+                  className={`py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${mode === "estricto" ? "bg-kuma-gold text-black shadow-md shadow-kuma-gold/10" : "text-zinc-500 hover:text-white"}`}
+                >
+                  Estricto
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("regular")}
+                  className={`py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${mode === "regular" ? "bg-white text-black shadow-md shadow-white/10" : "text-zinc-500 hover:text-white"}`}
+                >
+                  Regular
+                </button>
+              </div>
+            </div>
+
             {/* Time Elapsed */}
             <div className="flex items-center justify-between px-2 pt-2 border-t border-white/5">
               <div className="flex items-center gap-1.5 text-zinc-500">
