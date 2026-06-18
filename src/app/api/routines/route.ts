@@ -59,6 +59,33 @@ async function ensurePushupRevisorRoutine() {
     }
 }
 
+async function ensureBurpeeRevisorRoutine() {
+    const existing = await Routine.findOne({ slug: "burpee-revisor" });
+    if (!existing) {
+        await Routine.create({
+            title: "Revisor de Burpees",
+            slug: "burpee-revisor",
+            description: "Revisa tu técnica de burpees completos de perfil usando visión artificial. Pasa secuencialmente de pie, flexión con el pecho al suelo, plancha alta y finaliza con un salto estirando las manos.",
+            difficulty: "Avanzado",
+            estimated_duration: 7,
+            equipment_types: ["peso_corporal"],
+            blocks: [
+                {
+                    type: "exercise",
+                    exercise_name: "Burpees con MediaPipe",
+                    sets: 1,
+                    reps: 10,
+                    rest_seconds: 0,
+                    measure_type: "reps",
+                    notes: "Colócate de perfil / medio lado frente a la cámara. Realiza el ejercicio completo."
+                }
+            ],
+            active: true,
+            allowedUsers: []
+        });
+    }
+}
+
 // GET /api/routines
 // Public (or protected if needed) list of active routines
 // GET /api/routines
@@ -68,6 +95,7 @@ export async function GET(req: NextRequest) {
     try {
         await ensureSquatRevisorRoutine();
         await ensurePushupRevisorRoutine();
+        await ensureBurpeeRevisorRoutine();
 
         const session = await auth();
         if (!session) {
@@ -82,8 +110,8 @@ export async function GET(req: NextRequest) {
         const isSuperAdmin = session.user?.role === "super_admin" || session.user?.role === "admin";
 
         if (isAdmin && isSuperAdmin) {
-            // Admin Panel Mode: see absolute everything (active + inactive) EXCEPT squat-revisor and pushup-revisor
-            query = { slug: { $nin: ["squat-revisor", "pushup-revisor"] } };
+            // Admin Panel Mode: see absolute everything (active + inactive) EXCEPT squat-revisor, pushup-revisor, and burpee-revisor
+            query = { slug: { $nin: ["squat-revisor", "pushup-revisor", "burpee-revisor"] } };
         } else if (isSuperAdmin) {
             // Admin Listing Mode: see all active routines regardless of targeting
             query = { active: true };

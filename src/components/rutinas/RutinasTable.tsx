@@ -505,7 +505,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                     >
                         {filteredData.map((routine, idx) => {
                             const isFav = favorites.includes(routine._id);
-                            const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor";
+                            const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor" || routine.slug === "burpee-revisor";
                             return (
                                 <motion.div
                                     key={`${routine._id}-${idx}`}
@@ -607,7 +607,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                             <tbody className="divide-y divide-white/5">
                                 {filteredData.map((routine, idx) => {
                                     const isFav = favorites.includes(routine._id);
-                                    const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor";
+                                    const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor" || routine.slug === "burpee-revisor";
                                     return (
                                         <motion.tr
                                             key={`${routine._id}-${idx}`}

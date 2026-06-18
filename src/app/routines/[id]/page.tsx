@@ -1,6 +1,7 @@
 import { RoutinePlayer } from "@/components/rutinas/RoutinePlayer";
 import { SquatRevisorClient } from "@/components/rutinas/SquatRevisorClient";
 import { PushupRevisorClient } from "@/components/rutinas/PushupRevisorClient";
+import { BurpeeRevisorClient } from "@/components/rutinas/BurpeeRevisorClient";
 import connectDB from "@/lib/db";
 import Routine from "@/models/Routine";
 import User from "@/models/User";
@@ -18,45 +19,27 @@ export default async function RoutinePlayerPage({ params }: { params: Promise<{ 
 
     // Redirigir si no está activo (Respaldo del middleware)
     // @ts-ignore
-    if (!user || user.isActive === false) {
-        redirect("/?error=inactive");
+    if (!user) {
+        redirect("/login");
     }
 
-    await connectDB();
-
-    // Validate params
-    if (!params) return notFound();
-
     const { id } = await params;
-    let routine;
+    let routine = null;
 
     try {
+        await connectDB();
         const doc = await Routine.findById(id).lean();
-        if (!doc) notFound();
-
-        // --- Targeted Routines Permission Check ---
-        if (user.role !== "super_admin") {
-            const dbUser = await User.findOne({ email: user.email });
-            if (!dbUser) notFound();
-
-            const isPublic = !doc.allowedUsers || doc.allowedUsers.length === 0;
-            const isAssignedToUser = doc.allowedUsers?.some((uid: any) => uid.toString() === dbUser._id.toString());
-
-            if (!isPublic && !isAssignedToUser) {
-                // Return 404 so it "doesn't exist" for unauthorized users
-                notFound();
-            }
+        if (!doc) {
+            notFound();
         }
-
-        // Serialize ObjectId and Dates
+        
         routine = {
             ...doc,
             _id: doc._id.toString(),
-            createdAt: doc.createdAt?.toISOString(),
-            updatedAt: doc.updatedAt?.toISOString(),
+            // @ts-ignore
             blocks: doc.blocks?.map((block: any) => ({
                 ...block,
-                _id: block._id?.toString(),
+                _id: block._id?.toString() || ""
             })) || [],
         };
     } catch (error) {
@@ -75,6 +58,8 @@ export default async function RoutinePlayerPage({ params }: { params: Promise<{ 
                 <SquatRevisorClient user={user} routine={routine as any} />
             ) : routine.slug === "pushup-revisor" ? (
                 <PushupRevisorClient user={user} routine={routine as any} />
+            ) : routine.slug === "burpee-revisor" ? (
+                <BurpeeRevisorClient user={user} routine={routine as any} />
             ) : (
                 <RoutinePlayer routine={routine as any} />
             )}
