@@ -18,6 +18,7 @@ export interface IBlock {
     measure_type: "reps" | "time";
     notes?: string;
     loop_count?: number;
+    isAiEnabled?: boolean;
 }
 
 export interface IRoutineData {
@@ -526,6 +527,26 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
                                                         className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-sm text-white focus:border-kuma-gold/50 focus:outline-none"
                                                     />
                                                 </div>
+                                                {(() => {
+                                                    const nameLower = (block.exercise_name || "").toLowerCase();
+                                                    const isCompatible = nameLower.includes("sentadilla") || nameLower.includes("squat") ||
+                                                                        nameLower.includes("push") || nameLower.includes("pechada") || nameLower.includes("lagartija") ||
+                                                                        nameLower.includes("burpee");
+                                                    if (!isCompatible) return null;
+                                                    return (
+                                                        <div className="md:col-span-3 flex items-center h-full pt-5">
+                                                            <label className="flex items-center gap-2 cursor-pointer select-none">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={block.isAiEnabled || false}
+                                                                    onChange={e => updateBlock(idx, "isAiEnabled", e.target.checked)}
+                                                                    className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-kuma-gold focus:ring-kuma-gold cursor-pointer"
+                                                                />
+                                                                <span className="text-xs text-kuma-gold font-bold uppercase tracking-wider">Activar Revisión por Cámara (IA)</span>
+                                                            </label>
+                                                        </div>
+                                                    );
+                                                })()}
                                             </div>
                                         </>
                                     )}

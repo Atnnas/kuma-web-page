@@ -40,6 +40,7 @@ interface IBlock {
     notes?: string;
     media_url?: string;
     loop_count?: number;
+    isAiEnabled?: boolean;
 }
 
 interface IRoutineData {
@@ -176,6 +177,25 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const activeBlock = routine.blocks[currentBlockIndex];
     const totalBlocks = routine.blocks.length;
+
+    const getIsAiExercise = (block: IBlock | undefined) => {
+        if (!block) return false;
+        const nameLower = (block.exercise_name || "").toLowerCase();
+        return !!(
+            block.isAiEnabled ||
+            ["Sentadillas con MediaPipe", "Push Ups con MediaPipe", "Burpees con MediaPipe"].includes(block.exercise_name) ||
+            (routine.isAiRoutine && (
+                nameLower.includes("sentadilla") || nameLower.includes("squat") ||
+                nameLower.includes("push") || nameLower.includes("pechada") || nameLower.includes("lagartija") ||
+                nameLower.includes("burpee")
+            ))
+        );
+    };
+    const isAiExerciseActive = getIsAiExercise(activeBlock);
+    const activeBlockNameLower = (activeBlock?.exercise_name || "").toLowerCase();
+    const isSquatActive = activeBlock?.exercise_name === "Sentadillas con MediaPipe" || activeBlockNameLower.includes("sentadilla") || activeBlockNameLower.includes("squat");
+    const isPushupActive = activeBlock?.exercise_name === "Push Ups con MediaPipe" || activeBlockNameLower.includes("push") || activeBlockNameLower.includes("pechada") || activeBlockNameLower.includes("lagartija");
+    const isBurpeeActive = activeBlock?.exercise_name === "Burpees con MediaPipe" || activeBlockNameLower.includes("burpee");
 
     // --- TIMER LOGIC ---
     useEffect(() => {
@@ -431,19 +451,20 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         } catch {}
     };
 
-    // Auto-prompt on mount if IA routine
+    // Auto-prompt on mount if IA routine or any block has AI enabled
     useEffect(() => {
-        if (routine.isAiRoutine) {
+        const hasAiBlock = routine.blocks?.some(b => b.isAiEnabled);
+        if (routine.isAiRoutine || hasAiBlock) {
             setShowCameraPrompt(true);
         }
-    }, [routine.isAiRoutine]);
+    }, [routine.isAiRoutine, routine.blocks]);
 
     // Setup MediaPipe camera and pose on active AI set
     useEffect(() => {
         if (!useCamera || !scriptsLoaded || status !== "active" || isResting) return;
         if (!activeBlock) return;
 
-        const isAiExercise = ["Sentadillas con MediaPipe", "Push Ups con MediaPipe", "Burpees con MediaPipe"].includes(activeBlock.exercise_name);
+        const isAiExercise = isAiExerciseActive;
         if (!isAiExercise) return;
 
         let active = true;
@@ -540,9 +561,10 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         }
 
         let isLeftProfile = true;
-        const isSquat = activeBlock?.exercise_name === "Sentadillas con MediaPipe";
-        const isPushup = activeBlock?.exercise_name === "Push Ups con MediaPipe";
-        const isBurpee = activeBlock?.exercise_name === "Burpees con MediaPipe";
+        const nameLower = (activeBlock?.exercise_name || "").toLowerCase();
+        const isSquat = activeBlock?.exercise_name === "Sentadillas con MediaPipe" || nameLower.includes("sentadilla") || nameLower.includes("squat");
+        const isPushup = activeBlock?.exercise_name === "Push Ups con MediaPipe" || nameLower.includes("push") || nameLower.includes("pechada") || nameLower.includes("lagartija");
+        const isBurpee = activeBlock?.exercise_name === "Burpees con MediaPipe" || nameLower.includes("burpee");
 
         if (isSquat) {
             const leftVisibility = (landmarks[23]?.visibility || 0) + (landmarks[25]?.visibility || 0) + (landmarks[27]?.visibility || 0);
@@ -1526,7 +1548,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 <div className="flex-1 flex flex-col p-6 lg:p-0 lg:col-span-8 lg:h-full justify-center">
                     <AnimatePresence mode="wait">
                         {!isResting ? (
-                            useCamera && activeBlock && ["Sentadillas con MediaPipe", "Push Ups con MediaPipe", "Burpees con MediaPipe"].includes(activeBlock.exercise_name) ? (
+                            useCamera && activeBlock && isAiExerciseActive ? (
                                 <motion.div
                                     key="active-stage-camera"
                                     initial={{ opacity: 0, scale: 0.95 }}
@@ -1587,15 +1609,17 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                                 <div 
                                                     className={cn(
                                                         "h-full rounded-full transition-all duration-100",
-                                                        activeBlock.exercise_name === "Sentadillas con MediaPipe"
+                                                        isSquatActive
                                                             ? (kneeAngle <= 95 ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : kneeAngle < 135 ? "bg-yellow-400 shadow-[0_0_15px_#facc15]" : "bg-rose-500")
-                                                            : (elbowAngle <= 95 ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : elbowAngle < 135 ? "bg-yellow-400 shadow-[0_0_15px_#facc15]" : "bg-rose-500")
+                                                            : isPushupActive
+                                                            ? (elbowAngle <= 95 ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : elbowAngle < 135 ? "bg-yellow-400 shadow-[0_0_15px_#facc15]" : "bg-rose-500")
+                                                            : "bg-rose-500"
                                                     )}
                                                     style={{ 
                                                         width: `${Math.min(100, Math.max(0, 
-                                                            activeBlock.exercise_name === "Sentadillas con MediaPipe"
+                                                            isSquatActive
                                                                 ? (180 - kneeAngle) / (180 - 80) * 100
-                                                                : activeBlock.exercise_name === "Push Ups con MediaPipe"
+                                                                : isPushupActive
                                                                 ? (180 - elbowAngle) / (180 - 80) * 100
                                                                 : torsoAngle // Burpee torso angle
                                                         ))}%` 
@@ -1603,7 +1627,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                                 />
                                             </div>
                                             <span className="text-xs font-bold font-mono text-white shrink-0">
-                                                {activeBlock.exercise_name === "Sentadillas con MediaPipe" ? `${kneeAngle}°` : activeBlock.exercise_name === "Push Ups con MediaPipe" ? `${elbowAngle}°` : `${torsoAngle}°`}
+                                                {isSquatActive ? `${kneeAngle}°` : isPushupActive ? `${elbowAngle}°` : `${torsoAngle}°`}
                                             </span>
                                         </div>
                                     </div>

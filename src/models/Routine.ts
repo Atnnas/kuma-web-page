@@ -9,6 +9,7 @@ export interface IBlock {
     measure_type: "reps" | "time";
     notes?: string;
     loop_count?: number; // Para loop_start
+    isAiEnabled?: boolean;
 }
 
 export interface IRoutine extends Document {
@@ -43,7 +44,8 @@ const BlockSchema = new Schema<IBlock>({
         default: "reps"
     },
     notes: { type: String, required: false },
-    loop_count: { type: Number, required: false }
+    loop_count: { type: Number, required: false },
+    isAiEnabled: { type: Boolean, required: false }
 });
 
 const RoutineSchema = new Schema<IRoutine>(
