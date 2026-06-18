@@ -1560,7 +1560,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                         <video ref={videoRef} className="hidden" playsInline muted />
                                         
                                         <div className="w-full flex-1 flex items-center justify-center relative min-h-[280px]">
-                                            <canvas ref={canvasRef} width={640} height={480} className="w-full h-full max-h-[420px] object-cover rounded-3xl border border-white/10 bg-black shadow-2xl" />
+                                            <canvas ref={canvasRef} width={640} height={480} className="w-full h-full lg:max-h-[520px] max-h-[420px] object-cover rounded-3xl border border-white/10 bg-black shadow-2xl" />
                                             
                                             {cameraError ? (
                                                 <div className="absolute inset-0 bg-zinc-950 flex flex-col items-center justify-center p-6 text-center rounded-3xl border border-red-500/20 z-50">
