@@ -201,7 +201,16 @@ export function RutinasTable({ data }: RutinasTableProps) {
         key: null,
         direction: "asc",
     });
-    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+    const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+    const [activeTab, setActiveTab] = useState<"ejercicios" | "rutinas">("ejercicios");
+
+    const individualExercises = useMemo(() => {
+        return data.filter(r => r.slug === "squat-revisor" || r.slug === "pushup-revisor" || r.slug === "burpee-revisor");
+    }, [data]);
+
+    const generalRoutines = useMemo(() => {
+        return data.filter(r => r.slug !== "squat-revisor" && r.slug !== "pushup-revisor" && r.slug !== "burpee-revisor");
+    }, [data]);
 
     // Responsive check to force grid on mobile
     useEffect(() => {
@@ -282,7 +291,8 @@ export function RutinasTable({ data }: RutinasTableProps) {
 
     // ----- FILTER + SORT -----
     const filteredData = useMemo(() => {
-        let processed = [...data];
+        const sourceData = activeTab === "ejercicios" ? individualExercises : generalRoutines;
+        let processed = [...sourceData];
 
         // Favorites only
         if (showFavoritesOnly) {
@@ -333,7 +343,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
         });
 
         return processed;
-    }, [data, searchQuery, sortConfig, difficultyFilter, equipmentFilter, durationFilter, showFavoritesOnly, favorites]);
+    }, [activeTab, individualExercises, generalRoutines, searchQuery, sortConfig, difficultyFilter, equipmentFilter, durationFilter, showFavoritesOnly, favorites]);
 
     const activeFiltersCount = [
         difficultyFilter !== "all",
@@ -384,6 +394,71 @@ export function RutinasTable({ data }: RutinasTableProps) {
 
     return (
         <div className="w-full space-y-8">
+            {/* --- DIVISION TABS --- */}
+            <div className="border-b border-white/5 pb-4">
+                <div className="flex flex-wrap gap-4 md:gap-8">
+                    <button
+                        onClick={() => {
+                            setActiveTab("ejercicios");
+                            clearFilters();
+                        }}
+                        className="relative group py-2"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className={`p-2.5 rounded-xl border transition-all duration-300 ${
+                                activeTab === "ejercicios"
+                                    ? "bg-yellow-500/15 border-yellow-500/40 text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.15)]"
+                                    : "bg-white/5 border-white/10 text-zinc-500 group-hover:text-zinc-300"
+                            }`}>
+                                <Lightning className="w-5 h-5" weight="fill" />
+                            </div>
+                            <span className={`text-base md:text-lg font-black uppercase tracking-widest italic transition-colors ${
+                                activeTab === "ejercicios" ? "text-yellow-400" : "text-zinc-400 group-hover:text-zinc-200"
+                            }`}>
+                                Revisión de Ejercicios IA
+                            </span>
+                        </div>
+                        {activeTab === "ejercicios" && (
+                            <motion.div
+                                layoutId="activeTabGlow"
+                                className="absolute -bottom-4 left-0 right-0 h-0.5 bg-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.8)]"
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            />
+                        )}
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            setActiveTab("rutinas");
+                            clearFilters();
+                        }}
+                        className="relative group py-2"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className={`p-2.5 rounded-xl border transition-all duration-300 ${
+                                activeTab === "rutinas"
+                                    ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+                                    : "bg-white/5 border-white/10 text-zinc-500 group-hover:text-zinc-300"
+                            }`}>
+                                <Barbell className="w-5 h-5" weight="fill" />
+                            </div>
+                            <span className={`text-base md:text-lg font-black uppercase tracking-widest italic transition-colors ${
+                                activeTab === "rutinas" ? "text-cyan-400" : "text-zinc-400 group-hover:text-zinc-200"
+                            }`}>
+                                Rutinas de Entrenamiento
+                            </span>
+                        </div>
+                        {activeTab === "rutinas" && (
+                            <motion.div
+                                layoutId="activeTabGlow"
+                                className="absolute -bottom-4 left-0 right-0 h-0.5 bg-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.8)]"
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            />
+                        )}
+                    </button>
+                </div>
+            </div>
+
             {/* --- CONTROLS HEADER --- */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 {/* Search Bar */}
@@ -393,7 +468,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                         <MagnifyingGlass className="absolute left-4 w-5 h-5 text-zinc-500 group-hover:text-cyan-400 transition-colors" />
                         <input
                             type="text"
-                            placeholder="BUSCAR ENTRENAMIENTO..."
+                            placeholder={activeTab === "ejercicios" ? "BUSCAR EJERCICIO IA..." : "BUSCAR RUTINA..."}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full bg-transparent border-none py-4 pl-12 pr-4 text-white font-bold placeholder:text-zinc-700 focus:ring-0 uppercase tracking-wider"
@@ -432,7 +507,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                     </div>
 
                     <div className="px-4 py-2 bg-zinc-900 rounded-lg border border-white/5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest hidden md:block">
-                        {filteredData.length} RUTINAS
+                        {filteredData.length} {activeTab === "ejercicios" ? "EJERCICIOS" : "RUTINAS"}
                     </div>
                 </div>
             </div>
@@ -597,10 +672,15 @@ export function RutinasTable({ data }: RutinasTableProps) {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-white/10 bg-white/5 text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-black">
-                                    <th className="p-6 cursor-pointer hover:text-white hover:bg-white/5 transition-colors" onClick={() => requestSort("title")}><div className="flex items-center gap-2">Rutina {getSortIcon("title")}</div></th>
+                                    <th className="p-6 cursor-pointer hover:text-white hover:bg-white/5 transition-colors" onClick={() => requestSort("title")}>
+                                        <div className="flex items-center gap-2">
+                                            {activeTab === "ejercicios" ? "Ejercicio IA" : "Rutina"} {getSortIcon("title")}
+                                        </div>
+                                    </th>
                                     <th className="p-6 cursor-pointer hover:text-white hover:bg-white/5 transition-colors" onClick={() => requestSort("difficulty")}><div className="flex items-center gap-2">Nivel {getSortIcon("difficulty")}</div></th>
                                     <th className="p-6 cursor-pointer hover:text-white hover:bg-white/5 transition-colors" onClick={() => requestSort("estimated_duration")}><div className="flex items-center gap-2">Tiempo {getSortIcon("estimated_duration")}</div></th>
                                     <th className="p-6 hidden md:table-cell">Equipo</th>
+                                    <th className="p-6 hidden lg:table-cell">Ejercicios</th>
                                     <th className="p-6 text-right">Acciones</th>
                                 </tr>
                             </thead>
@@ -652,6 +732,28 @@ export function RutinasTable({ data }: RutinasTableProps) {
                                             </td>
                                             <td className="p-6 hidden md:table-cell">
                                                 {getEquipmentBadge(routine.equipment_types)}
+                                            </td>
+                                            <td className="p-6 hidden lg:table-cell max-w-xs xl:max-w-md">
+                                                <div className="flex flex-wrap gap-1.5 max-h-16 overflow-y-auto pr-1">
+                                                    {routine.blocks && routine.blocks.length > 0 ? (
+                                                        routine.blocks
+                                                            .filter((block: any) => block.type !== "loop_start" && block.type !== "loop_end")
+                                                            .map((block: any, idx: number) => (
+                                                                <span
+                                                                    key={idx}
+                                                                    className={`px-2 py-0.5 rounded text-[9px] font-black tracking-wider uppercase border transition-all ${
+                                                                        isRevisor
+                                                                            ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-400"
+                                                                            : "bg-white/5 border-white/10 text-zinc-400"
+                                                                    }`}
+                                                                >
+                                                                    {block.exercise_name || block.type || "Ejercicio"}
+                                                                </span>
+                                                            ))
+                                                    ) : (
+                                                        <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">-</span>
+                                                    )}
+                                                </div>
                                             </td>
                                             <td className="p-6 text-right">
                                                 <div className="flex items-center justify-end gap-2">
