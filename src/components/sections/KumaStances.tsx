@@ -28,6 +28,7 @@ export default function KumaStances() {
   const [currentPreset, setCurrentPreset] = useState<PosePreset | null>(null);
   const [tolerance, setTolerance] = useState<number>(15);
   const [analysisMode, setAnalysisMode] = useState<"superior" | "inferior" | "completo">("completo");
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
   
   // Local capture stance (to freeze user's own posture on screen)
   const [localCapture, setLocalCapture] = useState<{
@@ -61,11 +62,13 @@ export default function KumaStances() {
   const analysisModeRef = useRef(analysisMode);
   const hasTriggeredAlignRef = useRef(false);
   const audioEnabledRef = useRef(audioEnabled);
+  const facingModeRef = useRef(facingMode);
 
   useEffect(() => { toleranceRef.current = tolerance; }, [tolerance]);
   useEffect(() => { currentPresetRef.current = currentPreset; }, [currentPreset]);
   useEffect(() => { analysisModeRef.current = analysisMode; }, [analysisMode]);
   useEffect(() => { audioEnabledRef.current = audioEnabled; }, [audioEnabled]);
+  useEffect(() => { facingModeRef.current = facingMode; }, [facingMode]);
 
   // Load presets list from database on mount
   useEffect(() => {
@@ -213,7 +216,19 @@ export default function KumaStances() {
   };
 
   // Rendering Helpers
-  const drawGhostSkeleton = (ctx: CanvasRenderingContext2D, lms: PoseLandmark[], w: number, h: number, color: string, thickness: number) => {
+  const getCanvasX = (x: number, w: number, isMirrored: boolean) => {
+    return isMirrored ? (1 - x) * w : x * w;
+  };
+
+  const drawGhostSkeleton = (
+    ctx: CanvasRenderingContext2D,
+    lms: PoseLandmark[],
+    w: number,
+    h: number,
+    color: string,
+    thickness: number,
+    isMirrored: boolean
+  ) => {
     ctx.save();
     ctx.strokeStyle = color;
     ctx.lineWidth = thickness;
@@ -226,8 +241,8 @@ export default function KumaStances() {
       const ptB = lms[idxB];
       if (ptA && ptB) {
         ctx.beginPath();
-        ctx.moveTo((1 - ptA.x) * w, ptA.y * h);
-        ctx.lineTo((1 - ptB.x) * w, ptB.y * h);
+        ctx.moveTo(getCanvasX(ptA.x, w, isMirrored), ptA.y * h);
+        ctx.lineTo(getCanvasX(ptB.x, w, isMirrored), ptB.y * h);
         ctx.stroke();
       }
     };
@@ -255,7 +270,7 @@ export default function KumaStances() {
       if (pt) {
         ctx.fillStyle = "rgba(6, 182, 212, 0.5)";
         ctx.beginPath();
-        ctx.arc((1 - pt.x) * w, pt.y * h, 4, 0, 2 * Math.PI);
+        ctx.arc(getCanvasX(pt.x, w, isMirrored), pt.y * h, 4, 0, 2 * Math.PI);
         ctx.fill();
       }
     };
@@ -272,7 +287,8 @@ export default function KumaStances() {
     rightJointColor: string,
     mode: "superior" | "inferior" | "completo",
     leftKneeColor?: string,
-    rightKneeColor?: string
+    rightKneeColor?: string,
+    isMirrored = true
   ) => {
     ctx.save();
     ctx.lineCap = "round";
@@ -287,8 +303,8 @@ export default function KumaStances() {
         ctx.shadowBlur = 10;
         ctx.shadowColor = color;
         ctx.beginPath();
-        ctx.moveTo((1 - ptA.x) * w, ptA.y * h);
-        ctx.lineTo((1 - ptB.x) * w, ptB.y * h);
+        ctx.moveTo(getCanvasX(ptA.x, w, isMirrored), ptA.y * h);
+        ctx.lineTo(getCanvasX(ptB.x, w, isMirrored), ptB.y * h);
         ctx.stroke();
         ctx.restore();
       }
@@ -304,18 +320,18 @@ export default function KumaStances() {
         if (outerRing) {
           ctx.fillStyle = color;
           ctx.beginPath();
-          ctx.arc((1 - pt.x) * w, pt.y * h, radius + 4, 0, 2 * Math.PI);
+          ctx.arc(getCanvasX(pt.x, w, isMirrored), pt.y * h, radius + 4, 0, 2 * Math.PI);
           ctx.fill();
 
           ctx.fillStyle = "#ffffff";
           ctx.shadowBlur = 0;
           ctx.beginPath();
-          ctx.arc((1 - pt.x) * w, pt.y * h, radius, 0, 2 * Math.PI);
+          ctx.arc(getCanvasX(pt.x, w, isMirrored), pt.y * h, radius, 0, 2 * Math.PI);
           ctx.fill();
         } else {
           ctx.fillStyle = color;
           ctx.beginPath();
-          ctx.arc((1 - pt.x) * w, pt.y * h, radius, 0, 2 * Math.PI);
+          ctx.arc(getCanvasX(pt.x, w, isMirrored), pt.y * h, radius, 0, 2 * Math.PI);
           ctx.fill();
         }
         ctx.restore();
@@ -378,7 +394,7 @@ export default function KumaStances() {
     ctx.restore();
   };
 
-  const drawCenterOfGravity = (ctx: CanvasRenderingContext2D, lms: PoseLandmark[], w: number, h: number) => {
+  const drawCenterOfGravity = (ctx: CanvasRenderingContext2D, lms: PoseLandmark[], w: number, h: number, isMirrored: boolean) => {
     const ankleL = lms[27];
     const ankleR = lms[28];
     const shoulderL = lms[11];
@@ -391,11 +407,11 @@ export default function KumaStances() {
       const torsoTopY = (shoulderL.y + shoulderR.y) / 2;
       const baseFloorY = (ankleL.y + ankleR.y) / 2;
 
-      const drawComX = (1 - comX) * w;
+      const drawComX = getCanvasX(comX, w, isMirrored);
       const drawTorsoTopY = torsoTopY * h;
       const drawFloorY = baseFloorY * h;
-      const drawAnkleLX = (1 - ankleL.x) * w;
-      const drawAnkleRX = (1 - ankleR.x) * w;
+      const drawAnkleLX = getCanvasX(ankleL.x, w, isMirrored);
+      const drawAnkleRX = getCanvasX(ankleR.x, w, isMirrored);
 
       const isStable = comX >= Math.min(ankleL.x, ankleR.x) && comX <= Math.max(ankleL.x, ankleR.x);
       const balanceColor = isStable ? "rgba(34, 197, 94, 0.85)" : "rgba(239, 68, 68, 0.9)";
@@ -438,7 +454,7 @@ export default function KumaStances() {
     }
   };
 
-  const drawAnglesOnSkeleton = (ctx: CanvasRenderingContext2D, lms: PoseLandmark[], w: number, h: number, currentAngles: any, mode: string) => {
+  const drawAnglesOnSkeleton = (ctx: CanvasRenderingContext2D, lms: PoseLandmark[], w: number, h: number, currentAngles: any, mode: string, isMirrored: boolean) => {
     ctx.font = "bold 13px monospace";
     ctx.fillStyle = "#ffffff";
     ctx.shadowBlur = 4;
@@ -447,16 +463,16 @@ export default function KumaStances() {
     if (mode === "completo" || mode === "superior") {
       const elbowL = lms[13];
       const elbowR = lms[14];
-      if (elbowL) ctx.fillText(`${currentAngles.left}°`, (1 - elbowL.x) * w + 10, elbowL.y * h);
-      if (elbowR) ctx.fillText(`${currentAngles.right}°`, (1 - elbowR.x) * w - 35, elbowR.y * h);
+      if (elbowL) ctx.fillText(`${currentAngles.left}°`, getCanvasX(elbowL.x, w, isMirrored) + 10, elbowL.y * h);
+      if (elbowR) ctx.fillText(`${currentAngles.right}°`, getCanvasX(elbowR.x, w, isMirrored) - 35, elbowR.y * h);
     }
     if (mode === "completo" || mode === "inferior") {
       const kneeL = lms[25];
       const kneeR = lms[26];
       const leftVal = mode === "completo" ? currentAngles.leftKnee : currentAngles.left;
       const rightVal = mode === "completo" ? currentAngles.rightKnee : currentAngles.right;
-      if (kneeL) ctx.fillText(`${leftVal}°`, (1 - kneeL.x) * w + 10, kneeL.y * h);
-      if (kneeR) ctx.fillText(`${rightVal}°`, (1 - kneeR.x) * w - 35, kneeR.y * h);
+      if (kneeL) ctx.fillText(`${leftVal}°`, getCanvasX(kneeL.x, w, isMirrored) + 10, kneeL.y * h);
+      if (kneeR) ctx.fillText(`${rightVal}°`, getCanvasX(kneeR.x, w, isMirrored) - 35, kneeR.y * h);
     }
   };
 
@@ -469,14 +485,17 @@ export default function KumaStances() {
 
     const width = canvas.width;
     const height = canvas.height;
+    const isMirrored = facingModeRef.current === "user";
 
     // Draw video frame
     ctx.save();
     ctx.clearRect(0, 0, width, height);
 
     if (results.image) {
-      ctx.translate(width, 0);
-      ctx.scale(-1, 1);
+      if (isMirrored) {
+        ctx.translate(width, 0);
+        ctx.scale(-1, 1);
+      }
       ctx.drawImage(results.image, 0, 0, width, height);
       ctx.restore();
     }
@@ -578,17 +597,17 @@ export default function KumaStances() {
     if (referenceLandmarks) {
       const normalizedLms = normalizeReferenceLandmarks(landmarks, referenceLandmarks);
       const ghostColor = isUsingLocalCapture ? "rgba(250, 204, 21, 0.5)" : "rgba(6, 182, 212, 0.45)";
-      drawGhostSkeleton(ctx, normalizedLms, width, height, ghostColor, 5);
+      drawGhostSkeleton(ctx, normalizedLms, width, height, ghostColor, 5, isMirrored);
     }
 
     // 2. Draw user skeleton
-    drawActiveSkeleton(ctx, landmarks, width, height, leftColor, rightColor, mode, leftKneeColor, rightKneeColor);
+    drawActiveSkeleton(ctx, landmarks, width, height, leftColor, rightColor, mode, leftKneeColor, rightKneeColor, isMirrored);
 
     // 3. Draw Center of Gravity
-    drawCenterOfGravity(ctx, landmarks, width, height);
+    drawCenterOfGravity(ctx, landmarks, width, height, isMirrored);
 
     // 4. Draw angles
-    drawAnglesOnSkeleton(ctx, landmarks, width, height, currentAngles, mode);
+    drawAnglesOnSkeleton(ctx, landmarks, width, height, currentAngles, mode, isMirrored);
   };
 
   // MediaPipe initialization effect
@@ -597,9 +616,7 @@ export default function KumaStances() {
     if (!videoRef.current || !canvasRef.current) return;
 
     const PoseClass = (window as any).Pose;
-    const CameraClass = (window as any).Camera;
-
-    if (!PoseClass || !CameraClass) return;
+    if (!PoseClass) return;
 
     const pose = new PoseClass({
       locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
@@ -616,28 +633,67 @@ export default function KumaStances() {
     pose.onResults(handlePoseResults);
     poseInstanceRef.current = pose;
 
-    const camera = new CameraClass(videoRef.current, {
-      onFrame: async () => {
-        if (videoRef.current) {
-          await pose.send({ image: videoRef.current });
-        }
-      },
-      width: 640,
-      height: 480
-    });
+    let activeStream: MediaStream | null = null;
+    let animationFrameId: number | null = null;
+    let isProcessing = false;
 
-    camera.start();
-    cameraInstanceRef.current = camera;
+    const startCamera = async () => {
+      try {
+        const constraints = {
+          video: {
+            facingMode: facingMode,
+            width: { ideal: 640 },
+            height: { ideal: 480 }
+          },
+          audio: false
+        };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        activeStream = stream;
+        
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current?.play().catch(e => console.error("Error playing video:", e));
+          };
+        }
+
+        const processFrame = async () => {
+          if (!videoRef.current || !poseInstanceRef.current || !cameraActive) return;
+          if (videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA) {
+            if (!isProcessing) {
+              isProcessing = true;
+              try {
+                await pose.send({ image: videoRef.current });
+              } catch (err) {
+                console.error("Error sending image to pose:", err);
+              }
+              isProcessing = false;
+            }
+          }
+          animationFrameId = requestAnimationFrame(processFrame);
+        };
+
+        animationFrameId = requestAnimationFrame(processFrame);
+      } catch (err: any) {
+        console.error("Error starting camera:", err);
+        setConnectionError("No se pudo acceder a la cámara. Por favor asegúrate de dar los permisos correspondientes.");
+      }
+    };
+
+    startCamera();
 
     return () => {
-      if (cameraInstanceRef.current) {
-        try { cameraInstanceRef.current.stop(); } catch {}
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      if (activeStream) {
+        activeStream.getTracks().forEach((track) => track.stop());
       }
       if (poseInstanceRef.current) {
         try { poseInstanceRef.current.close(); } catch {}
       }
     };
-  }, [scriptsLoaded, cameraActive]);
+  }, [scriptsLoaded, cameraActive, facingMode]);
 
   // Handle dropdown selection change
   const handlePresetChange = (presetId: string) => {
@@ -709,6 +765,24 @@ export default function KumaStances() {
                   height="480"
                   className="w-full h-full aspect-[4/3]"
                 />
+
+                {cameraActive && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nextMode = facingMode === "user" ? "environment" : "user";
+                      setFacingMode(nextMode);
+                      speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
+                    }}
+                    className="absolute top-4 left-4 p-3 bg-zinc-950/80 hover:bg-zinc-900 border border-white/15 rounded-xl transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 group z-20 cursor-pointer"
+                    title="Cambiar Cámara"
+                  >
+                    <RefreshCw className="w-4 h-4 text-kuma-gold group-hover:rotate-180 transition-transform duration-500" />
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-white">
+                      Cámara: {facingMode === "user" ? "Frontal" : "Trasera"}
+                    </span>
+                  </button>
+                )}
 
                 {!cameraActive && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-950/95 text-center p-6 space-y-4 z-20">
