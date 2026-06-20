@@ -29,6 +29,7 @@ export default function KumaStances() {
   const [tolerance, setTolerance] = useState<number>(15);
   const [analysisMode, setAnalysisMode] = useState<"superior" | "inferior" | "completo">("completo");
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
+  const [aspectRatio, setAspectRatio] = useState<number>(4 / 3);
   
   // Local capture stance (to freeze user's own posture on screen)
   const [localCapture, setLocalCapture] = useState<{
@@ -69,6 +70,9 @@ export default function KumaStances() {
   useEffect(() => { analysisModeRef.current = analysisMode; }, [analysisMode]);
   useEffect(() => { audioEnabledRef.current = audioEnabled; }, [audioEnabled]);
   useEffect(() => { facingModeRef.current = facingMode; }, [facingMode]);
+
+  const aspectRatioRef = useRef(4 / 3);
+  useEffect(() => { aspectRatioRef.current = aspectRatio; }, [aspectRatio]);
 
   // Load presets list from database on mount
   useEffect(() => {
@@ -483,6 +487,18 @@ export default function KumaStances() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const video = videoRef.current;
+    if (video && video.videoWidth && video.videoHeight) {
+      if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+      }
+      const currentAspect = video.videoWidth / video.videoHeight;
+      if (Math.abs(aspectRatioRef.current - currentAspect) > 0.01) {
+        setAspectRatio(currentAspect);
+      }
+    }
+
     const width = canvas.width;
     const height = canvas.height;
     const isMirrored = facingModeRef.current === "user";
@@ -758,12 +774,15 @@ export default function KumaStances() {
                 autoPlay
               />
 
-              <div className="relative w-full max-w-[960px] aspect-[4/3] bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+              <div 
+                className="relative w-full max-w-[960px] bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-300"
+                style={{ aspectRatio: aspectRatio }}
+              >
                 <canvas 
                   ref={canvasRef}
                   width="640"
                   height="480"
-                  className="w-full h-full aspect-[4/3]"
+                  className="w-full h-full"
                 />
 
                 {cameraActive && (
