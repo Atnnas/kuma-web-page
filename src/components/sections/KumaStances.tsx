@@ -30,7 +30,6 @@ export default function KumaStances() {
   const [analysisMode, setAnalysisMode] = useState<"superior" | "inferior" | "completo">("completo");
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
   const [aspectRatio, setAspectRatio] = useState<number>(4 / 3);
-  const [isMobile, setIsMobile] = useState(false);
   const wakeLockRef = useRef<any>(null);
   
   // Local capture stance (to freeze user's own posture on screen)
@@ -75,16 +74,6 @@ export default function KumaStances() {
 
   const aspectRatioRef = useRef(4 / 3);
   useEffect(() => { aspectRatioRef.current = aspectRatio; }, [aspectRatio]);
-
-  // Resize listener to check if screen layout is mobile
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1280);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   // Screen Wake Lock API to prevent screen sleep/dimming on mobile
   useEffect(() => {
@@ -131,26 +120,43 @@ export default function KumaStances() {
     };
   }, [cameraActive]);
 
-  // Lock body scroll on mobile when camera is active
+  // Dynamically inject mobile-only styles to shift the camera to the absolute top and override overflow
   useEffect(() => {
-    if (isMobile && cameraActive) {
-      document.body.style.overflow = "hidden";
-      document.body.style.height = "100vh";
-      document.documentElement.style.overflow = "hidden";
-      document.documentElement.style.height = "100vh";
-    } else {
-      document.body.style.overflow = "";
-      document.body.style.height = "";
-      document.documentElement.style.overflow = "";
-      document.documentElement.style.height = "";
-    }
+    if (!cameraActive) return;
+
+    const style = document.createElement("style");
+    style.id = "kuma-stances-mobile-active-styles";
+    style.innerHTML = `
+      @media (max-width: 1279.98px) {
+        /* Hide mobile header / menu toggle button */
+        .fixed.top-6.left-6 {
+          display: none !important;
+        }
+        /* Hide navbar and general header components */
+        header, nav, [class*="Navbar"], #main-header {
+          display: none !important;
+        }
+        /* Remove top and bottom padding from page main wrapper, force overflow visible for scrolling */
+        main {
+          padding-top: 0 !important;
+          padding-bottom: 0 !important;
+          overflow: visible !important;
+        }
+        /* Remove any body margin/padding spacing */
+        body {
+          padding-top: 0 !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
     return () => {
-      document.body.style.overflow = "";
-      document.body.style.height = "";
-      document.documentElement.style.overflow = "";
-      document.documentElement.style.height = "";
+      const existing = document.getElementById("kuma-stances-mobile-active-styles");
+      if (existing) {
+        existing.remove();
+      }
     };
-  }, [cameraActive, isMobile]);
+  }, [cameraActive]);
 
   // Load presets list from database on mount
   useEffect(() => {
@@ -809,7 +815,7 @@ export default function KumaStances() {
 
   return (
     <section className={`relative w-full flex flex-col justify-start items-center overflow-x-hidden bg-zinc-950 text-white transition-all duration-300 ${
-      cameraActive ? "max-xl:pt-0 max-xl:pb-0 max-xl:min-h-screen" : "min-h-[calc(100vh-80px)] pt-6 sm:pt-12 pb-12 sm:pb-20"
+      cameraActive ? "max-xl:pt-0 max-xl:pb-0 max-xl:min-h-0" : "min-h-[calc(100vh-80px)] pt-6 sm:pt-12 pb-12 sm:pb-20"
     }`}>
       
       {/* Decorative Watermark */}
@@ -844,12 +850,14 @@ export default function KumaStances() {
           </div>
         ) : (
           <div className={`w-full flex flex-col xl:flex-row gap-4 sm:gap-8 bg-zinc-900/40 border border-white/10 shadow-2xl rounded-[2rem] p-3 sm:p-8 md:p-10 min-h-[580px] backdrop-blur-md transition-all duration-300 ${
-            cameraActive ? "max-xl:p-0 max-xl:border-none max-xl:rounded-none max-xl:min-h-screen" : ""
+            cameraActive ? "max-xl:p-0 max-xl:border-none max-xl:rounded-none max-xl:min-h-0" : ""
           }`}>
             
             {/* Camera Evaluation Window */}
-            <div className={`flex-1 flex flex-col items-center justify-center bg-black/95 relative min-h-[480px] transition-all duration-300 ${
-              cameraActive ? "max-xl:p-0 max-xl:border-none max-xl:w-full max-xl:h-full" : "border border-neutral-850 p-2 sm:p-4 rounded-xl"
+            <div className={`flex-1 flex flex-col items-center justify-center bg-black/95 relative transition-all duration-300 ${
+              cameraActive 
+                ? "max-xl:p-0 max-xl:border-none max-xl:w-full max-xl:h-auto max-xl:min-h-0" 
+                : "border border-neutral-850 p-2 sm:p-4 rounded-xl min-h-[480px]"
             }`}>
               
               <video 
@@ -863,240 +871,86 @@ export default function KumaStances() {
               />
 
               <div 
-                className={`relative w-full border border-white/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 ${
-                  cameraActive 
-                    ? "bg-neutral-900 max-xl:bg-black max-xl:fixed max-xl:inset-0 max-xl:w-full max-xl:h-full max-xl:rounded-none max-xl:z-50 max-xl:border-none xl:max-w-[960px]" 
-                    : "bg-neutral-900 max-w-[960px]"
+                className={`relative w-full max-w-[960px] bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 ${
+                  cameraActive ? "max-xl:rounded-none max-xl:border-none" : ""
                 }`}
-                style={!(isMobile && cameraActive) ? { aspectRatio: aspectRatio } : {}}
+                style={{ aspectRatio: aspectRatio }}
               >
                 <canvas 
                   ref={canvasRef}
                   width="640"
                   height="480"
-                  className={`w-full h-full ${cameraActive ? "max-xl:object-contain" : ""}`}
+                  className="w-full h-full"
                 />
 
-                {/* Mobile Camera Active Overlays */}
-                {isMobile && cameraActive && (
+                {cameraActive && (
                   <>
-                    {/* Top Row Overlay */}
-                    <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-20 pointer-events-none">
-                      <div className="flex items-center gap-2 pointer-events-auto">
-                        <button
-                          type="button"
-                          onClick={() => setCameraActive(false)}
-                          className="p-3 bg-zinc-950/70 border border-white/10 rounded-xl text-white active:scale-95 transition-all cursor-pointer"
-                          title="Volver"
-                        >
-                          <ArrowLeft className="w-5 h-5" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const nextMode = facingMode === "user" ? "environment" : "user";
-                            setFacingMode(nextMode);
-                            speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
-                          }}
-                          className="p-3 bg-zinc-950/70 border border-white/10 rounded-xl text-white active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
-                          title="Cambiar Cámara"
-                        >
-                          <RefreshCw className="w-5 h-5 text-kuma-gold" />
-                        </button>
-                      </div>
-
-                      <div className="flex items-center gap-2 pointer-events-auto">
-                        <button
-                          onClick={() => setAudioEnabled(!audioEnabled)}
-                          className={`p-3 bg-zinc-950/70 border border-white/10 rounded-xl active:scale-95 transition-all cursor-pointer ${
-                            audioEnabled ? 'text-kuma-gold border-kuma-gold/30' : 'text-zinc-500'
-                          }`}
-                          title="Toggle Audio"
-                        >
-                          {audioEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-                        </button>
-
-                        {presets.length > 0 && (
-                          <select
-                            value={selectedPresetId}
-                            onChange={(e) => handlePresetChange(e.target.value)}
-                            className="px-3 py-2.5 border border-white/10 rounded-xl bg-zinc-950/75 text-xs font-bold text-white focus:outline-none focus:border-kuma-gold/50 max-w-[130px] cursor-pointer"
-                          >
-                            {presets.map((preset) => (
-                              <option key={preset._id} value={preset._id}>
-                                {preset.name}
-                              </option>
-                            ))}
-                          </select>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Stance Badge */}
-                    <div className="absolute top-18 left-4 bg-zinc-950/70 border border-white/10 px-3 py-1.5 rounded-lg text-[9px] font-bold text-kuma-gold uppercase tracking-wider z-20">
-                      {currentPreset?.name || "Captura Local"}
-                    </div>
-
-                    {/* Precision Score HUD */}
-                    {alignmentMetrics.score > 0 && (
-                      <div className="absolute top-18 right-4 bg-zinc-950/80 border border-white/10 px-4 py-2 rounded-xl text-center z-20">
-                        <div className="text-[8px] text-zinc-400 uppercase tracking-widest font-bold">PRECISIÓN</div>
-                        <div className={`text-lg font-black ${alignmentMetrics.aligned ? "text-emerald-500" : "text-amber-500"}`}>
-                          {alignmentMetrics.score}%
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Tolerance Slider Overlay (Right Side) */}
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-20 pointer-events-none">
-                      <span className="text-[9px] font-bold text-white/80 bg-zinc-950/70 border border-white/10 px-1.5 py-0.5 rounded uppercase tracking-wider rotate-90 origin-center translate-y-[-16px]">
-                        TOL: {tolerance}°
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const nextMode = facingMode === "user" ? "environment" : "user";
+                        setFacingMode(nextMode);
+                        speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
+                      }}
+                      className="absolute top-4 left-4 p-3 bg-zinc-950/80 hover:bg-zinc-900 border border-white/15 rounded-xl transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 group z-20 cursor-pointer"
+                      title="Cambiar Cámara"
+                    >
+                      <RefreshCw className="w-4 h-4 text-kuma-gold group-hover:rotate-180 transition-transform duration-500" />
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-white max-sm:hidden">
+                        Cámara: {facingMode === "user" ? "Frontal" : "Trasera"}
                       </span>
-                      <div className="h-40 w-10 flex items-center justify-center pointer-events-auto">
-                        <input 
-                          type="range"
-                          min={5}
-                          max={35}
-                          step={1}
-                          value={tolerance}
-                          onChange={(e) => setTolerance(parseInt(e.target.value))}
-                          className="h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-500 -rotate-90 origin-center w-28"
-                        />
-                      </div>
-                    </div>
+                    </button>
 
-                    {/* Bottom Controls Overlay */}
-                    <div className="absolute bottom-6 left-4 right-4 flex flex-col items-center gap-4 z-20 pointer-events-none">
-                      {/* Capture Stance button */}
-                      {!localCapture ? (
-                        <button
-                          type="button"
-                          disabled={!latestPoseLandmarksRef.current}
-                          onClick={() => {
-                            if (latestPoseLandmarksRef.current && latestPoseLandmarksRef.current.length > 0) {
-                              const mode = analysisMode;
-                              const angles = calculateCurrentAngles(latestPoseLandmarksRef.current, mode);
-                              const captured = {
-                                landmarks: [...latestPoseLandmarksRef.current],
-                                angles: { ...angles },
-                                mode: mode
-                              };
-                              setSelectedPresetId("");
-                              setCurrentPreset(null);
-                              currentPresetRef.current = null;
-                              localCaptureRef.current = captured;
-                              setLocalCapture(captured);
-                              hasTriggeredAlignRef.current = false;
-                              speak("Posición capturada.");
-                            }
-                          }}
-                          className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 border border-amber-400/30 text-white rounded-xl text-[10px] font-bold tracking-widest pointer-events-auto active:scale-95 disabled:opacity-40 disabled:pointer-events-none transition-all shadow-lg cursor-pointer"
-                        >
-                          CAPTURAR POSICIÓN
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            localCaptureRef.current = null;
-                            setLocalCapture(null);
-                            hasTriggeredAlignRef.current = false;
-                            speak("Captura limpia.");
-                          }}
-                          className="px-6 py-3 bg-zinc-950/80 border border-white/10 text-white rounded-xl text-[10px] font-bold tracking-widest pointer-events-auto active:scale-95 transition-all cursor-pointer"
-                        >
-                          LIMPIAR CAPTURA
-                        </button>
-                      )}
-
-                      {/* Analysis Zone buttons */}
-                      <div className="flex border border-white/15 bg-zinc-950/80 backdrop-blur-md rounded-xl overflow-hidden pointer-events-auto shadow-xl w-full max-w-[280px] divide-x divide-white/10">
-                        {([
-                          { value: "superior" as const, label: "Sup." },
-                          { value: "inferior" as const, label: "Inf." },
-                          { value: "completo" as const, label: "Comp." }
-                        ]).map((opt) => (
-                          <button
-                            key={opt.value}
-                            type="button"
-                            onClick={() => setAnalysisMode(opt.value)}
-                            className={`flex-1 py-2 text-center transition-all cursor-pointer ${
-                              analysisMode === opt.value
-                                ? "bg-[#E52B34] text-white font-bold"
-                                : "bg-transparent text-zinc-400 hover:text-white"
-                            }`}
-                          >
-                            <span className="block text-[10px] uppercase tracking-wider">
-                              {opt.label}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                    <Link
+                      href="/resources/aplicaciones"
+                      className="absolute top-4 right-4 p-3 bg-zinc-950/80 hover:bg-zinc-900 border border-white/15 rounded-xl transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 group z-20 cursor-pointer text-zinc-400 hover:text-kuma-gold"
+                      title="Volver a Aplicaciones"
+                    >
+                      <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-white max-sm:hidden">
+                        Volver
+                      </span>
+                    </Link>
                   </>
                 )}
 
-                {/* Desktop camera active overlays */}
-                {(!isMobile || !cameraActive) && (
-                  <>
-                    {cameraActive && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const nextMode = facingMode === "user" ? "environment" : "user";
-                          setFacingMode(nextMode);
-                          speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
-                        }}
-                        className="absolute top-4 left-4 p-3 bg-zinc-950/80 hover:bg-zinc-900 border border-white/15 rounded-xl transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 group z-20 cursor-pointer"
-                        title="Cambiar Cámara"
-                      >
-                        <RefreshCw className="w-4 h-4 text-kuma-gold group-hover:rotate-180 transition-transform duration-500" />
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-white">
-                          Cámara: {facingMode === "user" ? "Frontal" : "Trasera"}
-                        </span>
-                      </button>
-                    )}
+                {!cameraActive && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-950/95 text-center p-6 space-y-4 z-20">
+                    <Camera className="w-12 h-12 text-zinc-400 animate-pulse" />
+                    <div>
+                      <p className="font-body text-sm font-semibold text-white">Práctica de Espejo Local</p>
+                      <p className="font-body text-xs text-zinc-500 max-w-sm mt-1.5 leading-relaxed">
+                        Kuma Stances procesa tu video localmente. Enciende tu cámara web para comenzar a evaluar tus posturas.
+                      </p>
+                    </div>
+                    
+                    <button
+                      onClick={() => setCameraActive(true)}
+                      className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-white rounded-xl text-xs font-bold tracking-widest px-8 py-3.5 hover:opacity-95 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                    >
+                      ACTIVAR EVALUADOR EN VIVO
+                    </button>
+                  </div>
+                )}
 
-                    {!cameraActive && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-950/95 text-center p-6 space-y-4 z-20">
-                        <Camera className="w-12 h-12 text-zinc-400 animate-pulse" />
-                        <div>
-                          <p className="font-body text-sm font-semibold text-white">Práctica de Espejo Local</p>
-                          <p className="font-body text-xs text-zinc-500 max-w-sm mt-1.5 leading-relaxed">
-                            Kuma Stances procesa tu video localmente. Enciende tu cámara web para comenzar a evaluar tus posturas.
-                          </p>
-                        </div>
-                        
-                        <button
-                          onClick={() => setCameraActive(true)}
-                          className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-white rounded-xl text-xs font-bold tracking-widest px-8 py-3.5 hover:opacity-95 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
-                        >
-                          ACTIVAR EVALUADOR EN VIVO
-                        </button>
-                      </div>
-                    )}
-                  </>
+                {/* Live HUD Feedback Overlay - Bottom Right of the video wrapper */}
+                {cameraActive && alignmentMetrics.score > 0 && (
+                  <div className="absolute bottom-4 right-4 bg-zinc-950/85 border border-white/15 p-3 rounded-xl space-y-1 font-body text-[10px] sm:text-xs z-20 backdrop-blur-md shadow-lg flex flex-col">
+                    <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold">ALINEACIÓN</span>
+                    <div className="flex justify-between gap-4 pt-1 border-t border-white/5">
+                      <span className="text-zinc-400">Coincidencia:</span>
+                      <span className={`font-bold ${alignmentMetrics.aligned ? "text-emerald-500" : "text-amber-500"}`}>
+                        {alignmentMetrics.score}%
+                      </span>
+                    </div>
+                  </div>
                 )}
               </div>
-
-              {/* Live HUD Feedback Overlay */}
-              {cameraActive && alignmentMetrics.score > 0 && !isMobile && (
-                <div className="absolute top-8 right-8 bg-zinc-950/80 border border-white/10 p-4 rounded-xl space-y-1 font-body text-xs z-10 backdrop-blur-sm">
-                  <span className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">PRECISIÓN DE ALINEACIÓN</span>
-                  <div className="flex justify-between gap-6 pt-1 border-t border-white/5">
-                    <span className="text-zinc-400">Coincidencia:</span>
-                    <span className={`font-bold ${alignmentMetrics.aligned ? "text-emerald-500" : "text-amber-500"}`}>
-                      {alignmentMetrics.score}%
-                    </span>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Sidebar Controls */}
-            <div className={`w-full xl:w-[360px] shrink-0 border border-white/10 bg-zinc-900/40 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between space-y-6 backdrop-blur-md shadow-2xl ${
-              cameraActive ? "max-xl:hidden" : ""
+            <div className={`w-full xl:w-[360px] shrink-0 border border-white/10 bg-zinc-900/40 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between space-y-6 backdrop-blur-md shadow-2xl transition-all duration-300 ${
+              cameraActive ? "max-xl:rounded-none max-xl:border-x-0 max-xl:border-b-0 max-xl:p-4" : ""
             }`}>
               
               <div className="space-y-6">

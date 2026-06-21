@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function KumaStancesPage() {
   return (
-    <main className="min-h-screen bg-zinc-950 text-white relative overflow-hidden pt-24 pb-20">
+    <main className="min-h-screen bg-zinc-950 text-white relative overflow-x-hidden pt-24 pb-20">
       {/* Background Decor */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-kuma-gold/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
