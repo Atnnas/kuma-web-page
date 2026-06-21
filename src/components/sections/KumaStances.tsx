@@ -787,17 +787,23 @@ export default function KumaStances() {
   };
 
   return (
-    <section className="relative w-full min-h-[calc(100vh-80px)] flex flex-col justify-start items-center overflow-x-hidden bg-zinc-950 text-white pt-12 pb-20">
+    <section className={`relative w-full flex flex-col justify-start items-center overflow-x-hidden bg-zinc-950 text-white transition-all duration-300 ${
+      cameraActive ? "max-xl:pt-0 max-xl:pb-0 max-xl:min-h-screen" : "min-h-[calc(100vh-80px)] pt-6 sm:pt-12 pb-12 sm:pb-20"
+    }`}>
       
       {/* Decorative Watermark */}
       <div className="absolute right-10 top-[12%] text-[24vw] md:text-[14vw] font-black text-white/[0.03] select-none pointer-events-none leading-none z-0 font-serif hidden sm:block">
         姿勢
       </div>
 
-      <div className="relative z-20 w-full max-w-[99vw] mx-auto px-2 sm:px-4 md:px-6 lg:px-8 flex flex-col justify-start items-center pt-0">
+      <div className={`relative z-20 w-full mx-auto flex flex-col justify-start items-center pt-0 transition-all duration-300 ${
+        cameraActive ? "max-xl:max-w-none max-xl:px-0" : "max-w-[99vw] px-1.5 sm:px-4 md:px-6 lg:px-8"
+      }`}>
         
         {/* Navigation / Header */}
-        <div className="w-full flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+        <div className={`w-full flex justify-between items-center mb-4 sm:mb-8 border-b border-white/5 pb-4 ${
+          cameraActive ? "max-xl:hidden" : ""
+        }`}>
           <Link
             href="/resources/aplicaciones"
             className="flex items-center gap-2 text-zinc-500 hover:text-kuma-gold transition-all duration-300 group px-3 py-2 rounded-xl hover:bg-white/5 active:scale-95"
@@ -816,10 +822,14 @@ export default function KumaStances() {
             <p className="font-body text-sm text-zinc-400">Cargando catálogo oficial de posturas...</p>
           </div>
         ) : (
-          <div className="w-full flex flex-col xl:flex-row gap-8 bg-zinc-900/40 border border-white/10 shadow-2xl rounded-[2.5rem] p-6 sm:p-8 md:p-10 min-h-[580px] backdrop-blur-md">
+          <div className={`w-full flex flex-col xl:flex-row gap-4 sm:gap-8 bg-zinc-900/40 border border-white/10 shadow-2xl rounded-[2rem] p-3 sm:p-8 md:p-10 min-h-[580px] backdrop-blur-md transition-all duration-300 ${
+            cameraActive ? "max-xl:p-0 max-xl:border-none max-xl:rounded-none max-xl:min-h-screen" : ""
+          }`}>
             
             {/* Camera Evaluation Window */}
-            <div className="flex-1 flex flex-col items-center justify-center bg-black/95 border border-neutral-850 p-4 relative min-h-[480px]">
+            <div className={`flex-1 flex flex-col items-center justify-center bg-black/95 relative min-h-[480px] transition-all duration-300 ${
+              cameraActive ? "max-xl:p-0 max-xl:border-none max-xl:w-full max-xl:h-full" : "border border-neutral-850 p-2 sm:p-4 rounded-xl"
+            }`}>
               
               <video 
                 ref={videoRef}
