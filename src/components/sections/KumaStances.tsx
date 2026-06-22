@@ -1202,7 +1202,7 @@ export default function KumaStances() {
 
                 {/* Mobile Active Camera Controls */}
                 {cameraActive && isMobile && (
-                  <div className="grid grid-cols-2 gap-3 pb-4 border-b border-white/5">
+                  <div className="pb-4 border-b border-white/5">
                     <button
                       type="button"
                       onClick={() => {
@@ -1221,20 +1221,10 @@ export default function KumaStances() {
                         setFacingMode(nextMode);
                         speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
                       }}
-                      className="py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                      className="w-full py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
                     >
                       <RefreshCw className="w-3.5 h-3.5 text-kuma-gold" />
-                      Cámara
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCameraActive(false);
-                      }}
-                      className="py-2.5 bg-red-950/20 hover:bg-red-950/40 border border-red-500/20 rounded-xl text-xs font-bold text-red-400 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
-                    >
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                      Desactivar
+                      Cambiar Cámara
                     </button>
                   </div>
                 )}
