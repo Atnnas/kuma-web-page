@@ -1031,9 +1031,9 @@ export default function KumaStances() {
                     left: 0, 
                     width: "100%", 
                     height: "100%", 
-                    opacity: 0.05, 
+                    opacity: 0.01, 
                     pointerEvents: "none", 
-                    zIndex: 50, 
+                    zIndex: 0, 
                     objectFit: "contain",
                     transform: facingMode === "user" ? "scaleX(-1)" : "none"
                   }}
