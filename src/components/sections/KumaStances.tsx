@@ -927,14 +927,15 @@ export default function KumaStances() {
                   ref={videoRef}
                   style={{ 
                     position: "absolute", 
-                    top: "8px", 
-                    left: "8px", 
-                    width: "32px", 
-                    height: "24px", 
-                    opacity: 0.02, 
+                    top: 0, 
+                    left: 0, 
+                    width: "100%", 
+                    height: "100%", 
+                    opacity: 0.05, 
                     pointerEvents: "none", 
                     zIndex: 50, 
-                    objectFit: "contain"
+                    objectFit: "contain",
+                    transform: facingMode === "user" ? "scaleX(-1)" : "none"
                   }}
                   width="640"
                   height="480"
