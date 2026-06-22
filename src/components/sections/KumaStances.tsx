@@ -1180,7 +1180,16 @@ export default function KumaStances() {
               <div className="space-y-6">
                 
                 {/* Header */}
-                <div className="border-b border-white/5 pb-4 flex items-center justify-end">
+                <div className="border-b border-white/5 pb-4 flex items-center justify-between">
+                  <div className="max-xl:hidden">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 border border-amber-500/30 text-amber-400 bg-amber-950/30 rounded-lg">
+                      PRÁCTICA INDIVIDUAL
+                    </span>
+                    <h2 className="font-impact-condensed text-xl text-white tracking-wide mt-1">
+                      KUMA STANCES
+                    </h2>
+                  </div>
+
                   {/* Audio Toggle button */}
                   <button
                     onClick={() => setAudioEnabled(!audioEnabled)}
