@@ -1047,7 +1047,7 @@ export default function KumaStances() {
                   ref={canvasRef}
                   width="640"
                   height="480"
-                  className={`relative w-full h-full z-10 ${cameraActive ? "object-contain bg-black" : ""}`}
+                  className={`relative w-full h-full z-10 ${cameraActive ? "max-xl:object-cover object-contain bg-black" : ""}`}
                 />
 
                 {/* Debug console removed from screen as requested */}
@@ -1174,13 +1174,13 @@ export default function KumaStances() {
 
             {/* Sidebar Controls */}
             <div className={`w-full xl:w-[360px] shrink-0 border border-white/10 bg-zinc-900/40 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between space-y-6 backdrop-blur-md shadow-2xl transition-all duration-300 ${
-              cameraActive ? "max-xl:block max-xl:pt-[52vh] max-xl:rounded-none max-xl:border-none max-xl:bg-zinc-950 max-xl:w-full max-xl:p-4 max-xl:flex-1 max-xl:space-y-4 max-xl:shadow-none" : ""
+              cameraActive ? "max-xl:block max-xl:pt-[50vh] max-xl:rounded-none max-xl:border-none max-xl:bg-zinc-950 max-xl:w-full max-xl:px-4 max-xl:pb-8 max-xl:flex-1 max-xl:space-y-4 max-xl:shadow-none" : ""
             }`}>
               
               <div className="space-y-6">
                 
                 {/* Header */}
-                <div className="border-b border-white/5 pb-4 flex items-center justify-between">
+                <div className={`border-b border-white/5 pb-4 flex items-center justify-between ${cameraActive ? "max-xl:hidden" : ""}`}>
                   <div className="max-xl:hidden">
                     <span className="text-[9px] font-bold uppercase px-2 py-0.5 border border-amber-500/30 text-amber-400 bg-amber-950/30 rounded-lg">
                       PRÁCTICA INDIVIDUAL
