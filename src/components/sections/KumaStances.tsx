@@ -1015,10 +1015,13 @@ export default function KumaStances() {
                     <div className="absolute top-8 left-6 right-6 flex justify-between items-center z-[70] pointer-events-none">
                       <button
                         type="button"
-                        onClick={async () => {
+                        onClick={() => {
                           if (videoRef.current) {
                             try {
-                              await videoRef.current.play().catch(() => {});
+                              const playPromise = videoRef.current.play();
+                              if (playPromise !== undefined) {
+                                playPromise.catch(() => {});
+                              }
                               videoRef.current.pause();
                             } catch (e) {}
                           }
@@ -1142,10 +1145,13 @@ export default function KumaStances() {
                       <>
                         <button
                           type="button"
-                          onClick={async () => {
+                          onClick={() => {
                             if (videoRef.current) {
                               try {
-                                await videoRef.current.play().catch(() => {});
+                                const playPromise = videoRef.current.play();
+                                if (playPromise !== undefined) {
+                                  playPromise.catch(() => {});
+                                }
                                 videoRef.current.pause();
                               } catch (e) {}
                             }
@@ -1189,10 +1195,13 @@ export default function KumaStances() {
                     
                     <button
                       disabled={!scriptsLoaded}
-                      onClick={async () => {
+                      onClick={() => {
                         if (videoRef.current) {
                           try {
-                            await videoRef.current.play().catch(() => {});
+                            const playPromise = videoRef.current.play();
+                            if (playPromise !== undefined) {
+                              playPromise.catch(() => {});
+                            }
                             videoRef.current.pause();
                           } catch (e) {}
                         }
