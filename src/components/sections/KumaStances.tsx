@@ -106,10 +106,9 @@ export default function KumaStances() {
   // Lock body scroll on mobile when camera is active
   useEffect(() => {
     if (isMobile && cameraActive) {
-      document.body.style.overflow = "hidden";
-      document.body.style.height = "100vh";
-      document.documentElement.style.overflow = "hidden";
-      document.documentElement.style.height = "100vh";
+      // Let's not lock overflow-y to allow vertical scroll of controls on active mobile split-screen
+      document.body.style.overflowX = "hidden";
+      document.documentElement.style.overflowX = "hidden";
     } else {
       document.body.style.overflow = "";
       document.body.style.height = "";
@@ -195,10 +194,10 @@ export default function KumaStances() {
         body {
           padding-top: 0 !important;
         }
-        /* Canvas wrapper overrides for active mobile fullscreen view */
+         /* Canvas wrapper overrides for active mobile fullscreen view */
         .canvas-wrapper-mobile-active {
           width: 100vw !important;
-          height: 100vh !important;
+          height: 50vh !important;
           aspect-ratio: auto !important;
           max-width: none !important;
         }
@@ -1013,7 +1012,7 @@ export default function KumaStances() {
             {/* Camera Evaluation Window */}
             <div className={`flex-1 flex flex-col items-center justify-center bg-black/95 relative transition-all duration-300 ${
               cameraActive 
-                ? "max-xl:fixed max-xl:inset-0 max-xl:z-[60] max-xl:w-screen max-xl:h-screen max-xl:bg-black" 
+                ? "max-xl:fixed max-xl:top-0 max-xl:left-0 max-xl:w-screen max-xl:h-[50vh] max-xl:z-[60] max-xl:bg-black max-xl:bottom-auto" 
                 : "border border-neutral-850 p-2 sm:p-4 rounded-xl min-h-[480px]"
             }`}>
               
@@ -1021,7 +1020,7 @@ export default function KumaStances() {
                 className={`relative w-full max-w-[960px] bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 ${
                   cameraActive ? "max-xl:rounded-none max-xl:border-none max-xl:w-full max-xl:h-full max-xl:max-w-none canvas-wrapper-mobile-active" : ""
                 }`}
-                style={(cameraActive && isMobile) ? { width: "100vw", height: "100vh" } : { aspectRatio: aspectRatio }}
+                style={(cameraActive && isMobile) ? { width: "100vw", height: "50vh" } : { aspectRatio: aspectRatio }}
               >
                 <video 
                   ref={videoRef}
@@ -1065,7 +1064,7 @@ export default function KumaStances() {
                 {cameraActive && isMobile && (
                   <>
                     {/* Top Controls Overlay */}
-                    <div className="absolute top-8 left-6 right-6 flex justify-between items-center z-[70] pointer-events-none">
+                    <div className="absolute top-3 left-4 right-4 flex justify-between items-center z-[70] pointer-events-none">
                       <button
                         type="button"
                         onClick={() => {
@@ -1084,31 +1083,31 @@ export default function KumaStances() {
                           setFacingMode(nextMode);
                           speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
                         }}
-                        className="p-3 bg-zinc-950/90 hover:bg-zinc-900 border-2 border-white/20 hover:border-kuma-gold/50 rounded-xl pointer-events-auto active:scale-95 shadow-2xl flex items-center justify-center gap-2 group cursor-pointer"
+                        className="p-2.5 bg-zinc-950/90 hover:bg-zinc-900 border-2 border-white/20 hover:border-kuma-gold/50 rounded-xl pointer-events-auto active:scale-95 shadow-2xl flex items-center justify-center gap-1.5 group cursor-pointer"
                         title="Cambiar Cámara"
                       >
-                        <RefreshCw className="w-4 h-4 text-kuma-gold group-hover:rotate-180 transition-transform duration-500" />
-                        <span className="text-[10px] uppercase font-black tracking-widest text-white">
+                        <RefreshCw className="w-3.5 h-3.5 text-kuma-gold group-hover:rotate-180 transition-transform duration-500" />
+                        <span className="text-[9px] uppercase font-black tracking-widest text-white">
                           Cámara
                         </span>
                       </button>
 
                       <Link
                         href="/resources/aplicaciones"
-                        className="p-3 bg-zinc-950/90 hover:bg-zinc-900 border-2 border-white/20 hover:border-red-500/50 rounded-xl pointer-events-auto active:scale-95 shadow-2xl flex items-center justify-center gap-2 text-zinc-300 hover:text-red-500 cursor-pointer"
+                        className="p-2.5 bg-zinc-950/90 hover:bg-zinc-900 border-2 border-white/20 hover:border-red-500/50 rounded-xl pointer-events-auto active:scale-95 shadow-2xl flex items-center justify-center gap-1.5 text-zinc-300 hover:text-red-500 cursor-pointer"
                         title="Volver"
                       >
-                        <ArrowLeft className="w-4 h-4" />
-                        <span className="text-[10px] uppercase font-black tracking-widest text-white">
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                        <span className="text-[9px] uppercase font-black tracking-widest text-white">
                           Volver
                         </span>
                       </Link>
                     </div>
 
                     {/* Right Controls Overlay (Tolerance Slider) */}
-                    <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-3 z-50 bg-zinc-950/70 border border-white/10 p-3.5 rounded-2xl shadow-2xl backdrop-blur-md pointer-events-auto">
-                      <SlidersHorizontal className="w-4 h-4 text-kuma-gold" />
-                      <span className="text-[8px] font-black tracking-widest text-zinc-300 uppercase rotate-90 my-3">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-50 bg-zinc-950/70 border border-white/10 p-2 rounded-2xl shadow-2xl backdrop-blur-md pointer-events-auto">
+                      <SlidersHorizontal className="w-3.5 h-3.5 text-kuma-gold" />
+                      <span className="text-[8px] font-black tracking-widest text-zinc-300 uppercase rotate-90 my-2">
                         TOL: {tolerance}°
                       </span>
                       <input 
@@ -1118,12 +1117,12 @@ export default function KumaStances() {
                         step={1}
                         value={tolerance}
                         onChange={(e) => setTolerance(parseInt(e.target.value))}
-                        className="h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-500 -rotate-90 origin-center w-28 my-4"
+                        className="h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-500 -rotate-90 origin-center w-24 my-3"
                       />
                     </div>
 
                     {/* Bottom Controls Overlay */}
-                    <div className="absolute bottom-8 left-4 right-4 flex flex-col items-center gap-4 z-50 pointer-events-none">
+                    <div className="absolute bottom-2 left-4 right-4 flex flex-col items-center gap-2 z-50 pointer-events-none">
                       {/* Capture Stance button */}
                       {!localCapture ? (
                         <button
@@ -1313,7 +1312,7 @@ export default function KumaStances() {
 
             {/* Sidebar Controls */}
             <div className={`w-full xl:w-[360px] shrink-0 border border-white/10 bg-zinc-900/40 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between space-y-6 backdrop-blur-md shadow-2xl transition-all duration-300 ${
-              cameraActive ? "max-xl:hidden" : ""
+              cameraActive ? "max-xl:block max-xl:pt-[52vh] max-xl:rounded-none max-xl:border-none max-xl:bg-zinc-950 max-xl:w-full max-xl:p-4 max-xl:flex-1 max-xl:space-y-4 max-xl:shadow-none" : ""
             }`}>
               
               <div className="space-y-6">
