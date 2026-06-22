@@ -1230,7 +1230,7 @@ export default function KumaStances() {
                 )}
 
                 {/* Stance Selector */}
-                <div className="space-y-2">
+                <div className={`space-y-2 ${cameraActive ? "max-xl:hidden" : ""}`}>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-kuma-gold block">
                     Selecciona una Postura
                   </label>
@@ -1253,7 +1253,7 @@ export default function KumaStances() {
                 </div>
 
                 {/* Active Stance Description card */}
-                <div className="bg-zinc-950/60 border border-white/5 p-4 rounded-2xl space-y-3">
+                <div className={`bg-zinc-950/60 border border-white/5 p-4 rounded-2xl space-y-3 ${cameraActive ? "max-xl:hidden" : ""}`}>
                   <h3 className="text-[10px] font-bold uppercase text-kuma-gold tracking-wider">
                     Postura Seleccionada
                   </h3>
