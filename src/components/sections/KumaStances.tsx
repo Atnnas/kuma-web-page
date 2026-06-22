@@ -626,18 +626,8 @@ export default function KumaStances() {
     const height = canvas.height;
     const isMirrored = facingModeRef.current === "user";
 
-    // Draw video frame
+    // Clear transparent canvas
     ctx.clearRect(0, 0, width, height);
-
-    if (results.image) {
-      ctx.save();
-      if (isMirrored) {
-        ctx.translate(width, 0);
-        ctx.scale(-1, 1);
-      }
-      ctx.drawImage(results.image, 0, 0, width, height);
-      ctx.restore();
-    }
 
     const landmarks = results.poseLandmarks;
     if (!landmarks) {
@@ -924,7 +914,17 @@ export default function KumaStances() {
               >
                 <video 
                   ref={videoRef}
-                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.02, pointerEvents: "none", zIndex: 12, objectFit: "contain" }}
+                  style={{ 
+                    position: "absolute", 
+                    top: 0, 
+                    left: 0, 
+                    width: "100%", 
+                    height: "100%", 
+                    opacity: 1, 
+                    zIndex: 5, 
+                    objectFit: "contain",
+                    transform: facingMode === "user" ? "scaleX(-1)" : "none"
+                  }}
                   width="640"
                   height="480"
                   playsInline
@@ -936,7 +936,7 @@ export default function KumaStances() {
                   ref={canvasRef}
                   width="640"
                   height="480"
-                  className={`relative w-full h-full z-10 ${cameraActive ? "object-contain bg-black" : ""}`}
+                  className="absolute top-0 left-0 w-full h-full z-10 object-contain bg-transparent"
                 />
 
                 {/* Mobile Camera Overlays (only visible on mobile when camera is active) */}
