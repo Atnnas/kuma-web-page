@@ -51,6 +51,7 @@ export default function KumaStances() {
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [alignmentMetrics, setAlignmentMetrics] = useState({ score: 0, aligned: false });
+  const [checkAttempts, setCheckAttempts] = useState(0);
 
   // Refs for video & canvas
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -58,6 +59,17 @@ export default function KumaStances() {
   const poseInstanceRef = useRef<any>(null);
   const cameraInstanceRef = useRef<any>(null);
   const latestPoseLandmarksRef = useRef<PoseLandmark[] | null>(null);
+  const activeColorsRef = useRef<{
+    leftColor: string;
+    rightColor: string;
+    leftKneeColor: string;
+    rightKneeColor: string;
+  }>({
+    leftColor: "rgba(255, 0, 0, 0.8)",
+    rightColor: "rgba(255, 0, 0, 0.8)",
+    leftKneeColor: "rgba(255, 0, 0, 0.8)",
+    rightKneeColor: "rgba(255, 0, 0, 0.8)"
+  });
 
   // Sync refs to avoid stale closures in MediaPipe's async callback loop
   const toleranceRef = useRef(tolerance);
@@ -605,40 +617,6 @@ export default function KumaStances() {
 
   // Main evaluation logic called by MediaPipe loop
   const handlePoseResults = (results: any) => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const video = videoRef.current;
-    if (video && video.videoWidth && video.videoHeight) {
-      if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-      }
-      const currentAspect = video.videoWidth / video.videoHeight;
-      if (Math.abs(aspectRatioRef.current - currentAspect) > 0.01) {
-        setAspectRatio(currentAspect);
-      }
-    }
-
-    const width = canvas.width;
-    const height = canvas.height;
-    const isMirrored = facingModeRef.current === "user";
-
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-
-    if (results.image) {
-      ctx.save();
-      if (isMirrored) {
-        ctx.translate(width, 0);
-        ctx.scale(-1, 1);
-      }
-      ctx.drawImage(results.image, 0, 0, width, height);
-      ctx.restore();
-    }
-
     const landmarks = results.poseLandmarks;
     if (!landmarks) {
       latestPoseLandmarksRef.current = null;
@@ -656,7 +634,6 @@ export default function KumaStances() {
     let targetLeftKnee: number | null = null;
     let targetRightKnee: number | null = null;
     let referenceLandmarks: PoseLandmark[] | null = null;
-    let isUsingLocalCapture = false;
 
     const cap = localCaptureRef.current;
     const activePreset = currentPresetRef.current;
@@ -669,7 +646,6 @@ export default function KumaStances() {
         targetRightKnee = cap.angles.rightKnee || cap.angles.right;
       }
       referenceLandmarks = cap.landmarks;
-      isUsingLocalCapture = true;
     } else if (activePreset) {
       targetLeft = activePreset.angles.left;
       targetRight = activePreset.angles.right;
@@ -732,21 +708,7 @@ export default function KumaStances() {
       setAlignmentMetrics({ score: 0, aligned: false });
     }
 
-    // 1. Draw reference ghost (either local capture in yellow/gold or official preset in cyan)
-    if (referenceLandmarks) {
-      const normalizedLms = normalizeReferenceLandmarks(landmarks, referenceLandmarks);
-      const ghostColor = isUsingLocalCapture ? "rgba(250, 204, 21, 0.5)" : "rgba(6, 182, 212, 0.45)";
-      drawGhostSkeleton(ctx, normalizedLms, width, height, ghostColor, 5, isMirrored);
-    }
-
-    // 2. Draw user skeleton
-    drawActiveSkeleton(ctx, landmarks, width, height, leftColor, rightColor, mode, leftKneeColor, rightKneeColor, isMirrored);
-
-    // 3. Draw Center of Gravity
-    drawCenterOfGravity(ctx, landmarks, width, height, isMirrored);
-
-    // 4. Draw angles
-    drawAnglesOnSkeleton(ctx, landmarks, width, height, currentAngles, mode, isMirrored);
+    activeColorsRef.current = { leftColor, rightColor, leftKneeColor, rightKneeColor };
   };
 
   // MediaPipe initialization effect
@@ -755,7 +717,18 @@ export default function KumaStances() {
     if (!videoRef.current || !canvasRef.current) return;
 
     const PoseClass = (window as any).Pose;
-    if (!PoseClass) return;
+    if (!PoseClass) {
+      if (checkAttempts < 10) {
+        const timer = setTimeout(() => {
+          setCheckAttempts((prev) => prev + 1);
+        }, 500);
+        return () => clearTimeout(timer);
+      } else {
+        console.error("Pose class not found on window after 10 attempts");
+        setConnectionError("No se pudo iniciar el motor de visión artificial (Pose class not found). Por favor recarga la página.");
+        return;
+      }
+    }
 
     const pose = new PoseClass({
       locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
@@ -807,15 +780,98 @@ export default function KumaStances() {
         }
 
         const processFrame = async () => {
-          if (!videoRef.current || !poseInstanceRef.current || !cameraActive) return;
-          if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
+          if (!videoRef.current || !canvasRef.current || !cameraActive) return;
+          
+          const video = videoRef.current;
+          const canvas = canvasRef.current;
+          const ctx = canvas.getContext("2d");
+          
+          if (ctx && video.readyState >= 2 && video.videoWidth > 0) {
+            // 1. Ensure canvas dimensions match video
+            if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+            }
+            
+            const currentAspect = video.videoWidth / video.videoHeight;
+            if (Math.abs(aspectRatioRef.current - currentAspect) > 0.01) {
+              setAspectRatio(currentAspect);
+            }
+            
+            const width = canvas.width;
+            const height = canvas.height;
+            const isMirrored = facingModeRef.current === "user";
+            
+            // 2. Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // 3. Draw video frame
+            ctx.save();
+            if (isMirrored) {
+              ctx.translate(width, 0);
+              ctx.scale(-1, 1);
+            }
+            ctx.drawImage(video, 0, 0, width, height);
+            ctx.restore();
+            
+            // 4. Draw reference ghost skeleton
+            let referenceLandmarks: PoseLandmark[] | null = null;
+            let isUsingLocalCapture = false;
+            
+            const cap = localCaptureRef.current;
+            const activePreset = currentPresetRef.current;
+            const mode = analysisModeRef.current || "completo";
+            
+            if (cap) {
+              referenceLandmarks = cap.landmarks;
+              isUsingLocalCapture = true;
+            } else if (activePreset) {
+              referenceLandmarks = activePreset.landmarks;
+            }
+            
+            if (referenceLandmarks && latestPoseLandmarksRef.current) {
+              const normalizedLms = normalizeReferenceLandmarks(latestPoseLandmarksRef.current, referenceLandmarks);
+              const ghostColor = isUsingLocalCapture ? "rgba(250, 204, 21, 0.5)" : "rgba(6, 182, 212, 0.45)";
+              drawGhostSkeleton(ctx, normalizedLms, width, height, ghostColor, 5, isMirrored);
+            }
+            
+            // 5. Draw active skeleton & overlays
+            const landmarks = latestPoseLandmarksRef.current;
+            if (landmarks) {
+              const colors = activeColorsRef.current || {
+                leftColor: "rgba(255, 0, 0, 0.8)",
+                rightColor: "rgba(255, 0, 0, 0.8)",
+                leftKneeColor: "rgba(255, 0, 0, 0.8)",
+                rightKneeColor: "rgba(255, 0, 0, 0.8)"
+              };
+              
+              drawActiveSkeleton(
+                ctx, 
+                landmarks, 
+                width, 
+                height, 
+                colors.leftColor, 
+                colors.rightColor, 
+                mode, 
+                colors.leftKneeColor, 
+                colors.rightKneeColor, 
+                isMirrored
+              );
+              
+              drawCenterOfGravity(ctx, landmarks, width, height, isMirrored);
+              
+              const currentAngles = calculateCurrentAngles(landmarks, mode);
+              drawAnglesOnSkeleton(ctx, landmarks, width, height, currentAngles, mode, isMirrored);
+            }
+            
+            // 6. Send to MediaPipe pose detector at throttled interval
             const now = performance.now();
             const elapsed = now - lastFrameTime;
             if (elapsed >= frameInterval) {
               if (!isProcessing) {
                 isProcessing = true;
                 try {
-                  await pose.send({ image: videoRef.current });
+                  await pose.send({ image: video });
                   lastFrameTime = now;
                 } catch (err) {
                   console.error("Error sending image to pose:", err);
@@ -824,6 +880,7 @@ export default function KumaStances() {
               }
             }
           }
+          
           animationFrameId = requestAnimationFrame(processFrame);
         };
 
@@ -850,7 +907,7 @@ export default function KumaStances() {
         try { poseInstanceRef.current.close(); } catch {}
       }
     };
-  }, [scriptsLoaded, cameraActive, facingMode]);
+  }, [scriptsLoaded, cameraActive, facingMode, checkAttempts]);
 
   // Handle dropdown selection change
   const handlePresetChange = (presetId: string) => {
@@ -958,7 +1015,13 @@ export default function KumaStances() {
                     <div className="absolute top-8 left-6 right-6 flex justify-between items-center z-[70] pointer-events-none">
                       <button
                         type="button"
-                        onClick={() => {
+                        onClick={async () => {
+                          if (videoRef.current) {
+                            try {
+                              await videoRef.current.play().catch(() => {});
+                              videoRef.current.pause();
+                            } catch (e) {}
+                          }
                           const nextMode = facingMode === "user" ? "environment" : "user";
                           setFacingMode(nextMode);
                           speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
@@ -1079,7 +1142,13 @@ export default function KumaStances() {
                       <>
                         <button
                           type="button"
-                          onClick={() => {
+                          onClick={async () => {
+                            if (videoRef.current) {
+                              try {
+                                await videoRef.current.play().catch(() => {});
+                                videoRef.current.pause();
+                              } catch (e) {}
+                            }
                             const nextMode = facingMode === "user" ? "environment" : "user";
                             setFacingMode(nextMode);
                             speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
@@ -1120,7 +1189,15 @@ export default function KumaStances() {
                     
                     <button
                       disabled={!scriptsLoaded}
-                      onClick={() => setCameraActive(true)}
+                      onClick={async () => {
+                        if (videoRef.current) {
+                          try {
+                            await videoRef.current.play().catch(() => {});
+                            videoRef.current.pause();
+                          } catch (e) {}
+                        }
+                        setCameraActive(true);
+                      }}
                       className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-white rounded-xl text-xs font-bold tracking-widest px-8 py-3.5 hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all cursor-pointer"
                     >
                       {scriptsLoaded ? "ACTIVAR EVALUADOR EN VIVO" : "CARGANDO LIBRERÍAS..."}
