@@ -1050,15 +1050,7 @@ export default function KumaStances() {
                   className={`relative w-full h-full z-10 ${cameraActive ? "object-contain bg-black" : ""}`}
                 />
 
-                {/* Subtle Debug Logs Overlay */}
-                {cameraActive && debugLogs.length > 0 && (
-                  <div className="absolute bottom-24 left-4 z-40 bg-zinc-950/85 border border-white/10 p-2 rounded-xl text-[8px] font-mono text-zinc-400 max-w-[280px] pointer-events-none select-none text-left space-y-0.5 shadow-2xl backdrop-blur-md">
-                    <div className="text-zinc-500 font-bold border-b border-white/5 pb-0.5 mb-1 uppercase tracking-wider text-[7px]">Debug Console</div>
-                    {debugLogs.map((log, idx) => (
-                      <div key={idx} className="whitespace-pre-wrap leading-tight">{log}</div>
-                    ))}
-                  </div>
-                )}
+                {/* Debug console removed from screen as requested */}
 
                 {/* Mobile Camera Overlays (only visible on mobile when camera is active) */}
                 {cameraActive && isMobile && (
@@ -1105,7 +1097,7 @@ export default function KumaStances() {
                     </div>
 
                     {/* Right Controls Overlay (Tolerance Slider) */}
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-50 bg-zinc-950/70 border border-white/10 p-2 rounded-2xl shadow-2xl backdrop-blur-md pointer-events-auto">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-50 pointer-events-auto">
                       <SlidersHorizontal className="w-3.5 h-3.5 text-kuma-gold" />
                       <span className="text-[8px] font-black tracking-widest text-zinc-300 uppercase rotate-90 my-2">
                         TOL: {tolerance}°
