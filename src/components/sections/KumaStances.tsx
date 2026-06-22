@@ -796,16 +796,17 @@ export default function KumaStances() {
           };
         }
 
-        const processFrame = async (timestamp: number) => {
+        const processFrame = async () => {
           if (!videoRef.current || !poseInstanceRef.current || !cameraActive) return;
           if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
-            const elapsed = timestamp - lastFrameTime;
+            const now = performance.now();
+            const elapsed = now - lastFrameTime;
             if (elapsed >= frameInterval) {
               if (!isProcessing) {
                 isProcessing = true;
                 try {
                   await pose.send({ image: videoRef.current });
-                  lastFrameTime = timestamp;
+                  lastFrameTime = now;
                 } catch (err) {
                   console.error("Error sending image to pose:", err);
                 }
@@ -936,7 +937,7 @@ export default function KumaStances() {
                   ref={canvasRef}
                   width="640"
                   height="480"
-                  className="absolute top-0 left-0 w-full h-full z-10 object-contain bg-transparent"
+                  className="relative w-full h-full z-10 object-contain bg-transparent"
                 />
 
                 {/* Mobile Camera Overlays (only visible on mobile when camera is active) */}
