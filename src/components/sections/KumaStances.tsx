@@ -775,6 +775,8 @@ export default function KumaStances() {
     let activeStream: MediaStream | null = null;
     let animationFrameId: number | null = null;
     let isProcessing = false;
+    let lastFrameTime = 0;
+    const frameInterval = 1000 / 22; // Throttle to 22 FPS to prevent CPU/GPU overload on high refresh rate mobile screens
 
     const startCamera = async () => {
       try {
@@ -804,17 +806,21 @@ export default function KumaStances() {
           };
         }
 
-        const processFrame = async () => {
+        const processFrame = async (timestamp: number) => {
           if (!videoRef.current || !poseInstanceRef.current || !cameraActive) return;
           if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
-            if (!isProcessing) {
-              isProcessing = true;
-              try {
-                await pose.send({ image: videoRef.current });
-              } catch (err) {
-                console.error("Error sending image to pose:", err);
+            const elapsed = timestamp - lastFrameTime;
+            if (elapsed >= frameInterval) {
+              if (!isProcessing) {
+                isProcessing = true;
+                try {
+                  await pose.send({ image: videoRef.current });
+                  lastFrameTime = timestamp;
+                } catch (err) {
+                  console.error("Error sending image to pose:", err);
+                }
+                isProcessing = false;
               }
-              isProcessing = false;
             }
           }
           animationFrameId = requestAnimationFrame(processFrame);
@@ -918,7 +924,7 @@ export default function KumaStances() {
               >
                 <video 
                   ref={videoRef}
-                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.01, pointerEvents: "none", zIndex: 0, objectFit: "contain" }}
+                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.02, pointerEvents: "none", zIndex: 12, objectFit: "contain" }}
                   width="640"
                   height="480"
                   playsInline
