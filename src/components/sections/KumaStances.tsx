@@ -1299,11 +1299,11 @@ export default function KumaStances() {
                 </div>
 
                 {/* Local Capture Section */}
-                <div className="bg-zinc-950/60 border border-white/5 p-4 rounded-2xl space-y-3">
-                  <h3 className="text-[10px] font-bold uppercase text-kuma-gold tracking-wider">
+                <div className={`bg-zinc-950/60 border border-white/5 p-4 rounded-2xl space-y-3 ${cameraActive ? "max-xl:p-0 max-xl:bg-transparent max-xl:border-none max-xl:space-y-0" : ""}`}>
+                  <h3 className={`text-[10px] font-bold uppercase text-kuma-gold tracking-wider ${cameraActive ? "max-xl:hidden" : ""}`}>
                     Capturar Posición
                   </h3>
-                  <p className="font-body text-[11px] text-zinc-400 font-light leading-relaxed">
+                  <p className={`font-body text-[11px] text-zinc-400 font-light leading-relaxed ${cameraActive ? "max-xl:hidden" : ""}`}>
                     Congela tu postura actual detectada en la cámara como silueta guía dorada.
                   </p>
                   
