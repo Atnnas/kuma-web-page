@@ -52,6 +52,11 @@ export default function KumaStances() {
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [alignmentMetrics, setAlignmentMetrics] = useState({ score: 0, aligned: false });
   const [checkAttempts, setCheckAttempts] = useState(0);
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+  const addLog = (msg: string) => {
+    console.log(msg);
+    setDebugLogs((prev) => [...prev.slice(-4), `${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}: ${msg}`]);
+  };
 
   // Refs for video & canvas
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -275,14 +280,17 @@ export default function KumaStances() {
       });
     };
 
+    addLog("Iniciando descarga de librerías MediaPipe...");
     Promise.all([
       loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"),
       loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js")
     ])
       .then(() => {
+        addLog("Librerías MediaPipe cargadas con éxito.");
         setScriptsLoaded(true);
       })
       .catch((err) => {
+        addLog(`Error cargando librerías MediaPipe: ${err?.message || err}`);
         console.error("Error loading MediaPipe scripts:", err);
         setConnectionError("No se pudieron cargar las librerías de visión artificial.");
       });
@@ -716,20 +724,24 @@ export default function KumaStances() {
     if (!scriptsLoaded || !cameraActive) return;
     if (!videoRef.current || !canvasRef.current) return;
 
+    addLog(`Chequeando window.Pose (Intento ${checkAttempts + 1}/10)...`);
     const PoseClass = (window as any).Pose;
     if (!PoseClass) {
       if (checkAttempts < 10) {
+        addLog("window.Pose no encontrado. Programando reintento en 500ms...");
         const timer = setTimeout(() => {
           setCheckAttempts((prev) => prev + 1);
         }, 500);
         return () => clearTimeout(timer);
       } else {
+        addLog("Error: window.Pose no encontrado tras 10 intentos.");
         console.error("Pose class not found on window after 10 attempts");
         setConnectionError("No se pudo iniciar el motor de visión artificial (Pose class not found). Por favor recarga la página.");
         return;
       }
     }
 
+    addLog("window.Pose encontrado. Inicializando instancia...");
     const pose = new PoseClass({
       locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
     });
@@ -744,6 +756,7 @@ export default function KumaStances() {
 
     pose.onResults(handlePoseResults);
     poseInstanceRef.current = pose;
+    addLog("Instancia MediaPipe Pose configurada y lista.");
 
     let activeStream: MediaStream | null = null;
     let animationFrameId: number | null = null;
@@ -753,6 +766,7 @@ export default function KumaStances() {
 
     const startCamera = async () => {
       try {
+        addLog(`Iniciando cámara con facingMode: ${facingMode}...`);
         const constraints = {
           video: {
             facingMode: facingMode,
@@ -764,20 +778,34 @@ export default function KumaStances() {
         let stream: MediaStream;
         try {
           stream = await navigator.mediaDevices.getUserMedia(constraints);
+          addLog("Stream obtenido con constraints ideales.");
         } catch (constraintsErr) {
+          addLog(`Constraints ideales fallaron, intentando fallback...`);
           console.warn("Failed with strict camera constraints, trying fallback video: true", constraintsErr);
           // Fallback to basic video stream without ideal resolution
           stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          addLog("Stream obtenido con constraints fallback.");
         }
         activeStream = stream;
         
         if (videoRef.current) {
+          // Fix React muted autoplay check bug explicitly:
+          videoRef.current.defaultMuted = true;
+          videoRef.current.muted = true;
           videoRef.current.srcObject = stream;
-          videoRef.current.play().catch(e => console.error("Error playing video immediately:", e));
+          addLog("Stream asignado a videoRef.");
+          videoRef.current.play()
+            .then(() => addLog("Video reproduciéndose inmediatamente."))
+            .catch(e => addLog(`Fallo play inmediato: ${e?.message || e}`));
           videoRef.current.onloadedmetadata = () => {
-            videoRef.current?.play().catch(e => console.error("Error playing video on metadata:", e));
+            addLog("Metadata del video cargada.");
+            videoRef.current?.play()
+              .then(() => addLog("Video reproduciéndose en metadata."))
+              .catch(e => addLog(`Fallo play metadata: ${e?.message || e}`));
           };
         }
+
+        let firstFrameLogged = false;
 
         const processFrame = async () => {
           if (!videoRef.current || !canvasRef.current || !cameraActive) return;
@@ -786,106 +814,120 @@ export default function KumaStances() {
           const canvas = canvasRef.current;
           const ctx = canvas.getContext("2d");
           
-          if (ctx && video.readyState >= 2 && video.videoWidth > 0) {
-            // 1. Ensure canvas dimensions match video
-            if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
-              canvas.width = video.videoWidth;
-              canvas.height = video.videoHeight;
-            }
-            
-            const currentAspect = video.videoWidth / video.videoHeight;
-            if (Math.abs(aspectRatioRef.current - currentAspect) > 0.01) {
-              setAspectRatio(currentAspect);
-            }
-            
-            const width = canvas.width;
-            const height = canvas.height;
-            const isMirrored = facingModeRef.current === "user";
-            
-            // 2. Clear canvas
-            ctx.clearRect(0, 0, width, height);
-            
-            // 3. Draw video frame
-            ctx.save();
-            if (isMirrored) {
-              ctx.translate(width, 0);
-              ctx.scale(-1, 1);
-            }
-            ctx.drawImage(video, 0, 0, width, height);
-            ctx.restore();
-            
-            // 4. Draw reference ghost skeleton
-            let referenceLandmarks: PoseLandmark[] | null = null;
-            let isUsingLocalCapture = false;
-            
-            const cap = localCaptureRef.current;
-            const activePreset = currentPresetRef.current;
-            const mode = analysisModeRef.current || "completo";
-            
-            if (cap) {
-              referenceLandmarks = cap.landmarks;
-              isUsingLocalCapture = true;
-            } else if (activePreset) {
-              referenceLandmarks = activePreset.landmarks;
-            }
-            
-            if (referenceLandmarks && latestPoseLandmarksRef.current) {
-              const normalizedLms = normalizeReferenceLandmarks(latestPoseLandmarksRef.current, referenceLandmarks);
-              const ghostColor = isUsingLocalCapture ? "rgba(250, 204, 21, 0.5)" : "rgba(6, 182, 212, 0.45)";
-              drawGhostSkeleton(ctx, normalizedLms, width, height, ghostColor, 5, isMirrored);
-            }
-            
-            // 5. Draw active skeleton & overlays
-            const landmarks = latestPoseLandmarksRef.current;
-            if (landmarks) {
-              const colors = activeColorsRef.current || {
-                leftColor: "rgba(255, 0, 0, 0.8)",
-                rightColor: "rgba(255, 0, 0, 0.8)",
-                leftKneeColor: "rgba(255, 0, 0, 0.8)",
-                rightKneeColor: "rgba(255, 0, 0, 0.8)"
-              };
-              
-              drawActiveSkeleton(
-                ctx, 
-                landmarks, 
-                width, 
-                height, 
-                colors.leftColor, 
-                colors.rightColor, 
-                mode, 
-                colors.leftKneeColor, 
-                colors.rightKneeColor, 
-                isMirrored
-              );
-              
-              drawCenterOfGravity(ctx, landmarks, width, height, isMirrored);
-              
-              const currentAngles = calculateCurrentAngles(landmarks, mode);
-              drawAnglesOnSkeleton(ctx, landmarks, width, height, currentAngles, mode, isMirrored);
-            }
-            
-            // 6. Send to MediaPipe pose detector at throttled interval
-            const now = performance.now();
-            const elapsed = now - lastFrameTime;
-            if (elapsed >= frameInterval) {
-              if (!isProcessing) {
-                isProcessing = true;
-                try {
-                  await pose.send({ image: video });
-                  lastFrameTime = now;
-                } catch (err) {
-                  console.error("Error sending image to pose:", err);
+          try {
+            if (ctx) {
+              if (!firstFrameLogged) {
+                addLog(`FrameLoop - readyState: ${video.readyState}, size: ${video.videoWidth}x${video.videoHeight}`);
+                firstFrameLogged = true;
+              }
+
+              if (video.readyState >= 2 && video.videoWidth > 0) {
+                // 1. Ensure canvas dimensions match video
+                if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+                  canvas.width = video.videoWidth;
+                  canvas.height = video.videoHeight;
+                  addLog(`Ajustando tamaño canvas a ${canvas.width}x${canvas.height}`);
                 }
-                isProcessing = false;
+                
+                const currentAspect = video.videoWidth / video.videoHeight;
+                if (Math.abs(aspectRatioRef.current - currentAspect) > 0.01) {
+                  setAspectRatio(currentAspect);
+                }
+                
+                const width = canvas.width;
+                const height = canvas.height;
+                const isMirrored = facingModeRef.current === "user";
+                
+                // 2. Clear canvas
+                ctx.clearRect(0, 0, width, height);
+                
+                // 3. Draw video frame
+                ctx.save();
+                if (isMirrored) {
+                  ctx.translate(width, 0);
+                  ctx.scale(-1, 1);
+                }
+                ctx.drawImage(video, 0, 0, width, height);
+                ctx.restore();
+                
+                // 4. Draw reference ghost skeleton
+                let referenceLandmarks: PoseLandmark[] | null = null;
+                let isUsingLocalCapture = false;
+                
+                const cap = localCaptureRef.current;
+                const activePreset = currentPresetRef.current;
+                const mode = analysisModeRef.current || "completo";
+                
+                if (cap) {
+                  referenceLandmarks = cap.landmarks;
+                  isUsingLocalCapture = true;
+                } else if (activePreset) {
+                  referenceLandmarks = activePreset.landmarks;
+                }
+                
+                if (referenceLandmarks && latestPoseLandmarksRef.current) {
+                  const normalizedLms = normalizeReferenceLandmarks(latestPoseLandmarksRef.current, referenceLandmarks);
+                  const ghostColor = isUsingLocalCapture ? "rgba(250, 204, 21, 0.5)" : "rgba(6, 182, 212, 0.45)";
+                  drawGhostSkeleton(ctx, normalizedLms, width, height, ghostColor, 5, isMirrored);
+                }
+                
+                // 5. Draw active skeleton & overlays
+                const landmarks = latestPoseLandmarksRef.current;
+                if (landmarks) {
+                  const colors = activeColorsRef.current || {
+                    leftColor: "rgba(255, 0, 0, 0.8)",
+                    rightColor: "rgba(255, 0, 0, 0.8)",
+                    leftKneeColor: "rgba(255, 0, 0, 0.8)",
+                    rightKneeColor: "rgba(255, 0, 0, 0.8)"
+                  };
+                  
+                  drawActiveSkeleton(
+                    ctx, 
+                    landmarks, 
+                    width, 
+                    height, 
+                    colors.leftColor, 
+                    colors.rightColor, 
+                    mode, 
+                    colors.leftKneeColor, 
+                    colors.rightKneeColor, 
+                    isMirrored
+                  );
+                  
+                  drawCenterOfGravity(ctx, landmarks, width, height, isMirrored);
+                  
+                  const currentAngles = calculateCurrentAngles(landmarks, mode);
+                  drawAnglesOnSkeleton(ctx, landmarks, width, height, currentAngles, mode, isMirrored);
+                }
+                
+                // 6. Send to MediaPipe pose detector at throttled interval
+                const now = performance.now();
+                const elapsed = now - lastFrameTime;
+                if (elapsed >= frameInterval) {
+                  if (!isProcessing) {
+                    isProcessing = true;
+                    try {
+                      await pose.send({ image: video });
+                      lastFrameTime = now;
+                    } catch (err: any) {
+                      addLog(`Error enviando frame a pose: ${err?.message || err}`);
+                      console.error("Error sending image to pose:", err);
+                    }
+                    isProcessing = false;
+                  }
+                }
               }
             }
+          } catch (loopErr: any) {
+            addLog(`Error en FrameLoop: ${loopErr?.message || loopErr}`);
+          } finally {
+            animationFrameId = requestAnimationFrame(processFrame);
           }
-          
-          animationFrameId = requestAnimationFrame(processFrame);
         };
 
         animationFrameId = requestAnimationFrame(processFrame);
       } catch (err: any) {
+        addLog(`Error en startCamera: ${err?.message || err}`);
         console.error("Error starting camera:", err);
         setConnectionError("No se pudo acceder a la cámara. Por favor asegúrate de dar los permisos correspondientes.");
       }
@@ -894,6 +936,7 @@ export default function KumaStances() {
     startCamera();
 
     return () => {
+      addLog("Desmontando cámara y limpiando recursos...");
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
@@ -1008,6 +1051,16 @@ export default function KumaStances() {
                   className={`relative w-full h-full z-10 ${cameraActive ? "object-contain bg-black" : ""}`}
                 />
 
+                {/* Subtle Debug Logs Overlay */}
+                {cameraActive && debugLogs.length > 0 && (
+                  <div className="absolute bottom-24 left-4 z-40 bg-zinc-950/85 border border-white/10 p-2 rounded-xl text-[8px] font-mono text-zinc-400 max-w-[280px] pointer-events-none select-none text-left space-y-0.5 shadow-2xl backdrop-blur-md">
+                    <div className="text-zinc-500 font-bold border-b border-white/5 pb-0.5 mb-1 uppercase tracking-wider text-[7px]">Debug Console</div>
+                    {debugLogs.map((log, idx) => (
+                      <div key={idx} className="whitespace-pre-wrap leading-tight">{log}</div>
+                    ))}
+                  </div>
+                )}
+
                 {/* Mobile Camera Overlays (only visible on mobile when camera is active) */}
                 {cameraActive && isMobile && (
                   <>
@@ -1018,6 +1071,8 @@ export default function KumaStances() {
                         onClick={() => {
                           if (videoRef.current) {
                             try {
+                              videoRef.current.defaultMuted = true;
+                              videoRef.current.muted = true;
                               const playPromise = videoRef.current.play();
                               if (playPromise !== undefined) {
                                 playPromise.catch(() => {});
@@ -1148,6 +1203,8 @@ export default function KumaStances() {
                           onClick={() => {
                             if (videoRef.current) {
                               try {
+                                videoRef.current.defaultMuted = true;
+                                videoRef.current.muted = true;
                                 const playPromise = videoRef.current.play();
                                 if (playPromise !== undefined) {
                                   playPromise.catch(() => {});
@@ -1198,6 +1255,8 @@ export default function KumaStances() {
                       onClick={() => {
                         if (videoRef.current) {
                           try {
+                            videoRef.current.defaultMuted = true;
+                            videoRef.current.muted = true;
                             const playPromise = videoRef.current.play();
                             if (playPromise !== undefined) {
                               playPromise.catch(() => {});
