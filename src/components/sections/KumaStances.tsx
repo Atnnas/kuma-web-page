@@ -1073,10 +1073,10 @@ export default function KumaStances() {
                       setFacingMode(nextMode);
                       speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
                     }}
-                    className="absolute top-4 left-4 p-3 bg-zinc-950/40 border border-white/10 hover:bg-zinc-900/60 rounded-xl pointer-events-auto active:scale-95 shadow-2xl flex items-center justify-center z-[70] backdrop-blur-md cursor-pointer text-zinc-300 hover:text-white"
+                    className="absolute top-4 left-4 p-3.5 bg-zinc-950 border-2 border-kuma-gold hover:bg-zinc-900 rounded-2xl pointer-events-auto active:scale-95 shadow-[0_0_15px_rgba(245,158,11,0.4)] flex items-center justify-center z-[70] cursor-pointer text-zinc-300 hover:text-white"
                     title="Cambiar Cámara"
                   >
-                    <RefreshCw className="w-5 h-5 text-kuma-gold" />
+                    <RefreshCw className="w-6 h-6 text-kuma-gold" />
                   </button>
                 )}
 
