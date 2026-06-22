@@ -106,10 +106,9 @@ export default function KumaStances() {
   // Lock body scroll on mobile when camera is active
   useEffect(() => {
     if (isMobile && cameraActive) {
-      document.body.style.overflow = "hidden";
-      document.body.style.height = "100vh";
-      document.documentElement.style.overflow = "hidden";
-      document.documentElement.style.height = "100vh";
+      // Let's not lock overflow-y to allow vertical scroll of controls on active mobile split-screen
+      document.body.style.overflowX = "hidden";
+      document.documentElement.style.overflowX = "hidden";
     } else {
       document.body.style.overflow = "";
       document.body.style.height = "";
@@ -185,11 +184,11 @@ export default function KumaStances() {
         header, nav, [class*="Navbar"], #main-header {
           display: none !important;
         }
-        /* Remove top and bottom padding from page main wrapper, force overflow hidden to prevent scrolling */
+        /* Remove top and bottom padding from page main wrapper, force overflow visible for scrolling */
         main {
           padding-top: 0 !important;
           padding-bottom: 0 !important;
-          overflow: hidden !important;
+          overflow: visible !important;
         }
         /* Remove any body margin/padding spacing */
         body {
@@ -198,7 +197,7 @@ export default function KumaStances() {
          /* Canvas wrapper overrides for active mobile fullscreen view */
         .canvas-wrapper-mobile-active {
           width: 100vw !important;
-          height: 100vh !important;
+          height: 50vh !important;
           aspect-ratio: auto !important;
           max-width: none !important;
         }
@@ -1013,7 +1012,7 @@ export default function KumaStances() {
             {/* Camera Evaluation Window */}
             <div className={`flex-1 flex flex-col items-center justify-center bg-black/95 relative transition-all duration-300 ${
               cameraActive 
-                ? "max-xl:fixed max-xl:inset-0 max-xl:z-[60] max-xl:w-screen max-xl:h-screen max-xl:bg-black" 
+                ? "max-xl:fixed max-xl:top-0 max-xl:left-0 max-xl:w-screen max-xl:h-[50vh] max-xl:z-[60] max-xl:bg-black max-xl:bottom-auto" 
                 : "border border-neutral-850 p-2 sm:p-4 rounded-xl min-h-[480px]"
             }`}>
               
@@ -1021,7 +1020,7 @@ export default function KumaStances() {
                 className={`relative w-full max-w-[960px] bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 ${
                   cameraActive ? "max-xl:rounded-none max-xl:border-none max-xl:w-full max-xl:h-full max-xl:max-w-none canvas-wrapper-mobile-active" : ""
                 }`}
-                style={(cameraActive && isMobile) ? { width: "100vw", height: "100vh" } : { aspectRatio: aspectRatio }}
+                style={(cameraActive && isMobile) ? { width: "100vw", height: "50vh" } : { aspectRatio: aspectRatio }}
               >
                 <video 
                   ref={videoRef}
@@ -1053,162 +1052,7 @@ export default function KumaStances() {
 
                 {/* Debug console removed from screen as requested */}
 
-                {/* Mobile Camera Overlays - floating transparent controls on screen */}
-                {cameraActive && isMobile && (
-                  <>
-                    {/* Top Controls Overlay */}
-                    <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-[70] pointer-events-none">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCameraActive(false);
-                        }}
-                        className="p-3 bg-black/35 hover:bg-black/50 border border-white/15 rounded-full pointer-events-auto active:scale-95 shadow-md flex items-center justify-center text-white backdrop-blur-md cursor-pointer"
-                        title="Desactivar"
-                      >
-                        <ArrowLeft className="w-4 h-4" />
-                      </button>
-
-                      {/* Transparent Stance Selector */}
-                      <div className="relative pointer-events-auto">
-                        <select
-                          value={selectedPresetId}
-                          onChange={(e) => handlePresetChange(e.target.value)}
-                          className="bg-black/35 border border-white/15 rounded-full px-5 py-2 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-md focus:outline-none appearance-none cursor-pointer pr-9 shadow-md"
-                          style={{ color: "#ffffff", backgroundColor: "rgba(0, 0, 0, 0.7)" }}
-                        >
-                          {presets.map((preset) => (
-                            <option key={preset._id} value={preset._id} className="bg-zinc-950 text-white">
-                              {preset.name}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-kuma-gold text-[7px]">▼</div>
-                      </div>
-
-                      <div className="flex gap-2 pointer-events-auto">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (videoRef.current) {
-                              try {
-                                videoRef.current.defaultMuted = true;
-                                videoRef.current.muted = true;
-                                const playPromise = videoRef.current.play();
-                                if (playPromise !== undefined) {
-                                  playPromise.catch(() => {});
-                                }
-                                videoRef.current.pause();
-                              } catch (e) {}
-                            }
-                            const nextMode = facingMode === "user" ? "environment" : "user";
-                            setFacingMode(nextMode);
-                            speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
-                          }}
-                          className="p-3 bg-black/35 hover:bg-black/50 border border-white/15 rounded-full active:scale-95 shadow-md flex items-center justify-center text-white backdrop-blur-md cursor-pointer"
-                          title="Cambiar Cámara"
-                        >
-                          <RefreshCw className="w-4 h-4 text-white" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setAudioEnabled(!audioEnabled)}
-                          className={`p-3 bg-black/35 hover:bg-black/50 border rounded-full active:scale-95 shadow-md flex items-center justify-center backdrop-blur-md cursor-pointer ${
-                            audioEnabled ? 'text-kuma-gold border-kuma-gold/45' : 'text-zinc-400 border-white/15'
-                          }`}
-                          title={audioEnabled ? "Silenciar audio" : "Activar audio"}
-                        >
-                          {audioEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 text-zinc-400" />}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Right Controls Overlay (Tolerance Slider - Semi-transparent float) */}
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2.5 z-50 pointer-events-auto bg-black/25 border border-white/10 p-2.5 rounded-full backdrop-blur-sm shadow-xl">
-                      <SlidersHorizontal className="w-3.5 h-3.5 text-kuma-gold" />
-                      <span className="text-[7px] font-black tracking-widest text-zinc-300 uppercase rotate-90 my-2">
-                        TOL: {tolerance}°
-                      </span>
-                      <input 
-                        type="range"
-                        min={5}
-                        max={35}
-                        step={1}
-                        value={tolerance}
-                        onChange={(e) => setTolerance(parseInt(e.target.value))}
-                        className="h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-500 -rotate-90 origin-center w-20 my-2"
-                      />
-                    </div>
-
-                    {/* Bottom Controls Overlay */}
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-50 w-full max-w-[280px] pointer-events-none">
-                      {/* Capture Stance button */}
-                      {!localCapture ? (
-                        <button
-                          type="button"
-                          disabled={!latestPoseLandmarksRef.current}
-                          onClick={() => {
-                            if (latestPoseLandmarksRef.current && latestPoseLandmarksRef.current.length > 0) {
-                              const mode = analysisMode;
-                              const angles = calculateCurrentAngles(latestPoseLandmarksRef.current, mode);
-                              const captured = {
-                                landmarks: [...latestPoseLandmarksRef.current],
-                                angles: { ...angles },
-                                mode: mode
-                              };
-                              setSelectedPresetId("");
-                              setCurrentPreset(null);
-                              currentPresetRef.current = null;
-                              localCaptureRef.current = captured;
-                              setLocalCapture(captured);
-                              hasTriggeredAlignRef.current = false;
-                              speak("Posición capturada.");
-                            }
-                          }}
-                          className="px-6 py-2.5 bg-amber-500/25 border-2 border-amber-500/50 text-amber-400 rounded-full text-[9px] font-bold tracking-widest pointer-events-auto active:scale-95 disabled:opacity-35 disabled:pointer-events-none transition-all shadow-xl backdrop-blur-md cursor-pointer"
-                        >
-                          CAPTURAR POSICIÓN
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            localCaptureRef.current = null;
-                            setLocalCapture(null);
-                            hasTriggeredAlignRef.current = false;
-                            speak("Captura limpia.");
-                          }}
-                          className="px-6 py-2.5 bg-zinc-950/40 border-2 border-white/10 text-white rounded-full text-[9px] font-bold tracking-widest pointer-events-auto active:scale-95 transition-all backdrop-blur-md cursor-pointer"
-                        >
-                          LIMPIAR CAPTURA
-                        </button>
-                      )}
-
-                      {/* Analysis Zone Segmented Selector */}
-                      <div className="flex border border-white/15 bg-black/35 backdrop-blur-md rounded-full overflow-hidden pointer-events-auto shadow-xl w-full max-w-[220px] divide-x divide-white/10 p-0.5">
-                        {([
-                          { value: "superior" as const, label: "Sup" },
-                          { value: "inferior" as const, label: "Inf" },
-                          { value: "completo" as const, label: "Comp" }
-                        ]).map((opt) => (
-                          <button
-                            key={opt.value}
-                            type="button"
-                            onClick={() => setAnalysisMode(opt.value)}
-                            className={`flex-1 py-1.5 text-center transition-all cursor-pointer rounded-full text-[8px] uppercase tracking-wider font-semibold ${
-                              analysisMode === opt.value
-                                ? "bg-[#E52B34]/60 text-white font-bold"
-                                : "bg-transparent text-zinc-300 hover:text-white"
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
+                {/* Mobile Camera Overlays completely removed to free screen space */}
 
                 {/* Desktop/Default camera active overlays (visible on desktop only) */}
                 {(!isMobile || !cameraActive) && (
@@ -1330,22 +1174,13 @@ export default function KumaStances() {
 
             {/* Sidebar Controls */}
             <div className={`w-full xl:w-[360px] shrink-0 border border-white/10 bg-zinc-900/40 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between space-y-6 backdrop-blur-md shadow-2xl transition-all duration-300 ${
-              cameraActive ? "max-xl:hidden" : ""
+              cameraActive ? "max-xl:block max-xl:pt-[52vh] max-xl:rounded-none max-xl:border-none max-xl:bg-zinc-950 max-xl:w-full max-xl:p-4 max-xl:flex-1 max-xl:space-y-4 max-xl:shadow-none" : ""
             }`}>
               
               <div className="space-y-6">
                 
                 {/* Header */}
-                <div className="border-b border-white/5 pb-4 flex items-center justify-between">
-                  <div>
-                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 border border-amber-500/30 text-amber-400 bg-amber-950/30 rounded-lg">
-                      PRÁCTICA INDIVIDUAL
-                    </span>
-                    <h2 className="font-impact-condensed text-xl text-white tracking-wide mt-1">
-                      KUMA STANCES
-                    </h2>
-                  </div>
-
+                <div className="border-b border-white/5 pb-4 flex items-center justify-end">
                   {/* Audio Toggle button */}
                   <button
                     onClick={() => setAudioEnabled(!audioEnabled)}
@@ -1355,6 +1190,45 @@ export default function KumaStances() {
                     {audioEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                   </button>
                 </div>
+
+                {/* Mobile Active Camera Controls */}
+                {cameraActive && isMobile && (
+                  <div className="grid grid-cols-2 gap-3 pb-4 border-b border-white/5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (videoRef.current) {
+                          try {
+                            videoRef.current.defaultMuted = true;
+                            videoRef.current.muted = true;
+                            const playPromise = videoRef.current.play();
+                            if (playPromise !== undefined) {
+                              playPromise.catch(() => {});
+                            }
+                            videoRef.current.pause();
+                          } catch (e) {}
+                        }
+                        const nextMode = facingMode === "user" ? "environment" : "user";
+                        setFacingMode(nextMode);
+                        speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
+                      }}
+                      className="py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5 text-kuma-gold" />
+                      Cámara
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCameraActive(false);
+                      }}
+                      className="py-2.5 bg-red-950/20 hover:bg-red-950/40 border border-red-500/20 rounded-xl text-xs font-bold text-red-400 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      Desactivar
+                    </button>
+                  </div>
+                )}
 
                 {/* Stance Selector */}
                 <div className="space-y-2">
