@@ -178,6 +178,13 @@ export default function KumaStances() {
         body {
           padding-top: 0 !important;
         }
+        /* Canvas wrapper overrides for active mobile fullscreen view */
+        .canvas-wrapper-mobile-active {
+          width: 100vw !important;
+          height: 100vh !important;
+          aspect-ratio: auto !important;
+          max-width: none !important;
+        }
       }
     `;
     document.head.appendChild(style);
@@ -620,10 +627,10 @@ export default function KumaStances() {
     const isMirrored = facingModeRef.current === "user";
 
     // Draw video frame
-    ctx.save();
     ctx.clearRect(0, 0, width, height);
 
     if (results.image) {
+      ctx.save();
       if (isMirrored) {
         ctx.translate(width, 0);
         ctx.scale(-1, 1);
@@ -894,7 +901,7 @@ export default function KumaStances() {
               
               <video 
                 ref={videoRef}
-                style={{ position: "absolute", width: "1px", height: "1px", opacity: 0, pointerEvents: "none" }}
+                style={{ position: "absolute", left: "-9999px", top: "0px", width: "320px", height: "240px", pointerEvents: "none" }}
                 width="640"
                 height="480"
                 playsInline
