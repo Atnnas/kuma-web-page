@@ -786,19 +786,27 @@ export default function KumaStances() {
           },
           audio: false
         };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        let stream: MediaStream;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia(constraints);
+        } catch (constraintsErr) {
+          console.warn("Failed with strict camera constraints, trying fallback video: true", constraintsErr);
+          // Fallback to basic video stream without ideal resolution
+          stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        }
         activeStream = stream;
         
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          videoRef.current.play().catch(e => console.error("Error playing video immediately:", e));
           videoRef.current.onloadedmetadata = () => {
-            videoRef.current?.play().catch(e => console.error("Error playing video:", e));
+            videoRef.current?.play().catch(e => console.error("Error playing video on metadata:", e));
           };
         }
 
         const processFrame = async () => {
           if (!videoRef.current || !poseInstanceRef.current || !cameraActive) return;
-          if (videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA) {
+          if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
             if (!isProcessing) {
               isProcessing = true;
               try {
@@ -827,6 +835,9 @@ export default function KumaStances() {
       }
       if (activeStream) {
         activeStream.getTracks().forEach((track) => track.stop());
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
       }
       if (poseInstanceRef.current) {
         try { poseInstanceRef.current.close(); } catch {}
@@ -899,27 +910,27 @@ export default function KumaStances() {
                 : "border border-neutral-850 p-2 sm:p-4 rounded-xl min-h-[480px]"
             }`}>
               
-              <video 
-                ref={videoRef}
-                style={{ position: "absolute", left: "-9999px", top: "0px", width: "320px", height: "240px", pointerEvents: "none" }}
-                width="640"
-                height="480"
-                playsInline
-                muted
-                autoPlay
-              />
-
               <div 
                 className={`relative w-full max-w-[960px] bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 ${
-                  cameraActive ? "max-xl:rounded-none max-xl:border-none max-xl:w-full max-xl:h-full max-xl:max-w-none" : ""
+                  cameraActive ? "max-xl:rounded-none max-xl:border-none max-xl:w-full max-xl:h-full max-xl:max-w-none canvas-wrapper-mobile-active" : ""
                 }`}
                 style={(cameraActive && isMobile) ? { width: "100vw", height: "100vh" } : { aspectRatio: aspectRatio }}
               >
+                <video 
+                  ref={videoRef}
+                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.01, pointerEvents: "none", zIndex: 0, objectFit: "contain" }}
+                  width="640"
+                  height="480"
+                  playsInline
+                  muted
+                  autoPlay
+                />
+
                 <canvas 
                   ref={canvasRef}
                   width="640"
                   height="480"
-                  className={`w-full h-full ${cameraActive ? "object-contain bg-black" : ""}`}
+                  className={`relative w-full h-full z-10 ${cameraActive ? "object-contain bg-black" : ""}`}
                 />
 
                 {/* Mobile Camera Overlays (only visible on mobile when camera is active) */}
@@ -1090,10 +1101,32 @@ export default function KumaStances() {
                     </div>
                     
                     <button
+                      disabled={!scriptsLoaded}
                       onClick={() => setCameraActive(true)}
-                      className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-white rounded-xl text-xs font-bold tracking-widest px-8 py-3.5 hover:opacity-95 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                      className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-white rounded-xl text-xs font-bold tracking-widest px-8 py-3.5 hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all cursor-pointer"
                     >
-                      ACTIVAR EVALUADOR EN VIVO
+                      {scriptsLoaded ? "ACTIVAR EVALUADOR EN VIVO" : "CARGANDO LIBRERÍAS..."}
+                    </button>
+                  </div>
+                )}
+
+                {connectionError && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/95 text-center p-6 space-y-4 z-[80] pointer-events-auto">
+                    <AlertCircle className="w-12 h-12 text-red-500 animate-pulse" />
+                    <div className="space-y-2">
+                      <p className="font-body text-sm font-semibold text-white">Error de Visión Artificial</p>
+                      <p className="font-body text-xs text-red-400 max-w-sm leading-relaxed">
+                        {connectionError}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setConnectionError("");
+                        setCameraActive(false);
+                      }}
+                      className="px-6 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-xl text-xs font-bold tracking-wider text-white active:scale-95 transition-all cursor-pointer"
+                    >
+                      Volver
                     </button>
                   </div>
                 )}
