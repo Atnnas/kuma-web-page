@@ -1052,137 +1052,7 @@ export default function KumaStances() {
 
                 {/* Debug console removed from screen as requested */}
 
-                {/* Mobile Camera Overlays (only visible on mobile when camera is active) */}
-                {cameraActive && isMobile && (
-                  <>
-                    {/* Top Controls Overlay */}
-                    <div className="absolute top-3 left-4 right-4 flex justify-between items-center z-[70] pointer-events-none">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (videoRef.current) {
-                            try {
-                              videoRef.current.defaultMuted = true;
-                              videoRef.current.muted = true;
-                              const playPromise = videoRef.current.play();
-                              if (playPromise !== undefined) {
-                                playPromise.catch(() => {});
-                              }
-                              videoRef.current.pause();
-                            } catch (e) {}
-                          }
-                          const nextMode = facingMode === "user" ? "environment" : "user";
-                          setFacingMode(nextMode);
-                          speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
-                        }}
-                        className="p-2.5 bg-zinc-950/90 hover:bg-zinc-900 border-2 border-white/20 hover:border-kuma-gold/50 rounded-xl pointer-events-auto active:scale-95 shadow-2xl flex items-center justify-center gap-1.5 group cursor-pointer"
-                        title="Cambiar Cámara"
-                      >
-                        <RefreshCw className="w-3.5 h-3.5 text-kuma-gold group-hover:rotate-180 transition-transform duration-500" />
-                        <span className="text-[9px] uppercase font-black tracking-widest text-white">
-                          Cámara
-                        </span>
-                      </button>
-
-                      <Link
-                        href="/resources/aplicaciones"
-                        className="p-2.5 bg-zinc-950/90 hover:bg-zinc-900 border-2 border-white/20 hover:border-red-500/50 rounded-xl pointer-events-auto active:scale-95 shadow-2xl flex items-center justify-center gap-1.5 text-zinc-300 hover:text-red-500 cursor-pointer"
-                        title="Volver"
-                      >
-                        <ArrowLeft className="w-3.5 h-3.5" />
-                        <span className="text-[9px] uppercase font-black tracking-widest text-white">
-                          Volver
-                        </span>
-                      </Link>
-                    </div>
-
-                    {/* Right Controls Overlay (Tolerance Slider) */}
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-50 pointer-events-auto">
-                      <SlidersHorizontal className="w-3.5 h-3.5 text-kuma-gold" />
-                      <span className="text-[8px] font-black tracking-widest text-zinc-300 uppercase rotate-90 my-2">
-                        TOL: {tolerance}°
-                      </span>
-                      <input 
-                        type="range"
-                        min={5}
-                        max={35}
-                        step={1}
-                        value={tolerance}
-                        onChange={(e) => setTolerance(parseInt(e.target.value))}
-                        className="h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-500 -rotate-90 origin-center w-24 my-3"
-                      />
-                    </div>
-
-                    {/* Bottom Controls Overlay */}
-                    <div className="absolute bottom-2 left-4 right-4 flex flex-col items-center gap-2 z-50 pointer-events-none">
-                      {/* Capture Stance button */}
-                      {!localCapture ? (
-                        <button
-                          type="button"
-                          disabled={!latestPoseLandmarksRef.current}
-                          onClick={() => {
-                            if (latestPoseLandmarksRef.current && latestPoseLandmarksRef.current.length > 0) {
-                              const mode = analysisMode;
-                              const angles = calculateCurrentAngles(latestPoseLandmarksRef.current, mode);
-                              const captured = {
-                                landmarks: [...latestPoseLandmarksRef.current],
-                                angles: { ...angles },
-                                mode: mode
-                              };
-                              setSelectedPresetId("");
-                              setCurrentPreset(null);
-                              currentPresetRef.current = null;
-                              localCaptureRef.current = captured;
-                              setLocalCapture(captured);
-                              hasTriggeredAlignRef.current = false;
-                              speak("Posición capturada.");
-                            }
-                          }}
-                          className="px-6 py-3 bg-gradient-to-r from-amber-500/70 via-yellow-500/70 to-amber-600/70 border border-white/10 text-white rounded-xl text-[10px] font-bold tracking-widest pointer-events-auto active:scale-95 disabled:opacity-40 disabled:pointer-events-none transition-all shadow-xl backdrop-blur-sm cursor-pointer"
-                        >
-                          CAPTURAR POSICIÓN
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            localCaptureRef.current = null;
-                            setLocalCapture(null);
-                            hasTriggeredAlignRef.current = false;
-                            speak("Captura limpia.");
-                          }}
-                          className="px-6 py-3 bg-zinc-950/70 border border-white/10 text-white rounded-xl text-[10px] font-bold tracking-widest pointer-events-auto active:scale-95 transition-all backdrop-blur-sm cursor-pointer"
-                        >
-                          LIMPIAR CAPTURA
-                        </button>
-                      )}
-
-                      {/* Analysis Zone buttons */}
-                      <div className="flex border border-white/10 bg-zinc-950/50 backdrop-blur-md rounded-xl overflow-hidden pointer-events-auto shadow-xl w-full max-w-[280px] divide-x divide-white/10">
-                        {([
-                          { value: "superior" as const, label: "Sup." },
-                          { value: "inferior" as const, label: "Inf." },
-                          { value: "completo" as const, label: "Comp." }
-                        ]).map((opt) => (
-                          <button
-                            key={opt.value}
-                            type="button"
-                            onClick={() => setAnalysisMode(opt.value)}
-                            className={`flex-1 py-2.5 text-center transition-all cursor-pointer ${
-                              analysisMode === opt.value
-                                ? "bg-[#E52B34]/70 text-white font-bold"
-                                : "bg-transparent text-zinc-300 hover:text-white"
-                            }`}
-                          >
-                            <span className="block text-[10px] uppercase tracking-wider">
-                              {opt.label}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
+                {/* Mobile Camera Overlays completely removed to free screen space */}
 
                 {/* Desktop/Default camera active overlays (visible on desktop only) */}
                 {(!isMobile || !cameraActive) && (
@@ -1329,6 +1199,45 @@ export default function KumaStances() {
                     {audioEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                   </button>
                 </div>
+
+                {/* Mobile Active Camera Controls */}
+                {cameraActive && isMobile && (
+                  <div className="grid grid-cols-2 gap-3 pb-4 border-b border-white/5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (videoRef.current) {
+                          try {
+                            videoRef.current.defaultMuted = true;
+                            videoRef.current.muted = true;
+                            const playPromise = videoRef.current.play();
+                            if (playPromise !== undefined) {
+                              playPromise.catch(() => {});
+                            }
+                            videoRef.current.pause();
+                          } catch (e) {}
+                        }
+                        const nextMode = facingMode === "user" ? "environment" : "user";
+                        setFacingMode(nextMode);
+                        speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
+                      }}
+                      className="py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5 text-kuma-gold" />
+                      Cámara
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCameraActive(false);
+                      }}
+                      className="py-2.5 bg-red-950/20 hover:bg-red-950/40 border border-red-500/20 rounded-xl text-xs font-bold text-red-400 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      Desactivar
+                    </button>
+                  </div>
+                )}
 
                 {/* Stance Selector */}
                 <div className="space-y-2">
