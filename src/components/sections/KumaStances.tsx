@@ -195,12 +195,13 @@ export default function KumaStances() {
           padding-top: 0 !important;
         }
          /* Canvas wrapper overrides for active mobile fullscreen view */
-        .canvas-wrapper-mobile-active {
-          width: 100vw !important;
-          height: 50vh !important;
-          aspect-ratio: auto !important;
-          max-width: none !important;
-        }
+         .canvas-wrapper-mobile-active {
+           width: 100vw !important;
+           height: calc(50vh - env(safe-area-inset-top, 24px)) !important;
+           margin-top: env(safe-area-inset-top, 24px) !important;
+           aspect-ratio: auto !important;
+           max-width: none !important;
+         }
       }
     `;
     document.head.appendChild(style);
