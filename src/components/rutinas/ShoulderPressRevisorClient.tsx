@@ -425,6 +425,11 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
     const isSymmetrical = asymmetryPercentage <= 5;
     const isForearmVertical = maxDrift <= 0.08;
 
+    // Fists width flaring check: wrists should not be more than 1.35x shoulder width apart
+    const shoulderWidth = Math.abs(s_L.x - s_R.x);
+    const wristWidth = Math.abs(w_L.x - w_R.x);
+    const isFistsCorrect = wristWidth <= 1.35 * shoulderWidth;
+
     // State machine for shoulder press:
     // Starting position (Bottom): Both elbows bent to <= 90°
     // Target position (Top): Both elbows extended to >= 160°
@@ -461,6 +466,11 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
           hasReachedTopRef.current = false;
           setFeedbackMsg("¡Alinea tus antebrazos! Mantenlos verticales");
           setInstructionMsg("Evita abrir o cerrar los brazos hacia los lados");
+        } else if (isStrict && !isFistsCorrect) {
+          if (hasReachedTopRef.current) playWarningBeep();
+          hasReachedTopRef.current = false;
+          setFeedbackMsg("¡No abras los brazos! Puños sobre la cabeza");
+          setInstructionMsg("Empuja verticalmente hacia arriba, no hacia afuera");
         } else {
           if (!hasReachedTopRef.current) {
             playDepthBeep();
@@ -479,6 +489,9 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
         } else if (isStrict && !isForearmVertical) {
           hasReachedTopRef.current = false;
           setFeedbackMsg("¡Antebrazos inclinados! Evita balancear");
+        } else if (isStrict && !isFistsCorrect) {
+          hasReachedTopRef.current = false;
+          setFeedbackMsg("¡Brazos muy abiertos! Puños sobre la cabeza");
         } else {
           wasPressingRef.current = true;
           if (!hasReachedTopRef.current) {
@@ -590,6 +603,26 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
         ctx.lineTo((1 - e_R.x) * width, w_R.y * height);
         ctx.stroke();
       }
+
+      // 3. Draw horizontal line connecting wrists to check flaring width
+      ctx.shadowBlur = 10;
+      if (isFistsCorrect) {
+        ctx.strokeStyle = "rgba(6, 182, 212, 0.25)"; // Cyan (faint)
+        ctx.shadowColor = "rgba(6, 182, 212, 0.25)";
+        ctx.lineWidth = 2;
+      } else {
+        ctx.strokeStyle = "rgba(239, 68, 68, 0.9)"; // Red warning
+        ctx.shadowColor = "rgba(239, 68, 68, 0.9)";
+        ctx.lineWidth = 6;
+        
+        ctx.font = "bold 11px monospace";
+        ctx.fillStyle = "#ef4444";
+        ctx.fillText("¡MUY ABIERTO!", (1 - (w_L.x + w_R.x) / 2) * width - 40, ((w_L.y + w_R.y) / 2) * height - 15);
+      }
+      ctx.beginPath();
+      ctx.moveTo((1 - w_L.x) * width, w_L.y * height);
+      ctx.lineTo((1 - w_R.x) * width, w_R.y * height);
+      ctx.stroke();
     }
 
     ctx.restore();

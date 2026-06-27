@@ -921,6 +921,10 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             const isSymmetrical = asymmetryPercentage <= 5;
             const isForearmVertical = maxDrift <= 0.08;
 
+            const shoulderWidth = Math.abs(s_L.x - s_R.x);
+            const wristWidth = Math.abs(w_L.x - w_R.x);
+            const isFistsCorrect = wristWidth <= 1.35 * shoulderWidth;
+
             if (angleL <= 90 && angleR <= 90) {
                 if (hasReachedDepthRef.current) {
                     repsCountRef.current += 1;
@@ -953,6 +957,11 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                         hasReachedDepthRef.current = false;
                         setFeedbackMsg("¡Alinea tus antebrazos! Mantenlos verticales");
                         setInstructionMsg("Evita abrir o cerrar los brazos");
+                    } else if (!isFistsCorrect) {
+                        if (hasReachedDepthRef.current) playWarningBeep();
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡No abras los brazos! Puños sobre la cabeza");
+                        setInstructionMsg("Empuja hacia arriba, no hacia afuera");
                     } else {
                         if (!hasReachedDepthRef.current) {
                             playDepthBeep();
@@ -971,6 +980,9 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                     } else if (!isForearmVertical) {
                         hasReachedDepthRef.current = false;
                         setFeedbackMsg("¡Antebrazos inclinados! Mantenlos verticales");
+                    } else if (!isFistsCorrect) {
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Brazos muy abiertos! Puños sobre la cabeza");
                     } else {
                         wasBendingRef.current = true;
                         if (!hasReachedDepthRef.current) {
@@ -1051,6 +1063,22 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 ctx.lineTo((1 - e_R.x) * width, w_R.y * height);
                 ctx.stroke();
             }
+
+            // Draw horizontal line connecting wrists to check flaring width
+            if (isFistsCorrect) {
+                ctx.strokeStyle = "rgba(6, 182, 212, 0.25)";
+                ctx.lineWidth = 2;
+            } else {
+                ctx.strokeStyle = "rgba(239, 68, 68, 0.9)";
+                ctx.lineWidth = 6;
+                ctx.font = "bold 11px monospace";
+                ctx.fillStyle = "#ef4444";
+                ctx.fillText("¡MUY ABIERTO!", (1 - (w_L.x + w_R.x) / 2) * width - 40, ((w_L.y + w_R.y) / 2) * height - 15);
+            }
+            ctx.beginPath();
+            ctx.moveTo((1 - w_L.x) * width, w_L.y * height);
+            ctx.lineTo((1 - w_R.x) * width, w_R.y * height);
+            ctx.stroke();
             ctx.restore();
 
         } else if (isPushup) {
