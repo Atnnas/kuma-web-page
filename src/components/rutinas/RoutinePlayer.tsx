@@ -1595,12 +1595,14 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                                             </div>
                                             
                                             {/* Active side/phase indicator */}
-                                            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur px-3 py-1.5 rounded-full border border-white/5 text-[10px] uppercase font-bold tracking-widest text-zinc-400">
-                                                {isBurpeeActive ? "Fase: " : "Lado: "}
-                                                <span className="text-cyan-400 font-bold">
-                                                    {isBurpeeActive ? (hasReachedBottom ? "SALTO Y PALMADA" : "PECHO AL SUELO") : activeSide}
-                                                </span>
-                                            </div>
+                                            {isBurpeeActive && (
+                                                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur px-3 py-1.5 rounded-full border border-white/5 text-[10px] uppercase font-bold tracking-widest text-zinc-400">
+                                                    Fase:{" "}
+                                                    <span className="text-cyan-400 font-bold">
+                                                        {hasReachedBottom ? "SALTO Y PALMADA" : "PECHO AL SUELO"}
+                                                    </span>
+                                                </div>
+                                            )}
 
                                             {/* Depth Indicator Bar (Cyber HUD Style) */}
                                             <div className="absolute right-4 top-1/2 -translate-y-1/2 h-[65%] w-3 bg-zinc-900/60 rounded-full border border-white/5 overflow-hidden flex flex-col justify-end">

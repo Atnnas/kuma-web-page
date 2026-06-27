@@ -889,7 +889,7 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
       <div className="flex flex-col xl:flex-row gap-6 w-full items-stretch">
         
         {/* Left Side: Camera & AI */}
-        <div className="flex-1 relative flex flex-col items-center justify-center bg-black/95 rounded-[2rem] border border-white/5 overflow-hidden p-3 md:p-5 shadow-2xl min-h-[400px]">
+        <div className="flex-1 relative flex flex-col items-center justify-center bg-black/95 rounded-[2rem] border border-white/5 overflow-hidden p-3 md:p-5 shadow-2xl min-h-[400px] lg:h-[70vh] lg:min-h-[600px]">
           
           {/* Flipped hidden video feed */}
           <video
@@ -903,12 +903,12 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
           />
 
           {/* Main Overlay & Canvas */}
-          <div className="relative w-full aspect-[4/3] bg-zinc-950 rounded-2xl overflow-hidden shadow-inner border border-white/10">
+          <div className="relative w-full flex-1 bg-zinc-950 rounded-2xl overflow-hidden shadow-inner border border-white/10 flex items-center justify-center">
             <canvas
               ref={canvasRef}
               width="640"
               height="480"
-              className="w-full h-full aspect-[4/3]"
+              className="w-full h-full object-cover rounded-2xl"
             />
 
             {/* Depth Indicator Bar (Cyber HUD Style) */}
@@ -922,11 +922,10 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
               {/* Depth Threshold line */}
               <div className="absolute bottom-[85%] left-0 right-0 h-px bg-white/40 border-t border-dashed" title="Meta paralela" />
             </div>
-
-            {/* HUD Status label */}
-            <div className="absolute top-4 left-4 bg-zinc-950/80 border border-white/10 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5 backdrop-blur-sm shadow-md">
-              <Activity className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Perfil: <strong className="text-white uppercase">{activeSide}</strong></span>
+            {/* Transparent Reps Overlay */}
+            <div className="absolute top-4 left-4 bg-zinc-950/80 backdrop-blur px-4 py-2 rounded-2xl border border-white/10 flex items-center gap-2 shadow-md">
+              <span className="text-xs font-bold text-zinc-400">Reps:</span>
+              <span className="text-lg font-black text-kuma-gold font-mono">{repsCount} / {targetReps}</span>
             </div>
 
             {/* Live Angle HUD */}
@@ -941,32 +940,11 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
         </div>
 
         {/* Right Side: Training Stats & HUD Controls */}
-        <div className="w-full xl:w-[380px] flex flex-col justify-between gap-6">
+        <div className="w-full xl:w-[320px] flex flex-col justify-between gap-6">
           
           {/* Main counter card */}
           <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-md shadow-2xl flex-1 flex flex-col justify-between space-y-6">
             
-            {/* Rep Counter Display */}
-            <div className="text-center space-y-2 py-4">
-              <span className="text-[10px] text-kuma-gold font-black uppercase tracking-[0.25em]">REPETICIONES COMPLETADAS</span>
-              <div className="flex items-center justify-center gap-3">
-                <span className="text-7xl font-black font-serif italic text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-                  {repsCount}
-                </span>
-                <span className="text-3xl text-zinc-600 font-black">/</span>
-                <span className="text-3xl text-zinc-500 font-black">
-                  {targetReps}
-                </span>
-              </div>
-              
-              {/* Rep progress bar */}
-              <div className="w-full h-1.5 bg-zinc-950 rounded-full overflow-hidden border border-white/5 mt-4">
-                <div 
-                  className="h-full bg-gradient-to-r from-kuma-gold to-yellow-400 transition-all duration-300 rounded-full"
-                  style={{ width: `${(repsCount / targetReps) * 100}%` }}
-                />
-              </div>
-            </div>
 
             {/* Live Feedback box */}
             <div className="bg-zinc-950/80 border border-white/5 p-4 rounded-2xl text-center space-y-2 relative overflow-hidden">
@@ -1005,17 +983,6 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
                 )}
                 Finalizar y Guardar
               </button>
-            </div>
-          </div>
-
-          {/* Guide Tips card */}
-          <div className="bg-zinc-900/20 border border-white/5 rounded-[2rem] p-6 backdrop-blur-sm flex flex-col gap-3">
-            <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">Guía de Entrenamiento</span>
-            <div className="text-xs text-zinc-500 space-y-2 leading-relaxed">
-              <p>1. Coloca tu dispositivo a una altura media y aléjate a unos <strong>2-3 metros</strong> de la cámara.</p>
-              <p>2. Ponte de <strong>perfil / medio lado</strong> de modo que se vea tu cuerpo completo (hombros, cadera, rodillas y pies).</p>
-              <p>3. Desciende flexionando bien la rodilla hasta que el muslo quede <strong>paralelo al suelo</strong> (ángulo menor o igual a 95°).</p>
-              <p>4. Vuelve a pararte <strong>erguido por completo</strong> para que la repetición sea contabilizada.</p>
             </div>
           </div>
 

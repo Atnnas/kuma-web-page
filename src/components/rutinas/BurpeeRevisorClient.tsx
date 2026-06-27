@@ -877,7 +877,7 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
       <div className="flex flex-col xl:flex-row gap-6 w-full items-stretch">
         
         {/* Camera feed & AI canvas */}
-        <div className="flex-1 relative flex flex-col items-center justify-center bg-black/95 rounded-[2rem] border border-white/5 overflow-hidden p-3 md:p-5 shadow-2xl min-h-[400px]">
+        <div className="flex-1 relative flex flex-col items-center justify-center bg-black/95 rounded-[2rem] border border-white/5 overflow-hidden p-3 md:p-5 shadow-2xl min-h-[400px] lg:h-[70vh] lg:min-h-[600px]">
           
           <video
             ref={videoRef}
@@ -889,12 +889,12 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
             autoPlay
           />
 
-          <div className="relative w-full aspect-[4/3] bg-zinc-950 rounded-2xl overflow-hidden shadow-inner border border-white/10">
+          <div className="relative w-full flex-1 bg-zinc-950 rounded-2xl overflow-hidden shadow-inner border border-white/10 flex items-center justify-center">
             <canvas
               ref={canvasRef}
               width="640"
               height="480"
-              className="w-full h-full aspect-[4/3]"
+              className="w-full h-full object-cover rounded-2xl"
             />
 
             {/* Depth Indicator Bar */}
@@ -906,9 +906,14 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
                 }}
               />
             </div>
+            {/* Transparent Reps Overlay */}
+            <div className="absolute top-4 left-4 bg-zinc-950/80 backdrop-blur px-4 py-2 rounded-2xl border border-white/10 flex items-center gap-2 shadow-md">
+              <span className="text-xs font-bold text-zinc-400">Reps:</span>
+              <span className="text-lg font-black text-kuma-gold font-mono">{repsCount} / {targetReps}</span>
+            </div>
 
             {/* Active profile hud */}
-            <div className="absolute top-4 left-4 bg-zinc-950/80 border border-white/10 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5 backdrop-blur-sm shadow-md">
+            <div className="absolute top-4 right-12 bg-zinc-950/80 border border-white/10 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5 backdrop-blur-sm shadow-md">
               <Activity className="w-3.5 h-3.5 text-cyan-400" />
               <span>Fase: <strong className="text-white uppercase">{getPhaseName(hasReachedBottom)}</strong></span>
             </div>
@@ -932,31 +937,10 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
         </div>
 
         {/* Stats and guide panel */}
-        <div className="w-full xl:w-[380px] flex flex-col justify-between gap-6">
+        <div className="w-full xl:w-[320px] flex flex-col justify-between gap-6">
           
           <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-md shadow-2xl flex-1 flex flex-col justify-between space-y-6">
             
-            {/* Rep Counter Display */}
-            <div className="text-center space-y-2 py-4">
-              <span className="text-[10px] text-kuma-gold font-black uppercase tracking-[0.25em]">BURPEES COMPLETADOS</span>
-              <div className="flex items-center justify-center gap-3">
-                <span className="text-7xl font-black font-serif italic text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-                  {repsCount}
-                </span>
-                <span className="text-3xl text-zinc-600 font-black">/</span>
-                <span className="text-3xl text-zinc-500 font-black">
-                  {targetReps}
-                </span>
-              </div>
-
-              {/* Progress bar */}
-              <div className="w-full bg-zinc-950/80 h-2 rounded-full overflow-hidden border border-white/5 mt-4">
-                <div 
-                  className="h-full bg-gradient-to-r from-kuma-gold to-yellow-500 shadow-[0_0_10px_#facc15] transition-all duration-300 rounded-full"
-                  style={{ width: `${(repsCount / targetReps) * 100}%` }}
-                />
-              </div>
-            </div>
 
             {/* Instruction Panel */}
             <div className="space-y-4">
