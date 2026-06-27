@@ -183,12 +183,13 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         const nameLower = (block.exercise_name || "").toLowerCase();
         return !!(
             block.isAiEnabled ||
-            ["Sentadillas con MediaPipe", "Push Ups con MediaPipe", "Burpees con MediaPipe", "Bicep Curl con MediaPipe"].includes(block.exercise_name) ||
+            ["Sentadillas con MediaPipe", "Push Ups con MediaPipe", "Burpees con MediaPipe", "Bicep Curl con MediaPipe", "Press Militar con MediaPipe"].includes(block.exercise_name) ||
             (routine.isAiRoutine && (
                 nameLower.includes("sentadilla") || nameLower.includes("squat") ||
                 nameLower.includes("push") || nameLower.includes("pechada") || nameLower.includes("lagartija") ||
                 nameLower.includes("burpee") ||
-                nameLower.includes("bicep") || nameLower.includes("biceps") || nameLower.includes("curl")
+                nameLower.includes("bicep") || nameLower.includes("biceps") || nameLower.includes("curl") ||
+                nameLower.includes("militar") || nameLower.includes("press") || nameLower.includes("hombro")
             ))
         );
     };
@@ -197,6 +198,8 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const isSquatActive = activeBlock?.exercise_name === "Sentadillas con MediaPipe" || activeBlockNameLower.includes("sentadilla") || activeBlockNameLower.includes("squat");
     const isPushupActive = activeBlock?.exercise_name === "Push Ups con MediaPipe" || activeBlockNameLower.includes("push") || activeBlockNameLower.includes("pechada") || activeBlockNameLower.includes("lagartija");
     const isBurpeeActive = activeBlock?.exercise_name === "Burpees con MediaPipe" || activeBlockNameLower.includes("burpee");
+    const isBicepCurlActive = activeBlock?.exercise_name === "Bicep Curl con MediaPipe" || activeBlockNameLower.includes("bicep") || activeBlockNameLower.includes("biceps") || activeBlockNameLower.includes("curl");
+    const isShoulderPressActive = activeBlock?.exercise_name === "Press Militar con MediaPipe" || activeBlockNameLower.includes("militar") || activeBlockNameLower.includes("press") || activeBlockNameLower.includes("hombro");
 
     // --- TIMER LOGIC ---
     useEffect(() => {
@@ -567,18 +570,26 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         const isPushup = activeBlock?.exercise_name === "Push Ups con MediaPipe" || nameLower.includes("push") || nameLower.includes("pechada") || nameLower.includes("lagartija");
         const isBurpee = activeBlock?.exercise_name === "Burpees con MediaPipe" || nameLower.includes("burpee");
         const isBicepCurl = activeBlock?.exercise_name === "Bicep Curl con MediaPipe" || nameLower.includes("bicep") || nameLower.includes("biceps") || nameLower.includes("curl");
+        const isShoulderPress = activeBlock?.exercise_name === "Press Militar con MediaPipe" || nameLower.includes("militar") || nameLower.includes("press") || nameLower.includes("hombro");
 
         if (isSquat) {
             const leftVisibility = (landmarks[23]?.visibility || 0) + (landmarks[25]?.visibility || 0) + (landmarks[27]?.visibility || 0);
             const rightVisibility = (landmarks[24]?.visibility || 0) + (landmarks[26]?.visibility || 0) + (landmarks[28]?.visibility || 0);
             isLeftProfile = leftVisibility > rightVisibility;
+        } else if (isShoulderPress) {
+            // Frontal view
+            isLeftProfile = true;
         } else {
             const leftVisibility = (landmarks[11]?.visibility || 0) + (landmarks[13]?.visibility || 0) + (landmarks[15]?.visibility || 0);
             const rightVisibility = (landmarks[12]?.visibility || 0) + (landmarks[14]?.visibility || 0) + (landmarks[16]?.visibility || 0);
             isLeftProfile = leftVisibility > rightVisibility;
         }
         
-        setActiveSide(isLeftProfile ? "izquierdo" : "derecho");
+        if (isShoulderPress) {
+            setActiveSide("detectando");
+        } else {
+            setActiveSide(isLeftProfile ? "izquierdo" : "derecho");
+        }
 
         const shoulderIdx = isLeftProfile ? 11 : 12;
         const elbowIdx = isLeftProfile ? 13 : 14;
@@ -875,6 +886,170 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 ctx.stroke();
                 ctx.fillStyle = "#f97316";
                 ctx.fillText(`Desv. Codo: ${upperArmAngle}°`, (1 - (shoulder.x + elbow.x) / 2) * width - 120, ((shoulder.y + elbow.y) / 2) * height + 15);
+            }
+            ctx.restore();
+
+        } else if (isShoulderPress) {
+            const s_L = landmarks[11];
+            const e_L = landmarks[13];
+            const w_L = landmarks[15];
+            const s_R = landmarks[12];
+            const e_R = landmarks[14];
+            const w_R = landmarks[16];
+
+            if (
+                !s_L || !e_L || !w_L || !s_R || !e_R || !w_R ||
+                s_L.visibility < minVisibility || e_L.visibility < minVisibility || w_L.visibility < minVisibility ||
+                s_R.visibility < minVisibility || e_R.visibility < minVisibility || w_R.visibility < minVisibility
+            ) {
+                setFeedbackMsg("Aléjate un poco más para enfocar tus hombros y brazos");
+                drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.2)");
+                return;
+            }
+
+            const angleL = calculate2DAngle(s_L, e_L, w_L);
+            const angleR = calculate2DAngle(s_R, e_R, w_R);
+            setElbowAngle(Math.min(angleL, angleR));
+
+            const diffY = Math.abs(s_L.y - s_R.y);
+            const asymmetryPercentage = Math.round(diffY * 100);
+            
+            const driftL = Math.abs(w_L.x - e_L.x);
+            const driftR = Math.abs(w_R.x - e_R.x);
+            const maxDrift = Math.max(driftL, driftR);
+
+            const isSymmetrical = asymmetryPercentage <= 5;
+            const isForearmVertical = maxDrift <= 0.08;
+
+            if (angleL <= 90 && angleR <= 90) {
+                if (hasReachedDepthRef.current) {
+                    repsCountRef.current += 1;
+                    setRepsCount(repsCountRef.current);
+                    playBeep();
+                    hasReachedDepthRef.current = false;
+                    wasBendingRef.current = false;
+                    setFeedbackMsg("¡Repetición correcta!");
+                    
+                    if (repsCountRef.current >= (activeBlock?.reps || 10)) {
+                        finishSet();
+                        return;
+                    }
+                } else if (wasBendingRef.current) {
+                    playWarningBeep();
+                    setFeedbackMsg("¡Rango incompleto! Empuja hacia arriba.");
+                    wasBendingRef.current = false;
+                }
+                isReadyToStartRef.current = true;
+                setInstructionMsg("Empuja las mancuernas sobre tu cabeza");
+            } else if (angleL >= 160 && angleR >= 160) {
+                if (isReadyToStartRef.current) {
+                    if (!isSymmetrical) {
+                        if (hasReachedDepthRef.current) playWarningBeep();
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Empuje asimétrico! Empuja parejo");
+                        setInstructionMsg("Alinea la fuerza en ambos hombros");
+                    } else if (!isForearmVertical) {
+                        if (hasReachedDepthRef.current) playWarningBeep();
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Alinea tus antebrazos! Mantenlos verticales");
+                        setInstructionMsg("Evita abrir o cerrar los brazos");
+                    } else {
+                        if (!hasReachedDepthRef.current) {
+                            playDepthBeep();
+                        }
+                        hasReachedDepthRef.current = true;
+                        wasBendingRef.current = true;
+                        setFeedbackMsg("¡Extensión máxima! Baja lento.");
+                        setInstructionMsg("Regresa los codos a la altura de tus orejas");
+                    }
+                }
+            } else if (angleL > 110 || angleR > 110) {
+                if (isReadyToStartRef.current) {
+                    if (!isSymmetrical) {
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Corrige simetría de hombros!");
+                    } else if (!isForearmVertical) {
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Antebrazos inclinados! Mantenlos verticales");
+                    } else {
+                        wasBendingRef.current = true;
+                        if (!hasReachedDepthRef.current) {
+                            setFeedbackMsg("¡Sigue empujando hacia arriba!");
+                            setInstructionMsg("Estira tus brazos por completo...");
+                        }
+                    }
+                }
+            }
+
+            drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.15)");
+            
+            const isPeak = (angleL >= 160 && angleR >= 160) || hasReachedDepthRef.current;
+            const activeColorL = angleL >= 160 || hasReachedDepthRef.current ? "rgba(34, 197, 94, 0.9)" : angleL > 110 ? "rgba(250, 204, 21, 0.85)" : "rgba(239, 68, 68, 0.85)";
+            const activeColorR = angleR >= 160 || hasReachedDepthRef.current ? "rgba(34, 197, 94, 0.9)" : angleR > 110 ? "rgba(250, 204, 21, 0.85)" : "rgba(239, 68, 68, 0.85)";
+
+            if (isPeak) {
+                drawBone(s_L, e_L, "rgba(74, 222, 128, 0.4)", 12, 20, "rgba(34, 197, 94, 0.9)");
+                drawBone(e_L, w_L, "rgba(74, 222, 128, 0.4)", 12, 20, "rgba(34, 197, 94, 0.9)");
+                drawBone(s_R, e_R, "rgba(74, 222, 128, 0.4)", 12, 20, "rgba(34, 197, 94, 0.9)");
+                drawBone(e_R, w_R, "rgba(74, 222, 128, 0.4)", 12, 20, "rgba(34, 197, 94, 0.9)");
+                
+                drawBone(s_L, e_L, "#ffffff", 4, 6, "#ffffff");
+                drawBone(e_L, w_L, "#ffffff", 4, 6, "#ffffff");
+                drawBone(s_R, e_R, "#ffffff", 4, 6, "#ffffff");
+                drawBone(e_R, w_R, "#ffffff", 4, 6, "#ffffff");
+            } else {
+                drawBone(s_L, e_L, activeColorL, 6, 10, activeColorL);
+                drawBone(e_L, w_L, activeColorL, 6, 10, activeColorL);
+                drawBone(s_R, e_R, activeColorR, 6, 10, activeColorR);
+                drawBone(e_R, w_R, activeColorR, 6, 10, activeColorR);
+            }
+
+            drawJoint(s_L, "rgba(255,255,255,0.9)", 5);
+            drawJoint(w_L, "rgba(255,255,255,0.9)", 5);
+            drawJoint(e_L, activeColorL, 10);
+            drawJoint(e_L, "#ffffff", 5);
+
+            drawJoint(s_R, "rgba(255,255,255,0.9)", 5);
+            drawJoint(w_R, "rgba(255,255,255,0.9)", 5);
+            drawJoint(e_R, activeColorR, 10);
+            drawJoint(e_R, "#ffffff", 5);
+
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = "black";
+            ctx.font = "bold 15px monospace";
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(`${angleL}°`, (1 - e_L.x) * width - 50, e_L.y * height + 5);
+            ctx.fillText(`${angleR}°`, (1 - e_R.x) * width + 15, e_R.y * height + 5);
+
+            ctx.save();
+            ctx.lineCap = "round";
+            ctx.shadowBlur = 10;
+            if (isSymmetrical) {
+                ctx.strokeStyle = "rgba(6, 182, 212, 0.8)";
+                ctx.shadowColor = "rgba(6, 182, 212, 0.8)";
+                ctx.lineWidth = 4;
+            } else {
+                ctx.strokeStyle = "rgba(239, 68, 68, 0.9)";
+                ctx.shadowColor = "rgba(239, 68, 68, 0.9)";
+                ctx.lineWidth = 7;
+            }
+            ctx.beginPath();
+            ctx.moveTo((1 - s_L.x) * width, s_L.y * height);
+            ctx.lineTo((1 - s_R.x) * width, s_R.y * height);
+            ctx.stroke();
+            ctx.font = "bold 11px monospace";
+            ctx.fillStyle = isSymmetrical ? "#22c55e" : "#ef4444";
+            ctx.fillText(`Desv. Hombros: ${asymmetryPercentage}%`, (1 - (s_L.x + s_R.x) / 2) * width - 60, s_L.y * height - 15);
+
+            if (!isForearmVertical) {
+                ctx.strokeStyle = "rgba(249, 115, 22, 0.8)";
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo((1 - e_L.x) * width, e_L.y * height);
+                ctx.lineTo((1 - e_L.x) * width, w_L.y * height);
+                ctx.moveTo((1 - e_R.x) * width, e_R.y * height);
+                ctx.lineTo((1 - e_R.x) * width, w_R.y * height);
+                ctx.stroke();
             }
             ctx.restore();
 

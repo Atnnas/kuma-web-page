@@ -3,6 +3,7 @@ import { SquatRevisorClient } from "@/components/rutinas/SquatRevisorClient";
 import { PushupRevisorClient } from "@/components/rutinas/PushupRevisorClient";
 import { BurpeeRevisorClient } from "@/components/rutinas/BurpeeRevisorClient";
 import { BicepCurlRevisorClient } from "@/components/rutinas/BicepCurlRevisorClient";
+import { ShoulderPressRevisorClient } from "@/components/rutinas/ShoulderPressRevisorClient";
 import connectDB from "@/lib/db";
 import Routine from "@/models/Routine";
 import User from "@/models/User";
@@ -63,6 +64,8 @@ export default async function RoutinePlayerPage({ params }: { params: Promise<{ 
                 <BurpeeRevisorClient user={user} routine={routine as any} />
             ) : routine.slug === "bicepcurl-revisor" ? (
                 <BicepCurlRevisorClient user={user} routine={routine as any} />
+            ) : routine.slug === "shoulderpress-revisor" ? (
+                <ShoulderPressRevisorClient user={user} routine={routine as any} />
             ) : (
                 <RoutinePlayer routine={routine as any} />
             )}
