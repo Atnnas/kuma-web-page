@@ -741,9 +741,9 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
               <button
                 type="button"
                 onClick={() => setTargetReps(prev => Math.min(999, prev + 1))}
-                className="w-16 h-16 flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-950 hover:bg-zinc-800 border-2 border-white/10 active:border-kuma-gold/50 hover:border-kuma-gold/30 active:scale-95 transition-all rounded-2xl shadow-lg shadow-black/40 text-2xl font-bold cursor-pointer select-none"
+                className="w-16 h-16 flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-950 hover:bg-zinc-800 border-2 border-white/10 active:border-amber-500/50 hover:border-amber-500/30 active:scale-95 transition-all rounded-2xl shadow-lg shadow-black/40 text-2xl font-bold cursor-pointer select-none"
               >
-                <Plus className="w-6 h-6 text-kuma-gold" />
+                <Plus className="w-6 h-6 text-amber-400" />
               </button>
             </div>
           </div>
