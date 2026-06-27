@@ -205,11 +205,11 @@ export function RutinasTable({ data }: RutinasTableProps) {
     const [activeTab, setActiveTab] = useState<"ejercicios" | "rutinas">("ejercicios");
 
     const individualExercises = useMemo(() => {
-        return data.filter(r => r.slug === "squat-revisor" || r.slug === "pushup-revisor" || r.slug === "burpee-revisor");
+        return data.filter(r => r.slug === "squat-revisor" || r.slug === "pushup-revisor" || r.slug === "burpee-revisor" || r.slug === "bicepcurl-revisor");
     }, [data]);
 
     const generalRoutines = useMemo(() => {
-        return data.filter(r => r.slug !== "squat-revisor" && r.slug !== "pushup-revisor" && r.slug !== "burpee-revisor");
+        return data.filter(r => r.slug !== "squat-revisor" && r.slug !== "pushup-revisor" && r.slug !== "burpee-revisor" && r.slug !== "bicepcurl-revisor");
     }, [data]);
 
     // Responsive check to force grid on mobile
@@ -580,7 +580,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                     >
                         {filteredData.map((routine, idx) => {
                             const isFav = favorites.includes(routine._id);
-                            const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor" || routine.slug === "burpee-revisor";
+                            const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor" || routine.slug === "burpee-revisor" || routine.slug === "bicepcurl-revisor";
                             return (
                                 <motion.div
                                     key={`${routine._id}-${idx}`}
@@ -687,7 +687,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
                             <tbody className="divide-y divide-white/15">
                                 {filteredData.map((routine, idx) => {
                                     const isFav = favorites.includes(routine._id);
-                                    const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor" || routine.slug === "burpee-revisor";
+                                    const isRevisor = routine.slug === "squat-revisor" || routine.slug === "pushup-revisor" || routine.slug === "burpee-revisor" || routine.slug === "bicepcurl-revisor";
                                     return (
                                         <motion.tr
                                             key={`${routine._id}-${idx}`}

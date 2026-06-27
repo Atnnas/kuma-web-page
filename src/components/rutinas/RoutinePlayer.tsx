@@ -183,11 +183,12 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         const nameLower = (block.exercise_name || "").toLowerCase();
         return !!(
             block.isAiEnabled ||
-            ["Sentadillas con MediaPipe", "Push Ups con MediaPipe", "Burpees con MediaPipe"].includes(block.exercise_name) ||
+            ["Sentadillas con MediaPipe", "Push Ups con MediaPipe", "Burpees con MediaPipe", "Bicep Curl con MediaPipe"].includes(block.exercise_name) ||
             (routine.isAiRoutine && (
                 nameLower.includes("sentadilla") || nameLower.includes("squat") ||
                 nameLower.includes("push") || nameLower.includes("pechada") || nameLower.includes("lagartija") ||
-                nameLower.includes("burpee")
+                nameLower.includes("burpee") ||
+                nameLower.includes("bicep") || nameLower.includes("biceps") || nameLower.includes("curl")
             ))
         );
     };
@@ -565,6 +566,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         const isSquat = activeBlock?.exercise_name === "Sentadillas con MediaPipe" || nameLower.includes("sentadilla") || nameLower.includes("squat");
         const isPushup = activeBlock?.exercise_name === "Push Ups con MediaPipe" || nameLower.includes("push") || nameLower.includes("pechada") || nameLower.includes("lagartija");
         const isBurpee = activeBlock?.exercise_name === "Burpees con MediaPipe" || nameLower.includes("burpee");
+        const isBicepCurl = activeBlock?.exercise_name === "Bicep Curl con MediaPipe" || nameLower.includes("bicep") || nameLower.includes("biceps") || nameLower.includes("curl");
 
         if (isSquat) {
             const leftVisibility = (landmarks[23]?.visibility || 0) + (landmarks[25]?.visibility || 0) + (landmarks[27]?.visibility || 0);
@@ -720,6 +722,161 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             ctx.font = "bold 15px monospace";
             ctx.fillStyle = "#ffffff";
             ctx.fillText(`${angle}°`, (1 - knee.x) * width + 15, knee.y * height + 5);
+
+        } else if (isBicepCurl) {
+            if (!shoulder || !elbow || !wrist || !hip || shoulder.visibility < minVisibility || elbow.visibility < minVisibility || wrist.visibility < minVisibility || hip.visibility < minVisibility) {
+                setFeedbackMsg("Aléjate un poco más para ver tu torso y brazo");
+                drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.2)");
+                return;
+            }
+
+            const angle = calculate2DAngle(shoulder, elbow, wrist);
+            setElbowAngle(angle);
+
+            // Calculate back angle and elbow drift
+            let backAngle = 0;
+            const vecHS = { x: shoulder.x - hip.x, y: shoulder.y - hip.y };
+            const lenHS = Math.sqrt(vecHS.x * vecHS.x + vecHS.y * vecHS.y);
+            if (lenHS > 0) {
+                const cosTheta = -vecHS.y / lenHS;
+                backAngle = Math.round(Math.acos(Math.min(1, Math.max(-1, cosTheta))) * (180 / Math.PI));
+            }
+
+            let upperArmAngle = 0;
+            const vecSE = { x: elbow.x - shoulder.x, y: elbow.y - shoulder.y };
+            const lenSE = Math.sqrt(vecSE.x * vecSE.x + vecSE.y * vecSE.y);
+            if (lenSE > 0) {
+                const cosTheta = vecSE.y / lenSE;
+                upperArmAngle = Math.round(Math.acos(Math.min(1, Math.max(-1, cosTheta))) * (180 / Math.PI));
+            }
+
+            const isBackGood = backAngle <= 15;
+            const isElbowGood = upperArmAngle <= 25;
+
+            if (angle > 155) {
+                if (hasReachedDepthRef.current) {
+                    repsCountRef.current += 1;
+                    setRepsCount(repsCountRef.current);
+                    playBeep();
+                    hasReachedDepthRef.current = false;
+                    wasBendingRef.current = false;
+                    setFeedbackMsg("¡Repetición correcta!");
+                    
+                    if (repsCountRef.current >= (activeBlock?.reps || 10)) {
+                        finishSet();
+                        return;
+                    }
+                } else if (wasBendingRef.current) {
+                    playWarningBeep();
+                    setFeedbackMsg("¡Curl incompleto! Flexiona más.");
+                    wasBendingRef.current = false;
+                }
+                isReadyToStartRef.current = true;
+                setInstructionMsg("Flexiona el brazo para realizar el curl");
+            } else if (angle <= 55) {
+                if (isReadyToStartRef.current) {
+                    if (!isBackGood) {
+                        if (hasReachedDepthRef.current) playWarningBeep();
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡No te balancees! Espalda recta");
+                        setInstructionMsg("Evita balancear el torso");
+                    } else if (!isElbowGood) {
+                        if (hasReachedDepthRef.current) playWarningBeep();
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Codo suelto! Pégalo al cuerpo");
+                        setInstructionMsg("Mantén el codo fijo");
+                    } else {
+                        if (!hasReachedDepthRef.current) {
+                            playDepthBeep();
+                        }
+                        hasReachedDepthRef.current = true;
+                        wasBendingRef.current = true;
+                        setFeedbackMsg("¡Contracción máxima! Baja lento.");
+                        setInstructionMsg("Estira el brazo de forma controlada");
+                    }
+                }
+            } else if (angle < 135) {
+                if (isReadyToStartRef.current) {
+                    if (!isBackGood) {
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡No te balancees! Espalda recta");
+                    } else if (!isElbowGood) {
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Codo suelto! Mantén el codo fijo");
+                    } else {
+                        wasBendingRef.current = true;
+                        if (!hasReachedDepthRef.current) {
+                            setFeedbackMsg("¡Sube un poco más!");
+                            setInstructionMsg("Flexiona hacia el hombro...");
+                        }
+                    }
+                }
+            }
+
+            let armColor = "rgba(239, 68, 68, 0.85)";
+            if (angle <= 55 || hasReachedDepthRef.current) {
+                armColor = "rgba(34, 197, 94, 0.9)";
+            } else if (angle < 135) {
+                armColor = "rgba(250, 204, 21, 0.85)";
+            }
+
+            drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.15)");
+            
+            const isPeak = angle <= 55 || hasReachedDepthRef.current;
+            if (isPeak) {
+                drawBone(shoulder, elbow, "rgba(74, 222, 128, 0.4)", 12, 20, "rgba(34, 197, 94, 0.9)");
+                drawBone(elbow, wrist, "rgba(74, 222, 128, 0.4)", 12, 20, "rgba(34, 197, 94, 0.9)");
+                drawBone(shoulder, elbow, "#ffffff", 4, 6, "#ffffff");
+                drawBone(elbow, wrist, "#ffffff", 4, 6, "#ffffff");
+            } else {
+                drawBone(shoulder, elbow, armColor, 6, 10, armColor);
+                drawBone(elbow, wrist, armColor, 6, 10, armColor);
+            }
+
+            drawJoint(shoulder, "rgba(255,255,255,0.9)", 5);
+            drawJoint(wrist, "rgba(255,255,255,0.9)", 5);
+            drawJoint(elbow, armColor, 10);
+            drawJoint(elbow, "#ffffff", 5);
+
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = "black";
+            ctx.font = "bold 15px monospace";
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(`${angle}°`, (1 - elbow.x) * width + 15, elbow.y * height + 5);
+
+            // Draw back posture line
+            ctx.save();
+            ctx.lineCap = "round";
+            ctx.shadowBlur = 15;
+            if (isBackGood) {
+                ctx.strokeStyle = "rgba(6, 182, 212, 0.8)";
+                ctx.shadowColor = "rgba(6, 182, 212, 0.8)";
+                ctx.lineWidth = 5;
+            } else {
+                ctx.strokeStyle = "rgba(239, 68, 68, 0.9)";
+                ctx.shadowColor = "rgba(239, 68, 68, 0.9)";
+                ctx.lineWidth = 8;
+            }
+            ctx.beginPath();
+            ctx.moveTo((1 - hip.x) * width, hip.y * height);
+            ctx.lineTo((1 - shoulder.x) * width, shoulder.y * height);
+            ctx.stroke();
+            ctx.font = "bold 12px monospace";
+            ctx.fillStyle = isBackGood ? "#22c55e" : "#ef4444";
+            ctx.fillText(`Espalda: ${backAngle}°`, (1 - (hip.x + shoulder.x) / 2) * width + 15, ((hip.y + shoulder.y) / 2) * height - 10);
+
+            if (!isElbowGood) {
+                ctx.strokeStyle = "rgba(249, 115, 22, 0.9)";
+                ctx.shadowColor = "rgba(249, 115, 22, 0.9)";
+                ctx.lineWidth = 7;
+                ctx.beginPath();
+                ctx.moveTo((1 - shoulder.x) * width, shoulder.y * height);
+                ctx.lineTo((1 - elbow.x) * width, elbow.y * height);
+                ctx.stroke();
+                ctx.fillStyle = "#f97316";
+                ctx.fillText(`Desv. Codo: ${upperArmAngle}°`, (1 - (shoulder.x + elbow.x) / 2) * width - 120, ((shoulder.y + elbow.y) / 2) * height + 15);
+            }
+            ctx.restore();
 
         } else if (isPushup) {
             if (!shoulder || !elbow || !wrist || !hip || shoulder.visibility < minVisibility || elbow.visibility < minVisibility || wrist.visibility < minVisibility || hip.visibility < minVisibility) {

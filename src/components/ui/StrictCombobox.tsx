@@ -35,7 +35,8 @@ export function StrictCombobox({ value, onChange, onSelectFull, placeholder = "S
             const aiOptions = [
                 { value: "Sentadillas con MediaPipe", label: "Sentadillas con MediaPipe", description: "Intermedio", category: "Visión IA" },
                 { value: "Push Ups con MediaPipe", label: "Push Ups con MediaPipe", description: "Intermedio", category: "Visión IA" },
-                { value: "Burpees con MediaPipe", label: "Burpees con MediaPipe", description: "Avanzado", category: "Visión IA" }
+                { value: "Burpees con MediaPipe", label: "Burpees con MediaPipe", description: "Avanzado", category: "Visión IA" },
+                { value: "Bicep Curl con MediaPipe", label: "Bicep Curl con MediaPipe", description: "Principiante", category: "Visión IA" }
             ];
             // Filter by search text if any
             if (search) {

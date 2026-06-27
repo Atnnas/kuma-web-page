@@ -19,6 +19,8 @@ export const EXERCISE_GIFS: Record<string, string> = {
     "Pushups": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/push-up.gif",
     "Dominadas": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/pull-up.gif",
     "Pullups": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/pull-up.gif",
+    "Bicep Curl": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/dumbbell-bicep-curl.gif",
+    "Biceps": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/dumbbell-bicep-curl.gif",
 
     // Core
     "Plancha": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/plank.gif",
