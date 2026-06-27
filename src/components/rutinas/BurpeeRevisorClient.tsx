@@ -337,6 +337,16 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // Dynamically adjust canvas dimensions to match the actual stream resolution and aspect ratio,
+    // which prevents stretching/squishing (especially on mobile portrait orientation).
+    const video = videoRef.current;
+    if (video && video.videoWidth && video.videoHeight) {
+      if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+      }
+    }
+
     const width = canvas.width;
     const height = canvas.height;
 
@@ -685,17 +695,20 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
             </p>
           </div>
 
-          <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 grid grid-cols-3 gap-4 items-center">
-            <div className="flex flex-col">
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-1 text-center lg:text-left">Objetivo (Reps)</span>
-              <div className="flex items-center bg-zinc-950/80 border border-white/10 rounded-xl overflow-hidden p-0.5 w-full">
-                <button
-                  type="button"
-                  onClick={() => setTargetReps(prev => Math.max(1, prev - 1))}
-                  className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95 transition-all rounded-lg"
-                >
-                  <Minus className="w-3.5 h-3.5" />
-                </button>
+          <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-6 flex flex-col items-center justify-center space-y-4">
+            <span className="text-xs text-zinc-400 uppercase font-black tracking-widest text-center">
+              Objetivo de Repeticiones
+            </span>
+            <div className="flex items-center justify-center gap-6 w-full max-w-sm">
+              <button
+                type="button"
+                onClick={() => setTargetReps(prev => Math.max(1, prev - 1))}
+                className="w-16 h-16 flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-950 hover:bg-zinc-800 border-2 border-white/10 active:border-cyan-500/50 hover:border-cyan-500/30 active:scale-95 transition-all rounded-2xl shadow-lg shadow-black/40 text-2xl font-bold cursor-pointer select-none"
+              >
+                <Minus className="w-6 h-6 text-cyan-400" />
+              </button>
+              
+              <div className="flex flex-col items-center justify-center min-w-[100px]">
                 <input
                   type="number"
                   min="1"
@@ -710,24 +723,18 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
                       setTargetReps(10);
                     }
                   }}
-                  className="flex-1 min-w-0 bg-transparent border-none text-center text-base text-white font-black focus:outline-none focus:ring-0 px-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full bg-transparent border-none text-center text-4xl text-white font-black focus:outline-none focus:ring-0 p-0 font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
-                <button
-                  type="button"
-                  onClick={() => setTargetReps(prev => Math.min(999, prev + 1))}
-                  className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95 transition-all rounded-lg"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
+                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">reps</span>
               </div>
-            </div>
-            <div>
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block">Complejo</span>
-              <span className="text-lg text-white font-black">Lagartija + Salto</span>
-            </div>
-            <div>
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block">Dificultad</span>
-              <span className="text-lg text-kuma-gold font-black">{routine.difficulty}</span>
+
+              <button
+                type="button"
+                onClick={() => setTargetReps(prev => Math.min(999, prev + 1))}
+                className="w-16 h-16 flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-950 hover:bg-zinc-800 border-2 border-white/10 active:border-kuma-gold/50 hover:border-kuma-gold/30 active:scale-95 transition-all rounded-2xl shadow-lg shadow-black/40 text-2xl font-bold cursor-pointer select-none"
+              >
+                <Plus className="w-6 h-6 text-kuma-gold" />
+              </button>
             </div>
           </div>
 
@@ -876,8 +883,8 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
 
       <div className="flex flex-col xl:flex-row gap-6 w-full items-stretch">
         
-        {/* Camera feed & AI canvas */}
-        <div className="flex-1 relative flex flex-col items-center justify-center bg-black/95 rounded-[2rem] border border-white/5 overflow-hidden p-3 md:p-5 shadow-2xl min-h-[400px] lg:h-[70vh] lg:min-h-[600px]">
+        {/* Left Side: Camera & AI */}
+        <div className="w-full h-[55vh] min-h-[450px] lg:h-[70vh] lg:min-h-[600px] relative flex flex-col items-center justify-center bg-black/95 rounded-[2rem] border border-white/5 overflow-hidden p-3 md:p-5 shadow-2xl">
           
           <video
             ref={videoRef}
