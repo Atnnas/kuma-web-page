@@ -28,6 +28,13 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
 
   // Statuses: 'intro' | 'loading' | 'active' | 'completed' | 'cancelled'
   const [status, setStatus] = useState<"intro" | "loading" | "active" | "completed">("intro");
+  const [mode, setMode] = useState<"estricto" | "regular">("regular");
+  const modeRef = useRef<"estricto" | "regular">("regular");
+
+  useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
+
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
@@ -406,19 +413,23 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
     const hipIdx = isLeftProfile ? 23 : 24;
     const kneeIdx = isLeftProfile ? 25 : 26;
     const ankleIdx = isLeftProfile ? 27 : 28;
+    const shoulderIdx = isLeftProfile ? 11 : 12;
 
     const hip = landmarks[hipIdx];
     const knee = landmarks[kneeIdx];
     const ankle = landmarks[ankleIdx];
+    const shoulder = landmarks[shoulderIdx];
 
     // Check if points are visible enough
     const minVisibility = 0.45;
+    const isStrict = modeRef.current === "estricto";
     if (
       (hip?.visibility || 0) < minVisibility || 
       (knee?.visibility || 0) < minVisibility || 
-      (ankle?.visibility || 0) < minVisibility
+      (ankle?.visibility || 0) < minVisibility ||
+      (isStrict && (shoulder?.visibility || 0) < minVisibility)
     ) {
-      setFeedbackMsg("Aléjate un poco más para ver tus piernas");
+      setFeedbackMsg(isStrict ? "Aléjate un poco más para ver hombros y piernas" : "Aléjate un poco más para ver tus piernas");
       drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.2)");
       return;
     }
@@ -426,6 +437,17 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
     // Calculate Knee angle
     const angle = calculate2DAngle(hip, knee, ankle);
     setKneeAngle(angle);
+
+    // Calculate back inclination angle relative to vertical axis (0 degrees is straight vertical)
+    let backAngle = 0;
+    if (shoulder && hip) {
+      const vecHS = { x: shoulder.x - hip.x, y: shoulder.y - hip.y };
+      const lenHS = Math.sqrt(vecHS.x * vecHS.x + vecHS.y * vecHS.y);
+      if (lenHS > 0) {
+        const cosTheta = -vecHS.y / lenHS;
+        backAngle = Math.round(Math.acos(Math.min(1, Math.max(-1, cosTheta))) * (180 / Math.PI));
+      }
+    }
 
     // Evaluate state machine for reps
     // Standard: Standing is > 165. Depth reached is <= 95
@@ -456,20 +478,36 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
       setInstructionMsg("Flexiona tus piernas para la sentadilla");
     } else if (angle <= 95) {
       if (isReadyToStartRef.current) {
-        if (!hasReachedDepthRef.current) {
-          playDepthBeep();
+        if (isStrict && backAngle > 40) {
+          // Warning: Bent back!
+          if (hasReachedDepthRef.current) {
+            playWarningBeep();
+          }
+          hasReachedDepthRef.current = false;
+          setFeedbackMsg("¡Espalda inclinada! Enderézate");
+          setInstructionMsg("Saca el pecho y mantén la espalda recta");
+        } else {
+          if (!hasReachedDepthRef.current) {
+            playDepthBeep();
+          }
+          hasReachedDepthRef.current = true;
+          wasBendingRef.current = true;
+          setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
+          setInstructionMsg("Regresa a la posición inicial erguido");
         }
-        hasReachedDepthRef.current = true;
-        wasBendingRef.current = true;
-        setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
-        setInstructionMsg("Regresa a la posición inicial erguido");
       }
     } else if (angle < 135) {
       if (isReadyToStartRef.current) {
-        wasBendingRef.current = true;
-        if (!hasReachedDepthRef.current) {
-          setFeedbackMsg("¡Baja un poco más!");
-          setInstructionMsg("Flexiona un poco más profundo...");
+        if (isStrict && backAngle > 40) {
+          hasReachedDepthRef.current = false;
+          setFeedbackMsg("¡Espalda inclinada! Enderézate");
+          setInstructionMsg("Mantén el torso erguido al bajar");
+        } else {
+          wasBendingRef.current = true;
+          if (!hasReachedDepthRef.current) {
+            setFeedbackMsg("¡Baja un poco más!");
+            setInstructionMsg("Flexiona un poco más profundo...");
+          }
         }
       }
     }
@@ -554,6 +592,39 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
     ctx.font = "bold 15px monospace";
     ctx.fillStyle = "#ffffff";
     ctx.fillText(`${angle}°`, (1 - knee.x) * width + 15, knee.y * height + 5);
+
+    // Draw back posture line if strict mode is active
+    if (isStrict && shoulder && hip) {
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.shadowBlur = 15;
+      
+      const isBackGood = backAngle <= 40;
+      if (isBackGood) {
+        ctx.strokeStyle = "rgba(6, 182, 212, 0.85)"; // Cyan glow for good posture
+        ctx.shadowColor = "rgba(6, 182, 212, 0.85)";
+        ctx.lineWidth = 5;
+      } else {
+        ctx.strokeStyle = "rgba(239, 68, 68, 0.9)"; // Red glow for warning posture
+        ctx.shadowColor = "rgba(239, 68, 68, 0.9)";
+        ctx.lineWidth = 8;
+      }
+      
+      // Draw line from hip to shoulder
+      ctx.beginPath();
+      ctx.moveTo((1 - hip.x) * width, hip.y * height);
+      ctx.lineTo((1 - shoulder.x) * width, shoulder.y * height);
+      ctx.stroke();
+      
+      // Draw text next to back line
+      ctx.shadowBlur = 4;
+      ctx.shadowColor = "black";
+      ctx.font = "bold 13px monospace";
+      ctx.fillStyle = isBackGood ? "#22c55e" : "#ef4444";
+      ctx.fillText(`Espalda: ${backAngle}°`, (1 - (hip.x + shoulder.x) / 2) * width + 15, ((hip.y + shoulder.y) / 2) * height);
+      
+      ctx.restore();
+    }
 
     ctx.restore();
   };
@@ -705,46 +776,79 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
             </p>
           </div>
 
-          <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-6 flex flex-col items-center justify-center space-y-4">
-            <span className="text-xs text-zinc-400 uppercase font-black tracking-widest text-center">
-              Objetivo de Repeticiones
-            </span>
-            <div className="flex items-center justify-center gap-6 w-full max-w-sm">
-              <button
-                type="button"
-                onClick={() => setTargetReps(prev => Math.max(1, prev - 1))}
-                className="w-16 h-16 flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-950 hover:bg-zinc-800 border-2 border-white/10 active:border-cyan-500/50 hover:border-cyan-500/30 active:scale-95 transition-all rounded-2xl shadow-lg shadow-black/40 text-2xl font-bold cursor-pointer select-none"
-              >
-                <Minus className="w-6 h-6 text-cyan-400" />
-              </button>
-              
-              <div className="flex flex-col items-center justify-center min-w-[100px]">
-                <input
-                  type="number"
-                  min="1"
-                  max="999"
-                  value={targetReps || ""}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value, 10);
-                    setTargetReps(isNaN(val) ? 0 : val);
-                  }}
-                  onBlur={() => {
-                    if (!targetReps || targetReps < 1) {
-                      setTargetReps(10);
-                    }
-                  }}
-                  className="w-full bg-transparent border-none text-center text-4xl text-white font-black focus:outline-none focus:ring-0 p-0 font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
-                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">reps</span>
-              </div>
+          <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-6 space-y-6">
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <span className="text-xs text-zinc-400 uppercase font-black tracking-widest text-center">
+                Objetivo de Repeticiones
+              </span>
+              <div className="flex items-center justify-center gap-6 w-full max-w-sm">
+                <button
+                  type="button"
+                  onClick={() => setTargetReps(prev => Math.max(1, prev - 1))}
+                  className="w-16 h-16 flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-950 hover:bg-zinc-800 border-2 border-white/10 active:border-cyan-500/50 hover:border-cyan-500/30 active:scale-95 transition-all rounded-2xl shadow-lg shadow-black/40 text-2xl font-bold cursor-pointer select-none"
+                >
+                  <Minus className="w-6 h-6 text-cyan-400" />
+                </button>
+                
+                <div className="flex flex-col items-center justify-center min-w-[100px]">
+                  <input
+                    type="number"
+                    min="1"
+                    max="999"
+                    value={targetReps || ""}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      setTargetReps(isNaN(val) ? 0 : val);
+                    }}
+                    onBlur={() => {
+                      if (!targetReps || targetReps < 1) {
+                        setTargetReps(10);
+                      }
+                    }}
+                    className="w-full bg-transparent border-none text-center text-4xl text-white font-black focus:outline-none focus:ring-0 p-0 font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">reps</span>
+                </div>
 
-              <button
-                type="button"
-                onClick={() => setTargetReps(prev => Math.min(999, prev + 1))}
-                className="w-16 h-16 flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-950 hover:bg-zinc-800 border-2 border-white/10 active:border-amber-500/50 hover:border-amber-500/30 active:scale-95 transition-all rounded-2xl shadow-lg shadow-black/40 text-2xl font-bold cursor-pointer select-none"
-              >
-                <Plus className="w-6 h-6 text-amber-400" />
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setTargetReps(prev => Math.min(999, prev + 1))}
+                  className="w-16 h-16 flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-950 hover:bg-zinc-800 border-2 border-white/10 active:border-amber-500/50 hover:border-amber-500/30 active:scale-95 transition-all rounded-2xl shadow-lg shadow-black/40 text-2xl font-bold cursor-pointer select-none"
+                >
+                  <Plus className="w-6 h-6 text-amber-400" />
+                </button>
+              </div>
+            </div>
+
+            {/* Mode Selector */}
+            <div className="pt-5 border-t border-white/5">
+              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-2 text-center lg:text-left">Modo de Revisión</span>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setMode("regular")}
+                  className={`py-3 px-4 rounded-2xl border text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 ${
+                    mode === "regular" 
+                      ? "bg-gradient-to-r from-cyan-500 to-blue-500 border-cyan-400 text-white shadow-[0_0_20px_rgba(6,182,212,0.35)] font-black" 
+                      : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-white hover:border-white/10"
+                  }`}
+                >
+                  <Activity className={`w-4 h-4 ${mode === "regular" ? "animate-pulse" : ""}`} />
+                  Regular (Solo Profundidad)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("estricto")}
+                  className={`py-3 px-4 rounded-2xl border text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 ${
+                    mode === "estricto" 
+                      ? "bg-gradient-to-r from-red-600 to-amber-500 border-amber-400 text-white shadow-[0_0_20px_rgba(239,68,68,0.35)] font-black" 
+                      : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-white hover:border-white/10"
+                  }`}
+                >
+                  <Zap className={`w-4 h-4 ${mode === "estricto" ? "fill-white animate-pulse" : ""}`} />
+                  Estricto (Espalda Recta)
+                </button>
+              </div>
             </div>
           </div>
 
