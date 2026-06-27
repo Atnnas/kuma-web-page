@@ -699,14 +699,7 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
   if (status === "intro") {
     return (
       <div className="relative z-10 flex-1 flex flex-col p-6 items-center justify-center max-w-5xl mx-auto w-full lg:flex-row lg:gap-16 min-h-[75vh]">
-        <div className="absolute top-6 left-6 md:top-8 md:left-8 z-20">
-          <Link href="/routines">
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/80 backdrop-blur text-zinc-400 hover:text-white hover:bg-white/10 transition-all border border-white/5 text-xs font-black uppercase tracking-wider shadow-md">
-              <ArrowLeft className="w-4 h-4" /> Volver a Ejercicios
-            </button>
-          </Link>
-        </div>
-
+        
         <div className="text-center lg:text-left lg:flex-1 space-y-8 max-w-lg">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -804,13 +797,22 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
             </div>
           </div>
 
-          <div className="pt-4">
+          <div className="pt-4 flex flex-col gap-3">
             <button
               onClick={loadScripts}
               className="group w-full lg:w-64 h-14 bg-white hover:bg-kuma-gold text-black rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-white/5"
             >
               <Play className="w-4 h-4 fill-black" /> Activar Cámara
             </button>
+
+            <Link href="/routines" className="w-full lg:w-64">
+              <button
+                type="button"
+                className="w-full h-12 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all border border-white/5"
+              >
+                <ArrowLeft className="w-4 h-4" /> Volver a Ejercicios
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -917,16 +919,9 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
   return (
     <div className="flex-1 flex flex-col relative w-full max-w-[1600px] mx-auto px-4 pt-6 z-10">
       
+      {/* Header controls */}
       <div className="flex items-center justify-between mb-6 w-full border-b border-white/5 pb-4">
-        <button
-          onClick={handleCancelWorkout}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all border border-white/5 text-xs font-black uppercase tracking-wider"
-          title="Volver"
-        >
-          <ArrowLeft className="w-4 h-4" /> Volver
-        </button>
-
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col">
           <span className="text-[9px] uppercase font-bold tracking-[0.2em] text-cyan-400 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
             Evaluación MediaPipe
@@ -1080,6 +1075,13 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
                   <CheckCircle className="w-4 h-4" />
                 )}
                 Finalizar y Guardar
+              </button>
+
+              <button
+                onClick={handleCancelWorkout}
+                className="w-full h-12 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-2xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all border border-rose-500/20 active:scale-95"
+              >
+                <ArrowLeft className="w-4 h-4" /> Cancelar y Volver
               </button>
             </div>
           </div>
