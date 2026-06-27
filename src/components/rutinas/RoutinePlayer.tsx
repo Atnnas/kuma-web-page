@@ -911,20 +911,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             const angleR = calculate2DAngle(s_R, e_R, w_R);
             setElbowAngle(Math.min(angleL, angleR));
 
-            const diffY = Math.abs(s_L.y - s_R.y);
-            const asymmetryPercentage = Math.round(diffY * 100);
-            
-            const driftL = Math.abs(w_L.x - e_L.x);
-            const driftR = Math.abs(w_R.x - e_R.x);
-            const maxDrift = Math.max(driftL, driftR);
-
-            const isSymmetrical = asymmetryPercentage <= 5;
-            const isForearmVertical = maxDrift <= 0.08;
-
-            const shoulderWidth = Math.abs(s_L.x - s_R.x);
-            const wristWidth = Math.abs(w_L.x - w_R.x);
-            const isFistsCorrect = wristWidth <= 1.35 * shoulderWidth;
-
             if (angleL <= 90 && angleR <= 90) {
                 if (hasReachedDepthRef.current) {
                     repsCountRef.current += 1;
@@ -947,48 +933,20 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
                 setInstructionMsg("Empuja las mancuernas sobre tu cabeza");
             } else if (angleL >= 160 && angleR >= 160) {
                 if (isReadyToStartRef.current) {
-                    if (!isSymmetrical) {
-                        if (hasReachedDepthRef.current) playWarningBeep();
-                        hasReachedDepthRef.current = false;
-                        setFeedbackMsg("¡Empuje asimétrico! Empuja parejo");
-                        setInstructionMsg("Alinea la fuerza en ambos hombros");
-                    } else if (!isForearmVertical) {
-                        if (hasReachedDepthRef.current) playWarningBeep();
-                        hasReachedDepthRef.current = false;
-                        setFeedbackMsg("¡Alinea tus antebrazos! Mantenlos verticales");
-                        setInstructionMsg("Evita abrir o cerrar los brazos");
-                    } else if (!isFistsCorrect) {
-                        if (hasReachedDepthRef.current) playWarningBeep();
-                        hasReachedDepthRef.current = false;
-                        setFeedbackMsg("¡No abras los brazos! Puños sobre la cabeza");
-                        setInstructionMsg("Empuja hacia arriba, no hacia afuera");
-                    } else {
-                        if (!hasReachedDepthRef.current) {
-                            playDepthBeep();
-                        }
-                        hasReachedDepthRef.current = true;
-                        wasBendingRef.current = true;
-                        setFeedbackMsg("¡Extensión máxima! Baja lento.");
-                        setInstructionMsg("Regresa los codos a la altura de tus orejas");
+                    if (!hasReachedDepthRef.current) {
+                        playDepthBeep();
                     }
+                    hasReachedDepthRef.current = true;
+                    wasBendingRef.current = true;
+                    setFeedbackMsg("¡Extensión máxima! Baja lento.");
+                    setInstructionMsg("Regresa los codos a la altura de tus orejas");
                 }
             } else if (angleL > 110 || angleR > 110) {
                 if (isReadyToStartRef.current) {
-                    if (!isSymmetrical) {
-                        hasReachedDepthRef.current = false;
-                        setFeedbackMsg("¡Corrige simetría de hombros!");
-                    } else if (!isForearmVertical) {
-                        hasReachedDepthRef.current = false;
-                        setFeedbackMsg("¡Antebrazos inclinados! Mantenlos verticales");
-                    } else if (!isFistsCorrect) {
-                        hasReachedDepthRef.current = false;
-                        setFeedbackMsg("¡Brazos muy abiertos! Puños sobre la cabeza");
-                    } else {
-                        wasBendingRef.current = true;
-                        if (!hasReachedDepthRef.current) {
-                            setFeedbackMsg("¡Sigue empujando hacia arriba!");
-                            setInstructionMsg("Estira tus brazos por completo...");
-                        }
+                    wasBendingRef.current = true;
+                    if (!hasReachedDepthRef.current) {
+                        setFeedbackMsg("¡Sigue empujando hacia arriba!");
+                        setInstructionMsg("Estira tus brazos por completo...");
                     }
                 }
             }
@@ -1033,52 +991,6 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             ctx.fillText(`${angleL}°`, (1 - e_L.x) * width - 50, e_L.y * height + 5);
             ctx.fillText(`${angleR}°`, (1 - e_R.x) * width + 15, e_R.y * height + 5);
 
-            ctx.save();
-            ctx.lineCap = "round";
-            ctx.shadowBlur = 10;
-            if (isSymmetrical) {
-                ctx.strokeStyle = "rgba(6, 182, 212, 0.8)";
-                ctx.shadowColor = "rgba(6, 182, 212, 0.8)";
-                ctx.lineWidth = 4;
-            } else {
-                ctx.strokeStyle = "rgba(239, 68, 68, 0.9)";
-                ctx.shadowColor = "rgba(239, 68, 68, 0.9)";
-                ctx.lineWidth = 7;
-            }
-            ctx.beginPath();
-            ctx.moveTo((1 - s_L.x) * width, s_L.y * height);
-            ctx.lineTo((1 - s_R.x) * width, s_R.y * height);
-            ctx.stroke();
-            ctx.font = "bold 11px monospace";
-            ctx.fillStyle = isSymmetrical ? "#22c55e" : "#ef4444";
-            ctx.fillText(`Desv. Hombros: ${asymmetryPercentage}%`, (1 - (s_L.x + s_R.x) / 2) * width - 60, s_L.y * height - 15);
-
-            if (!isForearmVertical) {
-                ctx.strokeStyle = "rgba(249, 115, 22, 0.8)";
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo((1 - e_L.x) * width, e_L.y * height);
-                ctx.lineTo((1 - e_L.x) * width, w_L.y * height);
-                ctx.moveTo((1 - e_R.x) * width, e_R.y * height);
-                ctx.lineTo((1 - e_R.x) * width, w_R.y * height);
-                ctx.stroke();
-            }
-
-            // Draw horizontal line connecting wrists to check flaring width
-            if (isFistsCorrect) {
-                ctx.strokeStyle = "rgba(6, 182, 212, 0.25)";
-                ctx.lineWidth = 2;
-            } else {
-                ctx.strokeStyle = "rgba(239, 68, 68, 0.9)";
-                ctx.lineWidth = 6;
-                ctx.font = "bold 11px monospace";
-                ctx.fillStyle = "#ef4444";
-                ctx.fillText("¡MUY ABIERTO!", (1 - (w_L.x + w_R.x) / 2) * width - 40, ((w_L.y + w_R.y) / 2) * height - 15);
-            }
-            ctx.beginPath();
-            ctx.moveTo((1 - w_L.x) * width, w_L.y * height);
-            ctx.lineTo((1 - w_R.x) * width, w_R.y * height);
-            ctx.stroke();
             ctx.restore();
 
         } else if (isPushup) {

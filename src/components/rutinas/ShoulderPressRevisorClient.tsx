@@ -28,8 +28,8 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
 
   // Statuses: 'intro' | 'loading' | 'active' | 'completed'
   const [status, setStatus] = useState<"intro" | "loading" | "active" | "completed">("intro");
-  const [mode, setMode] = useState<"estricto" | "regular">("estricto");
-  const modeRef = useRef<"estricto" | "regular">("estricto");
+  const [mode, setMode] = useState<"estricto" | "regular">("regular");
+  const modeRef = useRef<"estricto" | "regular">("regular");
 
   useEffect(() => {
     modeRef.current = mode;
@@ -801,36 +801,7 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
               </div>
             </div>
 
-            {/* Mode Selector */}
-            <div className="pt-5 border-t border-white/5">
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-2 text-center lg:text-left">Modo de Revisión</span>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setMode("regular")}
-                  className={`py-3 px-4 rounded-2xl border text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 ${
-                    mode === "regular" 
-                      ? "bg-gradient-to-r from-cyan-500 to-blue-500 border-cyan-400 text-white shadow-[0_0_20px_rgba(6,182,212,0.35)] font-black" 
-                      : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-white hover:border-white/10"
-                  }`}
-                >
-                  <Activity className={`w-4 h-4 ${mode === "regular" ? "animate-pulse" : ""}`} />
-                  Regular (Solo Empuje)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode("estricto")}
-                  className={`py-3 px-4 rounded-2xl border text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 ${
-                    mode === "estricto" 
-                      ? "bg-gradient-to-r from-red-600 to-amber-500 border-amber-400 text-white shadow-[0_0_20px_rgba(239,68,68,0.35)] font-black" 
-                      : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-white hover:border-white/10"
-                  }`}
-                >
-                  <Zap className={`w-4 h-4 ${mode === "estricto" ? "fill-white animate-pulse" : ""}`} />
-                  Estricto (Simetría + Antebrazos)
-                </button>
-              </div>
-            </div>
+            {/* No Mode Selector */}
           </div>
 
           <div className="pt-4">
@@ -1049,23 +1020,7 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
               </p>
             </div>
 
-            {/* Real-time posture status panel */}
-            <div className="bg-zinc-950/40 border border-white/5 rounded-2xl p-4 space-y-3">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block">MÉTRICAS DE POSTURA</span>
-              
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-zinc-400">Asimetría Hombros:</span>
-                <span className={`font-mono font-bold ${shoulderAsymmetry <= 5 ? "text-emerald-400" : "text-rose-400"}`}>
-                  {shoulderAsymmetry}% / 5%
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-zinc-400">Desviación Antebrazo:</span>
-                <span className={`font-mono font-bold ${forearmDrift <= 8 ? "text-emerald-400" : "text-rose-400"}`}>
-                  {forearmDrift}% / 8%
-                </span>
-              </div>
-            </div>
+            {/* No posture panel */}
 
             {/* Time Elapsed */}
             <div className="flex items-center justify-between px-2 pt-2 border-t border-white/5">
