@@ -140,6 +140,33 @@ async function ensureShoulderPressRevisorRoutine() {
     }
 }
 
+async function ensureTricepKickbackRevisorRoutine() {
+    const existing = await Routine.findOne({ slug: "tricepkickback-revisor" });
+    if (!existing) {
+        await Routine.create({
+            title: "Revisor de Patada de Tríceps",
+            slug: "tricepkickback-revisor",
+            description: "Revisa tu técnica de patada de tríceps de perfil usando visión artificial. Inclina tu torso hacia adelante manteniendo la espalda recta y extiende completamente los codos sin balancear los brazos.",
+            difficulty: "Intermedio",
+            estimated_duration: 5,
+            equipment_types: ["equipo"],
+            blocks: [
+                {
+                    type: "exercise",
+                    exercise_name: "Patada de Triceps con MediaPipe",
+                    sets: 1,
+                    reps: 10,
+                    rest_seconds: 0,
+                    measure_type: "reps",
+                    notes: "Colócate de perfil frente a la cámara. Inclina tu torso hacia adelante y realiza las patadas de tríceps extendiendo por completo el brazo."
+                }
+            ],
+            active: true,
+            allowedUsers: []
+        });
+    }
+}
+
 // GET /api/routines
 // Public (or protected if needed) list of active routines
 // GET /api/routines
@@ -152,6 +179,7 @@ export async function GET(req: NextRequest) {
         await ensureBurpeeRevisorRoutine();
         await ensureBicepCurlRevisorRoutine();
         await ensureShoulderPressRevisorRoutine();
+        await ensureTricepKickbackRevisorRoutine();
 
         const session = await auth();
         if (!session) {
@@ -166,8 +194,8 @@ export async function GET(req: NextRequest) {
         const isSuperAdmin = session.user?.role === "super_admin" || session.user?.role === "admin";
 
         if (isAdmin && isSuperAdmin) {
-            // Admin Panel Mode: see absolute everything (active + inactive) EXCEPT squat-revisor, pushup-revisor, burpee-revisor, bicepcurl-revisor, and shoulderpress-revisor
-            query = { slug: { $nin: ["squat-revisor", "pushup-revisor", "burpee-revisor", "bicepcurl-revisor", "shoulderpress-revisor"] } };
+            // Admin Panel Mode: see absolute everything (active + inactive) EXCEPT squat-revisor, pushup-revisor, burpee-revisor, bicepcurl-revisor, shoulderpress-revisor, and tricepkickback-revisor
+            query = { slug: { $nin: ["squat-revisor", "pushup-revisor", "burpee-revisor", "bicepcurl-revisor", "shoulderpress-revisor", "tricepkickback-revisor"] } };
         } else if (isSuperAdmin) {
             // Admin Listing Mode: see all active routines regardless of targeting
             query = { active: true };

@@ -571,6 +571,7 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
         const isBurpee = activeBlock?.exercise_name === "Burpees con MediaPipe" || nameLower.includes("burpee");
         const isBicepCurl = activeBlock?.exercise_name === "Bicep Curl con MediaPipe" || nameLower.includes("bicep") || nameLower.includes("biceps") || nameLower.includes("curl");
         const isShoulderPress = activeBlock?.exercise_name === "Press Militar con MediaPipe" || nameLower.includes("militar") || nameLower.includes("press") || nameLower.includes("hombro");
+        const isTricepKickback = activeBlock?.exercise_name === "Patada de Triceps con MediaPipe" || nameLower.includes("tricep") || nameLower.includes("kickback") || nameLower.includes("patada");
 
         if (isSquat) {
             const leftVisibility = (landmarks[23]?.visibility || 0) + (landmarks[25]?.visibility || 0) + (landmarks[27]?.visibility || 0);
@@ -990,6 +991,125 @@ export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
             ctx.fillStyle = "#ffffff";
             ctx.fillText(`${angleL}°`, (1 - e_L.x) * width - 50, e_L.y * height + 5);
             ctx.fillText(`${angleR}°`, (1 - e_R.x) * width + 15, e_R.y * height + 5);
+
+            ctx.restore();
+
+        } else if (isTricepKickback) {
+            if (!shoulder || !elbow || !wrist || !hip || shoulder.visibility < minVisibility || elbow.visibility < minVisibility || wrist.visibility < minVisibility || hip.visibility < minVisibility) {
+                setFeedbackMsg("Aléjate un poco más para ver tu torso y brazo");
+                drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.2)");
+                return;
+            }
+
+            const angle = calculate2DAngle(shoulder, elbow, wrist);
+            setElbowAngle(angle);
+
+            const dx = Math.abs(shoulder.x - hip.x);
+            const dy = Math.abs(shoulder.y - hip.y);
+            const torsoAngle = Math.round(Math.atan2(dy, dx) * (180 / Math.PI));
+
+            const upperArmTorsoAngle = calculate2DAngle(hip, shoulder, elbow);
+
+            const isTorsoInclined = torsoAngle <= 50;
+            const isElbowElevated = upperArmTorsoAngle <= 30;
+
+            if (angle <= 95) {
+                if (hasReachedDepthRef.current) {
+                    repsCountRef.current += 1;
+                    setRepsCount(repsCountRef.current);
+                    playBeep();
+                    hasReachedDepthRef.current = false;
+                    wasBendingRef.current = false;
+                    setFeedbackMsg("¡Repetición correcta!");
+                    
+                    if (repsCountRef.current >= (activeBlock?.reps || 10)) {
+                        finishSet();
+                        return;
+                    }
+                } else if (wasBendingRef.current) {
+                    playWarningBeep();
+                    setFeedbackMsg("¡Extensión incompleta! Estira el brazo.");
+                    wasBendingRef.current = false;
+                }
+                isReadyToStartRef.current = true;
+                setInstructionMsg("Estira el brazo hacia atrás");
+            } else if (angle >= 155) {
+                if (isReadyToStartRef.current) {
+                    if (!isTorsoInclined) {
+                        if (hasReachedDepthRef.current) playWarningBeep();
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Inclina tu torso!");
+                        setInstructionMsg("Inclina tu cuerpo hacia adelante");
+                    } else if (!isElbowElevated) {
+                        if (hasReachedDepthRef.current) playWarningBeep();
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Eleva tu codo!");
+                        setInstructionMsg("Mantén tu brazo paralelo al torso");
+                    } else {
+                        if (!hasReachedDepthRef.current) {
+                            playDepthBeep();
+                        }
+                        hasReachedDepthRef.current = true;
+                        wasBendingRef.current = true;
+                        setFeedbackMsg("¡Extensión máxima! Regresa lento.");
+                        setInstructionMsg("Flexiona el codo de vuelta a 90°");
+                    }
+                }
+            } else if (angle > 110) {
+                if (isReadyToStartRef.current) {
+                    if (!isTorsoInclined) {
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Inclina tu torso hacia adelante!");
+                    } else if (!isElbowElevated) {
+                        hasReachedDepthRef.current = false;
+                        setFeedbackMsg("¡Sube el codo! No lo dejes caer");
+                    } else {
+                        wasBendingRef.current = true;
+                        if (!hasReachedDepthRef.current) {
+                            setFeedbackMsg("¡Empuja hacia atrás!");
+                            setInstructionMsg("Extiende tu brazo por completo...");
+                        }
+                    }
+                }
+            }
+
+            drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.15)");
+            
+            const isPeak = angle >= 155 || hasReachedDepthRef.current;
+            const activeColor = angle >= 155 || hasReachedDepthRef.current ? "rgba(34, 197, 94, 0.9)" : angle > 110 ? "rgba(250, 204, 21, 0.85)" : "rgba(239, 68, 68, 0.85)";
+
+            if (isPeak) {
+                drawBone(shoulder, elbow, "rgba(74, 222, 128, 0.4)", 12, 20, "rgba(34, 197, 94, 0.9)");
+                drawBone(elbow, wrist, "rgba(74, 222, 128, 0.4)", 12, 20, "rgba(34, 197, 94, 0.9)");
+                drawBone(shoulder, elbow, "#ffffff", 4, 6, "#ffffff");
+                drawBone(elbow, wrist, "#ffffff", 4, 6, "#ffffff");
+            } else {
+                drawBone(shoulder, elbow, activeColor, 6, 10, activeColor);
+                drawBone(elbow, wrist, activeColor, 6, 10, activeColor);
+            }
+
+            const torsoColor = isTorsoInclined ? "rgba(6, 182, 212, 0.8)" : "rgba(239, 68, 68, 0.9)";
+            drawBone(shoulder, hip, torsoColor, 4, 10, torsoColor);
+
+            drawJoint(shoulder, "rgba(255,255,255,0.9)", 5);
+            drawJoint(wrist, "rgba(255,255,255,0.9)", 5);
+            drawJoint(elbow, activeColor, 10);
+            drawJoint(elbow, "#ffffff", 5);
+            drawJoint(hip, torsoColor, 6);
+
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = "black";
+            ctx.font = "bold 15px monospace";
+            ctx.fillStyle = "#ffffff";
+            const elbowDrawX = (1 - elbow.x) * width;
+            ctx.fillText(`${angle}°`, elbowDrawX + (isLeftProfile ? 15 : -55), elbow.y * height + 5);
+
+            const shoulderDrawX = (1 - shoulder.x) * width;
+            ctx.fillStyle = isTorsoInclined ? "#22c55e" : "#ef4444";
+            ctx.fillText(`Inclinación: ${torsoAngle}°`, shoulderDrawX - 60, shoulder.y * height - 20);
+
+            ctx.fillStyle = isElbowElevated ? "#22c55e" : "#ef4444";
+            ctx.fillText(`Alineación: ${upperArmTorsoAngle}°`, elbowDrawX - 60, elbow.y * height + 25);
 
             ctx.restore();
 
