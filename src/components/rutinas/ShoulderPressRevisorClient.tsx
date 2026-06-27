@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Camera, X, Volume2, VolumeX, Award, Zap, Loader2, ArrowLeft, Play, RefreshCw, Trophy, Activity, CheckCircle, AlertCircle, Flame, Plus, Minus
 } from "lucide-react";
@@ -29,6 +29,7 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
   // Statuses: 'intro' | 'loading' | 'active' | 'completed'
   const [status, setStatus] = useState<"intro" | "loading" | "active" | "completed">("intro");
   const [mode, setMode] = useState<"estricto" | "regular">("regular");
+  const [showConfirmCancel, setShowConfirmCancel] = useState(false);
   const modeRef = useRef<"estricto" | "regular">("regular");
 
   useEffect(() => {
@@ -675,11 +676,13 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
     pose.onResults(handlePoseResults);
     poseInstanceRef.current = pose;
 
+    let active = true;
+
     const camera = new CameraClass(videoRef.current, {
       onFrame: async () => {
-        if (videoRef.current) {
+        if (videoRef.current && active && poseInstanceRef.current) {
           try {
-            await pose.send({ image: videoRef.current });
+            await poseInstanceRef.current.send({ image: videoRef.current });
           } catch (e) {
             console.error("Frame processing error:", e);
           }
@@ -693,6 +696,7 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
     cameraInstanceRef.current = camera;
 
     return () => {
+      active = false;
       if (cameraInstanceRef.current) {
         try { cameraInstanceRef.current.stop(); } catch {}
       }
@@ -702,13 +706,8 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
     };
   }, [scriptsLoaded, status]);
 
-  const handleCancelWorkout = async () => {
-    if (confirm("¿Estás seguro de que quieres abandonar este entrenamiento? Se descartará el progreso.")) {
-      if (logIdRef.current) {
-        await deleteRoutineLog(logIdRef.current);
-      }
-      router.push("/routines");
-    }
+  const handleCancelWorkout = () => {
+    setShowConfirmCancel(true);
   };
 
   const formatTime = (secs: number) => {
@@ -1030,6 +1029,7 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
             {/* Actions */}
             <div className="space-y-3 pt-4">
               <button
+                type="button"
                 onClick={completeWorkout}
                 disabled={isFinishing}
                 className="w-full h-14 bg-white hover:bg-emerald-500 hover:text-white text-black font-black uppercase tracking-widest text-xs rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow-md shadow-white/5 disabled:opacity-50"
@@ -1043,6 +1043,7 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
               </button>
 
               <button
+                type="button"
                 onClick={handleCancelWorkout}
                 className="w-full h-12 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-2xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all border border-rose-500/20 active:scale-95"
               >
@@ -1053,6 +1054,59 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
 
         </div>
       </div>
+
+      {/* Custom Confirmation Modal */}
+      <AnimatePresence>
+        {showConfirmCancel && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="w-full max-w-sm bg-zinc-900 border border-white/10 rounded-[2rem] p-6 text-center space-y-6 shadow-2xl"
+            >
+              <div className="w-16 h-16 bg-rose-500/10 border border-rose-500/20 text-rose-500 rounded-full flex items-center justify-center mx-auto">
+                <AlertCircle className="w-8 h-8" />
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-xl font-black text-white uppercase italic tracking-tight">¿Abandonar entrenamiento?</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  ¿Estás seguro de que quieres abandonar este entrenamiento? Se descartará todo el progreso actual.
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmCancel(false)}
+                  className="flex-1 h-12 bg-white/5 hover:bg-white/10 text-zinc-300 font-bold rounded-xl text-xs uppercase tracking-wider border border-white/5 transition-colors cursor-pointer"
+                >
+                  Volver
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setShowConfirmCancel(false);
+                    if (logIdRef.current) {
+                      await deleteRoutineLog(logIdRef.current);
+                    }
+                    router.push("/routines");
+                  }}
+                  className="flex-1 h-12 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-xl text-xs uppercase tracking-widest transition-colors cursor-pointer"
+                >
+                  Abandonar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

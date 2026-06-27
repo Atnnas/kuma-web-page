@@ -28,6 +28,7 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
 
   // Statuses: 'intro' | 'loading' | 'active' | 'completed'
   const [status, setStatus] = useState<"intro" | "loading" | "active" | "completed">("intro");
+  const [showConfirmCancel, setShowConfirmCancel] = useState(false);
 
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
@@ -272,14 +273,8 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
     setCameraActive(false);
   };
 
-  const handleCancelWorkout = async () => {
-    if (confirm("¿Estás seguro de que quieres abandonar este entrenamiento? Se descartará el progreso.")) {
-      stopCamera();
-      if (logIdRef.current) {
-        await deleteRoutineLog(logIdRef.current);
-      }
-      router.push("/routines");
-    }
+  const handleCancelWorkout = () => {
+    setShowConfirmCancel(true);
   };
 
   // Finalize session
@@ -383,11 +378,17 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
     pose.onResults(onPoseResults);
     poseInstanceRef.current = pose;
 
+    let active = true;
+
     if (videoRef.current) {
       const camera = new vision.Camera(videoRef.current, {
         onFrame: async () => {
-          if (videoRef.current) {
-            await pose.send({ image: videoRef.current });
+          if (videoRef.current && active && poseInstanceRef.current) {
+            try {
+              await poseInstanceRef.current.send({ image: videoRef.current });
+            } catch (err) {
+              console.error("Pose frame error:", err);
+            }
           }
         },
         width: 640,
@@ -404,6 +405,7 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
     }
 
     return () => {
+      active = false;
       stopCamera();
     };
   }, [status, scriptsLoaded]);
@@ -985,6 +987,60 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
             trophy={currentAchievement} 
             onClose={handleNextAchievement} 
           />
+        )}
+      </AnimatePresence>
+
+      {/* Custom Confirmation Modal */}
+      <AnimatePresence>
+        {showConfirmCancel && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="w-full max-w-sm bg-zinc-900 border border-white/10 rounded-[2rem] p-6 text-center space-y-6 shadow-2xl"
+            >
+              <div className="w-16 h-16 bg-rose-500/10 border border-rose-500/20 text-rose-500 rounded-full flex items-center justify-center mx-auto">
+                <AlertCircle className="w-8 h-8" />
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-xl font-black text-white uppercase italic tracking-tight">¿Abandonar entrenamiento?</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  ¿Estás seguro de que quieres abandonar este entrenamiento? Se descartará todo el progreso actual.
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmCancel(false)}
+                  className="flex-1 h-12 bg-white/5 hover:bg-white/10 text-zinc-300 font-bold rounded-xl text-xs uppercase tracking-wider border border-white/5 transition-colors cursor-pointer"
+                >
+                  Volver
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setShowConfirmCancel(false);
+                    stopCamera();
+                    if (logIdRef.current) {
+                      await deleteRoutineLog(logIdRef.current);
+                    }
+                    router.push("/routines");
+                  }}
+                  className="flex-1 h-12 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-xl text-xs uppercase tracking-widest transition-colors cursor-pointer"
+                >
+                  Abandonar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
