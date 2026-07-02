@@ -28,13 +28,7 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
 
   // Statuses: 'intro' | 'loading' | 'active' | 'completed'
   const [status, setStatus] = useState<"intro" | "loading" | "active" | "completed">("intro");
-  const [mode, setMode] = useState<"estricto" | "regular">("regular");
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
-  const modeRef = useRef<"estricto" | "regular">("regular");
-
-  useEffect(() => {
-    modeRef.current = mode;
-  }, [mode]);
 
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
@@ -392,7 +386,7 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
     const w_R = landmarks[16];
 
     const minVisibility = 0.45;
-    const isStrict = modeRef.current === "estricto";
+    const isStrict = false;
 
     if (
       !s_L || !e_L || !w_L || !s_R || !e_R || !w_R ||
@@ -457,48 +451,20 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
       setInstructionMsg("Empuja las mancuernas verticalmente sobre tu cabeza");
     } else if (angleL >= 160 && angleR >= 160) {
       if (isReadyToStartRef.current) {
-        if (isStrict && !isSymmetrical) {
-          if (hasReachedTopRef.current) playWarningBeep();
-          hasReachedTopRef.current = false;
-          setFeedbackMsg("¡Empuje asimétrico! Empuja parejo");
-          setInstructionMsg("Alinea la fuerza en ambos hombros por igual");
-        } else if (isStrict && !isForearmVertical) {
-          if (hasReachedTopRef.current) playWarningBeep();
-          hasReachedTopRef.current = false;
-          setFeedbackMsg("¡Alinea tus antebrazos! Mantenlos verticales");
-          setInstructionMsg("Evita abrir o cerrar los brazos hacia los lados");
-        } else if (isStrict && !isFistsCorrect) {
-          if (hasReachedTopRef.current) playWarningBeep();
-          hasReachedTopRef.current = false;
-          setFeedbackMsg("¡No abras los brazos! Puños sobre la cabeza");
-          setInstructionMsg("Empuja verticalmente hacia arriba, no hacia afuera");
-        } else {
-          if (!hasReachedTopRef.current) {
-            playDepthBeep();
-          }
-          hasReachedTopRef.current = true;
-          wasPressingRef.current = true;
-          setFeedbackMsg("¡Extensión lograda! Baja lentamente.");
-          setInstructionMsg("Regresa los codos a la altura de tus orejas");
+        if (!hasReachedTopRef.current) {
+          playDepthBeep();
         }
+        hasReachedTopRef.current = true;
+        wasPressingRef.current = true;
+        setFeedbackMsg("¡Extensión lograda! Baja lentamente.");
+        setInstructionMsg("Regresa los codos a la altura de tus orejas");
       }
     } else if (angleL > 110 || angleR > 110) {
       if (isReadyToStartRef.current) {
-        if (isStrict && !isSymmetrical) {
-          hasReachedTopRef.current = false;
-          setFeedbackMsg("¡Corrige simetría de hombros!");
-        } else if (isStrict && !isForearmVertical) {
-          hasReachedTopRef.current = false;
-          setFeedbackMsg("¡Antebrazos inclinados! Evita balancear");
-        } else if (isStrict && !isFistsCorrect) {
-          hasReachedTopRef.current = false;
-          setFeedbackMsg("¡Brazos muy abiertos! Puños sobre la cabeza");
-        } else {
-          wasPressingRef.current = true;
-          if (!hasReachedTopRef.current) {
-            setFeedbackMsg("¡Sigue empujando hacia arriba!");
-            setInstructionMsg("Estira tus brazos por completo...");
-          }
+        wasPressingRef.current = true;
+        if (!hasReachedTopRef.current) {
+          setFeedbackMsg("¡Sigue empujando hacia arriba!");
+          setInstructionMsg("Estira tus brazos por completo...");
         }
       }
     }

@@ -28,13 +28,7 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
 
   // Statuses: 'intro' | 'loading' | 'active' | 'completed'
   const [status, setStatus] = useState<"intro" | "loading" | "active" | "completed">("intro");
-  const [mode, setMode] = useState<"estricto" | "regular">("estricto");
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
-  const modeRef = useRef<"estricto" | "regular">("estricto");
-
-  useEffect(() => {
-    modeRef.current = mode;
-  }, [mode]);
 
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
@@ -405,7 +399,7 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
 
     // Check if joints are visible enough
     const minVisibility = 0.45;
-    const isStrict = modeRef.current === "estricto";
+    const isStrict = false;
     if (
       (shoulder?.visibility || 0) < minVisibility || 
       (elbow?.visibility || 0) < minVisibility || 
@@ -474,44 +468,20 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
       setInstructionMsg("Flexiona el brazo para realizar el curl");
     } else if (angle <= 55) {
       if (isReadyToStartRef.current) {
-        if (isStrict && !isBackGood) {
-          if (!hasReachedDepthRef.current) {
-            playWarningBeep();
-          }
-          hasReachedDepthRef.current = true;
-          wasBendingRef.current = true;
-          setFeedbackMsg("¡No te balancees! Mantén la espalda recta");
-          setInstructionMsg("Saca el pecho y evita mover el torso");
-        } else if (isStrict && !isElbowGood) {
-          if (!hasReachedDepthRef.current) {
-            playWarningBeep();
-          }
-          hasReachedDepthRef.current = true;
-          wasBendingRef.current = true;
-          setFeedbackMsg("¡Codos sueltos! Pégalos al cuerpo");
-          setInstructionMsg("No adelantes el codo al subir");
-        } else {
-          if (!hasReachedDepthRef.current) {
-            playDepthBeep();
-          }
-          hasReachedDepthRef.current = true;
-          wasBendingRef.current = true;
-          setFeedbackMsg("¡Contracción máxima! Ahora baja lento.");
-          setInstructionMsg("Estira el brazo completamente de forma controlada");
+        if (!hasReachedDepthRef.current) {
+          playDepthBeep();
         }
+        hasReachedDepthRef.current = true;
+        wasBendingRef.current = true;
+        setFeedbackMsg("¡Contracción máxima! Ahora baja lento.");
+        setInstructionMsg("Estira el brazo completamente de forma controlada");
       }
     } else if (angle < 135) {
       if (isReadyToStartRef.current) {
-        if (isStrict && !isBackGood) {
-          setFeedbackMsg("¡No te balancees! Espalda recta");
-        } else if (isStrict && !isElbowGood) {
-          setFeedbackMsg("¡Mantén el codo fijo a tu cuerpo!");
-        } else {
-          wasBendingRef.current = true;
-          if (!hasReachedDepthRef.current) {
-            setFeedbackMsg("¡Sube un poco más!");
-            setInstructionMsg("Flexiona hacia el hombro...");
-          }
+        wasBendingRef.current = true;
+        if (!hasReachedDepthRef.current) {
+          setFeedbackMsg("¡Sube un poco más!");
+          setInstructionMsg("Flexiona hacia el hombro...");
         }
       }
     }
@@ -779,37 +749,6 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
                   className="w-16 h-16 flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-950 hover:bg-zinc-800 border-2 border-white/10 active:border-amber-500/50 hover:border-amber-500/30 active:scale-95 transition-all rounded-2xl shadow-lg shadow-black/40 text-2xl font-bold cursor-pointer select-none"
                 >
                   <Plus className="w-6 h-6 text-amber-400" />
-                </button>
-              </div>
-            </div>
-
-            {/* Mode Selector */}
-            <div className="pt-5 border-t border-white/5">
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-2 text-center lg:text-left">Modo de Revisión</span>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setMode("regular")}
-                  className={`py-3 px-4 rounded-2xl border text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 ${
-                    mode === "regular" 
-                      ? "bg-gradient-to-r from-cyan-500 to-blue-500 border-cyan-400 text-white shadow-[0_0_20px_rgba(6,182,212,0.35)] font-black" 
-                      : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-white hover:border-white/10"
-                  }`}
-                >
-                  <Activity className={`w-4 h-4 ${mode === "regular" ? "animate-pulse" : ""}`} />
-                  Regular (Solo Flexión)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode("estricto")}
-                  className={`py-3 px-4 rounded-2xl border text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 ${
-                    mode === "estricto" 
-                      ? "bg-gradient-to-r from-red-600 to-amber-500 border-amber-400 text-white shadow-[0_0_20px_rgba(239,68,68,0.35)] font-black" 
-                      : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-white hover:border-white/10"
-                  }`}
-                >
-                  <Zap className={`w-4 h-4 ${mode === "estricto" ? "fill-white animate-pulse" : ""}`} />
-                  Estricto (Codos + Espalda)
                 </button>
               </div>
             </div>

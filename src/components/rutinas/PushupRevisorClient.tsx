@@ -28,13 +28,7 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
 
   // Statuses: 'intro' | 'loading' | 'active' | 'completed'
   const [status, setStatus] = useState<"intro" | "loading" | "active" | "completed">("intro");
-  const [mode, setMode] = useState<"estricto" | "regular">("estricto");
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
-  const modeRef = useRef<"estricto" | "regular">("estricto");
-
-  useEffect(() => {
-    modeRef.current = mode;
-  }, [mode]);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
@@ -404,18 +398,15 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
     const wrist = landmarks[wristIdx];
     const hip = landmarks[hipIdx];
 
-    // Check visibility (including hip to verify plank position if strict mode)
+    // Check visibility
     const minVisibility = 0.45;
-    const isStrict = modeRef.current === "estricto";
-    const isHipRequired = isStrict;
 
     if (
       (shoulder?.visibility || 0) < minVisibility || 
       (elbow?.visibility || 0) < minVisibility || 
-      (wrist?.visibility || 0) < minVisibility ||
-      (isHipRequired && (hip?.visibility || 0) < minVisibility)
+      (wrist?.visibility || 0) < minVisibility
     ) {
-      setFeedbackMsg(isStrict ? "Aléjate un poco más para captar tus brazos y cadera" : "Alinea tu brazo y muñeca con la cámara");
+      setFeedbackMsg("Alinea tu brazo y muñeca con la cámara");
       drawSkeletonSkeleton(ctx, landmarks, width, height, "rgba(255, 255, 255, 0.2)");
       return;
     }
@@ -424,82 +415,51 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
     const angle = calculate2DAngle(shoulder, elbow, wrist);
     setElbowAngle(angle);
 
-    // Validate horizontal plank posture (only in strict mode)
-    let isCorrectPosture = true;
-    let postureFeedback = "";
+    // Push Up state machine
+    const depthThreshold = 110;
+    const extensionThreshold = 150;
 
-    if (isStrict) {
-      if (shoulder && hip) {
-        const dx = Math.abs(shoulder.x - hip.x);
-        const dy = Math.abs(shoulder.y - hip.y);
-        if (dx + dy > 0.02) {
-          const torsoInclination = Math.atan2(dy, dx) * (180 / Math.PI);
-          if (torsoInclination > 40) {
-            isCorrectPosture = false;
-            postureFeedback = "Alinea tu espalda paralela al suelo.";
-          }
+    if (angle > extensionThreshold) {
+      if (hasReachedDepthRef.current) {
+        // Success push up completed!
+        repsCountRef.current += 1;
+        setRepsCount(repsCountRef.current);
+        
+        playBeep();
+        speak(repsCountRef.current.toString());
+        
+        hasReachedDepthRef.current = false;
+        wasBendingRef.current = false;
+        setFeedbackMsg("¡Push up correcto!");
+        
+        if (repsCountRef.current >= targetRepsRef.current) {
+          completeWorkout();
         }
+      } else if (wasBendingRef.current) {
+        // Did not go deep enough before extending
+        playWarningBeep();
+        setFeedbackMsg("¡Flexión incompleta!");
+        speak("Baja más");
+        wasBendingRef.current = false;
       }
-
-      if (wrist && shoulder && wrist.y < shoulder.y) {
-        isCorrectPosture = false;
-        postureFeedback = "Posición incorrecta. Manos sobre los hombros.";
+      isReadyToStartRef.current = true;
+      setInstructionMsg("Flexiona los brazos para descender");
+    } else if (angle <= depthThreshold) {
+      if (isReadyToStartRef.current) {
+        if (!hasReachedDepthRef.current) {
+          playDepthBeep();
+        }
+        hasReachedDepthRef.current = true;
+        wasBendingRef.current = true;
+        setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
+        setInstructionMsg("Estira tus brazos por completo");
       }
-    }
-
-    if (!isCorrectPosture) {
-      setFeedbackMsg(postureFeedback || "Colócate en posición de plancha.");
-      setInstructionMsg("Tu espalda debe estar paralela al suelo");
-      hasReachedDepthRef.current = false;
-      wasBendingRef.current = false;
-      isReadyToStartRef.current = false;
-    } else {
-      // Push Up state machine
-      const depthThreshold = isStrict ? 95 : 110;
-      const extensionThreshold = isStrict ? 160 : 150;
-
-      if (angle > extensionThreshold) {
-        if (hasReachedDepthRef.current) {
-          // Success push up completed!
-          repsCountRef.current += 1;
-          setRepsCount(repsCountRef.current);
-          
-          playBeep();
-          speak(repsCountRef.current.toString());
-          
-          hasReachedDepthRef.current = false;
-          wasBendingRef.current = false;
-          setFeedbackMsg("¡Push up correcto!");
-          
-          if (repsCountRef.current >= targetRepsRef.current) {
-            completeWorkout();
-          }
-        } else if (wasBendingRef.current) {
-          // Did not go deep enough before extending
-          playWarningBeep();
-          setFeedbackMsg("¡Flexión incompleta!");
-          speak("Baja más");
-          wasBendingRef.current = false;
-        }
-        isReadyToStartRef.current = true;
-        setInstructionMsg("Flexiona los brazos para descender");
-      } else if (angle <= depthThreshold) {
-        if (isReadyToStartRef.current) {
-          if (!hasReachedDepthRef.current) {
-            playDepthBeep();
-          }
-          hasReachedDepthRef.current = true;
-          wasBendingRef.current = true;
-          setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
-          setInstructionMsg("Estira tus brazos por completo");
-        }
-      } else if (angle < (depthThreshold + 40)) {
-        if (isReadyToStartRef.current) {
-          wasBendingRef.current = true;
-          if (!hasReachedDepthRef.current) {
-            setFeedbackMsg("¡Baja un poco más!");
-            setInstructionMsg("Aproxima el pecho al suelo...");
-          }
+    } else if (angle < (depthThreshold + 40)) {
+      if (isReadyToStartRef.current) {
+        wasBendingRef.current = true;
+        if (!hasReachedDepthRef.current) {
+          setFeedbackMsg("¡Baja un poco más!");
+          setInstructionMsg("Aproxima el pecho al suelo...");
         }
       }
     }
@@ -688,7 +648,7 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
   };
 
   const getAngleColor = (angle: number) => {
-    const targetFlex = mode === "estricto" ? 95 : 110;
+    const targetFlex = 110;
     if (angle <= targetFlex) return "bg-emerald-500 shadow-[0_0_15px_#10b981]";
     if (angle < (targetFlex + 40)) return "bg-yellow-400 shadow-[0_0_15px_#facc15]";
     return "bg-rose-500 shadow-[0_0_15px_#f43f5e]";
@@ -760,37 +720,6 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
                   className="w-16 h-16 flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-950 hover:bg-zinc-800 border-2 border-white/10 active:border-amber-500/50 hover:border-amber-500/30 active:scale-95 transition-all rounded-2xl shadow-lg shadow-black/40 text-2xl font-bold cursor-pointer select-none"
                 >
                   <Plus className="w-6 h-6 text-amber-400" />
-                </button>
-              </div>
-            </div>
-
-            {/* Mode Selector */}
-            <div className="pt-3 border-t border-white/5">
-              <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-2 text-center lg:text-left">Modo de Revisión</span>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setMode("estricto")}
-                  className={`py-3 px-4 rounded-2xl border text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 ${
-                    mode === "estricto" 
-                      ? "bg-gradient-to-r from-red-600 to-amber-500 border-amber-400 text-white shadow-[0_0_20px_rgba(239,68,68,0.35)] font-black" 
-                      : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-white hover:border-white/10"
-                  }`}
-                >
-                  <Zap className={`w-4 h-4 ${mode === "estricto" ? "fill-white animate-pulse" : ""}`} />
-                  Estricto (Alineación + Profundo)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode("regular")}
-                  className={`py-3 px-4 rounded-2xl border text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 ${
-                    mode === "regular" 
-                      ? "bg-gradient-to-r from-cyan-500 to-blue-500 border-cyan-400 text-white shadow-[0_0_20px_rgba(6,182,212,0.35)] font-black" 
-                      : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-white hover:border-white/10"
-                  }`}
-                >
-                  <Activity className={`w-4 h-4 ${mode === "regular" ? "animate-pulse" : ""}`} />
-                  Regular (Permisivo / Solo Brazos)
                 </button>
               </div>
             </div>
@@ -997,20 +926,14 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
               />
               <div 
                 className="absolute left-0 right-0 h-px bg-white/40 border-t border-dashed" 
-                style={{ bottom: `${((180 - (mode === "estricto" ? 95 : 110)) / (180 - 80)) * 100}%` }}
-                title={mode === "estricto" ? "Meta paralela estricta" : "Meta regular"} 
+                style={{ bottom: `${((180 - 110) / (180 - 80)) * 100}%` }}
+                title="Meta regular" 
               />
             </div>
             {/* Transparent Reps Overlay */}
             <div className="absolute top-4 left-4 bg-zinc-950/80 backdrop-blur px-4 py-2 rounded-2xl border border-white/10 flex items-center gap-2 shadow-md">
               <span className="text-xs font-bold text-zinc-400">Reps:</span>
               <span className="text-lg font-black text-kuma-gold font-mono">{repsCount} / {targetReps}</span>
-            </div>
-
-            {/* Active profile hud */}
-            <div className="absolute top-4 right-12 bg-zinc-950/80 border border-white/10 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider text-zinc-400 flex items-center gap-1.5 backdrop-blur-sm shadow-md">
-              <Activity className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Modo: <strong className={mode === "estricto" ? "text-red-400 animate-pulse" : "text-cyan-400"}>{mode === "estricto" ? "ESTRICTO" : "REGULAR"}</strong></span>
             </div>
 
             {/* Live Angle HUD */}
@@ -1042,36 +965,6 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
               </p>
             </div>
 
-            {/* Live Mode Toggle during Workout */}
-            <div className="bg-zinc-950/60 p-3.5 border border-white/5 rounded-2xl space-y-2">
-              <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider block text-center">Modo de Revisión Activo</span>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setMode("estricto")}
-                  className={`py-2 px-3 rounded-xl border text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 active:scale-95 ${
-                    mode === "estricto" 
-                      ? "bg-gradient-to-r from-red-600 to-amber-500 border-amber-400 text-white shadow-[0_0_12px_rgba(239,68,68,0.35)] font-black" 
-                      : "bg-zinc-950/20 border-white/5 text-zinc-500 hover:text-white"
-                  }`}
-                >
-                  <Zap className="w-3.5 h-3.5" />
-                  Estricto
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode("regular")}
-                  className={`py-2 px-3 rounded-xl border text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 active:scale-95 ${
-                    mode === "regular" 
-                      ? "bg-gradient-to-r from-cyan-500 to-blue-500 border-cyan-400 text-white shadow-[0_0_12px_rgba(6,182,212,0.35)] font-black" 
-                      : "bg-zinc-950/20 border-white/5 text-zinc-500 hover:text-white"
-                  }`}
-                >
-                  <Activity className="w-3.5 h-3.5" />
-                  Regular
-                </button>
-              </div>
-            </div>
 
             {/* Time Elapsed */}
             <div className="flex items-center justify-between px-2 pt-2 border-t border-white/5">
