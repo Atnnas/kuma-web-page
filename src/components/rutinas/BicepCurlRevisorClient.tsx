@@ -399,7 +399,7 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
 
     // Check if joints are visible enough
     const minVisibility = 0.45;
-    const isStrict = false;
+    const isStrict = true;
     if (
       (shoulder?.visibility || 0) < minVisibility || 
       (elbow?.visibility || 0) < minVisibility || 
@@ -468,20 +468,42 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
       setInstructionMsg("Flexiona el brazo para realizar el curl");
     } else if (angle <= 55) {
       if (isReadyToStartRef.current) {
-        if (!hasReachedDepthRef.current) {
-          playDepthBeep();
+        if (!isBackGood) {
+          if (hasReachedDepthRef.current) playWarningBeep();
+          hasReachedDepthRef.current = false;
+          wasBendingRef.current = false;
+          setFeedbackMsg("¡No te balancees! Mantén la espalda recta");
+          setInstructionMsg("Saca el pecho y evita mover el torso");
+        } else if (!isElbowGood) {
+          if (hasReachedDepthRef.current) playWarningBeep();
+          hasReachedDepthRef.current = false;
+          wasBendingRef.current = false;
+          setFeedbackMsg("¡Hombros atrás! Mantén el codo fijo");
+          setInstructionMsg("No adelantes el codo al subir");
+        } else {
+          if (!hasReachedDepthRef.current) {
+            playDepthBeep();
+          }
+          hasReachedDepthRef.current = true;
+          wasBendingRef.current = true;
+          setFeedbackMsg("¡Contracción máxima! Ahora baja lento.");
+          setInstructionMsg("Estira el brazo completamente de forma controlada");
         }
-        hasReachedDepthRef.current = true;
-        wasBendingRef.current = true;
-        setFeedbackMsg("¡Contracción máxima! Ahora baja lento.");
-        setInstructionMsg("Estira el brazo completamente de forma controlada");
       }
     } else if (angle < 135) {
       if (isReadyToStartRef.current) {
-        wasBendingRef.current = true;
-        if (!hasReachedDepthRef.current) {
-          setFeedbackMsg("¡Sube un poco más!");
-          setInstructionMsg("Flexiona hacia el hombro...");
+        if (!isBackGood) {
+          hasReachedDepthRef.current = false;
+          setFeedbackMsg("¡No te balancees! Espalda recta");
+        } else if (!isElbowGood) {
+          hasReachedDepthRef.current = false;
+          setFeedbackMsg("¡Codos fijos y hombros atrás!");
+        } else {
+          wasBendingRef.current = true;
+          if (!hasReachedDepthRef.current) {
+            setFeedbackMsg("¡Sube un poco más!");
+            setInstructionMsg("Flexiona hacia el hombro...");
+          }
         }
       }
     }
