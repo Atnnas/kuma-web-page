@@ -412,26 +412,42 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
 
   // Main pose processing logic
   const onPoseResults = (results: any) => {
-    if (!canvasRef.current || !results.poseLandmarks) return;
+    if (!canvasRef.current || !canvasRef.current.getContext) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // Dynamically adjust canvas dimensions to match the actual stream resolution and aspect ratio,
+    // which prevents stretching/squishing (especially on mobile portrait orientation).
+    const video = videoRef.current;
+    if (video && video.videoWidth && video.videoHeight) {
+      if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+      }
+    }
+
     const width = canvas.width;
     const height = canvas.height;
 
-    // Clear frame
+    // Clear frame and draw mirrored video feed
+    ctx.save();
     ctx.clearRect(0, 0, width, height);
 
-    // Draw video feed mirrored
-    ctx.save();
-    ctx.translate(width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(results.image, 0, 0, width, height);
-    ctx.restore();
+    if (results.image) {
+      ctx.translate(width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(results.image, 0, 0, width, height);
+      ctx.restore();
+    }
 
     const landmarks = results.poseLandmarks;
+    if (!landmarks || landmarks.length < 33) {
+      setFeedbackMsg("Ponte de perfil frente a la cámara enfocando tu brazo y cadera");
+      return;
+    }
+
     const minVisibility = 0.55;
 
     // Determine profile side (Left vs Right) based on visibility of key landmarks

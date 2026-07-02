@@ -475,13 +475,19 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
     } else if (angle <= 55) {
       if (isReadyToStartRef.current) {
         if (isStrict && !isBackGood) {
-          if (hasReachedDepthRef.current) playWarningBeep();
-          hasReachedDepthRef.current = false;
+          if (!hasReachedDepthRef.current) {
+            playWarningBeep();
+          }
+          hasReachedDepthRef.current = true;
+          wasBendingRef.current = true;
           setFeedbackMsg("¡No te balancees! Mantén la espalda recta");
           setInstructionMsg("Saca el pecho y evita mover el torso");
         } else if (isStrict && !isElbowGood) {
-          if (hasReachedDepthRef.current) playWarningBeep();
-          hasReachedDepthRef.current = false;
+          if (!hasReachedDepthRef.current) {
+            playWarningBeep();
+          }
+          hasReachedDepthRef.current = true;
+          wasBendingRef.current = true;
           setFeedbackMsg("¡Codos sueltos! Pégalos al cuerpo");
           setInstructionMsg("No adelantes el codo al subir");
         } else {
@@ -497,10 +503,8 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
     } else if (angle < 135) {
       if (isReadyToStartRef.current) {
         if (isStrict && !isBackGood) {
-          hasReachedDepthRef.current = false;
           setFeedbackMsg("¡No te balancees! Espalda recta");
         } else if (isStrict && !isElbowGood) {
-          hasReachedDepthRef.current = false;
           setFeedbackMsg("¡Mantén el codo fijo a tu cuerpo!");
         } else {
           wasBendingRef.current = true;
