@@ -901,6 +901,26 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
               className="w-full h-full object-cover rounded-2xl"
             />
 
+            {/* Guide Silhouette Overlay */}
+            <div className={`absolute inset-0 pointer-events-none flex items-center justify-center transition-opacity duration-500 ${repsCount > 0 ? "opacity-0" : "opacity-25"}`}>
+              <svg viewBox="0 0 100 100" className="w-1/2 h-2/3 text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.3)]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">
+                {/* Head bent over */}
+                <circle cx="68" cy="38" r="6" fill="currentColor" fillOpacity="0.1" />
+                {/* Body */}
+                <path d="
+                  M 34,60
+                  C 33,70 32,80 30,90
+                  M 38,60
+                  C 37,70 36,80 34,90
+                  M 36,60
+                  L 58,38
+                  C 60,38 62,39 63,38
+                " />
+                {/* Arm holding position */}
+                <path d="M 52,42 L 38,52 L 48,64" />
+              </svg>
+            </div>
+
             {/* Depth Indicator Bar */}
             <div className="absolute right-4 top-1/2 -translate-y-1/2 h-[70%] w-3 bg-zinc-900/60 rounded-full border border-white/5 overflow-hidden flex flex-col justify-end">
               <div 

@@ -965,6 +965,33 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
               className="w-full h-full object-cover rounded-2xl"
             />
 
+            {/* Guide Silhouette Overlay */}
+            <div className={`absolute inset-0 pointer-events-none flex items-center justify-center transition-opacity duration-500 ${repsCount > 0 ? "opacity-0" : "opacity-25"}`}>
+              <svg viewBox="0 0 100 100" className="w-1/2 h-5/6 text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.3)]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">
+                {/* Head */}
+                <circle cx="50" cy="16" r="7" fill="currentColor" fillOpacity="0.1" />
+                {/* Shoulders & Torso */}
+                <path d="
+                  M 32,32 
+                  C 38,28 42,26 50,26 
+                  C 58,26 62,28 68,32 
+                  L 62,60 
+                  L 38,60 
+                  Z
+                " fill="currentColor" fillOpacity="0.05" />
+                {/* Legs */}
+                <path d="
+                  M 41,60 L 41,90
+                  M 59,60 L 59,90
+                " />
+                {/* Arms in starting Shoulder Press position (Goalposts) */}
+                <path d="
+                  M 32,32 L 24,32 L 24,18
+                  M 68,32 L 76,32 L 76,18
+                " />
+              </svg>
+            </div>
+
             {/* Depth Indicator Bar */}
             <div className="absolute right-4 top-1/2 -translate-y-1/2 h-[70%] w-3 bg-zinc-900/60 rounded-full border border-white/5 overflow-hidden flex flex-col justify-end">
               <div 

@@ -964,6 +964,29 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
               className="w-full h-full object-cover rounded-2xl"
             />
 
+            {/* Guide Silhouette Overlay */}
+            <div className={`absolute inset-0 pointer-events-none flex items-center justify-center transition-opacity duration-500 ${repsCount > 0 ? "opacity-0" : "opacity-25"}`}>
+              <svg viewBox="0 0 100 100" className="w-5/6 h-1/2 text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.3)]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">
+                {/* Head at right */}
+                <circle cx="80" cy="38" r="6" fill="currentColor" fillOpacity="0.1" />
+                {/* Horizontal torso and legs */}
+                <path d="
+                  M 74,40 
+                  L 20,54 
+                  L 20,58
+                  L 74,44
+                  Z
+                " fill="currentColor" fillOpacity="0.05" />
+                {/* Arms down to ground */}
+                <path d="
+                  M 68,43 L 68,70
+                  M 72,42 L 72,70
+                " />
+                {/* Ground line */}
+                <path d="M 10,70 L 90,70" strokeDasharray="3,3" />
+              </svg>
+            </div>
+
             {/* Depth Indicator Bar */}
             <div className="absolute right-4 top-1/2 -translate-y-1/2 h-[70%] w-3 bg-zinc-900/60 rounded-full border border-white/5 overflow-hidden flex flex-col justify-end">
               <div 

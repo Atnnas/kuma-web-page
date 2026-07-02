@@ -906,6 +906,29 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
               className="w-full h-full object-cover rounded-2xl"
             />
 
+            {/* Guide Silhouette Overlay */}
+            <div className={`absolute inset-0 pointer-events-none flex items-center justify-center transition-opacity duration-500 ${repsCount > 0 ? "opacity-0" : "opacity-25"}`}>
+              <svg viewBox="0 0 100 100" className="w-1/3 h-5/6 text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.3)]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">
+                {/* Head (Profile facing right) */}
+                <path d="M 48,10 C 44,10 44,18 48,18 C 50,18 52,17 52,15 C 52,14 53,13 52,12 C 51,12 50,11 48,10 Z" fill="currentColor" fillOpacity="0.1" />
+                {/* Body contour */}
+                <path d="
+                  M 47,19 
+                  C 44,24 43,35 44,45 
+                  C 45,52 42,58 44,65 
+                  C 46,72 44,82 46,90 
+                  L 45,92
+                  M 49,19 
+                  C 52,24 55,30 54,40 
+                  C 53,50 54,58 52,65 
+                  C 50,72 52,82 50,90 
+                  L 52,92
+                " />
+                {/* Arm */}
+                <path d="M 48,22 C 50,30 51,40 49,50" />
+              </svg>
+            </div>
+
             {/* Depth Indicator Bar */}
             <div className="absolute right-4 top-1/2 -translate-y-1/2 h-[70%] w-3 bg-zinc-900/60 rounded-full border border-white/5 overflow-hidden flex flex-col justify-end">
               <div 
