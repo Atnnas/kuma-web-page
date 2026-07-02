@@ -440,10 +440,10 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
     setElbowDriftVal(upperArmAngle);
 
     // Evaluate state machine for Curl
-    // Straight arm is > 155°. Flexed arm (Peak contraction) is <= 55°
-    // Strict constraints: Back swing <= 15°, Elbow drift <= 25°
+    // Straight arm is > 155°. Flexed arm (Peak contraction) is <= 75°
+    // Strict constraints: Back swing <= 15° (informational), Elbow drift <= 30° (enforced)
     const isBackGood = backAngle <= 15;
-    const isElbowGood = upperArmAngle <= 25;
+    const isElbowGood = upperArmAngle <= 30;
 
     if (angle > 155) {
       if (hasReachedDepthRef.current) {
@@ -466,15 +466,9 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
       }
       isReadyToStartRef.current = true;
       setInstructionMsg("Flexiona el brazo para realizar el curl");
-    } else if (angle <= 55) {
+    } else if (angle <= 75) {
       if (isReadyToStartRef.current) {
-        if (!isBackGood) {
-          if (hasReachedDepthRef.current) playWarningBeep();
-          hasReachedDepthRef.current = false;
-          wasBendingRef.current = false;
-          setFeedbackMsg("¡No te balancees! Mantén la espalda recta");
-          setInstructionMsg("Saca el pecho y evita mover el torso");
-        } else if (!isElbowGood) {
+        if (!isElbowGood) {
           if (hasReachedDepthRef.current) playWarningBeep();
           hasReachedDepthRef.current = false;
           wasBendingRef.current = false;
@@ -486,22 +480,27 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
           }
           hasReachedDepthRef.current = true;
           wasBendingRef.current = true;
-          setFeedbackMsg("¡Contracción máxima! Ahora baja lento.");
+          if (!isBackGood) {
+            setFeedbackMsg("Contracción lograda (¡Intenta no balancear la espalda!)");
+          } else {
+            setFeedbackMsg("¡Contracción máxima! Ahora baja lento.");
+          }
           setInstructionMsg("Estira el brazo completamente de forma controlada");
         }
       }
     } else if (angle < 135) {
       if (isReadyToStartRef.current) {
-        if (!isBackGood) {
-          hasReachedDepthRef.current = false;
-          setFeedbackMsg("¡No te balancees! Espalda recta");
-        } else if (!isElbowGood) {
+        if (!isElbowGood) {
           hasReachedDepthRef.current = false;
           setFeedbackMsg("¡Codos fijos y hombros atrás!");
         } else {
           wasBendingRef.current = true;
           if (!hasReachedDepthRef.current) {
-            setFeedbackMsg("¡Sube un poco más!");
+            if (!isBackGood) {
+              setFeedbackMsg("¡No te balancees! Espalda recta");
+            } else {
+              setFeedbackMsg("¡Sube un poco más!");
+            }
             setInstructionMsg("Flexiona hacia el hombro...");
           }
         }
@@ -699,7 +698,7 @@ export function BicepCurlRevisorClient({ user, routine }: BicepCurlRevisorClient
   };
 
   const getAngleColor = (angle: number) => {
-    if (angle <= 55) return "bg-emerald-500 shadow-[0_0_15px_#10b981]";
+    if (angle <= 75) return "bg-emerald-500 shadow-[0_0_15px_#10b981]";
     if (angle < 135) return "bg-yellow-400 shadow-[0_0_15px_#facc15]";
     return "bg-rose-500 shadow-[0_0_15px_#f43f5e]";
   };
