@@ -532,20 +532,40 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
       setInstructionMsg("Extiende tu codo completamente hacia atrás");
     } else if (angle >= 155) {
       if (isReadyToStartRef.current) {
-        if (!hasReachedTopRef.current) {
-          playDepthBeep();
+        if (!isTorsoInclined) {
+          if (hasReachedTopRef.current) playWarningBeep();
+          hasReachedTopRef.current = false;
+          setFeedbackMsg("¡Inclina tu torso! Mantén la espalda plana");
+          setInstructionMsg("Inclina tu cuerpo hacia adelante para trabajar tríceps");
+        } else if (!isElbowElevated) {
+          if (hasReachedTopRef.current) playWarningBeep();
+          hasReachedTopRef.current = false;
+          setFeedbackMsg("¡Eleva tu codo! Mantenlo arriba");
+          setInstructionMsg("Mantén tu brazo pegado y paralelo a tu torso");
+        } else {
+          if (!hasReachedTopRef.current) {
+            playDepthBeep();
+          }
+          hasReachedTopRef.current = true;
+          wasBendingRef.current = true;
+          setFeedbackMsg("¡Extensión lograda! Regresa lento.");
+          setInstructionMsg("Flexiona tu codo controladamente de vuelta a 90°");
         }
-        hasReachedTopRef.current = true;
-        wasBendingRef.current = true;
-        setFeedbackMsg("¡Extensión lograda! Regresa lento.");
-        setInstructionMsg("Flexiona tu codo controladamente de vuelta a 90°");
       }
     } else if (angle > 110) {
       if (isReadyToStartRef.current) {
-        wasBendingRef.current = true;
-        if (!hasReachedTopRef.current) {
-          setFeedbackMsg("¡Empuja hacia atrás!");
-          setInstructionMsg("Extiende tu brazo por completo...");
+        if (!isTorsoInclined) {
+          hasReachedTopRef.current = false;
+          setFeedbackMsg("¡Inclina más tu torso hacia adelante!");
+        } else if (!isElbowElevated) {
+          hasReachedTopRef.current = false;
+          setFeedbackMsg("¡Sube el codo! No lo dejes caer");
+        } else {
+          wasBendingRef.current = true;
+          if (!hasReachedTopRef.current) {
+            setFeedbackMsg("¡Empuja hacia atrás!");
+            setInstructionMsg("Extiende tu brazo por completo...");
+          }
         }
       }
     }
