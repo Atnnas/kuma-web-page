@@ -504,7 +504,11 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
     setElbowAngle(angle);
 
     const isTorsoInclined = torsoAngle <= 50; // Bending forward enough
-    const isElbowElevated = upperArmTorsoAngle <= 30; // Upper arm raised
+    const dx_hs = hip.x - shoulder.x;
+    const y_back_at_elbow = Math.abs(dx_hs) > 0.001
+      ? shoulder.y + (hip.y - shoulder.y) * ((elbow.x - shoulder.x) / dx_hs)
+      : shoulder.y;
+    const isElbowElevated = elbow.y <= y_back_at_elbow + 0.03; // Elbow is at or above the back line
 
     // State machine for Tricep Kickback repetitions:
     // Starting position (Flexed): Elbow bent to <= 90°
@@ -595,11 +599,12 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
 
     const isPeak = angle >= 155 || hasReachedTopRef.current;
     const activeColor = angle >= 155 || hasReachedTopRef.current ? "rgba(34, 197, 94, 0.9)" : angle > 110 ? "rgba(250, 204, 21, 0.85)" : "rgba(239, 68, 68, 0.85)";
+    const elbowColor = isElbowElevated ? "rgba(34, 197, 94, 0.9)" : "rgba(239, 68, 68, 0.85)";
 
     if (isPeak) {
       ctx.shadowBlur = 20;
       ctx.shadowColor = "rgba(34, 197, 94, 0.9)";
-      drawBone(shoulder, elbow, "rgba(74, 222, 128, 0.4)", 12);
+      drawBone(shoulder, elbow, isElbowElevated ? "rgba(74, 222, 128, 0.4)" : "rgba(239, 68, 68, 0.4)", 12);
       drawBone(elbow, wrist, "rgba(74, 222, 128, 0.4)", 12);
 
       ctx.shadowBlur = 6;
@@ -609,7 +614,7 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
     } else {
       ctx.shadowBlur = 10;
       ctx.shadowColor = "rgba(255,255,255,0.2)";
-      drawBone(shoulder, elbow, activeColor, 6);
+      drawBone(shoulder, elbow, elbowColor, 6);
       drawBone(elbow, wrist, activeColor, 6);
     }
 
@@ -621,7 +626,7 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
 
     drawJoint(shoulder, "rgba(255,255,255,0.9)", 5);
     drawJoint(wrist, "rgba(255,255,255,0.9)", 5);
-    drawJoint(elbow, activeColor, 10);
+    drawJoint(elbow, elbowColor, 10);
     drawJoint(elbow, "#ffffff", 5);
     drawJoint(hip, torsoColor, 6);
 
