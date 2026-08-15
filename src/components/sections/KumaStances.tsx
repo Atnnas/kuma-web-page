@@ -49,7 +49,7 @@ export default function KumaStances() {
   const [connectionError, setConnectionError] = useState("");
   const [cameraActive, setCameraActive] = useState(false);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
-  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [alignmentMetrics, setAlignmentMetrics] = useState({ score: 0, aligned: false });
   const [checkAttempts, setCheckAttempts] = useState(0);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
@@ -57,6 +57,16 @@ export default function KumaStances() {
     console.log(msg);
     setDebugLogs((prev) => [...prev.slice(-4), `${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}: ${msg}`]);
   };
+
+  // Load voice preference from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("kuma_stances_voice");
+      if (saved !== null) {
+        setVoiceEnabled(saved === "true");
+      }
+    } catch (e) {}
+  }, []);
 
   // Refs for video & canvas
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -81,13 +91,13 @@ export default function KumaStances() {
   const currentPresetRef = useRef<PosePreset | null>(null);
   const analysisModeRef = useRef(analysisMode);
   const hasTriggeredAlignRef = useRef(false);
-  const audioEnabledRef = useRef(audioEnabled);
+  const voiceEnabledRef = useRef(voiceEnabled);
   const facingModeRef = useRef(facingMode);
 
   useEffect(() => { toleranceRef.current = tolerance; }, [tolerance]);
   useEffect(() => { currentPresetRef.current = currentPreset; }, [currentPreset]);
   useEffect(() => { analysisModeRef.current = analysisMode; }, [analysisMode]);
-  useEffect(() => { audioEnabledRef.current = audioEnabled; }, [audioEnabled]);
+  useEffect(() => { voiceEnabledRef.current = voiceEnabled; }, [voiceEnabled]);
   useEffect(() => { facingModeRef.current = facingMode; }, [facingMode]);
 
   const aspectRatioRef = useRef(4 / 3);
@@ -238,20 +248,47 @@ export default function KumaStances() {
       });
   }, []);
 
-  // TTS Voice Feedback
+  // TTS Voice Feedback (Optional)
   const speak = (text: string) => {
-    if (!audioEnabledRef.current) return;
+    if (!voiceEnabledRef.current) return;
     if (typeof window === "undefined" || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "es-MX";
-    utterance.rate = 1.1;
-    window.speechSynthesis.speak(utterance);
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "es-MX";
+      utterance.rate = 1.1;
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {}
+  };
+
+  // Toggle Voice Feedback
+  const toggleVoice = (forcedState?: boolean) => {
+    const next = typeof forcedState === "boolean" ? forcedState : !voiceEnabled;
+    setVoiceEnabled(next);
+    try {
+      localStorage.setItem("kuma_stances_voice", String(next));
+    } catch (e) {}
+    if (next) {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        try {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance("Ayuda por voz activada");
+          utterance.lang = "es-MX";
+          utterance.rate = 1.1;
+          window.speechSynthesis.speak(utterance);
+        } catch (e) {}
+      }
+    } else {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        try {
+          window.speechSynthesis.cancel();
+        } catch (e) {}
+      }
+    }
   };
 
   // Trigger alignment beep sound
   const playBeep = () => {
-    if (!audioEnabledRef.current) return;
     try {
       const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
       const audioCtx = new AudioContextClass();
@@ -1053,31 +1090,46 @@ export default function KumaStances() {
 
                 {/* Debug console removed from screen as requested */}
 
-                {/* Mobile Camera Overlays completely removed to free screen space */}
+                {/* Mobile Camera Overlays */}
                 {cameraActive && isMobile && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (videoRef.current) {
-                        try {
-                          videoRef.current.defaultMuted = true;
-                          videoRef.current.muted = true;
-                          const playPromise = videoRef.current.play();
-                          if (playPromise !== undefined) {
-                            playPromise.catch(() => {});
-                          }
-                          videoRef.current.pause();
-                        } catch (e) {}
-                      }
-                      const nextMode = facingMode === "user" ? "environment" : "user";
-                      setFacingMode(nextMode);
-                      speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
-                    }}
-                    className="absolute top-4 left-4 p-3.5 bg-zinc-950 border-2 border-kuma-gold hover:bg-zinc-900 rounded-2xl pointer-events-auto active:scale-95 shadow-[0_0_15px_rgba(245,158,11,0.4)] flex items-center justify-center z-[70] cursor-pointer text-zinc-300 hover:text-white"
-                    title="Cambiar Cámara"
-                  >
-                    <RefreshCw className="w-6 h-6 text-kuma-gold" />
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (videoRef.current) {
+                          try {
+                            videoRef.current.defaultMuted = true;
+                            videoRef.current.muted = true;
+                            const playPromise = videoRef.current.play();
+                            if (playPromise !== undefined) {
+                              playPromise.catch(() => {});
+                            }
+                            videoRef.current.pause();
+                          } catch (e) {}
+                        }
+                        const nextMode = facingMode === "user" ? "environment" : "user";
+                        setFacingMode(nextMode);
+                        speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
+                      }}
+                      className="absolute top-4 left-4 p-3.5 bg-zinc-950 border-2 border-kuma-gold hover:bg-zinc-900 rounded-2xl pointer-events-auto active:scale-95 shadow-[0_0_15px_rgba(245,158,11,0.4)] flex items-center justify-center z-[70] cursor-pointer text-zinc-300 hover:text-white"
+                      title="Cambiar Cámara"
+                    >
+                      <RefreshCw className="w-6 h-6 text-kuma-gold" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => toggleVoice()}
+                      className={`absolute top-4 left-20 p-3.5 bg-zinc-950 border-2 rounded-2xl pointer-events-auto active:scale-95 flex items-center justify-center z-[70] cursor-pointer transition-all ${
+                        voiceEnabled
+                          ? "border-kuma-gold text-kuma-gold shadow-[0_0_15px_rgba(245,158,11,0.4)]"
+                          : "border-white/20 text-zinc-500 hover:text-zinc-300"
+                      }`}
+                      title={voiceEnabled ? "Desactivar ayuda por voz" : "Activar ayuda por voz"}
+                    >
+                      {voiceEnabled ? <Volume2 className="w-6 h-6 text-kuma-gold" /> : <VolumeX className="w-6 h-6 text-zinc-500" />}
+                    </button>
+                  </>
                 )}
 
                 {/* Desktop/Default camera active overlays (visible on desktop only) */}
@@ -1109,6 +1161,22 @@ export default function KumaStances() {
                           <RefreshCw className="w-4 h-4 text-kuma-gold group-hover:rotate-180 transition-transform duration-500" />
                           <span className="text-[10px] uppercase font-bold tracking-wider text-white">
                             Cámara: {facingMode === "user" ? "Frontal" : "Trasera"}
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => toggleVoice()}
+                          className={`absolute top-4 left-56 p-3 bg-zinc-950/80 hover:bg-zinc-900 border rounded-xl transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 group z-20 cursor-pointer ${
+                            voiceEnabled
+                              ? "border-kuma-gold/50 text-kuma-gold"
+                              : "border-white/15 text-zinc-400"
+                          }`}
+                          title={voiceEnabled ? "Desactivar ayuda por voz" : "Activar ayuda por voz"}
+                        >
+                          {voiceEnabled ? <Volume2 className="w-4 h-4 text-kuma-gold" /> : <VolumeX className="w-4 h-4 text-zinc-500" />}
+                          <span className="text-[10px] uppercase font-bold tracking-wider text-white">
+                            Voz: {voiceEnabled ? "Activada" : "Desactivada"}
                           </span>
                         </button>
 
@@ -1216,13 +1284,16 @@ export default function KumaStances() {
                     </h2>
                   </div>
 
-                  {/* Audio Toggle button */}
+                  {/* Audio / Voice Toggle button */}
                   <button
-                    onClick={() => setAudioEnabled(!audioEnabled)}
-                    className={`p-2 border border-white/10 rounded-xl transition-all hover:bg-white/5 ${audioEnabled ? 'text-kuma-gold border-kuma-gold/30' : 'text-zinc-500'}`}
-                    title={audioEnabled ? "Silenciar audio" : "Activar audio de voz"}
+                    type="button"
+                    onClick={() => toggleVoice()}
+                    className={`p-2 border rounded-xl transition-all hover:bg-white/5 cursor-pointer ${
+                      voiceEnabled ? 'text-kuma-gold border-kuma-gold/30 bg-amber-500/10' : 'text-zinc-500 border-white/10'
+                    }`}
+                    title={voiceEnabled ? "Desactivar ayuda por voz" : "Activar ayuda por voz"}
                   >
-                    {audioEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                    {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                   </button>
                 </div>
 
@@ -1345,6 +1416,44 @@ export default function KumaStances() {
                       CAPTURAR POSICIÓN
                     </button>
                   )}
+                </div>
+
+                {/* Voice Guidance Toggle Switch Card */}
+                <div className="bg-zinc-950/60 border border-white/5 p-4 rounded-2xl flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2.5 rounded-xl border transition-colors ${
+                      voiceEnabled 
+                        ? "bg-amber-500/10 border-amber-500/30 text-kuma-gold" 
+                        : "bg-zinc-900/80 border-white/10 text-zinc-500"
+                    }`}>
+                      {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-bold uppercase text-white tracking-wider">
+                        Ayuda por Voz
+                      </h3>
+                      <p className="font-body text-[10px] text-zinc-400">
+                        {voiceEnabled ? "Instrucciones de voz activadas" : "Modo silencioso (sin voz)"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={voiceEnabled}
+                    onClick={() => toggleVoice()}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                      voiceEnabled ? "bg-amber-500" : "bg-zinc-800"
+                    }`}
+                    title={voiceEnabled ? "Desactivar ayuda por voz" : "Activar ayuda por voz"}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow-lg ring-0 transition duration-200 ease-in-out ${
+                        voiceEnabled ? "translate-x-5 bg-zinc-950" : "translate-x-0 bg-zinc-400"
+                      }`}
+                    />
+                  </button>
                 </div>
 
                 {/* Analysis Mode Selector */}
