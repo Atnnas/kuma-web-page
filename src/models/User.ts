@@ -48,6 +48,10 @@ export interface IUser extends Document {
         cc?: string;
         habilidadSecreta?: string;
         dojo?: any;
+        gender?: "Masculino" | "Femenino";
+        wkfCategory?: string;
+        categoryWeight?: number;
+        weightReviewNeeded?: boolean;
         statsLastMonth?: {
             vel: number;
             pot: number;
@@ -202,6 +206,10 @@ const UserSchema = new Schema<IUser>(
             cc: { type: String, default: "" },
             habilidadSecreta: { type: String, default: "" },
             dojo: { type: Schema.Types.ObjectId, ref: "Dojo", default: null },
+            gender: { type: String, enum: ["Masculino", "Femenino"], default: undefined },
+            wkfCategory: { type: String, default: "" },
+            categoryWeight: { type: Number, default: null },
+            weightReviewNeeded: { type: Boolean, default: false },
             statsLastMonth: {
                 vel: { type: Number, default: 10 },
                 pot: { type: Number, default: 10 },

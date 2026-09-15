@@ -3,12 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getEnrolledAthletes, updateAthletePhotoSelf } from "@/lib/actions/athletes";
-import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid } from "lucide-react";
+import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { BeltSquare, MartialArtsBeltIcon, getBeltColor } from "@/components/admin/AthleteEditModal";
 import { WeeklyMVPSection } from "./WeeklyMVPSection";
+import { evaluateWkfCategory } from "@/lib/wkf-categories";
 
 interface Athlete {
     _id: string;
@@ -16,10 +17,24 @@ interface Athlete {
     email: string;
     image?: string;
     athleteProfile: {
+        birthDate?: string;
         weight: number;
         height: number;
         beltRank: string;
         specialization: "Kata" | "Kumite" | "Ambos";
+        gender?: "Masculino" | "Femenino";
+        wkfCategory?: string;
+        categoryWeight?: number;
+        weightReviewNeeded?: boolean;
+        wkfEvaluation?: {
+            age: number | null;
+            ageDivision: string;
+            calculatedWeightClass: string;
+            suggestedCategory: string;
+            displayCategory: string;
+            hasWeightReviewAlert: boolean;
+            alertMessage?: string;
+        };
         stats: {
             vel: number;
             pot: number;
@@ -300,6 +315,31 @@ export function KumaRanking({
                                                                     <span>{ath.athleteProfile.beltRank}</span>
                                                                 </span>
                                                             </span>
+
+                                                            {/* WKF Category & Weight Review in list */}
+                                                            {(() => {
+                                                                const wkf = ath.athleteProfile.wkfEvaluation || evaluateWkfCategory({
+                                                                    birthDate: ath.athleteProfile.birthDate,
+                                                                    currentWeight: ath.athleteProfile.weight,
+                                                                    gender: ath.athleteProfile.gender,
+                                                                    assignedCategory: ath.athleteProfile.wkfCategory,
+                                                                    assignedWeight: ath.athleteProfile.categoryWeight,
+                                                                    forceWeightReview: ath.athleteProfile.weightReviewNeeded
+                                                                });
+                                                                return (
+                                                                    <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                                                                        <span className="text-[9px] font-black text-amber-300 bg-amber-950/50 px-2 py-0.5 rounded border border-amber-500/25 uppercase tracking-wider">
+                                                                            🥋 {wkf.displayCategory}
+                                                                        </span>
+                                                                        {wkf.hasWeightReviewAlert && (
+                                                                            <span className="text-[8px] font-black text-amber-300 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/40 flex items-center gap-0.5 uppercase tracking-wider" title={wkf.alertMessage}>
+                                                                                <AlertTriangle className="w-2.5 h-2.5 text-amber-400" />
+                                                                                Revisión de peso
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })()}
                                                         </div>
                                                     </div>
 
@@ -445,6 +485,15 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
     const nameParts = athlete.name.split(" ");
     const displayFirstName = nameParts[0] || "";
     const displayLastName = nameParts[1] || "";
+
+    const wkfEval = athlete?.athleteProfile?.wkfEvaluation || evaluateWkfCategory({
+        birthDate: athlete?.athleteProfile?.birthDate,
+        currentWeight: athlete?.athleteProfile?.weight,
+        gender: athlete?.athleteProfile?.gender,
+        assignedCategory: athlete?.athleteProfile?.wkfCategory,
+        assignedWeight: athlete?.athleteProfile?.categoryWeight,
+        forceWeightReview: athlete?.athleteProfile?.weightReviewNeeded
+    });
 
     const cardClipPath = "polygon(0% 15%, 8% 13%, 12% 9%, 20% 5%, 50% 0%, 80% 5%, 88% 9%, 92% 13%, 100% 15%, 100% 85%, 50% 100%, 0% 85%)";
 
@@ -599,6 +648,24 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                                 <h3 className="relative z-10 text-[13px] font-serif font-black text-white uppercase tracking-[0.15em] truncate drop-shadow-md py-0.5 px-3">
                                     {displayFirstName} <span style={{ color: fut.textColor }}>{displayLastName}</span>
                                 </h3>
+                            </div>
+
+                            {/* WKF Official Category & Weight Review Indicator */}
+                            <div className="mt-1 flex flex-col items-center justify-center relative z-20 select-none px-1">
+                                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/75 border border-white/20 backdrop-blur-md shadow-sm">
+                                    <span className="text-[9px] font-black tracking-wider text-amber-200 uppercase truncate">
+                                        🥋 {wkfEval.displayCategory}
+                                    </span>
+                                </div>
+                                {wkfEval.hasWeightReviewAlert && (
+                                    <div 
+                                        className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-950/80 border border-red-500/60 text-red-300 text-[8px] font-black uppercase tracking-wider animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.4)]"
+                                        title={wkfEval.alertMessage || "Revisión de peso requerida"}
+                                    >
+                                        <AlertTriangle className="w-2.5 h-2.5 text-red-400 shrink-0" />
+                                        <span>Revisión de peso</span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* FIFA FUT STATS PANEL */}
@@ -1141,6 +1208,15 @@ export function KumaCelebrationModal({
     const displayLastName = nameParts[1] || "";
     const beltRank = athlete?.athleteProfile?.beltRank ?? "Blanco";
 
+    const wkfEval = athlete?.athleteProfile?.wkfEvaluation || evaluateWkfCategory({
+        birthDate: athlete?.athleteProfile?.birthDate,
+        currentWeight: athlete?.athleteProfile?.weight,
+        gender: athlete?.athleteProfile?.gender,
+        assignedCategory: athlete?.athleteProfile?.wkfCategory,
+        assignedWeight: athlete?.athleteProfile?.categoryWeight,
+        forceWeightReview: athlete?.athleteProfile?.weightReviewNeeded
+    });
+
     const getFUTStyles = (rating: number) => {
         if (rating >= 75) {
             return {
@@ -1472,6 +1548,43 @@ export function KumaCelebrationModal({
                                     <span className="text-kuma-gold font-black uppercase tracking-wider flex items-center gap-1">👑 {athlete.athleteProfile.mvpCount}</span>
                                 </div>
                             ) : null}
+                        </div>
+
+                        {/* Apartado Especial: Categoría Oficial WKF & Alerta de Peso */}
+                        <div className="bg-zinc-950/60 border border-amber-500/20 backdrop-blur-md rounded-2xl p-4 sm:p-5 w-full max-w-md space-y-3">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-amber-400">
+                                    Categoría Oficial WKF
+                                </span>
+                                <span className="text-xs font-black text-amber-200 px-3 py-1 rounded-full bg-zinc-900 border border-amber-500/30 uppercase tracking-wide">
+                                    🥋 {wkfEval.displayCategory}
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/5 text-[11px]">
+                                <div>
+                                    <span className="block text-[9px] text-zinc-500 uppercase font-bold">División</span>
+                                    <span className="font-bold text-zinc-200">{wkfEval.ageDivision}</span>
+                                </div>
+                                <div>
+                                    <span className="block text-[9px] text-zinc-500 uppercase font-bold">Edad</span>
+                                    <span className="font-bold text-zinc-200">{wkfEval.age !== null ? `${wkfEval.age} años` : "N/D"}</span>
+                                </div>
+                                <div>
+                                    <span className="block text-[9px] text-zinc-500 uppercase font-bold">Peso</span>
+                                    <span className="font-bold text-zinc-200">{athlete.athleteProfile?.weight ? `${athlete.athleteProfile.weight} kg` : "N/D"}</span>
+                                </div>
+                            </div>
+                            {wkfEval.hasWeightReviewAlert && (
+                                <div className="mt-2 p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs flex items-start gap-2">
+                                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                                    <div className="text-[11px] leading-tight">
+                                        <strong className="font-black uppercase tracking-wider block mb-0.5">Alerta: Revisión de peso</strong>
+                                        <span className="text-zinc-300">
+                                            {wkfEval.alertMessage || `El peso actual (${athlete.athleteProfile?.weight} kg) no coincide con la categoría asignada.`}
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Botón de acción táctil inferior para móviles */}

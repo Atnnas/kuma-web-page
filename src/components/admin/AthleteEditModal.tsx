@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Save, Shield, Ruler, Weight, Calendar, Phone, HeartPulse, Trophy, Zap, Target, Flame, Activity } from "lucide-react";
+import { X, Save, Shield, Ruler, Weight, Calendar, Phone, HeartPulse, Trophy, Zap, Target, Flame, Activity, AlertTriangle, Award } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { getDojos } from "@/lib/actions/dojos";
+import { evaluateWkfCategory } from "@/lib/wkf-categories";
 
 export const getBeltColor = (beltRank: string) => {
     const rank = (beltRank || "").toLowerCase().trim();
@@ -116,6 +117,10 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
             cc: p.cc || "",
             habilidadSecreta: p.habilidadSecreta || "",
             dojo: p.dojo?._id || p.dojo || "6a10ba00936f06f14847fd05",
+            gender: p.gender || "Masculino",
+            wkfCategory: p.wkfCategory || "",
+            categoryWeight: p.categoryWeight || p.weight || 70,
+            weightReviewNeeded: !!p.weightReviewNeeded,
             stats: {
                 vel: p.stats?.vel ?? 50,
                 pot: p.stats?.pot ?? 50,
@@ -125,6 +130,15 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                 ovr: p.stats?.ovr ?? 50
             }
         };
+    });
+
+    const wkfEval = evaluateWkfCategory({
+        birthDate: profile.birthDate,
+        currentWeight: profile.weight,
+        gender: profile.gender,
+        assignedCategory: profile.wkfCategory,
+        assignedWeight: profile.categoryWeight,
+        forceWeightReview: profile.weightReviewNeeded
     });
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -307,14 +321,27 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                                         </div>
                                     </div>
 
-                                    <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Fecha de Nacimiento</label>
-                                        <input
-                                            type="date"
-                                            value={profile.birthDate?.split('T')[0] || ""}
-                                            onChange={(e) => setProfile({ ...profile, birthDate: e.target.value })}
-                                            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-4 text-white focus:border-red-500 outline-none"
-                                        />
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Fecha de Nacimiento</label>
+                                            <input
+                                                type="date"
+                                                value={profile.birthDate?.split('T')[0] || ""}
+                                                onChange={(e) => setProfile({ ...profile, birthDate: e.target.value })}
+                                                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-4 text-white focus:border-red-500 outline-none text-xs"
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Rama / Género WKF</label>
+                                            <select
+                                                value={profile.gender || "Masculino"}
+                                                onChange={(e) => setProfile({ ...profile, gender: e.target.value as "Masculino" | "Femenino" })}
+                                                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-3 text-white focus:border-red-500 outline-none text-xs cursor-pointer"
+                                            >
+                                                <option value="Masculino">🥋 Masculino</option>
+                                                <option value="Femenino">🥋 Femenino</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -436,6 +463,114 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                                                 className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-4 text-white focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none placeholder:text-zinc-600 text-xs transition-all"
                                             />
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Section: WKF Category & Weight Review */}
+                            <div className="pt-4 border-t border-white/5 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-amber-400 text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                                        <Award className="w-4 h-4 text-amber-400" /> Categoría Oficial WKF (World Karate Federation)
+                                    </h3>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] px-2.5 py-1 rounded bg-zinc-900 border border-white/10 text-zinc-300 font-mono">
+                                            {wkfEval.age !== null ? `${wkfEval.age} años • ${wkfEval.ageDivision}` : "Edad no calculable"}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {wkfEval.hasWeightReviewAlert && (
+                                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
+                                        <div className="flex items-start gap-3">
+                                            <div className="p-2 rounded-lg bg-amber-500/20 text-amber-400 shrink-0 mt-0.5">
+                                                <AlertTriangle className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <div className="text-xs font-black uppercase tracking-wider text-amber-300">
+                                                    ⚠️ Alerta: Revisión de Peso Requerida
+                                                </div>
+                                                <div className="text-[11px] text-zinc-300 mt-0.5">
+                                                    {wkfEval.alertReason || "El peso registrado difiere de la categoría asignada."}
+                                                </div>
+                                                <div className="text-[10px] text-zinc-400 mt-1">
+                                                    Categoría WKF sugerida para {profile.weight} kg: <span className="text-amber-400 font-bold">{wkfEval.suggestedCategory}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 shrink-0 w-full md:w-auto">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setProfile({
+                                                        ...profile,
+                                                        wkfCategory: wkfEval.suggestedCategory,
+                                                        categoryWeight: profile.weight,
+                                                        weightReviewNeeded: false
+                                                    });
+                                                }}
+                                                className="flex-1 md:flex-initial px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer"
+                                            >
+                                                Actualizar a {wkfEval.suggestedCategory}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setProfile({
+                                                        ...profile,
+                                                        categoryWeight: profile.weight,
+                                                        weightReviewNeeded: false
+                                                    });
+                                                }}
+                                                className="flex-1 md:flex-initial px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 text-[11px] font-bold tracking-wider transition-colors cursor-pointer"
+                                            >
+                                                Mantener Categoría
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-zinc-950/60 p-3.5 rounded-xl border border-white/5">
+                                    <div className="space-y-1.5 md:col-span-2">
+                                        <div className="flex items-center justify-between">
+                                            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                                                Categoría Registrada (Tarjeta Kumakards)
+                                            </label>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setProfile({
+                                                        ...profile,
+                                                        wkfCategory: wkfEval.suggestedCategory,
+                                                        categoryWeight: profile.weight,
+                                                        weightReviewNeeded: false
+                                                    });
+                                                }}
+                                                className="text-[9px] text-amber-400 hover:text-amber-300 font-bold tracking-wider transition-colors underline cursor-pointer"
+                                            >
+                                                Usar sugerencia WKF ({wkfEval.suggestedCategory})
+                                            </button>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={profile.wkfCategory}
+                                            onChange={(e) => setProfile({ ...profile, wkfCategory: e.target.value })}
+                                            placeholder={`Ej: ${wkfEval.suggestedCategory}`}
+                                            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-3 text-white focus:border-amber-400 outline-none text-xs font-bold placeholder:text-zinc-600"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                                            Peso de Categoría (kg)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={profile.categoryWeight}
+                                            onChange={(e) => setProfile({ ...profile, categoryWeight: Number(e.target.value) })}
+                                            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 px-3 text-white focus:border-amber-400 outline-none text-xs font-mono"
+                                        />
+                                        <span className="text-[9px] text-zinc-500 block">Referencia para alertas</span>
                                     </div>
                                 </div>
                             </div>

@@ -6,6 +6,7 @@ import Dojo from "@/models/Dojo";
 import AttendanceLog from "@/models/AttendanceLog";
 import { revalidatePath } from "next/cache";
 import { requireSuperAdmin } from "@/lib/auth-utils";
+import { evaluateWkfCategory } from "@/lib/wkf-categories";
 
 /**
  * Fetch all users that are enrolled as athletes
@@ -62,7 +63,7 @@ export async function updateAthleteProfile(userId: string, profileData: any) {
 
         const user = await User.findById(userId);
         const userObj = user ? user.toObject() : null;
-        const existingProfile = userObj?.athleteProfile || {};
+        const existingProfile: any = userObj?.athleteProfile || {};
 
         // Ensure OVR is calculated if not provided
         if (profileData.stats && !profileData.stats.ovr) {
@@ -74,6 +75,12 @@ export async function updateAthleteProfile(userId: string, profileData: any) {
         
         if (!profileFields.dojo) {
             profileFields.dojo = "6a10ba00936f06f14847fd05";
+        }
+
+        // If category is assigned or changed, sync the baseline weight and clear review flag
+        if (profileFields.wkfCategory && profileFields.wkfCategory !== existingProfile.wkfCategory) {
+            profileFields.categoryWeight = profileFields.weight ?? existingProfile.weight;
+            profileFields.weightReviewNeeded = false;
         }
 
         const updateFields: any = {
@@ -165,9 +172,26 @@ function serializeAthlete(user: any, mvpCountsMap?: Record<string, number>) {
 
     if (serializedUser.athleteProfile) {
         const dojoPopulated = serializedUser.athleteProfile.dojo;
+        const bdate = serializedUser.athleteProfile.birthDate ? new Date(serializedUser.athleteProfile.birthDate).toISOString() : undefined;
+
+        // Dynamic WKF Category evaluation
+        const wkfEvaluation = evaluateWkfCategory({
+            birthDate: bdate,
+            currentWeight: serializedUser.athleteProfile.weight,
+            gender: serializedUser.athleteProfile.gender,
+            assignedCategory: serializedUser.athleteProfile.wkfCategory,
+            assignedWeight: serializedUser.athleteProfile.categoryWeight,
+            forceWeightReview: serializedUser.athleteProfile.weightReviewNeeded
+        });
+
         serializedUser.athleteProfile = {
             ...serializedUser.athleteProfile,
-            birthDate: serializedUser.athleteProfile.birthDate ? new Date(serializedUser.athleteProfile.birthDate).toISOString() : undefined,
+            birthDate: bdate,
+            gender: serializedUser.athleteProfile.gender,
+            wkfCategory: serializedUser.athleteProfile.wkfCategory,
+            categoryWeight: serializedUser.athleteProfile.categoryWeight,
+            weightReviewNeeded: serializedUser.athleteProfile.weightReviewNeeded,
+            wkfEvaluation,
             dojo: dojoPopulated ? (
                 typeof dojoPopulated === "object" && "_id" in dojoPopulated
                     ? {
