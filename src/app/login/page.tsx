@@ -169,6 +169,12 @@ function LoginContent() {
                 <p className="text-xs text-zinc-500">
                     Si ya tienes cuenta se iniciará tu sesión; si eres nuevo, tu perfil se creará automáticamente en un solo clic.
                 </p>
+                <p className="text-xs text-zinc-500">
+                    ¿Primera vez en el Dojo?{" "}
+                    <Link href="/register" className="text-red-500 hover:text-red-400 font-medium transition-colors underline-offset-4 hover:underline">
+                        Únete aquí
+                    </Link>
+                </p>
                 <div>
                     <Link
                         href="/"
