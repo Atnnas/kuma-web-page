@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { KumaMascot } from "./KumaMascot";
 import { MascotMood } from "@/types/didactica";
 import { didacticSound } from "@/lib/didacticSound";
+import { InstallAppButton } from "./InstallAppButton";
 import {
     Sparkle,
     WarningCircle,
@@ -205,6 +206,9 @@ export function KumaAbsenceGreetingModal({
                             <span>{buttonText}</span>
                             <ArrowRight className="w-5 h-5" weight="bold" />
                         </button>
+
+                        {/* Quick Mobile / Desktop Install Option */}
+                        <InstallAppButton variant="compact" className="w-full justify-center py-2.5" />
 
                         {/* Super Admin Simulator Toolbar */}
                         {isSuperAdmin && (

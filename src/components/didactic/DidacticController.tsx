@@ -8,6 +8,7 @@ import { DojoLingoMap } from "./DojoLingoMap";
 import { DidacticEncyclopedia } from "./DidacticEncyclopedia";
 import { LessonSessionModal } from "./LessonSessionModal";
 import { KumaAbsenceGreetingModal } from "./KumaAbsenceGreetingModal";
+import { InstallAppButton } from "./InstallAppButton";
 import {
     Compass,
     BookOpen,
@@ -389,6 +390,9 @@ export function DidacticController() {
                         </span>
                     )}
                 </button>
+
+                {/* Mobile & Desktop App Installer Button */}
+                <InstallAppButton variant="pill" />
 
                 {/* Direct super admin reset simulation pill */}
                 {isSuperAdmin && simulatedDays !== null && (

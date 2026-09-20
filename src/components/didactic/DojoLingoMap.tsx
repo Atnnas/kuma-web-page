@@ -6,6 +6,7 @@ import { PathType, Level, UserDidacticProgress, BeltRankId, MascotMood } from "@
 import { KumaMascot } from "./KumaMascot";
 import { TheorySheetModal } from "./TheorySheetModal";
 import { BeltCascadeSection } from "./BeltCascadeSection";
+import { InstallAppButton } from "./InstallAppButton";
 import { getBeltRank, BELT_RANKS } from "@/data/beltRanks";
 import { JapaneseFlagIcon, JapaneseFlagBadge, WkfShieldIcon, WkfOfficialBadge } from "./PathIcons";
 import {
@@ -507,6 +508,9 @@ export function DojoLingoMap({
                         </p>
                     </div>
                 </div>
+
+                {/* MOBILE / DESKTOP INSTALL APP CTA */}
+                <InstallAppButton variant="card" />
 
                 {/* QUICK ACCESS TO ENCYCLOPEDIA */}
                 <div className="p-6 rounded-3xl bg-zinc-900/90 border border-white/10 shadow-2xl backdrop-blur-md">

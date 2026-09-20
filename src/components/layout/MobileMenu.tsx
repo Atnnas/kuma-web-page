@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CaretDown } from "@phosphor-icons/react/dist/ssr";
 import { StreakFlame } from "./StreakFlame";
+import { InstallAppButton } from "@/components/didactic/InstallAppButton";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -132,6 +133,12 @@ export function MobileMenu({
                                 </Link>
                             </>
                         )}
+
+                        {/* PWA Mobile / Desktop Install Shortcut */}
+                        <div className="pt-2">
+                            <InstallAppButton variant="card" />
+                        </div>
+
                         {user && (
                             <div className="mt-auto pt-8 border-t border-white/10">
                                 <div className="flex items-center gap-3 mb-4">
