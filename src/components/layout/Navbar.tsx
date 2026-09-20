@@ -29,7 +29,7 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
             name: "Recursos",
             href: "#",
             subItems: [
-                { name: "Didáctica", href: "/resources/didactica" },
+                { name: "Kuma Sensei Academy", href: "/resources/didactica" },
                 { name: "Aplicaciones", href: "/resources/aplicaciones" }
             ]
         },

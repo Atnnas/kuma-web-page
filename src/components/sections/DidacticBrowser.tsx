@@ -32,7 +32,7 @@ const RESOURCES: Resource[] = [
     {
         id: "karategi",
         letter: "K",
-        title: "Historia del Karategi",
+        title: "Historia del Karate-Do",
         tag: "Historia & Tradición",
         description: "Origen, evolución y significado del uniforme blanco en el Camino del Guerrero.",
         link: "/resources/didactica/karategi",
