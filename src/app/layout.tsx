@@ -46,9 +46,20 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
-    icon: "/icon.jpg",
-    shortcut: "/icon.jpg",
-    apple: "/icon.jpg",
+    icon: [
+      { url: "/images/kuma-logo.jpg" },
+      { url: "/images/kuma-logo.jpg", sizes: "192x192", type: "image/jpeg" },
+      { url: "/images/kuma-logo.jpg", sizes: "512x512", type: "image/jpeg" },
+    ],
+    shortcut: "/images/kuma-logo.jpg",
+    apple: [
+      { url: "/images/kuma-logo.jpg", sizes: "180x180", type: "image/jpeg" },
+    ],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Kuma Dojo",
   },
 };
 

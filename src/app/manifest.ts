@@ -13,13 +13,19 @@ export default function manifest(): MetadataRoute.Manifest {
         orientation: "portrait",
         icons: [
             {
-                src: "/icon.jpg",
+                src: "/images/kuma-logo.jpg",
+                sizes: "192x192",
+                type: "image/jpeg",
+                purpose: "any",
+            },
+            {
+                src: "/images/kuma-logo.jpg",
                 sizes: "512x512",
                 type: "image/jpeg",
                 purpose: "any",
             },
             {
-                src: "/images/kuma-sensei-ready.jpg",
+                src: "/images/kuma-logo.jpg",
                 sizes: "512x512",
                 type: "image/jpeg",
                 purpose: "maskable",

@@ -114,8 +114,8 @@ export function InstallAppButton({ variant = "pill", className = "" }: InstallAp
                     className={`w-full p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-kuma-gold/20 to-amber-500/10 border-2 border-kuma-gold/50 hover:border-kuma-gold text-white flex items-center justify-between gap-3 shadow-[0_4px_20px_rgba(234,179,8,0.15)] hover:shadow-[0_6px_25px_rgba(234,179,8,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer group text-left ${className}`}
                 >
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-kuma-gold flex items-center justify-center text-zinc-950 shadow-md group-hover:rotate-6 transition-transform">
-                            <DeviceMobile className="w-5 h-5" weight="fill" />
+                        <div className="relative w-11 h-11 rounded-xl overflow-hidden border-2 border-kuma-gold/70 shadow-md shrink-0 bg-black group-hover:scale-105 transition-transform">
+                            <Image src="/images/kuma-logo.jpg" alt="Kuma Logo" fill className="object-cover" />
                         </div>
                         <div>
                             <span className="block text-xs font-serif font-black text-amber-300 uppercase tracking-wider">
@@ -137,7 +137,9 @@ export function InstallAppButton({ variant = "pill", className = "" }: InstallAp
                     className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-kuma-gold/15 hover:bg-kuma-gold/25 border border-kuma-gold/40 text-kuma-gold hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-sm ${className}`}
                     title="Instalar icono en el escritorio de tu celular o PC"
                 >
-                    <DeviceMobile className="w-3.5 h-3.5" weight="bold" />
+                    <div className="relative w-3.5 h-3.5 rounded-full overflow-hidden border border-kuma-gold/60 shrink-0">
+                        <Image src="/images/kuma-logo.jpg" alt="Logo" fill className="object-cover" />
+                    </div>
                     <span>Instalar App</span>
                 </button>
             ) : (
@@ -148,7 +150,9 @@ export function InstallAppButton({ variant = "pill", className = "" }: InstallAp
                     className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-gradient-to-r from-amber-500/20 via-kuma-gold/20 to-amber-500/20 hover:from-amber-500 hover:to-kuma-gold border border-kuma-gold/50 text-amber-300 hover:text-zinc-950 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer ${className}`}
                     title="Instalar icono en la pantalla de inicio de tu teléfono o PC"
                 >
-                    <DeviceMobile className="w-4 h-4" weight="fill" />
+                    <div className="relative w-4 h-4 rounded-full overflow-hidden border border-amber-300 shrink-0">
+                        <Image src="/images/kuma-logo.jpg" alt="Logo" fill className="object-cover" />
+                    </div>
                     <span>📲 Instalar en Celular / PC</span>
                 </button>
             )}
@@ -175,14 +179,15 @@ export function InstallAppButton({ variant = "pill", className = "" }: InstallAp
 
                             {/* Header */}
                             <div className="text-center mb-6">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-kuma-gold text-zinc-950 shadow-xl shadow-kuma-gold/25 mb-3 p-1 border-2 border-white/20">
-                                    <Image
-                                        src="/icon.jpg"
-                                        alt="Kuma Sensei Icon"
-                                        width={56}
-                                        height={56}
-                                        className="rounded-xl object-cover"
-                                    />
+                                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-black border-2 border-kuma-gold/60 text-zinc-950 shadow-2xl shadow-kuma-gold/30 mb-3 p-1">
+                                    <div className="relative w-full h-full rounded-xl overflow-hidden">
+                                        <Image
+                                            src="/images/kuma-logo.jpg"
+                                            alt="Kuma Sensei Logo"
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
                                 </div>
                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider border border-kuma-gold/40 bg-kuma-gold/10 text-amber-300">
                                     <Sparkle className="w-3 h-3" weight="fill" />
@@ -192,7 +197,7 @@ export function InstallAppButton({ variant = "pill", className = "" }: InstallAp
                                     Instalar Kuma Dojo
                                 </h3>
                                 <p className="text-xs text-zinc-300 mt-1 max-w-sm mx-auto">
-                                    Añade el icono de Kuma Sensei a tu pantalla para entrar directo al dojo sin abrir el navegador.
+                                    Añade el logo oficial de Kuma Dojo a tu pantalla para entrar directo al dojo como una aplicación nativa.
                                 </p>
                             </div>
 
