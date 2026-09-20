@@ -358,12 +358,16 @@ export function DojoLingoMap({
 
                                 const isBeltUnlocked = isFirstBelt || prevBeltWon || currentBeltStarted;
 
+                                const nextUnit = idx < tradUnits.length - 1 ? tradUnits[idx + 1] : null;
+                                const nextBelt = nextUnit ? getBeltRank(nextUnit.beltId || "") : null;
+
                                 return (
                                     <BeltCascadeSection
                                         key={unit.id}
                                         unit={unit}
                                         belt={beltRank}
                                         prevBelt={prevBelt}
+                                        nextBelt={nextBelt}
                                         isBeltUnlocked={isBeltUnlocked}
                                         allPathLevels={allTradLevels}
                                         progress={progress}

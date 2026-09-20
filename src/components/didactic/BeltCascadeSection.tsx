@@ -19,6 +19,7 @@ interface BeltCascadeSectionProps {
     unit: Unit;
     belt: BeltRank;
     prevBelt?: BeltRank | null;
+    nextBelt?: BeltRank | null;
     isBeltUnlocked: boolean;
     allPathLevels: Level[];
     progress: UserDidacticProgress;
@@ -224,10 +225,385 @@ export function BeltCircularEmblem({
     );
 }
 
+/**
+ * Dynamic S-Curve Martial Qi Stream & Kumihimo Cord
+ * Weaves organically between alternating level nodes within an unlocked belt.
+ */
+function MartialLevelBridge({
+    fromLeft,
+    isSourceCompleted,
+    isTargetUnlocked,
+    beltColor,
+}: {
+    fromLeft: boolean;
+    isSourceCompleted: boolean;
+    isTargetUnlocked: boolean;
+    beltColor: string;
+}) {
+    // Cubic bezier parameters:
+    // When fromLeft is true: starts at (45, 0) and ends at (115, 48)
+    // When fromLeft is false: starts at (115, 0) and ends at (45, 48)
+    const dPath = fromLeft
+        ? "M 45 0 C 45 28, 115 20, 115 48"
+        : "M 115 0 C 115 28, 45 20, 45 48";
+
+    const isFlowActive = isSourceCompleted;
+
+    return (
+        <div className="relative w-44 md:w-56 h-12 md:h-14 -my-2 flex items-center justify-center pointer-events-none z-0">
+            <svg
+                viewBox="0 0 160 48"
+                className="w-full h-full overflow-visible"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <defs>
+                    {/* Golden / Ki Energy Gradient */}
+                    <linearGradient id={`goldFlow-${fromLeft ? "L" : "R"}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.9" />
+                        <stop offset="50%" stopColor="#FDE68A" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#D97706" stopOpacity="0.8" />
+                    </linearGradient>
+
+                    {/* Dark Wrought Iron / Dormant Gradient */}
+                    <linearGradient id={`dormantFlow-${fromLeft ? "L" : "R"}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#52525B" stopOpacity="0.4" />
+                        <stop offset="50%" stopColor="#27272A" stopOpacity="0.6" />
+                        <stop offset="100%" stopColor="#3F3F46" stopOpacity="0.3" />
+                    </linearGradient>
+
+                    {/* Soft Radial Glow Filter */}
+                    <filter id={`qiGlow-${fromLeft ? "L" : "R"}`} x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                {/* Layer 1: Ambient Ethereal Glow Beam */}
+                <path
+                    d={dPath}
+                    stroke={isFlowActive ? "#F59E0B" : "rgba(255,255,255,0.04)"}
+                    strokeWidth={isFlowActive ? "7" : "3"}
+                    strokeOpacity={isFlowActive ? "0.35" : "0.2"}
+                    strokeLinecap="round"
+                    filter={isFlowActive ? `url(#qiGlow-${fromLeft ? "L" : "R"})` : undefined}
+                />
+
+                {/* Layer 2: Kumihimo Braided Silk Cord */}
+                <path
+                    d={dPath}
+                    stroke={isFlowActive ? `url(#goldFlow-${fromLeft ? "L" : "R"})` : `url(#dormantFlow-${fromLeft ? "L" : "R"})`}
+                    strokeWidth="3.2"
+                    strokeDasharray={isFlowActive ? "5 3" : "4 4"}
+                    strokeLinecap="round"
+                />
+
+                {/* Layer 3: Central Luminous Filament */}
+                {isFlowActive && (
+                    <path
+                        d={dPath}
+                        stroke="#FFFBEB"
+                        strokeWidth="1.2"
+                        strokeOpacity="0.85"
+                        strokeLinecap="round"
+                    />
+                )}
+
+                {/* Midpoint Qi Seal / Talisman Bead at inflection (80, 24) */}
+                <g transform="translate(80, 24)">
+                    {isFlowActive ? (
+                        <>
+                            {/* Outer pulsing ring */}
+                            <circle r="7" fill="#F59E0B" fillOpacity="0.2" className="animate-ping" />
+                            {/* Diamond Golden Talisman */}
+                            <polygon
+                                points="0,-6 6,0 0,6 -6,0"
+                                fill="#FBBF24"
+                                stroke="#78350F"
+                                strokeWidth="1"
+                                className="drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]"
+                            />
+                            {/* Core white spark */}
+                            <circle r="1.5" fill="#FFFFFF" />
+                        </>
+                    ) : (
+                        <>
+                            {/* Inactive iron bead */}
+                            <polygon
+                                points="0,-5 5,0 0,5 -5,0"
+                                fill="#27272A"
+                                stroke="#52525B"
+                                strokeWidth="1"
+                            />
+                            <circle r="1" fill="#71717A" />
+                        </>
+                    )}
+                </g>
+            </svg>
+        </div>
+    );
+}
+
+/**
+ * Ceremonial Kumihimo Cord & Grand Martial Kamon Medallion
+ * Connecting consecutive modules/belts with rich Japanese aesthetics,
+ * metallic bevels, authentic Kanji seals, and dynamic Qi energy bridges.
+ */
+function MartialInterBeltConnector({
+    isBeltCompleted,
+    isBeltUnlocked,
+    belt,
+    nextBelt,
+}: {
+    isBeltCompleted: boolean;
+    isBeltUnlocked: boolean;
+    belt: BeltRank;
+    nextBelt?: BeltRank | null;
+}) {
+    const isCompleted = isBeltCompleted;
+    const isUnlocked = isBeltUnlocked;
+
+    return (
+        <div className="relative flex flex-col items-center justify-center my-6 py-1 select-none pointer-events-none">
+            {/* Top Anchor Ferrule (Kanagu - 金具) */}
+            <div
+                className={`w-14 h-2.5 rounded-t-md border-t border-x transition-all duration-500 shadow-md ${
+                    isCompleted
+                        ? "bg-gradient-to-r from-amber-600 via-amber-300 to-amber-700 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.4)]"
+                        : isUnlocked
+                        ? "bg-gradient-to-r from-zinc-800 via-amber-500/60 to-zinc-800 border-amber-500/40"
+                        : "bg-zinc-900 border-zinc-700/60 opacity-60"
+                }`}
+            />
+
+            {/* UPPER KUMIHIMO BRAIDED CORD */}
+            <div className="relative w-10 h-10 flex items-center justify-center overflow-hidden">
+                <svg
+                    viewBox="0 0 32 40"
+                    className="w-full h-full"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <defs>
+                        <linearGradient id="kordTopGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#F59E0B" stopOpacity={isCompleted ? "1" : isUnlocked ? "0.8" : "0.2"} />
+                            <stop offset="100%" stopColor="#FBBF24" stopOpacity={isCompleted ? "0.9" : isUnlocked ? "0.7" : "0.1"} />
+                        </linearGradient>
+                    </defs>
+
+                    {/* Ambient Glow */}
+                    {isUnlocked && (
+                        <line
+                            x1="16" y1="0" x2="16" y2="40"
+                            stroke="#F59E0B"
+                            strokeWidth="8"
+                            strokeOpacity={isCompleted ? "0.4" : "0.25"}
+                            strokeLinecap="round"
+                        />
+                    )}
+
+                    {/* Twin Braided Silk Strands */}
+                    <path
+                        d="M 12,0 Q 20,10 12,20 T 12,40"
+                        stroke={isUnlocked ? "url(#kordTopGlow)" : "#3F3F46"}
+                        strokeWidth="3"
+                        strokeDasharray="4 2"
+                        strokeLinecap="round"
+                    />
+                    <path
+                        d="M 20,0 Q 12,10 20,20 T 20,40"
+                        stroke={isUnlocked ? (isCompleted ? "#D97706" : "#B45309") : "#27272A"}
+                        strokeWidth="2.6"
+                        strokeDasharray="3 2"
+                        strokeLinecap="round"
+                    />
+
+                    {/* Center Laser Core */}
+                    {isUnlocked && (
+                        <line
+                            x1="16" y1="0" x2="16" y2="40"
+                            stroke="#FFFBEB"
+                            strokeWidth="1.2"
+                            strokeOpacity="0.9"
+                        />
+                    )}
+                </svg>
+            </div>
+
+            {/* ========================================================= */}
+            {/* CENTRAL SACRED KAMON MEDALLION (OCTAGONAL MARTIAL SEAL)   */}
+            {/* ========================================================= */}
+            <div className="relative group flex flex-col items-center">
+                {/* Ethereal background radial aura */}
+                {isUnlocked && (
+                    <div
+                        className={`absolute inset-0 rounded-full blur-xl pointer-events-none transition-all duration-700 ${
+                            isCompleted
+                                ? "bg-amber-400/25 scale-125"
+                                : "bg-amber-500/15 scale-110"
+                        }`}
+                    />
+                )}
+
+                {/* Octagonal Kamon Body */}
+                <div
+                    className={`relative w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-2xl border-2 ${
+                        isCompleted
+                            ? "bg-gradient-to-b from-zinc-900 via-black to-zinc-950 border-amber-400/90 shadow-[0_0_30px_rgba(245,158,11,0.45)] ring-2 ring-amber-500/40"
+                            : isUnlocked
+                            ? "bg-gradient-to-b from-zinc-900 via-zinc-950 to-black border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.25)] ring-1 ring-amber-400/20"
+                            : "bg-zinc-950 border-zinc-800 shadow-inner"
+                    }`}
+                >
+                    {/* 8 Cardinal Direction Studs (Happō - 八方) */}
+                    <div className="absolute top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-amber-400/80" />
+                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-amber-400/80" />
+                    <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-amber-400/80" />
+                    <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-amber-400/80" />
+
+                    {/* Inner Circular Bevel */}
+                    <div
+                        className={`w-10 h-10 md:w-12 md:h-12 rounded-full border flex items-center justify-center relative overflow-hidden ${
+                            isCompleted
+                                ? "border-amber-400/60 bg-gradient-to-br from-amber-950/80 via-black to-zinc-950"
+                                : isUnlocked
+                                ? "border-amber-500/40 bg-black/90"
+                                : "border-zinc-800 bg-zinc-900/60"
+                        }`}
+                    >
+                        {/* Shimmer flare */}
+                        {isUnlocked && (
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(254,243,199,0.25)_0%,transparent_60%)] pointer-events-none" />
+                        )}
+
+                        {/* Central Kanji / Glyph */}
+                        {isCompleted ? (
+                            <div className="flex flex-col items-center">
+                                <span className="font-serif font-black text-base md:text-lg text-amber-300 drop-shadow-[0_0_8px_rgba(245,158,11,0.9)] leading-none">
+                                    極
+                                </span>
+                            </div>
+                        ) : isUnlocked ? (
+                            <div className="flex flex-col items-center">
+                                <span className="font-serif font-black text-base md:text-lg text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.7)] leading-none">
+                                    道
+                                </span>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center text-zinc-500">
+                                <Lock className="w-4 h-4 text-zinc-500" weight="duotone" />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Martial Calligraphy Ribbon / Plaque */}
+                <div
+                    className={`mt-2.5 px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 border transition-all duration-300 ${
+                        isCompleted
+                            ? "bg-black/90 border-amber-400/70 text-amber-300 shadow-[0_4px_15px_rgba(245,158,11,0.3)]"
+                            : isUnlocked
+                            ? "bg-black/85 border-amber-500/40 text-kuma-gold shadow-md"
+                            : "bg-zinc-950 border-zinc-800 text-zinc-600"
+                    }`}
+                >
+                    {isCompleted ? (
+                        <>
+                            <Sparkle className="w-3 h-3 text-amber-300 animate-pulse" weight="fill" />
+                            <span>Ascenso Culminado • 昇段</span>
+                            <Sparkle className="w-3 h-3 text-amber-300 animate-pulse" weight="fill" />
+                        </>
+                    ) : isUnlocked ? (
+                        <>
+                            <span className="text-[9px] text-amber-400/80">修行中</span>
+                            <span>{nextBelt ? `Camino a ${nextBelt.name}` : "Hacia el Siguiente Grado"}</span>
+                            <CaretDown className="w-3 h-3 text-kuma-gold animate-bounce" weight="bold" />
+                        </>
+                    ) : (
+                        <>
+                            <Lock className="w-2.5 h-2.5 text-zinc-600" weight="bold" />
+                            <span>Grado Sellado • 未伝</span>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {/* LOWER KUMIHIMO BRAIDED CORD */}
+            <div className="relative w-10 h-10 flex items-center justify-center overflow-hidden">
+                <svg
+                    viewBox="0 0 32 40"
+                    className="w-full h-full"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <defs>
+                        <linearGradient id="kordBottomGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#FBBF24" stopOpacity={isCompleted ? "0.9" : isUnlocked ? "0.7" : "0.1"} />
+                            <stop offset="100%" stopColor="#F59E0B" stopOpacity={isCompleted ? "1" : isUnlocked ? "0.8" : "0.2"} />
+                        </linearGradient>
+                    </defs>
+
+                    {/* Ambient Glow */}
+                    {isUnlocked && (
+                        <line
+                            x1="16" y1="0" x2="16" y2="40"
+                            stroke="#F59E0B"
+                            strokeWidth="8"
+                            strokeOpacity={isCompleted ? "0.4" : "0.25"}
+                            strokeLinecap="round"
+                        />
+                    )}
+
+                    {/* Twin Braided Silk Strands */}
+                    <path
+                        d="M 12,0 Q 20,10 12,20 T 12,40"
+                        stroke={isUnlocked ? "url(#kordBottomGlow)" : "#3F3F46"}
+                        strokeWidth="3"
+                        strokeDasharray="4 2"
+                        strokeLinecap="round"
+                    />
+                    <path
+                        d="M 20,0 Q 12,10 20,20 T 20,40"
+                        stroke={isUnlocked ? (isCompleted ? "#D97706" : "#B45309") : "#27272A"}
+                        strokeWidth="2.6"
+                        strokeDasharray="3 2"
+                        strokeLinecap="round"
+                    />
+
+                    {/* Center Laser Core */}
+                    {isUnlocked && (
+                        <line
+                            x1="16" y1="0" x2="16" y2="40"
+                            stroke="#FFFBEB"
+                            strokeWidth="1.2"
+                            strokeOpacity="0.9"
+                        />
+                    )}
+                </svg>
+            </div>
+
+            {/* Bottom Anchor Ferrule (Kanagu - 金具) */}
+            <div
+                className={`w-14 h-2.5 rounded-b-md border-b border-x transition-all duration-500 shadow-md ${
+                    isCompleted
+                        ? "bg-gradient-to-r from-amber-600 via-amber-300 to-amber-700 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.4)]"
+                        : isUnlocked
+                        ? "bg-gradient-to-r from-zinc-800 via-amber-500/60 to-zinc-800 border-amber-500/40"
+                        : "bg-zinc-900 border-zinc-700/60 opacity-60"
+                }`}
+            />
+        </div>
+    );
+}
+
 export function BeltCascadeSection({
     unit,
     belt,
     prevBelt,
+    nextBelt,
     isBeltUnlocked,
     allPathLevels,
     progress,
@@ -398,16 +774,18 @@ export function BeltCascadeSection({
                         transition={{ duration: 0.5 }}
                         className="relative mt-8 pt-2 pb-4 flex flex-col items-center"
                     >
-                        {/* Visual Connecting Line between nodes in this belt */}
+                        {/* Atmospheric subtle vertical light spine behind the levels */}
                         {beltLevels.length > 1 && (
-                            <div className="absolute top-10 bottom-10 left-1/2 -translate-x-1/2 w-1 border-l-2 border-dashed border-white/15 pointer-events-none z-0" />
+                            <div className="absolute top-8 bottom-8 left-1/2 -translate-x-1/2 w-[1px] bg-gradient-to-b from-transparent via-amber-500/20 to-transparent pointer-events-none z-0" />
                         )}
 
-                        <div className="relative z-10 w-full flex flex-col items-center gap-8">
+                        <div className="relative z-10 w-full flex flex-col items-center">
                             {beltLevels.map((level, idx) => {
                                 const unlocked = isLevelUnlocked(level);
                                 const completed = progress.completedLevelIds.includes(level.id);
                                 const stars = progress.levelStars[level.id] || 0;
+                                const nextLevel = beltLevels[idx + 1];
+                                const nextUnlocked = nextLevel ? isLevelUnlocked(nextLevel) : false;
 
                                 const offsetClass =
                                     beltLevels.length > 1
@@ -417,32 +795,43 @@ export function BeltCascadeSection({
                                         : "translate-x-0";
 
                                 return (
-                                    <div
-                                        key={level.id}
-                                        className={`flex flex-col items-center transition-all duration-300 ${offsetClass}`}
-                                    >
-                                        {/* ETHEREAL 3D VOLUMETRIC MARTIAL ORB (DESOPILANTE Y PREMIUM) */}
-                                        <EtherealMartialOrb
-                                            level={level}
-                                            isCompleted={completed}
-                                            isUnlocked={unlocked}
-                                            isDan={isDan}
-                                            stars={stars}
-                                            onClick={() => {
-                                                if (unlocked) onSelectLevel(level);
-                                            }}
-                                        />
+                                    <React.Fragment key={level.id}>
+                                        <div
+                                            className={`flex flex-col items-center transition-all duration-300 my-2 ${offsetClass}`}
+                                        >
+                                            {/* ETHEREAL 3D VOLUMETRIC MARTIAL ORB (DESOPILANTE Y PREMIUM) */}
+                                            <EtherealMartialOrb
+                                                level={level}
+                                                isCompleted={completed}
+                                                isUnlocked={unlocked}
+                                                isDan={isDan}
+                                                stars={stars}
+                                                onClick={() => {
+                                                    if (unlocked) onSelectLevel(level);
+                                                }}
+                                            />
 
-                                        {/* Level Title and Tag */}
-                                        <div className="mt-3 text-center max-w-[190px]">
-                                            <span className="block text-xs md:text-sm font-serif font-black text-white leading-tight drop-shadow">
-                                                {level.title}
-                                            </span>
-                                            <span className="text-[10px] text-kuma-gold/90 font-bold uppercase tracking-widest block mt-0.5">
-                                                {level.tag}
-                                            </span>
+                                            {/* Level Title and Tag */}
+                                            <div className="mt-3 text-center max-w-[190px]">
+                                                <span className="block text-xs md:text-sm font-serif font-black text-white leading-tight drop-shadow">
+                                                    {level.title}
+                                                </span>
+                                                <span className="text-[10px] text-kuma-gold/90 font-bold uppercase tracking-widest block mt-0.5">
+                                                    {level.tag}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
+
+                                        {/* Dynamic S-Curve Martial Qi Stream connecting alternating orbs */}
+                                        {idx < beltLevels.length - 1 && (
+                                            <MartialLevelBridge
+                                                fromLeft={idx % 2 === 0}
+                                                isSourceCompleted={completed}
+                                                isTargetUnlocked={nextUnlocked}
+                                                beltColor={belt.strokeColor || belt.color}
+                                            />
+                                        )}
+                                    </React.Fragment>
                                 );
                             })}
                         </div>
@@ -462,7 +851,7 @@ export function BeltCascadeSection({
                             {prevBelt ? (
                                 <>
                                     Para abrir este cinturón y revelar sus grados de aprendizaje,
-                                    debes superar todas las clases y lecciones de{" "}
+                                     debes superar todas las clases y lecciones de{" "}
                                     <span className="text-kuma-gold font-bold">{prevBelt.name}</span>.
                                 </>
                             ) : (
@@ -477,47 +866,14 @@ export function BeltCascadeSection({
                 )}
             </div>
 
-            {/* INTER-BELT CASCADE CONNECTOR */}
+            {/* INTER-BELT CASCADE CONNECTOR: CEREMONIAL KUMIHIMO CORD & OCTAGONAL KAMON SEAL */}
             {!isLast && (
-                <div className="flex flex-col items-center justify-center my-4 py-2 pointer-events-none">
-                    <div
-                        className={`w-[2px] h-8 transition-all ${
-                            isBeltUnlocked
-                                ? "bg-gradient-to-b from-kuma-gold/60 via-amber-400/40 to-white/20"
-                                : "bg-zinc-800"
-                        }`}
-                    />
-
-                    <div
-                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
-                            isBeltUnlocked
-                                ? "bg-black/80 border border-kuma-gold/30 text-kuma-gold shadow-lg"
-                                : "bg-zinc-950 border border-zinc-800 text-zinc-600"
-                        }`}
-                    >
-                        <span>
-                            {isBeltCompleted
-                                ? "Ascenso completado"
-                                : isBeltUnlocked
-                                ? "En curso hacia el siguiente grado"
-                                : "Camino sellado"}
-                        </span>
-                        <CaretDown
-                            className={`w-3 h-3 ${
-                                isBeltUnlocked ? "text-kuma-gold animate-bounce" : "text-zinc-600"
-                            }`}
-                            weight="bold"
-                        />
-                    </div>
-
-                    <div
-                        className={`w-[2px] h-8 transition-all ${
-                            isBeltUnlocked
-                                ? "bg-gradient-to-b from-white/20 via-amber-400/40 to-kuma-gold/60"
-                                : "bg-zinc-800"
-                        }`}
-                    />
-                </div>
+                <MartialInterBeltConnector
+                    isBeltCompleted={isBeltCompleted}
+                    isBeltUnlocked={isBeltUnlocked}
+                    belt={belt}
+                    nextBelt={nextBelt}
+                />
             )}
 
             {/* LAST BELT SPECIAL CLOSING: 10° DAN JUDAN */}
