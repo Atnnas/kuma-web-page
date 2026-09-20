@@ -23,6 +23,7 @@ import {
     Compass,
     X,
     ArrowCounterClockwise,
+    Sparkle,
 } from "@phosphor-icons/react";
 import { EtherealMartialOrb } from "./EtherealMartialOrb";
 
@@ -252,7 +253,7 @@ export function DojoLingoMap({
                             setSelectedLevel(null);
                             setWkfColor(Math.random() < 0.5 ? "red" : "blue");
                         }}
-                        className={`relative flex-1 py-3 px-3.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer ${
+                        className={`relative flex-1 py-3 px-3.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
                             activePath === "wkf"
                                 ? "bg-gradient-to-r from-amber-500 to-kuma-gold text-zinc-950 font-black shadow-lg shadow-kuma-gold/25 scale-[1.02]"
                                 : "text-zinc-400 hover:text-white hover:bg-white/5"
@@ -260,6 +261,13 @@ export function DojoLingoMap({
                     >
                         <WkfShieldIcon className={`w-6 h-6 shrink-0 transition-transform duration-300 ${activePath === "wkf" ? "scale-110 drop-shadow-md" : "opacity-80"}`} />
                         <span>Deportivo WKF</span>
+                        <span className={`text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider ${
+                            activePath === "wkf"
+                                ? "bg-black/25 text-zinc-950 border border-black/30"
+                                : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                        }`}>
+                            Próximamente
+                        </span>
                     </button>
                 </div>
 
@@ -277,28 +285,41 @@ export function DojoLingoMap({
                                     <Compass className="w-3 h-3" weight="fill" />
                                     {activePath === "tradicional"
                                         ? "20 Cinturones Tradicionales: 10 Kyu a 10 Dan"
-                                        : "Reglamento Oficial WKF de Competición"}
+                                        : "World Karate Federation • Módulo Próximamente"}
                                 </span>
                                 <h2 className="text-xl md:text-2xl font-serif font-black text-white leading-tight">
                                     {activePath === "tradicional"
                                         ? "El Sendero del Guerrero: De Blanco a 10° Dan"
-                                        : "Camino Deportivo WKF — Tatami & Puntuación"}
+                                        : "Camino Deportivo WKF — Próximamente"}
                                 </h2>
                                 <p className="text-xs text-zinc-400 mt-1 max-w-lg leading-relaxed">
                                     {activePath === "tradicional"
                                         ? "Recorre la cascada hacia abajo. Cada cinturón está encapsulado con sus grados y lecciones teóricas y prácticas a resolver."
-                                        : "Domina los 6 criterios de puntuación, señales del réferi y sanciones oficiales del kumite deportivo."}
+                                        : "Módulo interactivo de arbitraje, señales del réferi y kumite deportivo WKF actualmente en fase de preparación."}
                                 </p>
                             </div>
                         </div>
 
                         <div className="text-right shrink-0">
-                            <span className="text-2xl md:text-3xl font-black text-kuma-gold font-serif block">
-                                {pathPercent}%
-                            </span>
-                            <span className="text-[9px] text-zinc-400 uppercase font-bold tracking-widest block">
-                                Completado
-                            </span>
+                            {activePath === "tradicional" ? (
+                                <>
+                                    <span className="text-2xl md:text-3xl font-black text-kuma-gold font-serif block">
+                                        {pathPercent}%
+                                    </span>
+                                    <span className="text-[9px] text-zinc-400 uppercase font-bold tracking-widest block">
+                                        Completado
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="inline-block px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-black uppercase tracking-wider">
+                                        Próximamente
+                                    </span>
+                                    <span className="text-[9px] text-zinc-400 uppercase font-bold tracking-widest block mt-1">
+                                        En Forja
+                                    </span>
+                                </>
+                            )}
                         </div>
                     </div>
 
@@ -307,7 +328,7 @@ export function DojoLingoMap({
                         <motion.div
                             className="h-full bg-gradient-to-r from-amber-500 via-kuma-gold to-yellow-300 rounded-full shadow-[0_0_12px_rgba(234,179,8,0.7)]"
                             initial={{ width: 0 }}
-                            animate={{ width: `${pathPercent}%` }}
+                            animate={{ width: `${activePath === "tradicional" ? pathPercent : 0}%` }}
                             transition={{ duration: 0.8, ease: "easeOut" }}
                         />
                     </div>
@@ -357,82 +378,115 @@ export function DojoLingoMap({
                 )}
 
                 {/* ================================================================= */}
-                {/* CAMINO DEPORTIVO WKF (SERPENTINE PATH)                            */}
+                {/* CAMINO DEPORTIVO WKF (PRÓXIMAMENTE)                               */}
                 {/* ================================================================= */}
                 {activePath === "wkf" && (
-                    <div className="relative w-full max-w-md flex flex-col items-center py-6">
-                        {/* CURVED TRAIL LINE SVG */}
-                        <svg
-                            className="absolute top-10 bottom-10 left-0 w-full h-full pointer-events-none z-0"
-                            viewBox="0 0 380 650"
-                            fill="none"
-                            preserveAspectRatio="none"
-                        >
-                            <path
-                                d="M 190 20 C 130 90, 80 140, 100 200 C 130 270, 260 260, 280 340 C 300 420, 140 450, 190 530 C 210 570, 190 610, 190 640"
-                                stroke="rgba(234, 179, 8, 0.25)"
-                                strokeWidth="10"
-                                strokeLinecap="round"
-                                strokeDasharray="14 10"
-                            />
-                        </svg>
+                    <div className="w-full max-w-2xl bg-gradient-to-b from-zinc-900/95 via-zinc-950 to-black border-2 border-kuma-gold/40 rounded-3xl p-7 md:p-10 shadow-[0_0_50px_rgba(234,179,8,0.15)] relative overflow-hidden flex flex-col items-center text-center my-4">
+                        {/* Glow ambient background with WKF Ao & Aka colors */}
+                        <div className="absolute -top-20 -left-20 w-56 h-56 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute -bottom-20 -right-20 w-56 h-56 bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-kuma-gold/10 rounded-full blur-3xl pointer-events-none" />
 
-                        {allWkfLevels.map((level, idx) => {
-                            const unlocked = isWkfLevelUnlocked(idx, level.id);
-                            const completed = isLevelCompleted(level.id);
-                            const stars = progress.levelStars[level.id] || 0;
-
-                            const horizontalOffsets = [
-                                "translate-x-0",
-                                "-translate-x-12 md:-translate-x-16",
-                                "translate-x-12 md:translate-x-16",
-                                "-translate-x-8 md:-translate-x-10",
-                            ];
-                            const offsetClass = horizontalOffsets[idx % horizontalOffsets.length];
-
-                            return (
-                                <div
-                                    key={level.id}
-                                    className={`relative z-10 my-7 flex flex-col items-center transition-all ${offsetClass}`}
-                                >
-                                    {/* ETHEREAL 3D VOLUMETRIC MARTIAL ORB (DESOPILANTE Y PREMIUM) */}
-                                    <EtherealMartialOrb
-                                        level={level}
-                                        isCompleted={completed}
-                                        isUnlocked={unlocked}
-                                        isDan={false}
-                                        stars={stars}
-                                        onClick={() => {
-                                            if (unlocked) setSelectedLevel(level);
-                                        }}
-                                    />
-
-                                    <div className="mt-3 text-center max-w-[170px]">
-                                        <span className="block text-xs md:text-sm font-serif font-black text-white leading-tight drop-shadow-lg">
-                                            {level.title}
-                                        </span>
-                                        <span className="text-[10px] text-kuma-gold/80 font-bold uppercase tracking-widest block mt-0.5">
-                                            {level.tag}
-                                        </span>
-                                    </div>
+                        {/* Floating WKF Badge */}
+                        <div className="relative z-10 mb-4">
+                            <div className="relative inline-flex p-4 rounded-3xl bg-zinc-900/90 border-2 border-kuma-gold/50 shadow-2xl shadow-kuma-gold/20">
+                                <WkfOfficialBadge className="w-16 h-16 md:w-20 md:h-20" />
+                                <div className="absolute -bottom-2 -right-2 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-red-600 to-blue-600 text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest shadow-lg">
+                                    WKF Oficial
                                 </div>
-                            );
-                        })}
-
-                        {/* WKF CHECKPOINT */}
-                        <div className="relative z-10 mt-10 p-6 rounded-3xl bg-zinc-900/90 border border-kuma-gold/30 text-center max-w-xs shadow-2xl flex flex-col items-center">
-                            <div className="flex items-center justify-center gap-2.5 mb-2">
-                                <Trophy className="w-10 h-10 text-kuma-gold" weight="duotone" />
-                                <WkfOfficialBadge className="w-10 h-10" />
                             </div>
-                            <h4 className="font-serif font-black text-white text-base">
-                                Maestría Deportiva WKF
-                            </h4>
-                            <p className="text-xs text-zinc-400 mt-1">
-                                {pathPercent === 100
-                                    ? "¡Reglamento WKF superado con honor! Tu arbitraje y táctica son impecables."
-                                    : "Supera todos los niveles para consagrar tu conocimiento del tatami oficial."}
+                        </div>
+
+                        {/* Badges and Titles */}
+                        <div className="relative z-10 space-y-2 max-w-lg">
+                            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-500/20 border border-amber-500/40 text-amber-300">
+                                <Sparkle className="w-3.5 h-3.5 text-amber-400" weight="fill" />
+                                <span>Módulo en Construcción</span>
+                            </span>
+
+                            <h3 className="text-3xl md:text-4xl font-serif font-black text-white tracking-wide">
+                                Próximamente
+                            </h3>
+                            
+                            <p className="text-xs md:text-sm font-semibold text-amber-200">
+                                Camino Deportivo WKF • Tatami, Arbitraje & Kumite Olímpico
                             </p>
+
+                            <p className="text-xs md:text-sm text-zinc-300 leading-relaxed pt-1">
+                                Estamos forjando el currículum interactivo oficial de la <strong>Federación Mundial de Karate (WKF)</strong>: criterios de puntuación (<em>Yuko, Waza-ari, Ippon</em>), señales arbitrales de tatami, gestión de banderas y sanciones oficiales.
+                            </p>
+                        </div>
+
+                        {/* Feature Preview Grid */}
+                        <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-3 w-full my-6 text-left">
+                            <div className="p-3.5 rounded-2xl bg-zinc-900/80 border border-white/10 hover:border-red-500/40 transition-colors">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+                                    <span className="text-xs font-serif font-black text-white uppercase tracking-wider">
+                                        Puntuación Kumite
+                                    </span>
+                                </div>
+                                <p className="text-[11px] text-zinc-400 leading-relaxed">
+                                    Yuko (1 pt), Waza-ari (2 pts) e Ippon (3 pts) evaluando los 6 criterios WKF.
+                                </p>
+                            </div>
+
+                            <div className="p-3.5 rounded-2xl bg-zinc-900/80 border border-white/10 hover:border-blue-500/40 transition-colors">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+                                    <span className="text-xs font-serif font-black text-white uppercase tracking-wider">
+                                        Señales del Réferi
+                                    </span>
+                                </div>
+                                <p className="text-[11px] text-zinc-400 leading-relaxed">
+                                    Aprende la gestualidad arbitral oficial, pausas, amonestaciones y decisiones.
+                                </p>
+                            </div>
+
+                            <div className="p-3.5 rounded-2xl bg-zinc-900/80 border border-white/10 hover:border-amber-500/40 transition-colors">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
+                                    <span className="text-xs font-serif font-black text-white uppercase tracking-wider">
+                                        Penalizaciones WKF
+                                    </span>
+                                </div>
+                                <p className="text-[11px] text-zinc-400 leading-relaxed">
+                                    Salidas del tatami (Jogai), contactos excesivos, amonestaciones y Hansoku.
+                                </p>
+                            </div>
+
+                            <div className="p-3.5 rounded-2xl bg-zinc-900/80 border border-white/10 hover:border-emerald-500/40 transition-colors">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                                    <span className="text-xs font-serif font-black text-white uppercase tracking-wider">
+                                        Simulador Interactivo
+                                    </span>
+                                </div>
+                                <p className="text-[11px] text-zinc-400 leading-relaxed">
+                                    Evalúa combates en vivo con pulsadores oficiales de arbitraje Ao (Azul) y Aka (Rojo).
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* CTA Action Buttons */}
+                        <div className="relative z-10 flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
+                            <button
+                                type="button"
+                                onClick={() => onSelectPath("tradicional")}
+                                className="w-full sm:flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-500 to-kuma-gold text-zinc-950 font-black text-xs uppercase tracking-wider hover:brightness-110 shadow-lg shadow-kuma-gold/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                            >
+                                <JapaneseFlagIcon className="w-4 h-3" />
+                                <span>Ir a Tradicional (Kyu a Dan)</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={onOpenEncyclopedia}
+                                className="w-full sm:flex-1 py-3.5 px-5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-white/15 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            >
+                                <BookOpen className="w-4 h-4 text-kuma-gold" />
+                                <span>Ver Teoría WKF</span>
+                            </button>
                         </div>
                     </div>
                 )}
@@ -499,9 +553,7 @@ export function DojoLingoMap({
                         )}
                         <p className="text-xs text-zinc-300 mt-2 leading-relaxed">
                             {activePath === "wkf"
-                                ? wkfColor === "blue"
-                                    ? '"¡Protecciones Ao (Azul) listas! Mantén la distancia Ma-ai y puntúa con velocidad."'
-                                    : '"¡Protecciones Aka (Rojo) listas! Enfoque total en el tatami, velocidad y zanshin."'
+                                ? '"¡El tatami oficial WKF está en preparación! Muy pronto podrás entrenar arbitraje y táctica de competición. ¡Mientras tanto, continúa forjando tu espíritu en el Camino Tradicional!"'
                                 : activeBelt
                                 ? `"${activeBelt.motto}"`
                                 : '"El verdadero combate empieza al dominar los fundamentos. ¡Avanza paso a paso en tu camino!"'}
