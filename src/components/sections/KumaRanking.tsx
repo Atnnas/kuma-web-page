@@ -2,14 +2,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { getEnrolledAthletes, updateAthletePhotoSelf } from "@/lib/actions/athletes";
-import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid, AlertTriangle } from "lucide-react";
+import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid, AlertTriangle, GraduationCap, ArrowUpRight, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { BeltSquare, MartialArtsBeltIcon, getBeltColor } from "@/components/admin/AthleteEditModal";
 import { WeeklyMVPSection } from "./WeeklyMVPSection";
 import { evaluateWkfCategory } from "@/lib/wkf-categories";
+import { AthleteDidacticAuditModal } from "@/components/didactic/AthleteDidacticAuditModal";
 
 interface Athlete {
     _id: string;
@@ -82,6 +84,7 @@ export function KumaRanking({
   const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite">("Todos");
   const [editingPhotoAthlete, setEditingPhotoAthlete] = useState<Athlete | null>(null);
   const [celebratingAthlete, setCelebratingAthlete] = useState<Athlete | null>(null);
+  const [auditAthlete, setAuditAthlete] = useState<Athlete | null>(null);
   const [layoutMode, setLayoutMode] = useState<'ranking' | 'gallery'>('gallery');
 
   const loadAthletes = async () => {
@@ -179,6 +182,39 @@ export function KumaRanking({
                 <WeeklyMVPSection data={weeklyMvp as any} onClickCard={setCelebratingAthlete} />
             )}
 
+            {/* SUPER ADMIN QUICK BANNER: REPORTE DIDÁCTICO */}
+            {currentUser?.role === "super_admin" && (
+                <div className="mb-10 p-4 md:p-5 rounded-3xl bg-gradient-to-r from-amber-950/80 via-zinc-900/90 to-zinc-950 border border-kuma-gold/50 shadow-[0_0_35px_rgba(245,158,11,0.18)] flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
+                    <div className="flex items-center gap-3.5">
+                        <div className="w-11 h-11 rounded-2xl bg-kuma-gold/20 border border-kuma-gold/50 flex items-center justify-center text-kuma-gold shrink-0 shadow-inner">
+                            <GraduationCap className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-kuma-gold text-black shadow-sm">
+                                    Super Admin
+                                </span>
+                                <h4 className="text-sm font-serif font-black text-white">
+                                    Auditoría & Progreso Didáctico de la Academia
+                                </h4>
+                            </div>
+                            <p className="text-xs text-zinc-400 mt-0.5">
+                                Supervisa en vivo quiénes entran al módulo didáctico, días de inactividad, estrellas y avance hacia el siguiente cinturón.
+                            </p>
+                        </div>
+                    </div>
+
+                    <Link
+                        href="/admin/reports/didactica"
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-kuma-gold to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black text-xs font-serif font-black uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(245,158,11,0.25)] shrink-0 hover:scale-105 cursor-pointer"
+                    >
+                        <BarChart3 className="w-4 h-4" />
+                        <span>Ver Reporte Consolidado</span>
+                        <ArrowUpRight className="w-4 h-4" />
+                    </Link>
+                </div>
+            )}
+
             {/* Search and Filters */}
             <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-16 relative z-10">
                 <div className="relative w-full lg:w-96">
@@ -240,21 +276,21 @@ export function KumaRanking({
                                     {/* SECOND PLACE */}
                                     {podium[1] && (
                                         <div className="order-2 md:order-1 w-[275px] shrink-0 flex justify-center">
-                                            <PodiumCard athlete={podium[1]} position={2} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[1].athleteProfile.beltRank)} />
+                                            <PodiumCard athlete={podium[1]} position={2} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} onAuditAthlete={setAuditAthlete} style={getBeltStyles(podium[1].athleteProfile.beltRank)} />
                                         </div>
                                     )}
 
                                     {/* FIRST PLACE */}
                                     {podium[0] && (
                                         <div className="order-1 md:order-2 w-[275px] shrink-0 flex justify-center">
-                                            <PodiumCard athlete={podium[0]} position={1} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[0].athleteProfile.beltRank)} />
+                                            <PodiumCard athlete={podium[0]} position={1} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} onAuditAthlete={setAuditAthlete} style={getBeltStyles(podium[0].athleteProfile.beltRank)} />
                                         </div>
                                     )}
 
                                     {/* THIRD PLACE */}
                                     {podium[2] && (
                                         <div className="order-3 w-[275px] shrink-0 flex justify-center">
-                                            <PodiumCard athlete={podium[2]} position={3} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} style={getBeltStyles(podium[2].athleteProfile.beltRank)} />
+                                            <PodiumCard athlete={podium[2]} position={3} currentUser={currentUser} onEditPhoto={setEditingPhotoAthlete} onClickCard={setCelebratingAthlete} onAuditAthlete={setAuditAthlete} style={getBeltStyles(podium[2].athleteProfile.beltRank)} />
                                         </div>
                                     )}
 
@@ -360,6 +396,21 @@ export function KumaRanking({
                                                             </div>
                                                         </div>
 
+                                                        {/* Super Admin Didactic Audit Button */}
+                                                        {currentUser?.role === "super_admin" && (
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setAuditAthlete(ath);
+                                                                }}
+                                                                className="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-sm hover:scale-105 shrink-0"
+                                                                title="Auditar Progreso Didáctico Super Admin"
+                                                            >
+                                                                <GraduationCap className="w-3.5 h-3.5 text-kuma-gold" />
+                                                                <span className="hidden sm:inline">Auditar</span>
+                                                            </button>
+                                                        )}
+
                                                         {/* Edit photo button */}
                                                         {currentUser?.email && ath.email && ath.email.toLowerCase().trim() === currentUser.email.toLowerCase().trim() && (
                                                             <div className="flex items-center gap-2">
@@ -390,6 +441,7 @@ export function KumaRanking({
                                         currentUser={currentUser}
                                         onEditPhoto={setEditingPhotoAthlete}
                                         onClickCard={setCelebratingAthlete}
+                                        onAuditAthlete={setAuditAthlete}
                                         style={getBeltStyles(ath.athleteProfile.beltRank)}
                                     />
                                 </div>
@@ -413,6 +465,21 @@ export function KumaRanking({
                 onClose={() => setCelebratingAthlete(null)}
                 athlete={celebratingAthlete}
             />
+
+            {/* SUPER ADMIN DIDACTIC AUDIT MODAL */}
+            <AthleteDidacticAuditModal
+                isOpen={!!auditAthlete}
+                onClose={() => setAuditAthlete(null)}
+                athlete={auditAthlete ? {
+                    id: auditAthlete._id,
+                    name: auditAthlete.name,
+                    email: auditAthlete.email,
+                    image: auditAthlete.image,
+                    beltRank: auditAthlete.athleteProfile?.beltRank || "Blanco",
+                    dojoName: auditAthlete.athleteProfile?.dojo?.name || "Kuma Dojo",
+                    ovr: Math.round(auditAthlete.athleteProfile?.stats?.ovr ?? 50),
+                } : null}
+            />
         </div>
     );
 }
@@ -423,6 +490,7 @@ interface PodiumCardProps {
     currentUser?: any;
     onEditPhoto: (athlete: Athlete) => void;
     onClickCard: (athlete: Athlete) => void;
+    onAuditAthlete?: (athlete: Athlete) => void;
     style: { border: string; glow: string; bg: string; text: string };
 }
 
@@ -438,7 +506,7 @@ const renderDeltaArrow = (currentVal: number, lastVal?: number) => {
     return null;
 };
 
-function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }: PodiumCardProps) {
+function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard, onAuditAthlete }: PodiumCardProps) {
     const isFirst = position === 1;
     const ovr = Math.round(athlete?.athleteProfile?.stats?.ovr ?? 50);
     const beltRank = athlete?.athleteProfile?.beltRank ?? "Blanco";
@@ -731,6 +799,21 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard }
                     </div>
                 </div>
             </div>
+
+            {/* SUPER ADMIN DIDACTIC AUDIT ACTION BUTTON */}
+            {currentUser?.role === "super_admin" && (
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onAuditAthlete?.(athlete);
+                    }}
+                    className="w-full mt-1.5 py-2 px-3 rounded-2xl bg-gradient-to-r from-amber-950/80 via-zinc-900 to-black hover:from-amber-900 hover:via-zinc-800 hover:to-zinc-900 border border-kuma-gold/50 hover:border-kuma-gold text-amber-300 hover:text-white text-[10px] font-serif font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md hover:scale-[1.02] cursor-pointer"
+                    title="Auditar Progreso Didáctico"
+                >
+                    <GraduationCap className="w-3.5 h-3.5 text-kuma-gold" />
+                    <span>Auditoría Didáctica</span>
+                </button>
+            )}
 
             {/* SELF IMAGE EDIT LINK */}
             {currentUser?.email && athlete.email && athlete.email.toLowerCase().trim() === currentUser.email.toLowerCase().trim() && (

@@ -9,7 +9,8 @@ import {
     Clock,
     MagnifyingGlass,
     ArrowsDownUp,
-    CaretRight
+    CaretRight,
+    GraduationCap
 } from "@phosphor-icons/react/dist/ssr";
 
 interface ReportLink {
@@ -25,6 +26,17 @@ interface ReportLink {
 }
 
 const REPORTS: ReportLink[] = [
+    {
+        id: "didactica",
+        href: "/admin/reports/didactica",
+        title: "Progreso Didáctico & Alumnos",
+        description: "Auditoría en vivo de estudiantes en el tatami interactivo: frecuencia de entrada, días inactivos, lecciones ganadas y avance de cinturón.",
+        icon: GraduationCap,
+        colorClass: "text-amber-400",
+        bgClass: "bg-amber-500/20",
+        borderHoverClass: "hover:border-amber-500/50",
+        rotateClass: "rotate-12"
+    },
     {
         id: "visits",
         href: "/admin/reports/visits",
