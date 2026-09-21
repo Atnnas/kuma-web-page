@@ -639,6 +639,9 @@ export function BeltCascadeSection({
     const isDan = belt.category === "dan";
     const isWhiteBelt = belt.category === "kyu" && belt.levelNumber === 10;
     const beltLevels = unit.levels;
+    const unitHasNewQuestions = updatedLevelIds.length > 0 
+        ? beltLevels.some((lvl) => updatedLevelIds.includes(lvl.id))
+        : hasNewQuestions;
 
     // Progression metrics for this belt
     const completedLevelsCount = beltLevels.filter((l) =>
@@ -819,7 +822,7 @@ export function BeltCascadeSection({
                                         : `Grado Kyu • ${belt.shortName}`}
                                 </span>
 
-                                {hasNewQuestions && (
+                                {unitHasNewQuestions && (
                                     <motion.span
                                         initial={{ scale: 0.85, opacity: 0 }}
                                         animate={{ scale: [1, 1.06, 1], opacity: 1 }}
@@ -887,7 +890,7 @@ export function BeltCascadeSection({
                 </div>
 
                 {/* AVISO DE ACTUALIZACIÓN DEL MÓDULO CON NUEVAS PREGUNTAS */}
-                {hasNewQuestions && (
+                {unitHasNewQuestions && (
                     <motion.div
                         initial={{ opacity: 0, y: -6 }}
                         animate={{ opacity: 1, y: 0 }}

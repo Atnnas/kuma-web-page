@@ -112,7 +112,7 @@ export function TheorySheetModal({
                         {/* CONTENT PARAGRAPHS */}
                         <div className="space-y-4 text-justify">
                             {theory.content.map((p, idx) => (
-                                <p key={idx} className="text-zinc-300">
+                                <p key={idx} className="text-zinc-300 whitespace-pre-line">
                                     {p}
                                 </p>
                             ))}

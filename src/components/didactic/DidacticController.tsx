@@ -9,7 +9,7 @@ import { DidacticEncyclopedia } from "./DidacticEncyclopedia";
 import { LessonSessionModal } from "./LessonSessionModal";
 import { KumaAbsenceGreetingModal } from "./KumaAbsenceGreetingModal";
 import { InstallAppButton } from "./InstallAppButton";
-import { getDidacticCatalogStats } from "@/data/didacticaData";
+import { getDidacticCatalogStats, DIDACTIC_UNITS } from "@/data/didacticaData";
 import {
     Compass,
     BookOpen,
@@ -66,32 +66,108 @@ export function DidacticController() {
         if (!isLoaded) return;
         try {
             const currentStats = getDidacticCatalogStats();
-            const storedRaw = localStorage.getItem("kuma_didactic_catalog_meta_v1");
-            if (!storedRaw) {
-                // Primera visita: guardar la foto actual del catálogo
-                localStorage.setItem(
-                    "kuma_didactic_catalog_meta_v1",
-                    JSON.stringify({
-                        totalQuestions: currentStats.totalQuestions,
-                        unitCounts: currentStats.unitCounts,
-                        levelCounts: currentStats.levelCounts,
-                        timestamp: Date.now(),
-                    })
-                );
-            } else {
-                const stored = JSON.parse(storedRaw);
-                const prevTotal = stored.totalQuestions || 0;
-                if (currentStats.totalQuestions > prevTotal) {
-                    const newCount = currentStats.totalQuestions - prevTotal;
-                    const updatedUnitIds = Object.keys(currentStats.unitCounts).filter(
-                        (uId) => currentStats.unitCounts[uId] > (stored.unitCounts?.[uId] || 0)
-                    );
-                    const updatedLevelIds = Object.keys(currentStats.levelCounts).filter(
-                        (lvlId) => currentStats.levelCounts[lvlId] > (stored.levelCounts?.[lvlId] || 0)
-                    );
+            const storedV2Raw = localStorage.getItem("kuma_didactic_catalog_meta_v2");
+            
+            if (!storedV2Raw) {
+                // Check if user came from previous version v1
+                const v1Raw = localStorage.getItem("kuma_didactic_catalog_meta_v1");
+                let prevLevelCounts: Record<string, number> = {};
+                
+                if (v1Raw) {
+                    try {
+                        const v1 = JSON.parse(v1Raw);
+                        prevLevelCounts = v1.levelCounts || {};
+                    } catch {}
+                }
 
-                    // REGLA DEL DOJO: Si hay nuevas preguntas en un nivel, el progreso de estrellas baja
-                    // para exigir re-evaluación y garantizar que el alumno forje la maestría del nuevo temario
+                // If user had v1 (or was playing before this update):
+                // Historical baseline: level-karategi had 9 questions (now 15). All other levels had their exact current count.
+                const baselineLevelCounts: Record<string, number> = {};
+                Object.keys(currentStats.levelCounts).forEach((lvlId) => {
+                    if (typeof prevLevelCounts[lvlId] === "number") {
+                        baselineLevelCounts[lvlId] = prevLevelCounts[lvlId];
+                    } else if (v1Raw) {
+                        baselineLevelCounts[lvlId] = lvlId === "level-karategi" ? 9 : currentStats.levelCounts[lvlId];
+                    } else {
+                        // First-time guest/user: baseline is current count
+                        baselineLevelCounts[lvlId] = currentStats.levelCounts[lvlId];
+                    }
+                });
+
+                const updatedLevelIds = Object.keys(currentStats.levelCounts).filter((lvlId) => {
+                    const prev = baselineLevelCounts[lvlId] ?? currentStats.levelCounts[lvlId];
+                    return currentStats.levelCounts[lvlId] > prev;
+                });
+
+                if (updatedLevelIds.length > 0) {
+                    const newCount = updatedLevelIds.reduce((sum, lvlId) => {
+                        const prev = baselineLevelCounts[lvlId] ?? currentStats.levelCounts[lvlId];
+                        return sum + (currentStats.levelCounts[lvlId] - prev);
+                    }, 0);
+
+                    const updatedUnitIds = Object.keys(currentStats.unitCounts).filter((uId) => {
+                        const unit = DIDACTIC_UNITS.find((u) => u.id === uId);
+                        return unit ? unit.levels.some((l) => updatedLevelIds.includes(l.id)) : false;
+                    });
+
+                    // REGLA DEL DOJO: Si hay nuevas preguntas en un nivel específico, el progreso de estrellas baja
+                    // EXCLUSIVAMENTE en los niveles actualizados para exigir maestría del nuevo temario
+                    let starsDecreased = false;
+                    const adjustedStars = { ...(progress.levelStars || {}) };
+                    updatedLevelIds.forEach((lvlId) => {
+                        const currentStars = adjustedStars[lvlId] || 0;
+                        if (currentStars > 0) {
+                            adjustedStars[lvlId] = Math.max(0, currentStars - 1);
+                            starsDecreased = true;
+                        }
+                    });
+
+                    if (starsDecreased) {
+                        const updatedProg: UserDidacticProgress = {
+                            ...progress,
+                            levelStars: adjustedStars,
+                        };
+                        saveProgress(updatedProg);
+                    }
+
+                    setCatalogUpdate({
+                        hasNewQuestions: true,
+                        newQuestionsCount: newCount,
+                        updatedUnitIds,
+                        updatedLevelIds,
+                    });
+                } else {
+                    // Fresh snapshot
+                    localStorage.setItem(
+                        "kuma_didactic_catalog_meta_v2",
+                        JSON.stringify({
+                            totalQuestions: currentStats.totalQuestions,
+                            unitCounts: currentStats.unitCounts,
+                            levelCounts: currentStats.levelCounts,
+                            timestamp: Date.now(),
+                        })
+                    );
+                }
+            } else {
+                const stored = JSON.parse(storedV2Raw);
+                const prevLevelCounts = stored.levelCounts || {};
+                
+                const updatedLevelIds = Object.keys(currentStats.levelCounts).filter((lvlId) => {
+                    const prev = typeof prevLevelCounts[lvlId] === "number" ? prevLevelCounts[lvlId] : currentStats.levelCounts[lvlId];
+                    return currentStats.levelCounts[lvlId] > prev;
+                });
+
+                if (updatedLevelIds.length > 0) {
+                    const newCount = updatedLevelIds.reduce((sum, lvlId) => {
+                        const prev = typeof prevLevelCounts[lvlId] === "number" ? prevLevelCounts[lvlId] : currentStats.levelCounts[lvlId];
+                        return sum + (currentStats.levelCounts[lvlId] - prev);
+                    }, 0);
+
+                    const updatedUnitIds = Object.keys(currentStats.unitCounts).filter((uId) => {
+                        const unit = DIDACTIC_UNITS.find((u) => u.id === uId);
+                        return unit ? unit.levels.some((l) => updatedLevelIds.includes(l.id)) : false;
+                    });
+
                     let starsDecreased = false;
                     const adjustedStars = { ...(progress.levelStars || {}) };
                     updatedLevelIds.forEach((lvlId) => {
@@ -127,7 +203,7 @@ export function DidacticController() {
         try {
             const currentStats = getDidacticCatalogStats();
             localStorage.setItem(
-                "kuma_didactic_catalog_meta_v1",
+                "kuma_didactic_catalog_meta_v2",
                 JSON.stringify({
                     totalQuestions: currentStats.totalQuestions,
                     unitCounts: currentStats.unitCounts,
@@ -135,6 +211,7 @@ export function DidacticController() {
                     timestamp: Date.now(),
                 })
             );
+            localStorage.removeItem("kuma_didactic_catalog_meta_v1");
         } catch (e) {
             console.error("Error updating catalog meta in localStorage:", e);
         }
