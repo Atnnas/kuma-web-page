@@ -23,34 +23,30 @@ export function OkinawaMapOrb({
 }: OkinawaMapOrbProps) {
     return (
         <div className={`relative flex items-center justify-center select-none ${className}`}>
-            {/* Outer Radioactive Cherenkov Plasma Aura */}
-            <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-400/50 via-sky-300/50 to-blue-600/40 blur-2xl pointer-events-none animate-pulse" />
+            {/* Halo de Energía Espiritual de la Cuenta Maestra (Oyadama) */}
+            <div className="absolute -inset-3.5 rounded-full bg-gradient-to-tr from-cyan-400/40 via-sky-300/45 to-blue-600/35 blur-xl pointer-events-none animate-pulse" />
 
-            {/* Orbiting Cherenkov Cyan Ring */}
-            <div className="absolute -inset-4 pointer-events-none flex items-center justify-center [perspective:600px] z-30">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 4.5, ease: "linear" }}
-                    className="relative w-full h-full rounded-full border border-cyan-300/60 border-dashed [transform:rotateX(62deg)] shadow-[0_0_12px_rgba(0,245,255,0.4)]"
-                >
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-[0_0_10px_#ffffff,0_0_20px_#00f5ff] flex items-center justify-center">
-                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-200 animate-ping" />
-                    </div>
-                </motion.div>
-            </div>
+            {/* Ojal Superior Dorado del Cordón (Kanagu de Oyadama) */}
+            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-6 h-2 rounded-t-md bg-gradient-to-r from-amber-600 via-amber-300 to-amber-700 border border-amber-200 shadow-[0_0_8px_rgba(245,158,11,0.7)] z-30" />
+            {/* Ojal Inferior Dorado del Cordón */}
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-6 h-2 rounded-b-md bg-gradient-to-r from-amber-600 via-amber-300 to-amber-700 border border-amber-200 shadow-[0_0_8px_rgba(245,158,11,0.7)] z-30" />
 
-            {/* Translucent Crystalline Glass Shell */}
-            <div className="relative w-full h-full rounded-full overflow-hidden backdrop-blur-md bg-gradient-to-b from-cyan-100/25 via-sky-500/35 to-[#002B4D]/80 border border-cyan-200/80 shadow-[inset_0_0_25px_rgba(180,240,255,0.6),inset_0_-12px_22px_rgba(0,35,70,0.85),0_0_35px_rgba(0,245,255,0.95),0_0_70px_rgba(0,136,255,0.6),0_14px_30px_rgba(0,0,0,0.85)]">
-                {/* Sweeping Ocean Light Sheen */}
+            {/* Cuerpo Esférico de la Cuenta Maestra de Lapis Lazuli & Oro */}
+            <div className="relative w-full h-full rounded-full overflow-hidden bg-[radial-gradient(circle_at_32%_26%,_#E0F2FE_0%,_#38BDF8_25%,_#0284C7_55%,_#075985_80%,_#032035_100%)] border-t border-t-white/80 border-b-[5px] border-b-[#021524] shadow-[0_0_35px_rgba(14,165,233,0.85),0_0_65px_rgba(2,132,199,0.5),0_12px_26px_rgba(0,0,0,0.85)] flex items-center justify-center">
+                
+                {/* Cordón Sagrado Central */}
+                <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px] bg-gradient-to-b from-amber-300 via-yellow-100 to-amber-400 shadow-[0_0_6px_#fde047] opacity-60 pointer-events-none z-10" />
+
+                {/* Barrido de Brillo de Laca Oceánica */}
                 <motion.div
                     animate={{ x: ["-160%", "180%"] }}
                     transition={{
                         repeat: Infinity,
-                        duration: 2.8,
+                        duration: 3,
                         ease: "easeInOut",
-                        repeatDelay: 1.2,
+                        repeatDelay: 1.5,
                     }}
-                    className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/55 to-transparent skew-x-[-28deg] pointer-events-none z-10"
+                    className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/50 to-transparent skew-x-[-28deg] pointer-events-none z-20"
                 />
 
                 <Image
@@ -66,7 +62,7 @@ export function OkinawaMapOrb({
 
                 {/* Animated Expanding Ocean Radar Ripples from Shuri / Naha */}
                 <div
-                    className="absolute pointer-events-none z-10"
+                    className="absolute pointer-events-none z-20"
                     style={{ left: "39%", top: "59%", transform: "translate(-50%, -50%)" }}
                 >
                     {/* Continuous outward expanding radar shockwaves */}
@@ -87,23 +83,20 @@ export function OkinawaMapOrb({
                     <span className="relative block w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444,0_0_16px_#f87171] border border-white" />
                 </div>
 
-                {/* Bottom Caustic Refraction Pool */}
-                <div className="absolute bottom-1 left-3 right-3 h-5 rounded-[50%] bg-gradient-to-t from-cyan-300/50 via-sky-400/20 to-transparent pointer-events-none blur-[1px] z-10" />
-
-                {/* Upper Translucent Specular Glass Dome */}
-                <div className="absolute top-1 left-2.5 right-2.5 h-7 rounded-[50%] bg-gradient-to-b from-white/90 via-white/30 to-transparent pointer-events-none z-20" />
-                <div className="absolute top-2.5 left-4 w-3 h-1.5 rounded-[50%] bg-white/95 blur-[0.2px] rotate-[-25deg] pointer-events-none z-20" />
+                {/* Reflejo Especular Superior de Laca Esférica */}
+                <div className="absolute top-1 left-2.5 right-2.5 h-6 rounded-[50%] bg-gradient-to-b from-white/90 via-white/20 to-transparent pointer-events-none z-30" />
+                <div className="absolute top-2.5 left-4 w-3 h-1.5 rounded-[50%] bg-white blur-[0.2px] rotate-[-25deg] pointer-events-none z-30" />
             </div>
 
-            {/* Ethereal Floating Badge: Okinawa • N.1 */}
+            {/* Placa Sagrada de la Cuenta Maestra de Okinawa */}
             {showLabel && (
                 <motion.div
                     initial={{ y: 2, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#003B66]/90 border border-sky-300 shadow-[0_4px_12px_rgba(0,0,0,0.8),0_0_10px_rgba(28,176,246,0.5)] backdrop-blur-md shrink-0 whitespace-nowrap z-20"
+                    className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#032035]/95 border border-amber-300/80 shadow-[0_4px_12px_rgba(0,0,0,0.8),0_0_10px_rgba(245,158,11,0.4)] backdrop-blur-md shrink-0 whitespace-nowrap z-30"
                 >
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping shrink-0" />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-sky-100 font-serif leading-none drop-shadow-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping shrink-0" />
+                    <span className="text-[9px] font-black uppercase tracking-widest text-amber-200 font-serif leading-none drop-shadow-sm">
                         Okinawa {levelNumber ? `• N.${levelNumber}` : ""}
                     </span>
                 </motion.div>
