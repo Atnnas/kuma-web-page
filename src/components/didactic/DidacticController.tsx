@@ -54,13 +54,16 @@ export function DidacticController() {
         hasNewQuestions: boolean;
         newQuestionsCount: number;
         updatedUnitIds: string[];
+        updatedLevelIds: string[];
     }>({
         hasNewQuestions: false,
         newQuestionsCount: 0,
         updatedUnitIds: [],
+        updatedLevelIds: [],
     });
 
     useEffect(() => {
+        if (!isLoaded) return;
         try {
             const currentStats = getDidacticCatalogStats();
             const storedRaw = localStorage.getItem("kuma_didactic_catalog_meta_v1");
@@ -71,6 +74,7 @@ export function DidacticController() {
                     JSON.stringify({
                         totalQuestions: currentStats.totalQuestions,
                         unitCounts: currentStats.unitCounts,
+                        levelCounts: currentStats.levelCounts,
                         timestamp: Date.now(),
                     })
                 );
@@ -82,17 +86,42 @@ export function DidacticController() {
                     const updatedUnitIds = Object.keys(currentStats.unitCounts).filter(
                         (uId) => currentStats.unitCounts[uId] > (stored.unitCounts?.[uId] || 0)
                     );
+                    const updatedLevelIds = Object.keys(currentStats.levelCounts).filter(
+                        (lvlId) => currentStats.levelCounts[lvlId] > (stored.levelCounts?.[lvlId] || 0)
+                    );
+
+                    // REGLA DEL DOJO: Si hay nuevas preguntas en un nivel, el progreso de estrellas baja
+                    // para exigir re-evaluación y garantizar que el alumno forje la maestría del nuevo temario
+                    let starsDecreased = false;
+                    const adjustedStars = { ...(progress.levelStars || {}) };
+                    updatedLevelIds.forEach((lvlId) => {
+                        const currentStars = adjustedStars[lvlId] || 0;
+                        if (currentStars > 0) {
+                            adjustedStars[lvlId] = Math.max(0, currentStars - 1);
+                            starsDecreased = true;
+                        }
+                    });
+
+                    if (starsDecreased) {
+                        const updatedProg: UserDidacticProgress = {
+                            ...progress,
+                            levelStars: adjustedStars,
+                        };
+                        saveProgress(updatedProg);
+                    }
+
                     setCatalogUpdate({
                         hasNewQuestions: true,
                         newQuestionsCount: newCount,
                         updatedUnitIds,
+                        updatedLevelIds,
                     });
                 }
             }
         } catch (e) {
             console.error("Error checking didactic catalog stats:", e);
         }
-    }, []);
+    }, [isLoaded]);
 
     const handleDismissCatalogNotification = () => {
         try {
@@ -102,6 +131,7 @@ export function DidacticController() {
                 JSON.stringify({
                     totalQuestions: currentStats.totalQuestions,
                     unitCounts: currentStats.unitCounts,
+                    levelCounts: currentStats.levelCounts,
                     timestamp: Date.now(),
                 })
             );
@@ -112,6 +142,7 @@ export function DidacticController() {
             hasNewQuestions: false,
             newQuestionsCount: 0,
             updatedUnitIds: [],
+            updatedLevelIds: [],
         });
     };
 
@@ -526,7 +557,7 @@ export function DidacticController() {
                                                 Nuevos pergaminos y preguntas añadidas
                                             </h4>
                                             <p className="text-xs text-slate-300 mt-0.5">
-                                                Se han incorporado <strong className="text-yellow-300">+{catalogUpdate.newQuestionsCount} nuevas preguntas</strong> a los módulos marciales. ¡Pon a prueba tu conocimiento y forja tus 3 estrellas!
+                                                Se han incorporado <strong className="text-yellow-300">+{catalogUpdate.newQuestionsCount} nuevas preguntas</strong> a los módulos marciales. Debido al nuevo temario, <span className="text-amber-200 font-bold">el progreso de estrellas de los niveles actualizados ha disminuido</span> para que evalúes los nuevos conocimientos y reconquistes la maestría total (3/3).
                                             </p>
                                         </div>
                                     </div>
@@ -551,6 +582,7 @@ export function DidacticController() {
                             daysAbsent={daysAbsent}
                             onOpenAbsenceModal={() => setIsGreetingOpen(true)}
                             updatedUnitIds={catalogUpdate.updatedUnitIds}
+                            updatedLevelIds={catalogUpdate.updatedLevelIds}
                         />
                     </motion.div>
                 ) : (

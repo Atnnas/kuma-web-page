@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Level } from "@/types/didactica";
-import { Star } from "@phosphor-icons/react";
+import { Star, Sparkle } from "@phosphor-icons/react";
 import { OkinawaMapOrb } from "./OkinawaMapOrb";
 
 interface EtherealMartialOrbProps {
@@ -13,6 +13,7 @@ interface EtherealMartialOrbProps {
     isDan?: boolean;
     stars?: number;
     onClick?: () => void;
+    hasNewQuestions?: boolean;
 }
 
 /**
@@ -32,6 +33,7 @@ export function EtherealMartialOrb({
     isDan = false,
     stars = 0,
     onClick,
+    hasNewQuestions = false,
 }: EtherealMartialOrbProps) {
     const isOkinawa = level.id === "level-karategi" || level.icon === "okinawa";
 
@@ -76,6 +78,19 @@ export function EtherealMartialOrb({
                 }}
                 className="relative flex flex-col items-center"
             >
+                {/* INSIGNIA FLOTANTE: NUEVAS PREGUNTAS EN ESTE NIVEL */}
+                {hasNewQuestions && (
+                    <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: [1, 1.08, 1], opacity: 1 }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                        className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-30 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 text-black text-[8px] font-black uppercase tracking-wider shadow-[0_0_12px_rgba(250,204,21,0.8)] whitespace-nowrap flex items-center gap-1 pointer-events-none"
+                    >
+                        <Sparkle className="w-2.5 h-2.5 text-black" weight="fill" />
+                        <span>¡Nuevas Preguntas!</span>
+                    </motion.div>
+                )}
+
                 {/* Botón Táctil de la Cuenta Sagrada */}
                 <motion.button
                     whileHover={{

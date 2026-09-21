@@ -12,6 +12,7 @@ import {
     Sparkle,
     Trophy,
     ShieldWarning,
+    BellRinging,
 } from "@phosphor-icons/react";
 import { EtherealMartialOrb } from "./EtherealMartialOrb";
 
@@ -27,6 +28,7 @@ interface BeltCascadeSectionProps {
     isLast: boolean;
     onFocusBelt?: (beltId: BeltRankId) => void;
     hasNewQuestions?: boolean;
+    updatedLevelIds?: string[];
 }
 
 /**
@@ -632,6 +634,7 @@ export function BeltCascadeSection({
     isLast,
     onFocusBelt,
     hasNewQuestions = false,
+    updatedLevelIds = [],
 }: BeltCascadeSectionProps) {
     const isDan = belt.category === "dan";
     const isWhiteBelt = belt.category === "kyu" && belt.levelNumber === 10;
@@ -883,6 +886,25 @@ export function BeltCascadeSection({
                     <span className="text-kuma-gold font-serif font-black select-none">&rdquo;</span>
                 </div>
 
+                {/* AVISO DE ACTUALIZACIÓN DEL MÓDULO CON NUEVAS PREGUNTAS */}
+                {hasNewQuestions && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-3.5 p-3 rounded-2xl bg-gradient-to-r from-amber-950/80 via-zinc-950/90 to-amber-950/80 border-2 border-yellow-400/50 shadow-[0_0_15px_rgba(245,158,11,0.2)] flex items-center gap-3 text-xs text-amber-100"
+                    >
+                        <BellRinging className="w-5 h-5 text-yellow-400 shrink-0 animate-bounce" weight="fill" />
+                        <div>
+                            <span className="font-black text-yellow-300 uppercase tracking-wider block text-[10px]">
+                                ¡Módulo Actualizado con Nuevas Preguntas!
+                            </span>
+                            <span className="text-[11px] text-slate-300">
+                                Se han incorporado nuevas pruebas a este cinturón. El progreso de estrellas se ha reajustado para que demuestres maestría en el nuevo temario.
+                            </span>
+                        </div>
+                    </motion.div>
+                )}
+
                 {/* ================================================================= */}
                 {/* CONDITIONAL DISPLAY: UNLOCKED vs LOCKED STATE                     */}
                 {/* User rule: "que los cinturones no se abran y no se muestren hasta */}
@@ -931,6 +953,7 @@ export function BeltCascadeSection({
                                                 onClick={() => {
                                                     if (unlocked) onSelectLevel(level);
                                                 }}
+                                                hasNewQuestions={updatedLevelIds.includes(level.id)}
                                             />
 
                                             {/* Level Title and Tag */}
