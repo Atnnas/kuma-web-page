@@ -63,6 +63,27 @@ function QuestionBibliography({
 
             {isOpen && (
                 <div className={`mt-2 p-3 rounded-xl border ${containerBorder} backdrop-blur-md text-left space-y-2 max-w-xl animate-in fade-in slide-in-from-top-1 duration-200`}>
+                    {/* MOBILE ONLY: SENSEI SCHOLAR COMPANION */}
+                    <div className="md:hidden flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-amber-950/60 via-[#1E293B] to-[#0F172A] border border-[#FFC800]/40 shadow-sm overflow-hidden">
+                        <div className="w-16 h-16 shrink-0 flex items-center justify-center overflow-visible">
+                            <KumaMascot
+                                size="sm"
+                                mood="thinking"
+                                showBubble={false}
+                                interactive={true}
+                                className="scale-75 origin-center"
+                            />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-[#FFC800] block mb-0.5">
+                                📜 Kuma Sensei Académico
+                            </span>
+                            <p className="text-[11px] text-amber-100/90 leading-tight font-serif italic">
+                                &ldquo;Un verdadero karateka forja tanto el puño como el intelecto con las fuentes de los grandes maestros.&rdquo;
+                            </p>
+                        </div>
+                    </div>
+
                     <div className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider ${headerColor}`}>
                         <span>Bibliografía & Tratados de Origen</span>
                     </div>

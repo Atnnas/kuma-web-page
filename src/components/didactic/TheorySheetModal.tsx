@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { TheorySection } from "@/types/didactica";
+import { KumaMascot } from "./KumaMascot";
 import { X, BookOpen, Scroll, CheckCircle, Lightbulb } from "@phosphor-icons/react";
 
 interface TheorySheetModalProps {
@@ -174,6 +175,21 @@ export function TheorySheetModal({
                                         </h4>
                                         <p className="text-[11px] text-zinc-400">
                                             Obras maestras, investigaciones antropológicas y documentos canónicos de consulta:
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* MOBILE ONLY: SENSEI SCHOLAR COMPANION */}
+                                <div className="md:hidden flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-amber-950/60 via-[#1E293B] to-[#0F172A] border border-[#FFC800]/40 shadow-sm overflow-hidden">
+                                    <div className="w-16 h-16 shrink-0 flex items-center justify-center overflow-visible">
+                                        <KumaMascot size="sm" mood="thinking" showBubble={false} interactive={true} className="scale-75 origin-center" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <span className="text-[10px] font-black uppercase tracking-wider text-[#FFC800] block mb-0.5">
+                                            📜 Kuma Sensei Académico
+                                        </span>
+                                        <p className="text-[11px] text-amber-100/90 leading-tight font-serif italic">
+                                            &ldquo;Cada tratado antiguo contiene los secretos de los pioneros de Okinawa. ¡Léelos con respeto!&rdquo;
                                         </p>
                                     </div>
                                 </div>
