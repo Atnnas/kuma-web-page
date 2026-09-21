@@ -713,15 +713,18 @@ function shuffleArray<T>(array: T[]): T[] {
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.96 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="relative w-full h-36 md:h-44 rounded-2xl overflow-hidden border-2 border-white/10 bg-black/90 shadow-xl group"
+                                        className="relative w-full h-44 sm:h-56 md:h-64 rounded-2xl overflow-hidden border-2 border-amber-400/30 bg-black/95 shadow-[0_4px_20px_rgba(0,0,0,0.8)] group"
                                     >
                                         <Image
                                             src={currentQuestion.image}
-                                            alt="Referencia oficial de Karate Kuma"
+                                            alt="Referencia histórica del Dojo Kuma"
                                             fill
-                                            className="object-contain p-2.5 group-hover:scale-105 transition-transform duration-500"
+                                            className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                                             priority
                                         />
+                                        <div className="absolute bottom-1.5 right-2 px-2 py-0.5 rounded-full bg-black/70 border border-white/20 text-[9px] font-bold text-amber-200 backdrop-blur-sm pointer-events-none">
+                                            🗺️ Mapa / Documento Histórico
+                                        </div>
                                     </motion.div>
                                 )}
 

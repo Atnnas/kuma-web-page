@@ -28,14 +28,19 @@ export const DIDACTIC_UNITS: Unit[] = [
                     quote: "El Karate no consiste en herir o vencer a otros; consiste en vencer las propias debilidades, dominar el ego y forjar un espíritu noble de rectitud, serenidad y paz. — Maestro Gichin Funakoshi (Padre del Karate Moderno)",
                     images: [
                         {
+                            src: "/images/didactic/okinawa_three_cities_map.jpg",
+                            alt: "Mapa Histórico de Okinawa: Shuri, Tomari y Naha",
+                            caption: "Fig 1. Cartografía ancestral del Reino de Ryukyu con las tres cunas matrices del Karate: Shuri (capital y corte real), Tomari (puerto pesquero) y Naha (puerto comercial marítimo)."
+                        },
+                        {
                             src: "/images/didactic/bubishi_ancient_scroll.jpg",
                             alt: "El Manuscrito Sagrado Bubishi (武備志)",
-                            caption: "Fig 1. Tratado canónico secreto Bubishi (武備志): compendio histórico de las 48 técnicas de Grulla Blanca y puntos vitales traídos de Fujian a Okinawa."
+                            caption: "Fig 2. Tratado canónico secreto Bubishi (武備志): compendio histórico de las 48 técnicas de Grulla Blanca y puntos vitales traídos de Fujian a Okinawa."
                         },
                         {
                             src: "/images/didactic/okinawa_masters_history.jpg",
                             alt: "Maestros de Okinawa entrenando en la clandestinidad",
-                            caption: "Fig 2. Práctica nocturna clandestina en las murallas de Shuri tras los edictos de desarme forzoso de 1609 bajo la invasión del clan Satsuma."
+                            caption: "Fig 3. Práctica nocturna clandestina en las murallas de Shuri tras los edictos de desarme forzoso de 1609 bajo la invasión del clan Satsuma."
                         }
                     ],
                     content: [
@@ -538,6 +543,255 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Eyras",
                                 chapter: "Capítulo 5: El concepto de Ikken Hissatsu y la disciplina del autocontrol",
                                 note: "Funakoshi enfatiza que sin autocontrol milimétrico el karateka se convierte en un peligro público."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-shuri-mapa-origen",
+                        type: "multiple_choice",
+                        prompt: "En el mapa histórico de Okinawa: ¿Dónde se originó el SHURI-TE (首里手) y quiénes lo practicaban?",
+                        description: "La cuna del Karate en la colina de la corte real de Ryukyu.",
+                        image: "/images/didactic/okinawa_three_cities_map.jpg",
+                        options: [
+                            {
+                                id: "o1",
+                                text: "🏯 En la colina del Castillo de Shuri (nobles Peichin y guardias del Rey)",
+                                isCorrect: true
+                            },
+                            {
+                                id: "o2",
+                                text: "⚓ En el muelle de carga comercial del puerto sur",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o3",
+                                text: "🌾 En las aldeas de arrozales lejanas del norte",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o4",
+                                text: "⛵ En los barcos de mercaderes hacia Japón continental",
+                                isCorrect: false
+                            }
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "¡Exacto! El Shuri-Te floreció en la capital amurallada del Castillo de Shuri (首里城). Era cultivado por la nobleza y los oficiales de seguridad real ('Peichin'), caracterizándose por desplazamientos lineales, velocidad relámpago y posturas ágiles.",
+                        hint: "Observa la parte alta del mapa donde se ubica el palacio real.",
+                        references: [
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Mark Bishop",
+                                year: 1999,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 2: El linaje de Shuri y la corte del Castillo de Ryukyu",
+                                note: "Análisis histórico de la casta militar Peichin y la transmisión del arte en el palacio real."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-shuri-estilos-derivados",
+                        type: "multiple_choice",
+                        prompt: "¿Qué maestros legendarios y estilos mundiales nacieron de la matriz de SHURI?",
+                        description: "Evolución de la corte real hacia los estilos tradicionales universales.",
+                        options: [
+                            {
+                                id: "o1",
+                                text: "🥋 Sokon Matsumura y Anko Itosu ➔ Forjaron SHOTOKAN y SHITO-RYU",
+                                isCorrect: true
+                            },
+                            {
+                                id: "o2",
+                                text: "🥊 Kanryo Higaonna ➔ Forjó el GOJU-RYU y Uechi-Ryu",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o3",
+                                text: "🗡️ Minamoto no Yoshitsune ➔ Forjó el Kenjutsu Samurái",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o4",
+                                text: "🥋 Jigoro Kano ➔ Forjó el Judo moderno",
+                                isCorrect: false
+                            }
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "¡Brillante! Maestros legendarios de Shuri como 'Bushi' Matsumura (guardaespaldas del rey) y Anko Itosu instruyeron a Gichin Funakoshi (creador de Shotokan) y Kenwa Mabuni (fundador de Shito-Ryu, fusionando Shuri y Naha).",
+                        hint: "Funakoshi entrenó con los dos grandes maestros de Shuri: Asato e Itosu.",
+                        references: [
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 1: Mis maestros de Shuri: Anko Asato y Anko Itosu",
+                                note: "Crónica autobiográfica del entrenamiento nocturno en Shuri que dio origen al Karate moderno."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-naha-mapa-origen",
+                        type: "multiple_choice",
+                        prompt: "En el mapa histórico de Okinawa: ¿Qué era NAHA (那覇) y qué define la biomecánica del NAHA-TE?",
+                        description: "El bullicioso puerto marítimo y la herencia directa del sur de China.",
+                        image: "/images/didactic/okinawa_three_cities_map.jpg",
+                        options: [
+                            {
+                                id: "o1",
+                                text: "🚢 Puerto comercial marítimo con influencia de Fujian: posturas enraizadas (Sanchin) y respiración sonora",
+                                isCorrect: true
+                            },
+                            {
+                                id: "o2",
+                                text: "👑 La residencia de retiro de la reina madre de Okinawa",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o3",
+                                text: "🏔️ Un pico montañoso donde se entrenaba con lanzas largas",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o4",
+                                text: "🏕️ Una guarnición de samuráis del clan Satsuma",
+                                isCorrect: false
+                            }
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "¡Correcto! Naha era el gran puerto mercantil del sur y el hogar de Kumemura ('Las 36 Familias Chinas'). El Naha-Te se nutrió del boxeo de la Grulla Blanca de Fujian, distinguiéndose por posturas pesadas, respiración profunda 'Ibuki', fuerza isométrica y combate a corta distancia.",
+                        hint: "Observa la bahía portuaria en la parte inferior del mapa conectada con el mar de China.",
+                        references: [
+                            {
+                                title: "La Historia del Karate: Goju-Ryu de Okinawa",
+                                author: "Maestro Morio Higaonna (10° Dan)",
+                                year: 1996,
+                                editorial: "Editorial Miraguano",
+                                chapter: "Capítulo 2: El puerto de Naha, Kumemura y los viajes a Fujian",
+                                note: "Estudio exhaustivo sobre el intercambio marítimo y comercial que forjó el linaje de Naha."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-naha-estilos-derivados",
+                        type: "multiple_choice",
+                        prompt: "¿Qué estilos de renombre internacional descienden directamente del NAHA-TE?",
+                        description: "La armonía entre la dureza inquebrantable y la suavidad circular.",
+                        options: [
+                            {
+                                id: "o1",
+                                text: "🥋 GOJU-RYU (Chojun Miyagi) y UECHI-RYU (Kanbun Uechi)",
+                                isCorrect: true
+                            },
+                            {
+                                id: "o2",
+                                text: "⚡ SHOTOKAN y Wado-Ryu de Tokio",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o3",
+                                text: "🥊 Muay Thai y Kickboxing holandés",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o4",
+                                text: "🥋 Tae Kwon Do de Corea",
+                                isCorrect: false
+                            }
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "¡Exacto! Kanryo Higaonna viajó a Fuzhou y regresó a Naha para enseñar este sistema. Su discípulo Chojun Miyagi creó el GOJU-RYU ('Escuela de lo Duro y lo Flexible'), mientras que Kanbun Uechi preservó el Pangai-noon que dio vida al UECHI-RYU.",
+                        hint: "Piensa en el estilo fundado por Chojun Miyagi que honra lo duro (Go) y lo blando (Ju).",
+                        references: [
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 4: El poema Hakku Kenpo y la creación del nombre Goju-Ryu",
+                                note: "Documenta cómo Miyagi extrajo el nombre Goju-Ryu de los versos marciales del Bubishi."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-tomari-mapa-origen",
+                        type: "multiple_choice",
+                        prompt: "En el mapa histórico de Okinawa: ¿Qué era TOMARI (泊) y qué caracterizaba a sus guerreros?",
+                        description: "Pueblo portuario costero situado entre Shuri y Naha.",
+                        image: "/images/didactic/okinawa_three_cities_map.jpg",
+                        options: [
+                            {
+                                id: "o1",
+                                text: "🌊 Pueblo pesquero intermedio: marineros y campesinos con técnicas evasivas, saltos y derribos",
+                                isCorrect: true
+                            },
+                            {
+                                id: "o2",
+                                text: "🏰 La fortaleza principal del ejército imperial japonés",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o3",
+                                text: "⛩️ Un monasterio donde solo se practicaba tiro con arco",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o4",
+                                text: "🏔️ Una cordillera nevada donde vivían ermitaños",
+                                isCorrect: false
+                            }
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "¡Exacto! Tomari era un activo pueblo de pescadores y puerto secundario ubicado geográficamente entre Shuri y Naha. Los practicantes de Tomari-Te fusionaron la agilidad de Shuri con técnicas clandestinas de marineros y expertos chinos náufragos (como Chinto y Annan), destacando por esquivas rápidas, saltos y proyecciones.",
+                        hint: "Busca en el mapa el pueblo marítimo 'TOMARI' ubicado entre Shuri y Naha.",
+                        references: [
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Mark Bishop",
+                                year: 1999,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 3: El misterioso Tomari-Te y las enseñanzas del náufrago chino Annan",
+                                note: "Detalla la singularidad de Tomari como crisol de pescadores, campesinos y maestros itinerantes."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-tomari-estilos-katas",
+                        type: "multiple_choice",
+                        prompt: "¿Qué maestros y Katas clásicos representan el alma legendaria del TOMARI-TE?",
+                        description: "Katas de garzas blancas, saltos elásticos y defensas angulares.",
+                        options: [
+                            {
+                                id: "o1",
+                                text: "🥋 Kosaku Matsumora y Choki Motobu ➔ Katas Rohai, Wankan, Chinto y Bassai Tomari",
+                                isCorrect: true
+                            },
+                            {
+                                id: "o2",
+                                text: "🥊 Chojun Miyagi ➔ Katas Sanchin y Tensho",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o3",
+                                text: "⚡ Gichin Funakoshi ➔ Katas Taikyoku Shodan y Heian Shodan",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o4",
+                                text: "🗡️ Oda Nobunaga ➔ Formas de alabarda Naginata",
+                                isCorrect: false
+                            }
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "¡Extraordinario! Maestros como Kosaku Matsumora, Kokan Oyadomari y el temible combatiente Choki Motobu inmortalizaron el Tomari-Te. De allí surgieron katas emblemáticas como Rohai (La visión de la garza), Wankan, Chinto y Bassai Tomari, presentes hoy en escuelas como Shito-Ryu, Shorin-Ryu y Matsubayashi-Ryu.",
+                        hint: "Katas famosas de la garza (Rohai) y maestros como Matsumora y Motobu.",
+                        references: [
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Mark Bishop",
+                                year: 1999,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 3: Kosaku Matsumora, Choki Motobu y los katas exclusivos de Tomari",
+                                note: "Historia de cómo los katas de Tomari fueron transmitidos a las generaciones contemporáneas."
                             }
                         ]
                     }
