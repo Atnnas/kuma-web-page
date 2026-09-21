@@ -203,24 +203,55 @@ export function EtherealMartialOrb({
                             </span>
                         </div>
                     )}
-
-                    {/* Medalla de Estrellas Si Está Superado */}
-                    {isCompleted && stars > 0 && (
-                        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-950/95 border-2 border-yellow-300 shadow-[0_0_14px_rgba(250,204,21,0.9)] z-20 backdrop-blur-sm">
-                            {[1, 2, 3].map((s) => (
-                                <Star
-                                    key={s}
-                                    className={`w-3.5 h-3.5 ${
-                                        s <= stars
-                                            ? "text-yellow-300 fill-yellow-300 filter drop-shadow-[0_0_6px_#fde047]"
-                                            : "text-zinc-600"
-                                    }`}
-                                    weight="fill"
-                                />
-                            ))}
-                        </div>
-                    )}
                 </motion.button>
+
+                {/* BARRA DE MAESTRÍA DE 3 ESTRELLAS (DEBAJO DE CADA NIVEL) */}
+                <div className="mt-2.5 flex items-center justify-center">
+                    <div
+                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full backdrop-blur-md transition-all duration-300 shadow-md ${
+                            stars === 3
+                                ? "bg-gradient-to-r from-amber-950/90 via-zinc-950/95 to-amber-950/90 border-2 border-yellow-400 shadow-[0_0_14px_rgba(250,204,21,0.6)]"
+                                : stars > 0
+                                ? "bg-zinc-950/90 border border-amber-400/40 shadow-[0_0_8px_rgba(245,158,11,0.25)]"
+                                : isUnlocked
+                                ? "bg-zinc-950/80 border border-white/10"
+                                : "bg-zinc-950/60 border border-white/5 opacity-60"
+                        }`}
+                        title={
+                            stars === 3
+                                ? "¡Maestría Total (3/3 estrellas)!"
+                                : `Progreso de Maestría: ${stars}/3 estrellas. Pasa este nivel ${3 - stars} ${
+                                      3 - stars === 1 ? "vez más" : "veces más"
+                                  } para alcanzar la maestría.`
+                        }
+                    >
+                        {[1, 2, 3].map((starIdx) => {
+                            const isEarned = starIdx <= stars;
+                            return (
+                                <Star
+                                    key={starIdx}
+                                    className={`w-3.5 h-3.5 transition-all duration-300 ${
+                                        isEarned
+                                            ? "text-yellow-400 fill-yellow-400 filter drop-shadow-[0_0_6px_#fde047]"
+                                            : "text-zinc-600 fill-zinc-800"
+                                    }`}
+                                    weight={isEarned ? "fill" : "bold"}
+                                />
+                            );
+                        })}
+                        <span
+                            className={`text-[9px] font-black tracking-wider ml-0.5 ${
+                                stars === 3
+                                    ? "text-yellow-300 drop-shadow-[0_0_4px_#fde047]"
+                                    : stars > 0
+                                    ? "text-amber-200/90"
+                                    : "text-zinc-500"
+                            }`}
+                        >
+                            {stars}/3
+                        </span>
+                    </div>
+                </div>
             </motion.div>
         </div>
     );

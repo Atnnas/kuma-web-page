@@ -28,6 +28,7 @@ import {
     ArrowCounterClockwise,
     WarningCircle,
     BookBookmark,
+    Star,
 } from "@phosphor-icons/react";
 
 function QuestionBibliography({
@@ -138,6 +139,7 @@ interface LessonSessionModalProps {
     isOpen: boolean;
     onClose: () => void;
     onComplete: (levelId: string, stars: number, earnedXp: number) => void;
+    currentStars?: number;
     initialHearts?: number;
     onHeartLost?: () => void;
     beltRank?: BeltRank;
@@ -148,6 +150,7 @@ export function LessonSessionModal({
     isOpen,
     onClose,
     onComplete,
+    currentStars = 0,
     initialHearts = 5,
     onHeartLost,
     beltRank,
@@ -163,6 +166,7 @@ export function LessonSessionModal({
     const [mascotMood, setMascotMood] = useState<MascotMood>("idle");
     const [customSpeech, setCustomSpeech] = useState<string | undefined>(undefined);
     const [isTheoryOpen, setIsTheoryOpen] = useState(false);
+    const [earnedStars, setEarnedStars] = useState<number>(currentStars);
     const [isMuted, setIsMuted] = useState(false);
 
     // Selected state
@@ -202,6 +206,12 @@ export function LessonSessionModal({
     useEffect(() => {
         setIsMuted(didacticSound.getMuted());
     }, []);
+
+    useEffect(() => {
+        if (isOpen) {
+            setEarnedStars(currentStars);
+        }
+    }, [isOpen, currentStars, level.id]);
 
     // Lock background body scroll while lesson session is active
     useEffect(() => {
@@ -423,8 +433,10 @@ export function LessonSessionModal({
                     colors: ["#EAB308", "#F59E0B", "#FFFFFF", "#DC2626"],
                 });
 
-                const stars = ratio >= 0.9 ? 3 : ratio >= 0.75 ? 2 : 1;
-                onComplete(level.id, stars, level.xpReward);
+                // Maestría acumulativa: +1 estrella por cada pase exitoso hasta 3/3
+                const nextStars = Math.min(3, (currentStars || 0) + 1);
+                setEarnedStars(nextStars);
+                onComplete(level.id, nextStars, level.xpReward);
             } else {
                 // Not enough accuracy
                 setIsFailed(true);
@@ -940,6 +952,52 @@ export function LessonSessionModal({
                                 <h2 className="text-3xl md:text-5xl font-serif font-black text-white mt-2">
                                     {level.title}
                                 </h2>
+                            </div>
+
+                            {/* BARRA DE MAESTRÍA DE 3 ESTRELLAS */}
+                            <div className="w-full mt-6 p-4 rounded-2xl bg-gradient-to-b from-[#1C180A]/90 to-[#0A0D18]/90 border-2 border-[#FFC800]/50 shadow-[0_0_20px_rgba(255,200,0,0.15)] flex flex-col items-center">
+                                <span className="text-[11px] font-black uppercase tracking-widest text-[#FFC800]">
+                                    {earnedStars === 3 ? "👑 Maestría de Nivel Consagrada" : "⭐ Forja de Maestría Marcial"}
+                                </span>
+
+                                <div className="flex items-center gap-3.5 my-3">
+                                    {[1, 2, 3].map((starIndex) => {
+                                        const isEarned = starIndex <= earnedStars;
+                                        return (
+                                            <motion.div
+                                                key={starIndex}
+                                                initial={{ scale: 0.8, opacity: 0 }}
+                                                animate={{ scale: isEarned ? [1, 1.25, 1] : 1, opacity: 1 }}
+                                                transition={{ delay: 0.2 + starIndex * 0.15, duration: 0.4 }}
+                                                className={`p-2.5 rounded-full ${
+                                                    isEarned
+                                                        ? "bg-amber-400/20 border-2 border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.6)]"
+                                                        : "bg-slate-800/50 border border-slate-700 opacity-40"
+                                                }`}
+                                            >
+                                                <Star
+                                                    className={`w-7 h-7 ${
+                                                        isEarned ? "text-yellow-400 fill-yellow-400" : "text-slate-500 fill-slate-700"
+                                                    }`}
+                                                    weight={isEarned ? "fill" : "bold"}
+                                                />
+                                            </motion.div>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="text-center">
+                                    <p className="text-sm font-bold text-slate-200">
+                                        Progreso: <span className="text-yellow-400 font-black">{earnedStars}/3 Estrellas</span>
+                                    </p>
+                                    <p className="text-xs text-slate-400 mt-1 max-w-sm">
+                                        {earnedStars === 3
+                                            ? "¡Has alcanzado la maestría máxima de este nivel! Este conocimiento reside plenamente en tu espíritu."
+                                            : `Debes superar este nivel ${3 - earnedStars} ${
+                                                  3 - earnedStars === 1 ? "vez más" : "veces más"
+                                              } para llenar las 3 estrellas y consagrar la maestría completa.`}
+                                    </p>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-3 gap-3.5 w-full mt-6">

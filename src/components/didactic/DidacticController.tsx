@@ -273,7 +273,8 @@ export function DidacticController() {
             : [...progress.completedLevelIds, levelId];
 
         const existingStars = progress.levelStars[levelId] || 0;
-        const newStars = Math.max(existingStars, stars);
+        // Regla de gamificación: Se tendrá que pasar varias veces cada nivel para llenar las 3 estrellas obteniendo maestría
+        const newStars = Math.min(3, existingStars + 1);
         const now = Date.now();
 
         const updated: UserDidacticProgress = {
@@ -473,6 +474,7 @@ export function DidacticController() {
                     onComplete={(levelId, stars, earnedXp) => {
                         handleLevelComplete(levelId, stars, earnedXp);
                     }}
+                    currentStars={progress.levelStars[activeLesson.id] || 0}
                     initialHearts={progress.hearts}
                     onHeartLost={handleHeartLost}
                 />
