@@ -33,9 +33,17 @@ import {
 function QuestionBibliography({
     references,
     variant = "correct",
+    mascotMood = "thinking",
+    strikeTrigger,
+    activePath = "tradicional",
+    activeBeltRank,
 }: {
     references?: (string | BookReference)[];
     variant?: "correct" | "wrong";
+    mascotMood?: MascotMood;
+    strikeTrigger?: string | number;
+    activePath?: PathType;
+    activeBeltRank?: BeltRank;
 }) {
     const [isOpen, setIsOpen] = useState(false);
     if (!references || references.length === 0) return null;
@@ -51,7 +59,7 @@ function QuestionBibliography({
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] font-bold transition-all cursor-pointer border ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer border ${
                     isCorrect
                         ? "bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border-emerald-500/40"
                         : "bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border-rose-500/40"
@@ -63,15 +71,18 @@ function QuestionBibliography({
 
             {isOpen && (
                 <div className={`mt-2 p-3 rounded-xl border ${containerBorder} backdrop-blur-md text-left space-y-2 max-w-xl animate-in fade-in slide-in-from-top-1 duration-200`}>
-                    {/* MOBILE ONLY: SENSEI SCHOLAR COMPANION */}
-                    <div className="md:hidden flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-amber-950/60 via-[#1E293B] to-[#0F172A] border border-[#FFC800]/40 shadow-sm overflow-hidden">
-                        <div className="w-16 h-16 shrink-0 flex items-center justify-center overflow-visible">
+                    {/* MOBILE ONLY: SENSEI SCHOLAR COMPANION CON ANIMACIÓN ACTIVA */}
+                    <div className="md:hidden flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-amber-950/70 via-[#1E293B] to-[#0F172A] border border-[#FFC800]/50 shadow-md overflow-hidden">
+                        <div className="w-20 h-20 shrink-0 flex items-center justify-center overflow-visible">
                             <KumaMascot
                                 size="sm"
-                                mood="thinking"
+                                mood={mascotMood}
+                                strikeTrigger={strikeTrigger}
+                                path={activePath}
+                                beltRank={activeBeltRank}
                                 showBubble={false}
                                 interactive={true}
-                                className="scale-75 origin-center"
+                                className="scale-90 origin-center"
                             />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -1117,7 +1128,20 @@ export function LessonSessionModal({
                                 className="p-4 md:p-5 rounded-2xl md:rounded-3xl bg-[#143818] border-2 border-[#58CC02] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-lg max-h-[65vh] overflow-y-auto"
                             >
                                 <div className="flex items-start gap-3.5 w-full">
-                                    <CheckCircle className="w-8 h-8 text-[#58CC02] shrink-0 mt-0.5" weight="fill" />
+                                    {/* MOBILE ONLY: SENSEI ANIMATED MASCOT CELEBRATING TSUKI STRIKE */}
+                                    <div className="md:hidden flex items-center justify-center shrink-0 w-20 h-20 overflow-visible mt-0.5">
+                                        <KumaMascot
+                                            mood={streak >= 3 ? "streak" : "correct"}
+                                            strikeTrigger={`${currentIndex}-${answerStatus}-${streak}`}
+                                            path={activePath}
+                                            beltRank={activeBeltRank}
+                                            size="sm"
+                                            showBubble={false}
+                                            interactive={true}
+                                            className="scale-90 origin-center"
+                                        />
+                                    </div>
+                                    <CheckCircle className="hidden md:block w-8 h-8 text-[#58CC02] shrink-0 mt-0.5" weight="fill" />
                                     <div className="w-full">
                                         <div className="flex items-center gap-2 mb-0.5">
                                             <span className="text-[11px] font-black uppercase tracking-wider text-white bg-[#58CC02] px-2.5 py-1 rounded-lg shadow-sm">
@@ -1131,8 +1155,12 @@ export function LessonSessionModal({
                                             {currentQuestion.explanation}
                                         </p>
                                         <QuestionBibliography
-                                            references={currentQuestion.references || currentQuestion.bibliography}
+                                            references={currentQuestion.references || currentQuestion.bibliography || level.theory?.references}
                                             variant="correct"
+                                            mascotMood={streak >= 3 ? "streak" : "correct"}
+                                            strikeTrigger={`${currentIndex}-${answerStatus}-${streak}`}
+                                            activePath={activePath}
+                                            activeBeltRank={activeBeltRank}
                                         />
                                     </div>
                                 </div>
@@ -1160,7 +1188,20 @@ export function LessonSessionModal({
                                 className="p-4 md:p-5 rounded-2xl md:rounded-3xl bg-[#2B1313] border-2 border-[#FF4B4B] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-lg max-h-[65vh] overflow-y-auto"
                             >
                                 <div className="flex items-start gap-3.5 w-full">
-                                    <XCircle className="w-8 h-8 text-[#FF4B4B] shrink-0 mt-0.5" weight="fill" />
+                                    {/* MOBILE ONLY: SENSEI ANIMATED MASCOT REACTING TO INCORRECT TECHNIQUE */}
+                                    <div className="md:hidden flex items-center justify-center shrink-0 w-20 h-20 overflow-visible mt-0.5">
+                                        <KumaMascot
+                                            mood="wrong"
+                                            strikeTrigger={`${currentIndex}-${answerStatus}-${streak}`}
+                                            path={activePath}
+                                            beltRank={activeBeltRank}
+                                            size="sm"
+                                            showBubble={false}
+                                            interactive={true}
+                                            className="scale-90 origin-center"
+                                        />
+                                    </div>
+                                    <XCircle className="hidden md:block w-8 h-8 text-[#FF4B4B] shrink-0 mt-0.5" weight="fill" />
                                     <div className="w-full">
                                         <div className="flex items-center gap-2 mb-0.5">
                                             <span className="text-[11px] font-black uppercase tracking-wider text-white bg-[#FF4B4B] px-2.5 py-1 rounded-lg shadow-sm">
@@ -1173,7 +1214,7 @@ export function LessonSessionModal({
                                         <p className="text-xs md:text-sm text-rose-100 mt-1 leading-relaxed">
                                             En el tatami no se regalan respuestas. Para descubrir la técnica correcta y avanzar con honor, debes consultar el <strong>Pergamino Teórico</strong> de este nivel.
                                         </p>
-                                        <div className="mt-2.5">
+                                        <div className="mt-2.5 flex flex-wrap items-center gap-2">
                                             <button
                                                 type="button"
                                                 onClick={() => setIsTheoryOpen(true)}
@@ -1183,6 +1224,14 @@ export function LessonSessionModal({
                                                 <span>Estudiar Pergamino Teórico</span>
                                             </button>
                                         </div>
+                                        <QuestionBibliography
+                                            references={currentQuestion.references || currentQuestion.bibliography || level.theory?.references}
+                                            variant="wrong"
+                                            mascotMood="wrong"
+                                            strikeTrigger={`${currentIndex}-${answerStatus}-${streak}`}
+                                            activePath={activePath}
+                                            activeBeltRank={activeBeltRank}
+                                        />
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2.5 w-full lg:w-auto shrink-0 justify-end self-end lg:self-center">
