@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -181,6 +181,16 @@ export function LessonSessionModal({
     // Kanji drawing state
     const [isKanjiDrawn, setIsKanjiDrawn] = useState(false);
 
+// Fisher-Yates shuffle helper para orden aleatorio
+function shuffleArray<T>(array: T[]): T[] {
+    const copy = [...array];
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
+
     // Validation state
     const [answerStatus, setAnswerStatus] = useState<"idle" | "correct" | "wrong">("idle");
     const [isCompleted, setIsCompleted] = useState(false);
@@ -188,9 +198,23 @@ export function LessonSessionModal({
     const [correctCount, setCorrectCount] = useState(0);
     const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
 
-    const currentQuestion: Question | undefined = level.questions[currentIndex];
-    const totalQuestions = level.questions.length;
-    const progressPercent = Math.round((currentIndex / totalQuestions) * 100);
+    // PREGUNTAS EN ORDEN ALEATORIO: cada vez que se abre el nivel se barajan las preguntas y sus opciones
+    const sessionQuestions = useMemo(() => {
+        if (!isOpen || !level.questions) return [];
+        return shuffleArray(level.questions).map((q) => {
+            if (q.options && q.options.length > 1 && (q.type === "multiple_choice" || q.type === "image_choice")) {
+                return {
+                    ...q,
+                    options: shuffleArray(q.options),
+                };
+            }
+            return q;
+        });
+    }, [level.id, isOpen]);
+
+    const currentQuestion: Question | undefined = sessionQuestions[currentIndex];
+    const totalQuestions = sessionQuestions.length;
+    const progressPercent = totalQuestions > 0 ? Math.round((currentIndex / totalQuestions) * 100) : 0;
 
     const handleRequestCancel = () => {
         didacticSound.playClick();
@@ -622,7 +646,7 @@ export function LessonSessionModal({
                                                     ◀ Ant
                                                 </button>
 
-                                                {level.questions.map((_, qIdx) => (
+                                                {sessionQuestions.map((_: Question, qIdx: number) => (
                                                     <button
                                                         key={qIdx}
                                                         type="button"

@@ -26,6 +26,7 @@ interface BeltCascadeSectionProps {
     onSelectLevel: (level: Level) => void;
     isLast: boolean;
     onFocusBelt?: (beltId: BeltRankId) => void;
+    hasNewQuestions?: boolean;
 }
 
 /**
@@ -630,6 +631,7 @@ export function BeltCascadeSection({
     onSelectLevel,
     isLast,
     onFocusBelt,
+    hasNewQuestions = false,
 }: BeltCascadeSectionProps) {
     const isDan = belt.category === "dan";
     const isWhiteBelt = belt.category === "kyu" && belt.levelNumber === 10;
@@ -813,6 +815,18 @@ export function BeltCascadeSection({
                                         ? "Grado Dan • Maestría"
                                         : `Grado Kyu • ${belt.shortName}`}
                                 </span>
+
+                                {hasNewQuestions && (
+                                    <motion.span
+                                        initial={{ scale: 0.85, opacity: 0 }}
+                                        animate={{ scale: [1, 1.06, 1], opacity: 1 }}
+                                        transition={{ repeat: Infinity, duration: 2 }}
+                                        className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 text-black shadow-[0_0_12px_rgba(250,204,21,0.6)]"
+                                    >
+                                        <Sparkle className="w-3 h-3 text-black" weight="fill" />
+                                        ¡Nuevas Preguntas!
+                                    </motion.span>
+                                )}
 
                                 <span className="text-[11px] text-zinc-400 font-bold tracking-wider">
                                     {belt.japaneseName.includes("—") ? belt.japaneseName.split("—")[1].trim() : belt.japaneseName}

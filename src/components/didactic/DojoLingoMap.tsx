@@ -37,6 +37,7 @@ interface DojoLingoMapProps {
     kumaMood?: MascotMood;
     daysAbsent?: number;
     onOpenAbsenceModal?: () => void;
+    updatedUnitIds?: string[];
 }
 
 export function DojoLingoMap({
@@ -49,6 +50,7 @@ export function DojoLingoMap({
     kumaMood = "idle",
     daysAbsent = 0,
     onOpenAbsenceModal,
+    updatedUnitIds = [],
 }: DojoLingoMapProps) {
     const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
     const [theoryLevel, setTheoryLevel] = useState<Level | null>(null);
@@ -371,6 +373,7 @@ export function DojoLingoMap({
                                         onSelectLevel={(level) => setSelectedLevel(level)}
                                         isLast={idx === tradUnits.length - 1}
                                         onFocusBelt={(bId) => setActiveBeltId(bId)}
+                                        hasNewQuestions={updatedUnitIds.includes(unit.id)}
                                     />
                                 );
                             })}

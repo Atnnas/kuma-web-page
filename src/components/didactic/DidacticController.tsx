@@ -9,6 +9,7 @@ import { DidacticEncyclopedia } from "./DidacticEncyclopedia";
 import { LessonSessionModal } from "./LessonSessionModal";
 import { KumaAbsenceGreetingModal } from "./KumaAbsenceGreetingModal";
 import { InstallAppButton } from "./InstallAppButton";
+import { getDidacticCatalogStats } from "@/data/didacticaData";
 import {
     Compass,
     BookOpen,
@@ -17,6 +18,7 @@ import {
     UserCircle,
     ShieldStar,
     Sparkle,
+    BellRinging,
 } from "@phosphor-icons/react";
 
 const INITIAL_PROGRESS: UserDidacticProgress = {
@@ -46,6 +48,72 @@ export function DidacticController() {
     // Kuma Sensei Absence Greeting & Simulation States
     const [isGreetingOpen, setIsGreetingOpen] = useState(false);
     const [simulatedDays, setSimulatedDays] = useState<number | null>(null);
+
+    // Sistema de Detección y Aviso de Nuevas Preguntas / Módulos Actualizados
+    const [catalogUpdate, setCatalogUpdate] = useState<{
+        hasNewQuestions: boolean;
+        newQuestionsCount: number;
+        updatedUnitIds: string[];
+    }>({
+        hasNewQuestions: false,
+        newQuestionsCount: 0,
+        updatedUnitIds: [],
+    });
+
+    useEffect(() => {
+        try {
+            const currentStats = getDidacticCatalogStats();
+            const storedRaw = localStorage.getItem("kuma_didactic_catalog_meta_v1");
+            if (!storedRaw) {
+                // Primera visita: guardar la foto actual del catálogo
+                localStorage.setItem(
+                    "kuma_didactic_catalog_meta_v1",
+                    JSON.stringify({
+                        totalQuestions: currentStats.totalQuestions,
+                        unitCounts: currentStats.unitCounts,
+                        timestamp: Date.now(),
+                    })
+                );
+            } else {
+                const stored = JSON.parse(storedRaw);
+                const prevTotal = stored.totalQuestions || 0;
+                if (currentStats.totalQuestions > prevTotal) {
+                    const newCount = currentStats.totalQuestions - prevTotal;
+                    const updatedUnitIds = Object.keys(currentStats.unitCounts).filter(
+                        (uId) => currentStats.unitCounts[uId] > (stored.unitCounts?.[uId] || 0)
+                    );
+                    setCatalogUpdate({
+                        hasNewQuestions: true,
+                        newQuestionsCount: newCount,
+                        updatedUnitIds,
+                    });
+                }
+            }
+        } catch (e) {
+            console.error("Error checking didactic catalog stats:", e);
+        }
+    }, []);
+
+    const handleDismissCatalogNotification = () => {
+        try {
+            const currentStats = getDidacticCatalogStats();
+            localStorage.setItem(
+                "kuma_didactic_catalog_meta_v1",
+                JSON.stringify({
+                    totalQuestions: currentStats.totalQuestions,
+                    unitCounts: currentStats.unitCounts,
+                    timestamp: Date.now(),
+                })
+            );
+        } catch (e) {
+            console.error("Error updating catalog meta in localStorage:", e);
+        }
+        setCatalogUpdate({
+            hasNewQuestions: false,
+            newQuestionsCount: 0,
+            updatedUnitIds: [],
+        });
+    };
 
     // Load progress from DB (if authenticated) or localStorage (guest fallback)
     useEffect(() => {
@@ -435,6 +503,43 @@ export function DidacticController() {
                         exit={{ opacity: 0, y: -15 }}
                         transition={{ duration: 0.3 }}
                     >
+                        {/* BANNER FLOTANTE: AVISO DE NUEVAS PREGUNTAS EN LOS MÓDULOS */}
+                        <AnimatePresence>
+                            {catalogUpdate.hasNewQuestions && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -16, scale: 0.98 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: -16, scale: 0.98 }}
+                                    className="w-full max-w-2xl mx-auto mb-6 p-4 rounded-3xl bg-gradient-to-r from-amber-950/95 via-zinc-950/98 to-amber-950/95 border-2 border-yellow-400/80 shadow-[0_0_30px_rgba(250,204,21,0.25)] backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-4 z-30"
+                                >
+                                    <div className="flex items-center gap-3.5">
+                                        <div className="w-12 h-12 rounded-2xl bg-yellow-400/20 border-2 border-yellow-400/60 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(250,204,21,0.4)]">
+                                            <BellRinging className="w-6 h-6 text-yellow-400 animate-bounce" weight="duotone" />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-yellow-400 text-black">
+                                                    ¡Actualización del Dojo!
+                                                </span>
+                                            </div>
+                                            <h4 className="text-sm font-serif font-black text-white mt-1">
+                                                Nuevos pergaminos y preguntas añadidas
+                                            </h4>
+                                            <p className="text-xs text-slate-300 mt-0.5">
+                                                Se han incorporado <strong className="text-yellow-300">+{catalogUpdate.newQuestionsCount} nuevas preguntas</strong> a los módulos marciales. ¡Pon a prueba tu conocimiento y forja tus 3 estrellas!
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={handleDismissCatalogNotification}
+                                        className="shrink-0 w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-black font-black text-xs uppercase tracking-wider shadow-lg hover:shadow-yellow-400/50 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                                    >
+                                        <span>Entendido (Ossu)</span>
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
                         <DojoLingoMap
                             activePath={effectiveProgress.activePath || "tradicional"}
                             onSelectPath={handleSelectPath}
@@ -445,6 +550,7 @@ export function DidacticController() {
                             kumaMood={kumaMood}
                             daysAbsent={daysAbsent}
                             onOpenAbsenceModal={() => setIsGreetingOpen(true)}
+                            updatedUnitIds={catalogUpdate.updatedUnitIds}
                         />
                     </motion.div>
                 ) : (

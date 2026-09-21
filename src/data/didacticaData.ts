@@ -2215,3 +2215,26 @@ export const DIDACTIC_UNITS: Unit[] = [
 
 // Helper to get total levels
 export const ALL_LEVELS = DIDACTIC_UNITS.flatMap(u => u.levels);
+
+export interface DidacticCatalogStats {
+    totalQuestions: number;
+    unitCounts: Record<string, number>;
+    levelCounts: Record<string, number>;
+}
+
+export function getDidacticCatalogStats(): DidacticCatalogStats {
+    let totalQuestions = 0;
+    const unitCounts: Record<string, number> = {};
+    const levelCounts: Record<string, number> = {};
+    DIDACTIC_UNITS.forEach((u) => {
+        let uCount = 0;
+        u.levels.forEach((l) => {
+            const lCount = l.questions?.length || 0;
+            levelCounts[l.id] = lCount;
+            uCount += lCount;
+            totalQuestions += lCount;
+        });
+        unitCounts[u.id] = uCount;
+    });
+    return { totalQuestions, unitCounts, levelCounts };
+}
