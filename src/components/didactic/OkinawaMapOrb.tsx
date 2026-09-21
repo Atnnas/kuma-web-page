@@ -28,6 +28,18 @@ export function OkinawaMapOrb({
 
             {/* 3D Tactile Arcade Frame & Photorealistic Relief */}
             <div className="relative w-full h-full rounded-full overflow-hidden bg-gradient-to-b from-[#1CB0F6] via-[#0288D1] to-[#01579B] border-t-2 border-t-sky-100 border-x-2 border-x-sky-300 border-b-[6px] border-b-[#003B66] shadow-[0_12px_26px_rgba(0,0,0,0.65),0_0_25px_rgba(28,176,246,0.5)]">
+                {/* Sweeping Ocean Light Sheen */}
+                <motion.div
+                    animate={{ x: ["-150%", "170%"] }}
+                    transition={{
+                        repeat: Infinity,
+                        duration: 3,
+                        ease: "easeInOut",
+                        repeatDelay: 1.5,
+                    }}
+                    className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/45 to-transparent skew-x-[-25deg] pointer-events-none z-10"
+                />
+
                 <Image
                     src="/images/didactic/okinawa_orb_3d.jpg"
                     alt="Mapa 3D de Okinawa - Cuna del Karate-Do"
@@ -39,11 +51,22 @@ export function OkinawaMapOrb({
                     priority
                 />
 
-                {/* Animated Pulsing Ruby Beacon on Shuri / Naha (Coordinates: ~39% from left, ~59% from top) */}
+                {/* Animated Expanding Ocean Radar Ripples from Shuri / Naha */}
                 <div
                     className="absolute pointer-events-none z-10"
                     style={{ left: "39%", top: "59%", transform: "translate(-50%, -50%)" }}
                 >
+                    {/* Continuous outward expanding radar shockwaves */}
+                    <motion.span
+                        animate={{ scale: [1, 3.5], opacity: [0.9, 0] }}
+                        transition={{ repeat: Infinity, duration: 2.2, ease: "easeOut" }}
+                        className="absolute -inset-2 rounded-full border border-red-400"
+                    />
+                    <motion.span
+                        animate={{ scale: [1, 4.5], opacity: [0.8, 0] }}
+                        transition={{ repeat: Infinity, duration: 2.2, ease: "easeOut", delay: 0.7 }}
+                        className="absolute -inset-2 rounded-full border border-amber-300"
+                    />
                     {/* Shockwave ripple */}
                     <span className="absolute -inset-2.5 rounded-full bg-red-500/70 animate-ping" />
                     <span className="absolute -inset-1 rounded-full bg-rose-400/90 animate-pulse" />
@@ -52,8 +75,8 @@ export function OkinawaMapOrb({
                 </div>
 
                 {/* Upper Curved Gloss / Acrylic Specular Reflection */}
-                <div className="absolute top-1.5 left-3 right-3 h-7 rounded-[50%] bg-gradient-to-b from-white/80 via-white/25 to-transparent pointer-events-none" />
-                <div className="absolute top-2.5 left-4 w-2.5 h-1.5 rounded-[50%] bg-white/90 blur-[0.4px] rotate-[-25deg] pointer-events-none" />
+                <div className="absolute top-1.5 left-3 right-3 h-7 rounded-[50%] bg-gradient-to-b from-white/80 via-white/25 to-transparent pointer-events-none z-20" />
+                <div className="absolute top-2.5 left-4 w-2.5 h-1.5 rounded-[50%] bg-white/90 blur-[0.4px] rotate-[-25deg] pointer-events-none z-20" />
             </div>
 
             {/* Ethereal Floating Badge: Okinawa • N.1 */}

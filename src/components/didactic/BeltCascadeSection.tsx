@@ -676,12 +676,21 @@ export function BeltCascadeSection({
                 {/* SACRED ASANOHA & ILLUMINATED DOJO TATAMI BACKGROUND (EXCLUSIVO CINTURÓN BLANCO) */}
                 {isWhiteBelt && isBeltUnlocked && (
                     <>
-                        {/* Golden Overhead Spotlight */}
-                        <div
-                            className="absolute -top-16 left-1/2 -translate-x-1/2 w-full max-w-lg h-72 rounded-full pointer-events-none blur-3xl opacity-40"
+                        {/* Breathing Golden Overhead Spotlight */}
+                        <motion.div
+                            animate={{
+                                opacity: [0.35, 0.58, 0.35],
+                                scale: [1, 1.08, 1],
+                            }}
+                            transition={{
+                                repeat: Infinity,
+                                duration: 4.5,
+                                ease: "easeInOut",
+                            }}
+                            className="absolute -top-16 left-1/2 -translate-x-1/2 w-full max-w-lg h-72 rounded-full pointer-events-none blur-3xl"
                             style={{
                                 background:
-                                    "radial-gradient(ellipse at center, rgba(254, 240, 138, 0.45) 0%, rgba(245, 158, 11, 0.25) 45%, transparent 75%)",
+                                    "radial-gradient(ellipse at center, rgba(254, 240, 138, 0.5) 0%, rgba(245, 158, 11, 0.28) 45%, transparent 75%)",
                             }}
                         />
 
@@ -703,15 +712,61 @@ export function BeltCascadeSection({
                             }}
                         />
 
+                        {/* Floating Gold Ki Firefly Motes (Partículas de Energía del Tatami) */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                            {[
+                                { left: "15%", bottom: "5%", size: 4, dur: 5.5, delay: 0 },
+                                { left: "32%", bottom: "10%", size: 3, dur: 4.8, delay: 1.2 },
+                                { left: "52%", bottom: "2%", size: 5, dur: 6.2, delay: 0.5 },
+                                { left: "72%", bottom: "15%", size: 3.5, dur: 5.0, delay: 2.1 },
+                                { left: "86%", bottom: "8%", size: 4, dur: 5.8, delay: 1.8 },
+                                { left: "24%", bottom: "25%", size: 3, dur: 4.5, delay: 2.7 },
+                                { left: "68%", bottom: "20%", size: 4.5, dur: 6.0, delay: 3.2 },
+                            ].map((pt, i) => (
+                                <motion.div
+                                    key={i}
+                                    animate={{
+                                        y: [0, -160, -300],
+                                        x: [0, i % 2 === 0 ? 14 : -14, 0],
+                                        opacity: [0, 0.8, 0],
+                                        scale: [0.6, 1.3, 0.3],
+                                    }}
+                                    transition={{
+                                        repeat: Infinity,
+                                        duration: pt.dur,
+                                        delay: pt.delay,
+                                        ease: "easeInOut",
+                                    }}
+                                    style={{
+                                        left: pt.left,
+                                        bottom: pt.bottom,
+                                        width: `${pt.size}px`,
+                                        height: `${pt.size}px`,
+                                    }}
+                                    className="absolute rounded-full bg-yellow-200 shadow-[0_0_10px_#fde047,0_0_18px_#f59e0b]"
+                                />
+                            ))}
+                        </div>
+
                         {/* Faint Sacred Calligraphy Watermark: 初心 (Shoshin - "Mente de Principiante") */}
-                        <div className="absolute right-4 bottom-10 pointer-events-none select-none opacity-[0.08] flex flex-col items-center">
-                            <span className="text-8xl md:text-9xl font-serif font-black text-amber-200 leading-none drop-shadow-[0_0_20px_rgba(245,158,11,0.5)]">
+                        <motion.div
+                            animate={{
+                                opacity: [0.07, 0.13, 0.07],
+                            }}
+                            transition={{
+                                repeat: Infinity,
+                                duration: 5,
+                                ease: "easeInOut",
+                            }}
+                            className="absolute right-4 bottom-10 pointer-events-none select-none flex flex-col items-center"
+                        >
+                            <span className="text-8xl md:text-9xl font-serif font-black text-amber-200 leading-none drop-shadow-[0_0_25px_rgba(245,158,11,0.6)]">
                                 初心
                             </span>
                             <span className="text-[10px] font-black uppercase tracking-[0.35em] text-amber-200 mt-1">
                                 Shoshin
                             </span>
-                        </div>
+                        </motion.div>
 
                         {/* Decorative Golden Kamon Corner Brackets */}
                         <div className="absolute top-2.5 left-2.5 w-6 h-6 border-t-2 border-l-2 border-amber-300/40 rounded-tl-sm pointer-events-none" />
