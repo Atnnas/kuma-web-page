@@ -326,14 +326,14 @@ export function DidacticController() {
 
     return (
         <div className="w-full space-y-8 animate-in fade-in duration-700">
-            {/* VIEW MODE DUAL SELECTOR (TOP SWITCHER - ARCADE NEON) */}
+            {/* VIEW MODE DUAL SELECTOR (TOP SWITCHER - SOLID DUOLINGO CLASSIC) */}
             <div className="flex justify-center">
-                <div className="inline-flex items-center p-1.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-2xl backdrop-blur-md">
+                <div className="inline-flex items-center p-1.5 rounded-2xl bg-[#0F172A] border-2 border-[#334155] shadow-lg">
                     <button
                         onClick={() => setViewMode("map")}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                             viewMode === "map"
-                                ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black shadow-lg shadow-cyan-500/30 scale-[1.02]"
+                                ? "bg-[#58CC02] border-b-4 border-[#46A302] text-white font-black shadow-md active:translate-y-0.5"
                                 : "text-slate-400 hover:text-white"
                         }`}
                     >
@@ -343,9 +343,9 @@ export function DidacticController() {
 
                     <button
                         onClick={() => setViewMode("encyclopedia")}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                             viewMode === "encyclopedia"
-                                ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black shadow-lg shadow-cyan-500/30 scale-[1.02]"
+                                ? "bg-[#58CC02] border-b-4 border-[#46A302] text-white font-black shadow-md active:translate-y-0.5"
                                 : "text-slate-400 hover:text-white"
                         }`}
                     >
@@ -359,14 +359,14 @@ export function DidacticController() {
             <div className="flex flex-wrap items-center justify-center gap-3 -mt-3">
                 <button
                     onClick={() => setIsGreetingOpen(true)}
-                    className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 shadow-md hover:scale-105 cursor-pointer border ${
+                    className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-200 shadow-sm hover:scale-105 cursor-pointer border-2 ${
                         daysAbsent >= 14
-                            ? "border-blue-500/60 bg-blue-950/70 text-blue-300 hover:bg-blue-900/80 shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-pulse"
+                            ? "border-[#1CB0F6] bg-blue-950/80 text-blue-300 animate-pulse"
                             : daysAbsent >= 7
-                            ? "border-rose-500/60 bg-rose-950/70 text-rose-300 hover:bg-rose-900/80 shadow-[0_0_15px_rgba(244,63,94,0.3)]"
+                            ? "border-[#FF4B4B] bg-[#2B1313] text-[#FF4B4B]"
                             : daysAbsent >= 4
-                            ? "border-amber-500/60 bg-amber-950/70 text-amber-300 hover:bg-amber-900/80"
-                            : "border-cyan-400/50 bg-slate-900/90 text-cyan-300 hover:bg-slate-850 shadow-[0_0_15px_rgba(6,182,212,0.25)]"
+                            ? "border-[#FFC800] bg-[#2B230E] text-[#FFC800]"
+                            : "border-[#1CB0F6] bg-[#0E2A47] text-[#1CB0F6]"
                     }`}
                     title="Consultar estado de ánimo de Kuma Sensei"
                 >

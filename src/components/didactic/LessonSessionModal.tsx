@@ -405,12 +405,7 @@ export function LessonSessionModal({
     };
 
     return (
-        <div className="fixed inset-0 z-[70] flex flex-col bg-[#080C18]/98 backdrop-blur-3xl text-white select-none overflow-hidden">
-            {/* Ambient Arcade Neon Glows (Emerald, Cyan, Fuchsia) */}
-            <div className="absolute -top-20 -left-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none" />
-            <div className="absolute top-1/3 -right-20 w-96 h-96 bg-fuchsia-500/10 rounded-full blur-[140px] pointer-events-none" />
-            <div className="absolute -bottom-20 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
-
+        <div className="fixed inset-0 z-[70] flex flex-col bg-[#0B132B] text-white select-none overflow-hidden">
             {/* THEORY SHEET MODAL */}
             <TheorySheetModal
                 isOpen={isTheoryOpen}
@@ -422,31 +417,28 @@ export function LessonSessionModal({
             {/* CANCEL CONFIRMATION DIALOG (DUOLINGO STYLE) */}
             <AnimatePresence>
                 {isCancelConfirmOpen && (
-                    <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+                    <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="w-full max-w-md bg-slate-900/95 border-2 border-rose-500/50 rounded-3xl p-6 sm:p-8 shadow-[0_0_60px_rgba(244,63,94,0.3)] text-center relative overflow-hidden backdrop-blur-xl"
+                            className="w-full max-w-md bg-[#1E293B] border-2 border-[#FF4B4B] rounded-3xl p-6 sm:p-8 shadow-2xl text-center relative overflow-hidden"
                         >
-                            {/* Decorative background aura */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-20 bg-rose-500/15 blur-3xl pointer-events-none" />
-
                             {/* Close modal X button */}
                             <button
                                 onClick={() => setIsCancelConfirmOpen(false)}
-                                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/10 transition-colors cursor-pointer"
+                                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-700 transition-colors cursor-pointer"
                                 aria-label="Cerrar ventana"
                             >
                                 <X className="w-5 h-5" weight="bold" />
                             </button>
 
                             {/* Alert Icon */}
-                            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-950/70 border border-rose-500/50 flex items-center justify-center text-rose-400 shadow-inner">
+                            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#2B1313] border-2 border-[#FF4B4B] flex items-center justify-center text-[#FF4B4B] shadow-inner">
                                 <WarningCircle className="w-9 h-9" weight="fill" />
                             </div>
 
-                            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-rose-400 mb-1 block">
+                            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#FF4B4B] mb-1 block">
                                 Sesión en Curso
                             </span>
 
@@ -460,13 +452,13 @@ export function LessonSessionModal({
                             <div className="flex flex-col sm:flex-row items-center gap-3">
                                 <button
                                     onClick={() => setIsCancelConfirmOpen(false)}
-                                    className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider hover:brightness-110 shadow-lg shadow-cyan-500/25 transition-all cursor-pointer order-1 sm:order-2"
+                                    className="w-full py-3.5 px-5 rounded-2xl bg-[#58CC02] hover:bg-[#61E002] border-b-4 border-[#46A302] active:border-b-0 active:translate-y-1 text-white font-black text-xs uppercase tracking-wider transition-all cursor-pointer order-1 sm:order-2 shadow-md"
                                 >
                                     Continuar Lección
                                 </button>
                                 <button
                                     onClick={handleConfirmCancel}
-                                    className="w-full py-3.5 px-5 rounded-2xl bg-slate-800 hover:bg-rose-950/60 border border-white/10 hover:border-rose-500/50 text-slate-400 hover:text-rose-300 font-black text-xs uppercase tracking-wider transition-all cursor-pointer order-2 sm:order-1"
+                                    className="w-full py-3.5 px-5 rounded-2xl bg-[#2B1313] hover:bg-[#3D1A1A] border-2 border-[#FF4B4B] text-[#FF4B4B] hover:text-white font-black text-xs uppercase tracking-wider transition-all cursor-pointer order-2 sm:order-1"
                                 >
                                     Sí, Cancelar Lección
                                 </button>
@@ -480,25 +472,25 @@ export function LessonSessionModal({
                 ZONE 1: SAFE PINNED TOP APP BAR
                 Has generous padding (pt-6 pb-4) so it NEVER touches the browser top edge
             ========================================= */}
-            <header className="w-full shrink-0 border-b border-white/10 bg-[#080C18]/95 backdrop-blur-2xl z-30 pt-6 pb-4 px-4 md:px-8 shadow-md">
+            <header className="w-full shrink-0 border-b-2 border-[#1E293B] bg-[#0F172A] z-30 pt-6 pb-4 px-4 md:px-8 shadow-md">
                 <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 md:gap-6">
                     {/* Prominent Cancel Lesson Button (Always visible) */}
                     <button
                         onClick={handleRequestCancel}
-                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/40 hover:border-rose-400 text-rose-300 hover:text-rose-100 text-xs font-black uppercase tracking-wider transition-all shadow-md shrink-0 cursor-pointer group"
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#2B1313] hover:bg-[#3D1A1A] border-2 border-[#FF4B4B] text-[#FF4B4B] hover:text-white text-xs font-black uppercase tracking-wider transition-all shadow-sm shrink-0 cursor-pointer group"
                         title="Cancelar la lección en curso y volver al mapa"
                         aria-label="Cancelar lección"
                     >
-                        <X className="w-4 h-4 text-rose-400 group-hover:scale-110 transition-transform" weight="bold" />
+                        <X className="w-4 h-4 text-[#FF4B4B] group-hover:scale-110 transition-transform" weight="bold" />
                         <span className="hidden sm:inline">Cancelar Lección</span>
                         <span className="sm:hidden">Cancelar</span>
                     </button>
 
-                    {/* Progress Bar with Arcade Liquid Shine */}
+                    {/* Progress Bar with Pure Solid Duolingo Style */}
                     <div className="flex-1 mx-1 md:mx-4">
-                        <div className="w-full h-4 bg-slate-900/90 rounded-full overflow-hidden border border-slate-700/60 p-0.5 relative shadow-inner">
+                        <div className="w-full h-4 bg-[#1E293B] rounded-full overflow-hidden border-2 border-[#334155] p-0.5 relative shadow-inner">
                             <motion.div
-                                className="h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 rounded-full shadow-[0_0_20px_rgba(6,182,212,0.8)]"
+                                className="h-full bg-[#58CC02] border-b-2 border-[#46A302] rounded-full"
                                 initial={{ width: 0 }}
                                 animate={{ width: `${progressPercent}%` }}
                                 transition={{ duration: 0.5 }}
@@ -506,10 +498,10 @@ export function LessonSessionModal({
                         </div>
                     </div>
 
-                    {/* Quick Pergamino Button */}
+                    {/* Quick Pergamino Button (Solid Duolingo Gold) */}
                     <button
                         onClick={() => setIsTheoryOpen(true)}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-400/50 text-xs font-black tracking-wider uppercase transition-colors shadow-[0_0_12px_rgba(245,158,11,0.25)] shrink-0 cursor-pointer"
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#2B230E] hover:bg-[#3D3012] text-[#FFC800] border-2 border-[#FFC800] border-b-4 border-b-[#E5A200] active:translate-y-0.5 text-xs font-black tracking-wider uppercase transition-all shadow-sm shrink-0 cursor-pointer"
                         title="Abrir Pergamino Teórico"
                     >
                         <Scroll className="w-4 h-4" weight="duotone" />
@@ -519,16 +511,16 @@ export function LessonSessionModal({
                     {/* Sound Toggle */}
                     <button
                         onClick={toggleMute}
-                        className="p-2.5 text-slate-400 hover:text-cyan-300 rounded-2xl hover:bg-white/10 transition-colors shrink-0 cursor-pointer"
+                        className="p-2.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors shrink-0 cursor-pointer"
                         title={isMuted ? "Activar audio" : "Silenciar audio"}
                     >
-                        {isMuted ? <SpeakerSlash className="w-5 h-5" /> : <SpeakerHigh className="w-5 h-5 text-cyan-400" />}
+                        {isMuted ? <SpeakerSlash className="w-5 h-5" /> : <SpeakerHigh className="w-5 h-5 text-[#1CB0F6]" />}
                     </button>
 
-                    {/* Hearts Counter (Fucsia Punch Neon) */}
-                    <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-950/60 border-2 border-rose-500/50 text-rose-300 text-sm font-black shadow-[0_0_18px_rgba(244,63,94,0.35)] shrink-0">
-                        <Heart className="w-5 h-5 fill-rose-500 text-rose-500 animate-pulse" weight="fill" />
-                        <span>{hearts}</span>
+                    {/* Hearts Counter (Solid Primary Red) */}
+                    <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#2B1313] border-2 border-[#FF4B4B] text-[#FF4B4B] text-sm font-black shadow-sm shrink-0">
+                        <Heart className="w-5 h-5 fill-[#FF4B4B] text-[#FF4B4B]" weight="fill" />
+                        <span className="text-white">{hearts}</span>
                     </div>
                 </div>
             </header>
@@ -556,9 +548,9 @@ export function LessonSessionModal({
                                     <motion.div
                                         initial={{ scale: 0.8, opacity: 0 }}
                                         animate={{ scale: 1, opacity: 1 }}
-                                        className="mt-2.5 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 border border-amber-400/60 text-amber-100 text-xs font-black tracking-widest uppercase shadow-lg shadow-orange-500/30"
+                                        className="mt-2.5 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#2B230E] border-2 border-[#FFC800] text-[#FFC800] text-xs font-black tracking-wider uppercase shadow-sm"
                                     >
-                                        <Fire className="w-4 h-4 text-amber-300 animate-bounce" weight="fill" />
+                                        <Fire className="w-4 h-4 text-[#FFC800] animate-bounce" weight="fill" />
                                         <span>Racha x{streak} 🔥</span>
                                     </motion.div>
                                 )}
@@ -570,7 +562,7 @@ export function LessonSessionModal({
                                 <div className="space-y-2">
                                     {/* Testing Question Switcher (ESTRICTAMENTE SOLO PARA SUPER_ADMIN) */}
                                     {isSuperAdmin && (
-                                        <div className="flex items-center justify-between gap-2 flex-wrap bg-slate-900/90 p-2 rounded-2xl border border-amber-500/30 shadow-md">
+                                        <div className="flex items-center justify-between gap-2 flex-wrap bg-[#1E293B] p-2 rounded-2xl border-2 border-[#FFC800]/40 shadow-sm">
                                             <div className="flex items-center gap-1.5 flex-wrap">
                                                 <button
                                                     type="button"
@@ -595,8 +587,8 @@ export function LessonSessionModal({
                                                         }}
                                                         className={`w-7 h-7 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center ${
                                                             qIdx === currentIndex
-                                                                ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 ring-2 ring-cyan-300 shadow-md shadow-cyan-500/40 scale-105"
-                                                                : "bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white"
+                                                                ? "bg-[#58CC02] border-b-2 border-[#46A302] text-white shadow-sm scale-105"
+                                                                : "bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white"
                                                         }`}
                                                         title={`Ir a Pregunta ${qIdx + 1}`}
                                                     >
@@ -619,7 +611,7 @@ export function LessonSessionModal({
                                             </div>
 
                                             <div className="flex items-center gap-1.5 ml-auto">
-                                                <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-950/70 border border-amber-500/30 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                                                <span className="text-[10px] font-black uppercase tracking-wider text-[#FFC800] bg-[#2B230E] border border-[#FFC800]/40 px-2 py-0.5 rounded-lg flex items-center gap-1">
                                                     <span>🛡️</span>
                                                     <span className="hidden sm:inline">Super Admin</span>
                                                 </span>
@@ -628,17 +620,17 @@ export function LessonSessionModal({
                                     )}
 
                                     <div className="flex items-center justify-between gap-3">
-                                        <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-400/40 shadow-[0_0_12px_rgba(6,182,212,0.25)]">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                                        <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-[#1CB0F6] px-3 py-1 rounded-full bg-[#0E2A47] border-2 border-[#1CB0F6]/50 shadow-sm">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-[#1CB0F6] animate-pulse" />
                                             Pregunta {currentIndex + 1} de {totalQuestions} • {level.tag}
                                         </span>
                                         <button
                                             type="button"
                                             onClick={handleRequestCancel}
-                                            className="text-[11px] font-bold text-slate-400 hover:text-rose-400 uppercase tracking-wider transition-colors flex items-center gap-1 cursor-pointer sm:hidden"
+                                            className="text-[11px] font-bold text-slate-400 hover:text-[#FF4B4B] uppercase tracking-wider transition-colors flex items-center gap-1 cursor-pointer sm:hidden"
                                             title="Cancelar lección en curso"
                                         >
-                                            <X className="w-3.5 h-3.5 text-rose-400" weight="bold" />
+                                            <X className="w-3.5 h-3.5 text-[#FF4B4B]" weight="bold" />
                                             <span>Cancelar</span>
                                         </button>
                                     </div>
@@ -664,7 +656,7 @@ export function LessonSessionModal({
                                     </motion.div>
                                 )}
 
-                                {/* MULTIPLE CHOICE / IMAGE CHOICE WITH 3D TACTILE ARCADE BUTTONS */}
+                                {/* MULTIPLE CHOICE / IMAGE CHOICE WITH SOLID 3D DUOLINGO BUTTONS */}
                                 {(currentQuestion.type === "multiple_choice" || currentQuestion.type === "image_choice") && (
                                     <div className="grid grid-cols-1 gap-2.5">
                                         {currentQuestion.options?.map((opt, idx) => {
@@ -674,23 +666,17 @@ export function LessonSessionModal({
                                                 currentQuestion.correctAnswerId === opt.id
                                             );
                                             const letters = ["A", "B", "C", "D"];
-                                            const letterColors = [
-                                                "bg-cyan-500/20 border-cyan-400/50 text-cyan-300",
-                                                "bg-fuchsia-500/20 border-fuchsia-400/50 text-fuchsia-300",
-                                                "bg-amber-500/20 border-amber-400/50 text-amber-300",
-                                                "bg-emerald-500/20 border-emerald-400/50 text-emerald-300",
-                                            ];
 
                                             let buttonClass = "";
                                             if (isSelected) {
-                                                buttonClass = "bg-gradient-to-r from-cyan-950/80 via-sky-950/50 to-slate-900 border-cyan-400 border-b-cyan-600 text-white shadow-[0_0_30px_rgba(6,182,212,0.45)] ring-2 ring-cyan-400/50 translate-y-0.5";
+                                                buttonClass = "bg-[#0E2A47] border-2 border-[#1CB0F6] border-b-4 border-b-[#1899D6] text-white shadow-sm translate-y-0.5";
                                                 if (isCorrectAnswer) {
-                                                    buttonClass += " ring-4 ring-emerald-400 shadow-[0_0_35px_rgba(16,185,129,0.55)]";
+                                                    buttonClass += " ring-2 ring-[#58CC02]";
                                                 }
                                             } else if (isCorrectAnswer) {
-                                                buttonClass = "bg-emerald-950/40 hover:bg-emerald-950/60 border-emerald-400/70 border-b-emerald-600 text-emerald-50 shadow-[0_0_28px_rgba(16,185,129,0.45)] ring-2 ring-emerald-500/50 hover:border-emerald-300 transition-all";
+                                                buttonClass = "bg-[#143818] hover:bg-[#1C4E22] border-2 border-[#58CC02] border-b-4 border-b-[#46A302] text-white shadow-sm transition-all";
                                             } else {
-                                                buttonClass = "bg-slate-900/90 hover:bg-slate-850 border-slate-700/70 border-b-slate-950 text-slate-100 hover:border-cyan-400/40 active:translate-y-1 active:border-b-2 shadow-md";
+                                                buttonClass = "bg-[#1E293B] hover:bg-[#283548] border-2 border-[#334155] border-b-4 border-b-[#0F172A] text-slate-100 hover:border-[#475569] active:translate-y-1 active:border-b-2 shadow-sm";
                                             }
 
                                             return (
@@ -706,12 +692,12 @@ export function LessonSessionModal({
                                                 >
                                                     <div className="flex items-center gap-3">
                                                         <span
-                                                            className={`w-6 h-6 rounded-lg border text-xs font-black flex items-center justify-center shrink-0 ${
+                                                            className={`w-7 h-7 rounded-lg border-2 text-xs font-black flex items-center justify-center shrink-0 ${
                                                                 isSelected
-                                                                    ? "bg-cyan-400 border-cyan-300 text-slate-950 shadow-[0_0_12px_rgba(6,182,212,0.6)]"
+                                                                    ? "bg-[#1CB0F6] border-[#1899D6] text-slate-950 font-black shadow-sm"
                                                                     : isCorrectAnswer
-                                                                    ? "bg-emerald-900/80 border-emerald-400 text-emerald-200"
-                                                                    : letterColors[idx % 4]
+                                                                    ? "bg-[#58CC02] border-[#46A302] text-slate-950 font-black"
+                                                                    : "bg-slate-800 border-slate-600 text-slate-300"
                                                             }`}
                                                         >
                                                             {letters[idx]}
@@ -721,21 +707,21 @@ export function LessonSessionModal({
 
                                                     <div className="flex items-center gap-2 ml-3 shrink-0">
                                                         {isCorrectAnswer && (
-                                                            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/90 border border-emerald-500/50 px-2 py-0.5 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.4)] flex items-center gap-1">
-                                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                                            <span className="text-[10px] font-black uppercase tracking-wider text-[#58CC02] bg-[#143818] border border-[#58CC02]/50 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-[#58CC02] animate-pulse" />
                                                                 Correcta
                                                             </span>
                                                         )}
                                                         <div
-                                                            className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                                                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
                                                                 isSelected
-                                                                    ? "border-cyan-400 bg-cyan-950 text-cyan-300 shadow-[0_0_8px_#00F0FF]"
+                                                                    ? "border-[#1CB0F6] bg-[#0E2A47]"
                                                                     : isCorrectAnswer
-                                                                    ? "border-emerald-500/70 bg-emerald-950/60"
-                                                                    : "border-white/20"
+                                                                    ? "border-[#58CC02] bg-[#143818]"
+                                                                    : "border-slate-600"
                                                             }`}
                                                         >
-                                                            {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00F0FF]" />}
+                                                            {isSelected && <div className="w-2 h-2 rounded-full bg-[#1CB0F6]" />}
                                                         </div>
                                                     </div>
                                                 </button>
@@ -744,7 +730,7 @@ export function LessonSessionModal({
                                     </div>
                                 )}
 
-                                {/* TRUE / FALSE TACTILE TILES (DUOLINGO NEON) */}
+                                {/* TRUE / FALSE SOLID 3D DUOLINGO TILES */}
                                 {currentQuestion.type === "true_false" && (
                                     <div className="grid grid-cols-2 gap-3.5">
                                         {[
@@ -752,13 +738,13 @@ export function LessonSessionModal({
                                                 val: true,
                                                 label: "Verdadero",
                                                 icon: CheckCircle,
-                                                theme: "emerald",
+                                                theme: "green",
                                             },
                                             {
                                                 val: false,
                                                 label: "Falso",
                                                 icon: XCircle,
-                                                theme: "rose",
+                                                theme: "red",
                                             },
                                         ].map(({ val, label, icon: Icon, theme }) => {
                                             const isSelected = selectedBool === val;
@@ -768,19 +754,15 @@ export function LessonSessionModal({
 
                                             let tileClass = "";
                                             if (isSelected) {
-                                                if (theme === "emerald") {
-                                                    tileClass = "bg-emerald-900/70 border-emerald-400 border-b-emerald-600 text-white shadow-[0_0_30px_rgba(16,185,129,0.45)] ring-2 ring-emerald-300 translate-y-0.5";
+                                                if (theme === "green") {
+                                                    tileClass = "bg-[#143818] border-2 border-[#58CC02] border-b-4 border-b-[#46A302] text-white translate-y-0.5 shadow-sm";
                                                 } else {
-                                                    tileClass = "bg-rose-900/70 border-rose-400 border-b-rose-600 text-white shadow-[0_0_30px_rgba(244,63,94,0.45)] ring-2 ring-rose-300 translate-y-0.5";
+                                                    tileClass = "bg-[#2B1313] border-2 border-[#FF4B4B] border-b-4 border-b-[#EA2B2B] text-white translate-y-0.5 shadow-sm";
                                                 }
                                             } else if (isCorrectBool) {
-                                                tileClass = "bg-emerald-950/40 hover:bg-emerald-950/60 border-emerald-400/80 border-b-emerald-600 text-emerald-100 shadow-[0_0_25px_rgba(16,185,129,0.4)] ring-2 ring-emerald-400/50";
+                                                tileClass = "bg-[#143818] hover:bg-[#1C4E22] border-2 border-[#58CC02] border-b-4 border-b-[#46A302] text-white shadow-sm";
                                             } else {
-                                                if (theme === "emerald") {
-                                                    tileClass = "bg-slate-900/90 hover:bg-emerald-950/30 border-slate-700/80 hover:border-emerald-500/50 border-b-slate-950 text-slate-200 active:translate-y-1 active:border-b-2 shadow-md";
-                                                } else {
-                                                    tileClass = "bg-slate-900/90 hover:bg-rose-950/30 border-slate-700/80 hover:border-rose-500/50 border-b-slate-950 text-slate-200 active:translate-y-1 active:border-b-2 shadow-md";
-                                                }
+                                                tileClass = "bg-[#1E293B] hover:bg-[#283548] border-2 border-[#334155] border-b-4 border-b-[#0F172A] text-slate-100 active:translate-y-1 active:border-b-2 shadow-sm";
                                             }
 
                                             return (
@@ -794,12 +776,12 @@ export function LessonSessionModal({
                                                     }}
                                                     className={`p-4 sm:p-5 rounded-2xl border-2 border-b-4 text-center font-serif font-black text-base md:text-lg transition-all duration-150 flex flex-col items-center gap-2 select-none cursor-pointer ${tileClass}`}
                                                 >
-                                                    <Icon className={`w-8 h-8 ${isSelected ? "text-kuma-gold" : isCorrectBool ? "text-emerald-400" : "text-zinc-500"}`} weight="fill" />
+                                                    <Icon className={`w-8 h-8 ${isSelected ? (theme === "green" ? "text-[#58CC02]" : "text-[#FF4B4B]") : isCorrectBool ? "text-[#58CC02]" : "text-slate-500"}`} weight="fill" />
                                                     <div className="flex items-center gap-1.5">
                                                         <span>{label}</span>
                                                         {isCorrectBool && (
-                                                            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-950/90 border border-emerald-500/50 px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.35)] flex items-center gap-1">
-                                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                                            <span className="text-[10px] font-black uppercase tracking-wider text-[#58CC02] bg-[#143818] border border-[#58CC02]/50 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-[#58CC02] animate-pulse" />
                                                                 Correcta
                                                             </span>
                                                         )}
@@ -810,10 +792,10 @@ export function LessonSessionModal({
                                     </div>
                                 )}
 
-                                {/* MATCHING WITH CONNECTING CARDS */}
+                                {/* MATCHING WITH SOLID CONNECTING CARDS */}
                                 {currentQuestion.type === "matching" && currentQuestion.pairs && (
                                     <div className="space-y-2.5">
-                                        <p className="text-xs text-zinc-400 italic">
+                                        <p className="text-xs text-slate-400 italic">
                                             Toca un concepto en japonés a la izquierda y su traducción a la derecha:
                                         </p>
                                         <div className="grid grid-cols-2 gap-3">
@@ -828,10 +810,10 @@ export function LessonSessionModal({
                                                             onClick={() => handleSelectLeft(p.id)}
                                                             className={`w-full p-3 sm:p-3.5 rounded-xl border-2 border-b-4 text-xs md:text-sm font-bold text-left transition-all ${
                                                                 isMatched
-                                                                    ? "bg-emerald-950/60 border-emerald-400/60 border-b-emerald-700 text-emerald-300 opacity-70 line-through shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+                                                                    ? "bg-[#143818] border-2 border-[#58CC02] border-b-4 border-b-[#46A302] text-[#85E338] opacity-75 line-through shadow-sm"
                                                                     : isSelected
-                                                                    ? "bg-cyan-950/80 border-cyan-400 border-b-cyan-600 text-white ring-2 ring-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.4)] translate-y-0.5"
-                                                                    : "bg-slate-900 border-slate-700/80 border-b-slate-950 text-slate-100 hover:border-cyan-400/40 active:translate-y-1 shadow-sm"
+                                                                    ? "bg-[#0E2A47] border-2 border-[#1CB0F6] border-b-4 border-b-[#1899D6] text-white translate-y-0.5 shadow-sm"
+                                                                    : "bg-[#1E293B] hover:bg-[#283548] border-2 border-[#334155] border-b-4 border-b-[#0F172A] text-slate-100 active:translate-y-1 shadow-sm"
                                                             }`}
                                                         >
                                                             {p.left}
@@ -851,10 +833,10 @@ export function LessonSessionModal({
                                                             onClick={() => handleSelectRight(p.id)}
                                                             className={`w-full p-3 sm:p-3.5 rounded-xl border-2 border-b-4 text-xs md:text-sm font-medium text-left transition-all ${
                                                                 isMatched
-                                                                    ? "bg-emerald-950/60 border-emerald-400/60 border-b-emerald-700 text-emerald-300 opacity-70 line-through shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+                                                                    ? "bg-[#143818] border-2 border-[#58CC02] border-b-4 border-b-[#46A302] text-[#85E338] opacity-75 line-through shadow-sm"
                                                                     : isSelected
-                                                                    ? "bg-cyan-950/80 border-cyan-400 border-b-cyan-600 text-white ring-2 ring-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.4)] translate-y-0.5"
-                                                                    : "bg-slate-900 border-slate-700/80 border-b-slate-950 text-slate-100 hover:border-cyan-400/40 active:translate-y-1 shadow-sm"
+                                                                    ? "bg-[#0E2A47] border-2 border-[#1CB0F6] border-b-4 border-b-[#1899D6] text-white translate-y-0.5 shadow-sm"
+                                                                    : "bg-[#1E293B] hover:bg-[#283548] border-2 border-[#334155] border-b-4 border-b-[#0F172A] text-slate-100 active:translate-y-1 shadow-sm"
                                                             }`}
                                                         >
                                                             {p.right}
@@ -888,7 +870,7 @@ export function LessonSessionModal({
                             </div>
                         </div>
                     ) : isCompleted ? (
-                        /* LUXURY ARCADE VICTORY SCREEN */
+                        /* LUXURY SOLID DUOLINGO VICTORY SCREEN */
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -897,7 +879,7 @@ export function LessonSessionModal({
                             <KumaMascot mood="completed" size="lg" showBubble={true} customMessage={customSpeech} path={activePath} beltRank={activeBeltRank} />
 
                             <div className="mt-4">
-                                <span className="inline-block text-cyan-300 font-black uppercase tracking-[0.25em] text-xs bg-cyan-950/70 px-3.5 py-1 rounded-full border border-cyan-400/40 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                                <span className="inline-block text-[#1CB0F6] font-black uppercase tracking-[0.25em] text-xs bg-[#0E2A47] px-3.5 py-1 rounded-full border-2 border-[#1CB0F6] shadow-sm">
                                     ⚡ ¡Nivel Marcial Superado!
                                 </span>
                                 <h2 className="text-3xl md:text-5xl font-serif font-black text-white mt-2">
@@ -906,23 +888,23 @@ export function LessonSessionModal({
                             </div>
 
                             <div className="grid grid-cols-3 gap-3.5 w-full mt-6">
-                                <div className="p-4 rounded-2xl bg-amber-950/40 border-2 border-amber-400/50 flex flex-col items-center shadow-[0_0_20px_rgba(251,191,36,0.25)]">
-                                    <Trophy className="w-6 h-6 text-amber-300 mb-1" weight="duotone" />
-                                    <span className="text-[10px] text-amber-300/80 uppercase font-bold tracking-wider">XP Ganados</span>
+                                <div className="p-4 rounded-2xl bg-[#2B230E] border-2 border-[#FFC800] flex flex-col items-center shadow-sm">
+                                    <Trophy className="w-6 h-6 text-[#FFC800] mb-1" weight="duotone" />
+                                    <span className="text-[10px] text-[#FFC800] uppercase font-bold tracking-wider">XP Ganados</span>
                                     <span className="text-2xl font-serif font-black text-white">+{level.xpReward}</span>
                                 </div>
 
-                                <div className="p-4 rounded-2xl bg-cyan-950/40 border-2 border-cyan-400/50 flex flex-col items-center shadow-[0_0_20px_rgba(6,182,212,0.25)]">
-                                    <Sparkle className="w-6 h-6 text-cyan-300 mb-1" weight="fill" />
-                                    <span className="text-[10px] text-cyan-300/80 uppercase font-bold tracking-wider">Precisión</span>
+                                <div className="p-4 rounded-2xl bg-[#0E2A47] border-2 border-[#1CB0F6] flex flex-col items-center shadow-sm">
+                                    <Sparkle className="w-6 h-6 text-[#1CB0F6] mb-1" weight="fill" />
+                                    <span className="text-[10px] text-[#1CB0F6] uppercase font-bold tracking-wider">Precisión</span>
                                     <span className="text-2xl font-serif font-black text-white">
                                         {Math.round((correctCount / totalQuestions) * 100)}%
                                     </span>
                                 </div>
 
-                                <div className="p-4 rounded-2xl bg-rose-950/40 border-2 border-rose-500/50 flex flex-col items-center shadow-[0_0_20px_rgba(244,63,94,0.25)]">
-                                    <Heart className="w-6 h-6 text-rose-400 mb-1" weight="fill" />
-                                    <span className="text-[10px] text-rose-300/80 uppercase font-bold tracking-wider">Vidas</span>
+                                <div className="p-4 rounded-2xl bg-[#2B1313] border-2 border-[#FF4B4B] flex flex-col items-center shadow-sm">
+                                    <Heart className="w-6 h-6 text-[#FF4B4B] mb-1" weight="fill" />
+                                    <span className="text-[10px] text-[#FF4B4B] uppercase font-bold tracking-wider">Vidas</span>
                                     <span className="text-2xl font-serif font-black text-white">{hearts}/5</span>
                                 </div>
                             </div>
@@ -930,7 +912,7 @@ export function LessonSessionModal({
                             <div className="w-full space-y-3 mt-8">
                                 <button
                                     onClick={onClose}
-                                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black text-sm uppercase tracking-wider hover:brightness-110 shadow-2xl shadow-cyan-500/35 border-b-4 border-emerald-600 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                    className="w-full py-4 rounded-2xl bg-[#58CC02] hover:bg-[#61E002] text-white font-black text-sm uppercase tracking-wider border-b-4 border-[#46A302] active:border-b-0 active:translate-y-1 shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                                 >
                                     <span>Regresar al Camino Kuma</span>
                                     <ArrowRight className="w-5 h-5" weight="bold" />
@@ -938,9 +920,9 @@ export function LessonSessionModal({
 
                                 <button
                                     onClick={() => setIsTheoryOpen(true)}
-                                    className="w-full py-3 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                    className="w-full py-3 rounded-2xl bg-[#1E293B] hover:bg-[#283548] border-2 border-[#334155] text-slate-300 hover:text-white text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                                 >
-                                    <Scroll className="w-4 h-4 text-amber-400" weight="duotone" />
+                                    <Scroll className="w-4 h-4 text-[#FFC800]" weight="duotone" />
                                     <span>Consultar Pergamino Teórico</span>
                                 </button>
                             </div>
@@ -962,7 +944,7 @@ export function LessonSessionModal({
                             />
 
                             <div className="mt-4">
-                                <span className="inline-block text-rose-400 font-bold uppercase tracking-[0.25em] text-xs bg-rose-950/60 px-3 py-0.5 rounded-full border border-rose-500/40 shadow-[0_0_12px_rgba(244,63,94,0.3)]">
+                                <span className="inline-block text-[#FF4B4B] font-bold uppercase tracking-[0.25em] text-xs bg-[#2B1313] px-3 py-0.5 rounded-full border-2 border-[#FF4B4B] shadow-sm">
                                     Lección No Superada
                                 </span>
                                 <h2 className="text-3xl md:text-5xl font-serif font-black text-white mt-1">
@@ -974,31 +956,31 @@ export function LessonSessionModal({
                             </div>
 
                             <div className="grid grid-cols-3 gap-3.5 w-full mt-6">
-                                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-700 flex flex-col items-center shadow-lg">
-                                    <Trophy className="w-6 h-6 text-slate-500 mb-1" weight="duotone" />
+                                <div className="p-4 rounded-2xl bg-[#1E293B] border-2 border-[#334155] flex flex-col items-center shadow-sm">
+                                    <Trophy className="w-6 h-6 text-slate-400 mb-1" weight="duotone" />
                                     <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Aciertos</span>
                                     <span className="text-2xl font-serif font-black text-white">{correctCount}/{totalQuestions}</span>
                                 </div>
 
-                                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-700 flex flex-col items-center shadow-lg">
-                                    <Sparkle className="w-6 h-6 text-amber-400 mb-1" weight="fill" />
+                                <div className="p-4 rounded-2xl bg-[#1E293B] border-2 border-[#334155] flex flex-col items-center shadow-sm">
+                                    <Sparkle className="w-6 h-6 text-[#FFC800] mb-1" weight="fill" />
                                     <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Precisión</span>
                                     <span className="text-2xl font-serif font-black text-white">
                                         {Math.round((correctCount / totalQuestions) * 100)}%
                                     </span>
                                 </div>
 
-                                <div className="p-4 rounded-2xl bg-rose-950/40 border border-rose-500/50 flex flex-col items-center shadow-[0_0_15px_rgba(244,63,94,0.2)]">
-                                    <Heart className="w-6 h-6 text-rose-500 mb-1" weight="fill" />
-                                    <span className="text-[10px] text-rose-300 uppercase font-bold tracking-wider">Vidas</span>
-                                    <span className="text-2xl font-serif font-black text-rose-400">{hearts}/5</span>
+                                <div className="p-4 rounded-2xl bg-[#2B1313] border-2 border-[#FF4B4B] flex flex-col items-center shadow-sm">
+                                    <Heart className="w-6 h-6 text-[#FF4B4B] mb-1" weight="fill" />
+                                    <span className="text-[10px] text-[#FF4B4B] uppercase font-bold tracking-wider">Vidas</span>
+                                    <span className="text-2xl font-serif font-black text-[#FF4B4B]">{hearts}/5</span>
                                 </div>
                             </div>
 
                             <div className="w-full space-y-3 mt-8">
                                 <button
                                     onClick={onClose}
-                                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black text-sm uppercase tracking-wider hover:brightness-110 shadow-2xl shadow-cyan-500/35 border-b-4 border-emerald-600 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                    className="w-full py-4 rounded-2xl bg-[#1CB0F6] hover:bg-[#24BDFF] text-white font-black text-sm uppercase tracking-wider border-b-4 border-[#1899D6] active:border-b-0 active:translate-y-1 shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                                 >
                                     <span>Regresar al Camino Kuma</span>
                                     <ArrowRight className="w-5 h-5" weight="bold" />
@@ -1006,9 +988,9 @@ export function LessonSessionModal({
 
                                 <button
                                     onClick={handleRetry}
-                                    className="w-full py-3.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                    className="w-full py-3.5 rounded-2xl bg-[#58CC02] hover:bg-[#61E002] border-b-4 border-[#46A302] text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
                                 >
-                                    <ArrowCounterClockwise className="w-4 h-4 text-cyan-400" weight="bold" />
+                                    <ArrowCounterClockwise className="w-4 h-4 text-white" weight="bold" />
                                     <span>Reintentar Nivel Ahora</span>
                                 </button>
                             </div>
@@ -1018,11 +1000,11 @@ export function LessonSessionModal({
             </main>
 
             {/* =========================================
-                ZONE 3: SAFE PINNED BOTTOM VALIDATION DOCK
+                ZONE 3: SAFE PINNED BOTTOM VALIDATION DOCK (DUOLINGO STYLE)
                 Guaranteed to stay pinned at bottom without covering any content
             ========================================= */}
             {!isCompleted && !isFailed && (
-                <footer className="w-full shrink-0 border-t border-white/10 bg-[#080C18]/95 backdrop-blur-2xl py-4 md:py-5 px-4 md:px-8 z-30 shadow-[0_-10px_35px_rgba(0,0,0,0.85)]">
+                <footer className="w-full shrink-0 border-t-2 border-[#1E293B] bg-[#0F172A] py-4 md:py-5 px-4 md:px-8 z-30 shadow-lg">
                     <div className="max-w-5xl mx-auto">
                         {answerStatus === "idle" ? (
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
@@ -1030,10 +1012,10 @@ export function LessonSessionModal({
                                 <button
                                     type="button"
                                     onClick={handleRequestCancel}
-                                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-slate-700 hover:border-rose-500/50 bg-slate-900/90 hover:bg-rose-950/40 text-slate-400 hover:text-rose-300 text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-sm order-2 sm:order-1"
+                                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border-2 border-[#FF4B4B]/60 bg-[#2B1313] hover:bg-[#3D1A1A] text-[#FF4B4B] hover:text-white text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-sm order-2 sm:order-1"
                                     title="Cancelar la lección en curso y volver al mapa"
                                 >
-                                    <X className="w-4 h-4 text-rose-400" weight="bold" />
+                                    <X className="w-4 h-4 text-[#FF4B4B]" weight="bold" />
                                     <span>Cancelar Lección</span>
                                 </button>
 
@@ -1048,7 +1030,7 @@ export function LessonSessionModal({
                                                     didacticSound.playClick();
                                                     setCurrentIndex((prev) => Math.max(0, prev - 1));
                                                 }}
-                                                className="px-3.5 py-3.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none text-slate-300 hover:text-white border border-slate-700 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 shadow-sm"
+                                                className="px-3.5 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:pointer-events-none text-slate-300 hover:text-white border border-slate-600 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 shadow-sm"
                                                 title="Ir a pregunta anterior"
                                             >
                                                 <span>◀ Ant</span>
@@ -1061,7 +1043,7 @@ export function LessonSessionModal({
                                                     didacticSound.playClick();
                                                     setCurrentIndex((prev) => Math.min(totalQuestions - 1, prev + 1));
                                                 }}
-                                                className="px-3.5 py-3.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 disabled:opacity-30 disabled:pointer-events-none text-amber-300 hover:text-amber-200 border border-amber-500/30 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 shadow-sm"
+                                                className="px-3.5 py-3.5 rounded-2xl bg-[#2B230E] hover:bg-[#3D3012] disabled:opacity-30 disabled:pointer-events-none text-[#FFC800] border-2 border-[#FFC800]/50 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 shadow-sm"
                                                 title="Saltar a la siguiente pregunta sin responder (modo super admin)"
                                             >
                                                 <span>Saltar</span>
@@ -1075,8 +1057,8 @@ export function LessonSessionModal({
                                         onClick={() => handleValidation(false)}
                                         className={`w-full sm:w-auto px-9 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all select-none ${
                                             canCheck
-                                                ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 hover:brightness-110 shadow-xl shadow-emerald-400/30 border-b-4 border-emerald-600 active:border-b-0 active:translate-y-1 cursor-pointer"
-                                                : "bg-slate-900 text-slate-600 cursor-not-allowed border border-white/5"
+                                                ? "bg-[#58CC02] hover:bg-[#61E002] text-white border-b-4 border-[#46A302] active:border-b-0 active:translate-y-1 shadow-md cursor-pointer"
+                                                : "bg-[#334155] text-[#94A3B8] cursor-not-allowed border-b-4 border-[#1E293B]"
                                         }`}
                                     >
                                         Comprobar Técnica
@@ -1087,20 +1069,20 @@ export function LessonSessionModal({
                             <motion.div
                                 initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="p-4 md:p-5 rounded-2xl md:rounded-3xl bg-[#06291C]/98 border-2 border-emerald-400 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 backdrop-blur-2xl shadow-[0_0_50px_rgba(0,230,118,0.35)] max-h-[65vh] overflow-y-auto"
+                                className="p-4 md:p-5 rounded-2xl md:rounded-3xl bg-[#143818] border-2 border-[#58CC02] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-lg max-h-[65vh] overflow-y-auto"
                             >
                                 <div className="flex items-start gap-3.5 w-full">
-                                    <CheckCircle className="w-8 h-8 text-emerald-400 shrink-0 mt-0.5" weight="fill" />
+                                    <CheckCircle className="w-8 h-8 text-[#58CC02] shrink-0 mt-0.5" weight="fill" />
                                     <div className="w-full">
                                         <div className="flex items-center gap-2 mb-0.5">
-                                            <span className="text-[11px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-900/80 px-2.5 py-1 rounded-lg border border-emerald-400/50 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                                            <span className="text-[11px] font-black uppercase tracking-wider text-white bg-[#58CC02] px-2.5 py-1 rounded-lg shadow-sm">
                                                 🥋 ¡Poderoso Tsuki Certero de Kuma Sensei!
                                             </span>
                                         </div>
-                                        <h3 className="font-serif font-black text-emerald-300 text-base md:text-lg">
+                                        <h3 className="font-serif font-black text-[#58CC02] text-base md:text-lg">
                                             ¡Excelente! Técnica Impecable
                                         </h3>
-                                        <p className="text-xs md:text-sm text-emerald-100/90 mt-0.5 leading-relaxed">
+                                        <p className="text-xs md:text-sm text-emerald-100 mt-0.5 leading-relaxed">
                                             {currentQuestion.explanation}
                                         </p>
                                         <QuestionBibliography
@@ -1113,14 +1095,14 @@ export function LessonSessionModal({
                                     <button
                                         type="button"
                                         onClick={handleRequestCancel}
-                                        className="px-3.5 py-3 rounded-2xl text-xs font-bold text-emerald-200/70 hover:text-rose-300 transition-colors cursor-pointer"
+                                        className="px-3.5 py-3 rounded-2xl text-xs font-bold text-emerald-200/80 hover:text-[#FF4B4B] transition-colors cursor-pointer"
                                         title="Cancelar lección"
                                     >
                                         Cancelar
                                     </button>
                                     <button
                                         onClick={handleNextQuestion}
-                                        className="w-full sm:w-auto px-9 py-3.5 rounded-2xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black text-xs uppercase tracking-widest shadow-xl shadow-emerald-400/40 border-b-4 border-emerald-600 active:border-b-0 active:translate-y-1 transition-all shrink-0 cursor-pointer"
+                                        className="w-full sm:w-auto px-9 py-3.5 rounded-2xl bg-[#58CC02] hover:bg-[#61E002] text-white font-black text-xs uppercase tracking-widest border-b-4 border-[#46A302] active:border-b-0 active:translate-y-1 transition-all shrink-0 cursor-pointer shadow-md"
                                     >
                                         Continuar 🥋
                                     </button>
@@ -1130,20 +1112,20 @@ export function LessonSessionModal({
                             <motion.div
                                 initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="p-4 md:p-5 rounded-2xl md:rounded-3xl bg-[#2D0D17]/98 border-2 border-rose-500 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 backdrop-blur-2xl shadow-[0_0_50px_rgba(244,63,94,0.35)] max-h-[65vh] overflow-y-auto"
+                                className="p-4 md:p-5 rounded-2xl md:rounded-3xl bg-[#2B1313] border-2 border-[#FF4B4B] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-lg max-h-[65vh] overflow-y-auto"
                             >
                                 <div className="flex items-start gap-3.5 w-full">
-                                    <XCircle className="w-8 h-8 text-rose-400 shrink-0 mt-0.5" weight="fill" />
+                                    <XCircle className="w-8 h-8 text-[#FF4B4B] shrink-0 mt-0.5" weight="fill" />
                                     <div className="w-full">
                                         <div className="flex items-center gap-2 mb-0.5">
-                                            <span className="text-[11px] font-black uppercase tracking-wider text-rose-300 bg-rose-900/80 px-2.5 py-1 rounded-lg border border-rose-500/50 shadow-[0_0_10px_rgba(244,63,94,0.3)]">
+                                            <span className="text-[11px] font-black uppercase tracking-wider text-white bg-[#FF4B4B] px-2.5 py-1 rounded-lg shadow-sm">
                                                 😢 Kuma Sensei te apoya: ¡Aprende del error!
                                             </span>
                                         </div>
-                                        <h3 className="font-serif font-black text-rose-300 text-base md:text-lg">
+                                        <h3 className="font-serif font-black text-[#FF4B4B] text-base md:text-lg">
                                             Respuesta Incorrecta
                                         </h3>
-                                        <p className="text-xs md:text-sm text-rose-100/90 mt-0.5 leading-relaxed">
+                                        <p className="text-xs md:text-sm text-rose-100 mt-0.5 leading-relaxed">
                                             {currentQuestion.explanation}
                                         </p>
                                         <QuestionBibliography
@@ -1156,14 +1138,14 @@ export function LessonSessionModal({
                                     <button
                                         type="button"
                                         onClick={handleRequestCancel}
-                                        className="px-3.5 py-3 rounded-2xl text-xs font-bold text-rose-300/70 hover:text-rose-200 transition-colors cursor-pointer"
+                                        className="px-3.5 py-3 rounded-2xl text-xs font-bold text-rose-200/80 hover:text-white transition-colors cursor-pointer"
                                         title="Cancelar lección"
                                     >
                                         Cancelar
                                     </button>
                                     <button
                                         onClick={handleNextQuestion}
-                                        className="w-full sm:w-auto px-9 py-3.5 rounded-2xl bg-rose-500 hover:bg-rose-400 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-rose-500/40 border-b-4 border-rose-700 active:border-b-0 active:translate-y-1 transition-all shrink-0 cursor-pointer"
+                                        className="w-full sm:w-auto px-9 py-3.5 rounded-2xl bg-[#FF4B4B] hover:bg-[#FF5C5C] text-white font-black text-xs uppercase tracking-widest border-b-4 border-[#EA2B2B] active:border-b-0 active:translate-y-1 transition-all shrink-0 cursor-pointer shadow-md"
                                     >
                                         Entendido
                                     </button>
