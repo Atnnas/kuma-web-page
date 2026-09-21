@@ -115,28 +115,28 @@ export function DojoLingoMap({
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
                             transition={{ type: "spring", stiffness: 450, damping: 28 }}
-                            className="relative w-full max-w-md p-6 md:p-8 rounded-3xl bg-zinc-950 border-2 border-kuma-gold/60 shadow-[0_25px_70px_rgba(0,0,0,0.95)] z-10 text-left overflow-hidden"
+                            className="relative w-full max-w-md p-6 md:p-8 rounded-3xl bg-slate-950 border-2 border-cyan-400/70 shadow-[0_25px_70px_rgba(0,0,0,0.95),0_0_40px_rgba(6,182,212,0.25)] z-10 text-left overflow-hidden"
                         >
-                            {/* Top Gold Foil Accent Line */}
-                            <div className="absolute top-0 left-1/4 right-1/4 h-[2px] bg-gradient-to-r from-transparent via-kuma-gold to-transparent" />
+                            {/* Top Cyan Neon Foil Accent Line */}
+                            <div className="absolute top-0 left-1/4 right-1/4 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
 
                             {/* Prominent Close Button */}
                             <button
                                 onClick={() => setSelectedLevel(null)}
-                                className="absolute top-5 right-5 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-red-950/60 border border-white/20 hover:border-red-500/50 text-zinc-300 hover:text-red-400 text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer group"
+                                className="absolute top-5 right-5 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-950/60 border border-slate-700 hover:border-rose-500/50 text-slate-300 hover:text-rose-400 text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer group"
                                 title="Cerrar ventana"
                             >
-                                <X className="w-4 h-4 text-zinc-400 group-hover:text-red-400 transition-colors" weight="bold" />
+                                <X className="w-4 h-4 text-slate-400 group-hover:text-rose-400 transition-colors" weight="bold" />
                                 <span>Cerrar</span>
                             </button>
 
                             {/* Header Tags */}
                             <div className="flex items-center gap-2 mb-3 pr-8">
-                                <span className="text-[11px] font-black uppercase tracking-widest text-kuma-gold px-2.5 py-0.5 rounded-full bg-kuma-gold/10 border border-kuma-gold/30">
+                                <span className="text-[11px] font-black uppercase tracking-widest text-cyan-300 px-2.5 py-0.5 rounded-full bg-cyan-950/70 border border-cyan-400/40 shadow-[0_0_10px_rgba(6,182,212,0.25)]">
                                     Nivel {selectedLevel.number} • {selectedLevel.tag}
                                 </span>
-                                <span className="text-xs font-black text-amber-400 flex items-center gap-1">
-                                    <Lightning className="w-3.5 h-3.5" weight="fill" />
+                                <span className="text-xs font-black text-amber-300 flex items-center gap-1">
+                                    <Lightning className="w-3.5 h-3.5 text-amber-400" weight="fill" />
                                     +{selectedLevel.xpReward} XP
                                 </span>
                             </div>
@@ -145,7 +145,7 @@ export function DojoLingoMap({
                             <h3 className="text-2xl md:text-3xl font-serif font-black text-white mb-2 leading-tight">
                                 {selectedLevel.title}
                             </h3>
-                            <p className="text-sm text-zinc-300 mb-8 leading-relaxed">
+                            <p className="text-sm text-slate-300 mb-8 leading-relaxed">
                                 {selectedLevel.subtitle}
                             </p>
 
@@ -157,7 +157,7 @@ export function DojoLingoMap({
                                         setSelectedLevel(null);
                                         onStartLevel(lvl);
                                     }}
-                                    className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-500 to-kuma-gold text-zinc-950 font-black text-sm uppercase tracking-wider hover:brightness-110 shadow-2xl shadow-kuma-gold/30 border-b-4 border-amber-700 active:border-b-0 active:translate-y-1 flex items-center justify-center gap-2.5 transition-all select-none cursor-pointer"
+                                    className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black text-sm uppercase tracking-wider hover:brightness-110 shadow-2xl shadow-cyan-500/35 border-b-4 border-emerald-600 active:border-b-0 active:translate-y-1 flex items-center justify-center gap-2.5 transition-all select-none cursor-pointer"
                                 >
                                     <Play className="w-5 h-5" weight="fill" />
                                     <span>
@@ -171,9 +171,9 @@ export function DojoLingoMap({
                                         setSelectedLevel(null);
                                         setTheoryLevel(lvl);
                                     }}
-                                    className="w-full py-3 px-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all select-none cursor-pointer"
+                                    className="w-full py-3 px-6 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all select-none cursor-pointer"
                                 >
-                                    <Scroll className="w-4 h-4 text-kuma-gold" weight="duotone" />
+                                    <Scroll className="w-4 h-4 text-amber-400" weight="duotone" />
                                     <span>Ver Pergamino Teórico Completo</span>
                                 </button>
                             </div>
@@ -184,31 +184,31 @@ export function DojoLingoMap({
 
             {/* --- MAIN ROAD (BELT CASCADE OR WKF ROAD) --- */}
             <div className="flex-1 w-full flex flex-col items-center">
-                {/* FLOATING LUXURY HUD STATS BAR */}
-                <div className="w-full max-w-xl bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 border border-white/10 rounded-2xl p-2.5 mb-8 shadow-[0_10px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex items-center justify-between">
-                    {/* HEARTS */}
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-red-950/40 border border-red-500/30">
-                        <Heart className="w-5 h-5 text-red-500 fill-red-500 animate-pulse" weight="fill" />
+                {/* FLOATING ARCADE NEON HUD STATS BAR */}
+                <div className="w-full max-w-xl bg-slate-950/90 border border-slate-700/80 rounded-2xl p-2.5 mb-8 shadow-[0_10px_30px_rgba(0,0,0,0.7),0_0_20px_rgba(6,182,212,0.15)] backdrop-blur-xl flex items-center justify-between">
+                    {/* HEARTS (FUCSIA PUNCH) */}
+                    <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-rose-950/60 border-2 border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]">
+                        <Heart className="w-5 h-5 text-rose-500 fill-rose-500 animate-pulse" weight="fill" />
                         <div className="flex flex-col text-left">
-                            <span className="text-[10px] uppercase font-bold text-red-400 leading-none">Vidas</span>
+                            <span className="text-[10px] uppercase font-black text-rose-400 leading-none">Vidas</span>
                             <span className="text-sm font-black text-white leading-tight font-serif">{progress.hearts}/5</span>
                         </div>
                     </div>
 
-                    {/* STREAK */}
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-950/40 border border-amber-500/30">
+                    {/* STREAK (FUEGO MANDARINA) */}
+                    <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-950/60 border-2 border-amber-400/50 shadow-[0_0_15px_rgba(251,191,36,0.3)]">
                         <Fire className="w-5 h-5 text-amber-400 fill-amber-400" weight="fill" />
                         <div className="flex flex-col text-left">
-                            <span className="text-[10px] uppercase font-bold text-amber-300 leading-none">Racha</span>
+                            <span className="text-[10px] uppercase font-black text-amber-300 leading-none">Racha</span>
                             <span className="text-sm font-black text-white leading-tight font-serif">{progress.streak} Días</span>
                         </div>
                     </div>
 
-                    {/* KUMA XP */}
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-yellow-950/40 border border-yellow-500/30">
-                        <Lightning className="w-5 h-5 text-kuma-gold fill-kuma-gold" weight="fill" />
+                    {/* KUMA XP (AMARILLO RAYO) */}
+                    <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-yellow-950/60 border-2 border-yellow-400/50 shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                        <Lightning className="w-5 h-5 text-yellow-400 fill-yellow-400" weight="fill" />
                         <div className="flex flex-col text-left">
-                            <span className="text-[10px] uppercase font-bold text-kuma-gold leading-none">Kuma XP</span>
+                            <span className="text-[10px] uppercase font-black text-yellow-300 leading-none">Kuma XP</span>
                             <span className="text-sm font-black text-white leading-tight font-serif">{progress.xp}</span>
                         </div>
                     </div>
@@ -222,7 +222,7 @@ export function DojoLingoMap({
                                 }
                             }}
                             title="Reiniciar progreso a cero"
-                            className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-white/5 hover:bg-red-950/60 border border-white/10 hover:border-red-500/50 text-zinc-400 hover:text-red-400 text-xs font-bold transition-all cursor-pointer group"
+                            className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-slate-900 hover:bg-rose-950/60 border border-slate-700 hover:border-rose-500/50 text-slate-400 hover:text-rose-400 text-xs font-bold transition-all cursor-pointer group"
                         >
                             <ArrowCounterClockwise className="w-4 h-4 transition-transform group-hover:-rotate-90 duration-300" />
                             <span className="hidden sm:inline text-[10px] uppercase tracking-wider">Reiniciar</span>
@@ -231,7 +231,7 @@ export function DojoLingoMap({
                 </div>
 
                 {/* PATH SELECTION PILL (TRADITIONAL vs WKF) */}
-                <div className="w-full max-w-lg bg-black/60 border border-white/10 p-1.5 rounded-2xl flex items-center justify-between mb-8 shadow-2xl backdrop-blur-xl gap-2">
+                <div className="w-full max-w-lg bg-slate-950/90 border border-slate-700/80 p-1.5 rounded-2xl flex items-center justify-between mb-8 shadow-2xl backdrop-blur-xl gap-2">
                     <button
                         onClick={() => {
                             onSelectPath("tradicional");
@@ -239,8 +239,8 @@ export function DojoLingoMap({
                         }}
                         className={`relative flex-1 py-3 px-3.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer ${
                             activePath === "tradicional"
-                                ? "bg-gradient-to-r from-amber-500 to-kuma-gold text-zinc-950 font-black shadow-lg shadow-kuma-gold/25 scale-[1.02]"
-                                : "text-zinc-400 hover:text-white hover:bg-white/5"
+                                ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black shadow-lg shadow-cyan-500/30 scale-[1.02]"
+                                : "text-slate-400 hover:text-white hover:bg-white/5"
                         }`}
                     >
                         <JapaneseFlagIcon className={`w-6 h-4 shrink-0 transition-transform duration-300 ${activePath === "tradicional" ? "scale-110 drop-shadow-md" : "opacity-80"}`} />
@@ -255,15 +255,15 @@ export function DojoLingoMap({
                         }}
                         className={`relative flex-1 py-3 px-3.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
                             activePath === "wkf"
-                                ? "bg-gradient-to-r from-amber-500 to-kuma-gold text-zinc-950 font-black shadow-lg shadow-kuma-gold/25 scale-[1.02]"
-                                : "text-zinc-400 hover:text-white hover:bg-white/5"
+                                ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black shadow-lg shadow-cyan-500/30 scale-[1.02]"
+                                : "text-slate-400 hover:text-white hover:bg-white/5"
                         }`}
                     >
                         <WkfShieldIcon className={`w-6 h-6 shrink-0 transition-transform duration-300 ${activePath === "wkf" ? "scale-110 drop-shadow-md" : "opacity-80"}`} />
                         <span>Deportivo WKF</span>
                         <span className={`text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider ${
                             activePath === "wkf"
-                                ? "bg-black/25 text-zinc-950 border border-black/30"
+                                ? "bg-black/25 text-slate-950 border border-black/30"
                                 : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
                         }`}>
                             Próximamente
@@ -272,7 +272,7 @@ export function DojoLingoMap({
                 </div>
 
                 {/* OVERALL PATH PROGRESS HEADER */}
-                <div className="w-full max-w-2xl bg-gradient-to-b from-zinc-900 via-zinc-900/90 to-zinc-950 border border-white/10 rounded-3xl p-6 md:p-7 mb-8 shadow-2xl relative overflow-hidden">
+                <div className="w-full max-w-2xl bg-gradient-to-b from-slate-900 via-slate-900/90 to-slate-950 border border-slate-700/80 rounded-3xl p-6 md:p-7 mb-8 shadow-2xl relative overflow-hidden">
                     <div className="flex items-start justify-between gap-4">
                         <div className="flex items-start gap-3">
                             {activePath === "tradicional" ? (
@@ -281,8 +281,8 @@ export function DojoLingoMap({
                                 <WkfOfficialBadge className="w-12 h-12 shrink-0 mt-0.5" />
                             )}
                             <div>
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-[0.25em] text-kuma-gold uppercase mb-1.5 px-2.5 py-0.5 rounded-full bg-kuma-gold/10 border border-kuma-gold/20">
-                                    <Compass className="w-3 h-3" weight="fill" />
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-[0.25em] text-cyan-300 uppercase mb-1.5 px-2.5 py-0.5 rounded-full bg-cyan-950/70 border border-cyan-400/40 shadow-[0_0_10px_rgba(6,182,212,0.25)]">
+                                    <Compass className="w-3 h-3 text-cyan-400" weight="fill" />
                                     {activePath === "tradicional"
                                         ? "20 Cinturones Tradicionales: 10 Kyu a 10 Dan"
                                         : "World Karate Federation • Módulo Próximamente"}
@@ -292,7 +292,7 @@ export function DojoLingoMap({
                                         ? "El Sendero del Guerrero: De Blanco a 10° Dan"
                                         : "Camino Deportivo WKF — Próximamente"}
                                 </h2>
-                                <p className="text-xs text-zinc-400 mt-1 max-w-lg leading-relaxed">
+                                <p className="text-xs text-slate-300 mt-1 max-w-lg leading-relaxed">
                                     {activePath === "tradicional"
                                         ? "Recorre la cascada hacia abajo. Cada cinturón está encapsulado con sus grados y lecciones teóricas y prácticas a resolver."
                                         : "Módulo interactivo de arbitraje, señales del réferi y kumite deportivo WKF actualmente en fase de preparación."}
@@ -303,10 +303,10 @@ export function DojoLingoMap({
                         <div className="text-right shrink-0">
                             {activePath === "tradicional" ? (
                                 <>
-                                    <span className="text-2xl md:text-3xl font-black text-kuma-gold font-serif block">
+                                    <span className="text-2xl md:text-3xl font-black text-cyan-400 font-serif block drop-shadow-[0_0_12px_rgba(6,182,212,0.5)]">
                                         {pathPercent}%
                                     </span>
-                                    <span className="text-[9px] text-zinc-400 uppercase font-bold tracking-widest block">
+                                    <span className="text-[9px] text-slate-400 uppercase font-bold tracking-widest block">
                                         Completado
                                     </span>
                                 </>
@@ -315,7 +315,7 @@ export function DojoLingoMap({
                                     <span className="inline-block px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-black uppercase tracking-wider">
                                         Próximamente
                                     </span>
-                                    <span className="text-[9px] text-zinc-400 uppercase font-bold tracking-widest block mt-1">
+                                    <span className="text-[9px] text-slate-400 uppercase font-bold tracking-widest block mt-1">
                                         En Forja
                                     </span>
                                 </>
@@ -324,9 +324,9 @@ export function DojoLingoMap({
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="mt-4 w-full h-2.5 bg-black/60 rounded-full overflow-hidden border border-white/10 p-0.5">
+                    <div className="mt-4 w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-700/80 p-0.5">
                         <motion.div
-                            className="h-full bg-gradient-to-r from-amber-500 via-kuma-gold to-yellow-300 rounded-full shadow-[0_0_12px_rgba(234,179,8,0.7)]"
+                            className="h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.8)]"
                             initial={{ width: 0 }}
                             animate={{ width: `${activePath === "tradicional" ? pathPercent : 0}%` }}
                             transition={{ duration: 0.8, ease: "easeOut" }}

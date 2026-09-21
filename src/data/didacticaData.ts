@@ -159,33 +159,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-bubishi-origen-okinawa",
                         type: "multiple_choice",
-                        prompt: "Según el histórico documento Bubishi (武備志), ¿cuál fue la raíz original que dio nacimiento al Karate en las islas de Okinawa?",
-                        description: "Tratado clásico secreto de combate transmitido de maestro a discípulo en el antiguo Reino de Ryukyu.",
+                        prompt: "¿Cuál fue la raíz histórica que dio origen al Karate en Okinawa?",
+                        description: "Tratado secreto Bubishi (武備志) del antiguo Reino de Ryukyu.",
                         options: [
                             {
                                 id: "o1",
-                                text: "La adaptación del 'Te' (arte de combate autóctono de Okinawa) con el 'Jujutsu' militar de los samuráis del clan Satsuma.",
+                                text: "🇯🇵 Te de Okinawa + Jujutsu Samurái",
                                 isCorrect: false
                             },
                             {
                                 id: "o2",
-                                text: "La fusión del 'Te' (arte de combate autóctono de Okinawa) con el 'Quan-fa' de Fujian traído del sur de China.",
+                                text: "🇨🇳 Te de Okinawa + Quan-fa del sur de China",
                                 isCorrect: true
                             },
                             {
                                 id: "o3",
-                                text: "La evolución del 'Te' (arte de combate autóctono de Okinawa) con el boxeo monástico del templo Shaolin del norte.",
+                                text: "🥋 Boxeo Shaolin del Norte",
                                 isCorrect: false
                             },
                             {
                                 id: "o4",
-                                text: "La integración del 'Te' (arte de combate autóctono de Okinawa) con los métodos de esgrima y lucha armada de los marineros de Taiwán.",
+                                text: "⛵ Lucha de marineros de Taiwán",
                                 isCorrect: false
                             }
                         ],
                         correctAnswerId: "o2",
-                        explanation: "¡Exacto! El Bubishi (武備志), conocido como la 'Biblia secreta del Karate', documenta que el arte marcial nació en el Reino de Ryukyu mediante la síntesis del 'Te' (手 - técnica de combate nativa de Okinawa) con el 'Quan-fa' (boxeo de la Grulla Blanca y del Monje) de la provincia de Fujian, transmitido por las 36 familias chinas radicadas en Kumemura (Naha).",
-                        hint: "El Bubishi es de herencia chino-okinawense: busca la influencia del sur de China (Fujian).",
+                        explanation: "¡Exacto! El Bubishi documenta la síntesis del 'Te' (手) nativo de Okinawa con el 'Quan-fa' del sur de China (Fujian), preservado por los primeros maestros de Ryukyu.",
+                        hint: "El Bubishi es de herencia chino-okinawense: busca la influencia del sur de China.",
                         references: [
                             {
                                 title: "Bubishi: La Biblia del Karate",
@@ -216,33 +216,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-prohibicion-armas-okinawa",
                         type: "multiple_choice",
-                        prompt: "¿Por qué en la antigua Okinawa el Karate se practicaba estrictamente en secreto, a oscuras y durante la noche?",
-                        description: "La clandestinidad histórica forjada tras la invasión del clan Satsuma en 1609.",
+                        prompt: "¿Por qué se entrenaba en secreto y de noche en la antigua Okinawa?",
+                        description: "Clandestinidad marcial tras la invasión samurái de 1609.",
                         options: [
                             {
                                 id: "o1",
-                                text: "Por un precepto religioso del budismo zen que exigía meditar y combatir únicamente bajo la luna.",
+                                text: "🌙 Por meditar y combatir bajo la luna",
                                 isCorrect: false
                             },
                             {
                                 id: "o2",
-                                text: "Por el calor extremo y la intensa radiación solar de las playas subtropicales durante el mediodía.",
+                                text: "☀️ Por el calor del mediodía",
                                 isCorrect: false
                             },
                             {
                                 id: "o3",
-                                text: "Por la prohibición total de armas decretada por los reyes y la ocupación del clan samurái Satsuma.",
+                                text: "⚔️ Por la prohibición total de armas impuesta por los samuráis",
                                 isCorrect: true
                             },
                             {
                                 id: "o4",
-                                text: "Por una orden de los gremios comerciales de pescadores para evitar el espionaje de los mercaderes chinos.",
+                                text: "⛵ Para evitar a los pescadores",
                                 isCorrect: false
                             }
                         ],
                         correctAnswerId: "o3",
-                        explanation: "¡Exacto! Tras la invasión del clan samurái Satsuma en 1609 y los edictos reales de desarme, los habitantes de Okinawa se vieron forzados a entrenar en secreto absoluto durante la noche para convertir sus propios cuerpos en armas defensivas de supervivencia.",
-                        hint: "Piensa en las leyes de confiscación y prohibición de armas de los invasores.",
+                        explanation: "¡Exacto! Tras la invasión del clan Satsuma en 1609 y la prohibición de armas, los maestros entrenaban de noche en secreto para transformar su propio cuerpo en un arma de autodefensa.",
+                        hint: "Piensa en las leyes de desarme impuestas a los habitantes de Okinawa.",
                         references: [
                             {
                                 title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
@@ -257,33 +257,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-karate-ni-sente-nashi",
                         type: "multiple_choice",
-                        prompt: "¿Qué enseña el principio fundamental del maestro Gichin Funakoshi: 'Karate ni sente nashi'?",
-                        description: "El pilar ético y filosófico más importante del Karate-Do tradicional.",
+                        prompt: "¿Qué enseña el lema «Karate ni sente nashi»?",
+                        description: "Pilar ético fundamental del Maestro Gichin Funakoshi.",
                         options: [
                             {
                                 id: "o1",
-                                text: "En el Karate-Do no existe el primer ataque; su objetivo es la defensa pacífica y el autocontrol.",
+                                text: "🕊️ En el Karate no existe el primer ataque (defensa y paz)",
                                 isCorrect: true
                             },
                             {
                                 id: "o2",
-                                text: "En el Karate-Do no existe el perdón hacia el adversario que invada el territorio del dojo.",
+                                text: "⚡ Atacar antes que el rival para ganar",
                                 isCorrect: false
                             },
                             {
                                 id: "o3",
-                                text: "En el Karate-Do no existe la derrota mientras el estudiante mantenga su guardia alta.",
+                                text: "🛡️ Rendirse jamás ante la derrota",
                                 isCorrect: false
                             },
                             {
                                 id: "o4",
-                                text: "En el Karate-Do no existe la victoria deportiva sin antes conseguir el nocaut del rival.",
+                                text: "🥊 Buscar el nocaut obligatorio en el primer golpe",
                                 isCorrect: false
                             }
                         ],
                         correctAnswerId: "o1",
-                        explanation: "¡Brillante! 'Karate ni sente nashi' (空手に先手なし) es la máxima ética del Karate: un karateka jamás inicia una agresión. El arte fue creado para la autoprotección, la resolución pacífica y el dominio del propio ego.",
-                        hint: "La palabra 'sente' se refiere al primer golpe o iniciativa agresiva.",
+                        explanation: "¡Brillante! 'Karate ni sente nashi' enseña que un karateka jamás inicia la violencia: el arte fue creado para la autoprotección y la paz.",
+                        hint: "La palabra 'sente' significa la primera iniciativa o agresión.",
                         references: [
                             {
                                 title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
@@ -298,33 +298,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-ciudades-okinawa-te",
                         type: "multiple_choice",
-                        prompt: "Antes de existir estilos modernos como Shotokan o Goju-Ryu, ¿cómo se llamaban las ramas originales del Karate en Okinawa?",
-                        description: "Las tres grandes vertientes urbanas nacidas en el antiguo Reino de Ryukyu.",
+                        prompt: "¿Cómo se llamaban las ramas originales del Karate en Okinawa?",
+                        description: "Las 3 vertientes urbanas antes de los estilos modernos.",
                         options: [
                             {
                                 id: "o1",
-                                text: "Por las tres cordilleras montañosas de la isla: Yanbaru-Te, Motobu-Te y Chatan-Te.",
+                                text: "🏔️ Por sus montañas (Yanbaru, Motobu)",
                                 isCorrect: false
                             },
                             {
                                 id: "o2",
-                                text: "Por los tres niveles de guardia combativa: Jodan-Te, Chudan-Te y Gedan-Te.",
+                                text: "🥋 Por las guardias (Jodan, Chudan, Gedan)",
                                 isCorrect: false
                             },
                             {
                                 id: "o3",
-                                text: "Por los tres clanes dinásticos del palacio real: Sho-Te, Satsuma-Te y Ryukyu-Te.",
+                                text: "👑 Por reyes de la dinastía Ryukyu",
                                 isCorrect: false
                             },
                             {
                                 id: "o4",
-                                text: "Por las tres ciudades portuarias donde se practicaban: Shuri-Te, Naha-Te y Tomari-Te.",
+                                text: "🏯 Por sus 3 ciudades: Shuri, Naha y Tomari",
                                 isCorrect: true
                             }
                         ],
                         correctAnswerId: "o4",
-                        explanation: "¡Correcto! En Okinawa no existían los estilos con nombres modernos. El arte se diferenciaba por ciudades: Shuri-Te (rápido de la nobleza del palacio), Naha-Te (fuerte, circular y respiratorio del puerto) y Tomari-Te (fluido e impredecible de pescadores y campesinos).",
-                        hint: "Se clasificaban de acuerdo a las 3 ciudades históricas de la isla de Okinawa.",
+                        explanation: "¡Correcto! Originalmente se llamaban según la ciudad donde nacieron: Shuri-Te (nobleza), Naha-Te (puerto mercantil) y Tomari-Te (campesinos y pescadores).",
+                        hint: "Se clasificaban de acuerdo a 3 ciudades históricas de la isla.",
                         references: [
                             {
                                 title: "La Historia del Karate: Goju-Ryu de Okinawa",
@@ -339,33 +339,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-significado-saludo-rei",
                         type: "multiple_choice",
-                        prompt: "¿Por qué cada clase, combate y kata comienza y termina obligatoriamente con una reverencia formal (Rei)?",
-                        description: "La regla de oro del protocolo y etiqueta marcial en el Dojo.",
+                        prompt: "¿Por qué toda práctica marcial inicia y termina con el saludo (Rei)?",
+                        description: "Protocolo y etiqueta sagrada del Dojo.",
                         options: [
                             {
                                 id: "o1",
-                                text: "Porque es un gesto obligatorio de sumisión y rendición del discípulo ante la fuerza del maestro.",
+                                text: "🙇‍♂️ Por sumisión obligatoria ante el sensei",
                                 isCorrect: false
                             },
                             {
                                 id: "o2",
-                                text: "Porque el respeto y la cortesía marcial transforman el combate en un camino de superación mutua.",
+                                text: "🤝 Por respeto mutuo y cortesía marcial",
                                 isCorrect: true
                             },
                             {
                                 id: "o3",
-                                text: "Porque indica a los jueces de competencia que el competidor está listo para puntuar sin penalización.",
+                                text: "⏱️ Para que el árbitro inicie el reloj",
                                 isCorrect: false
                             },
                             {
                                 id: "o4",
-                                text: "Porque sirve para estirar los músculos de la columna vertebral y el cuello antes del esfuerzo físico.",
+                                text: "🧘 Para estirar los músculos del cuello",
                                 isCorrect: false
                             }
                         ],
                         correctAnswerId: "o2",
-                        explanation: "¡Exacto! 'Karate-do wa rei ni hajimari, rei ni owaru koto' (El Karate empieza y termina con respeto). La reverencia (Rei) nos recuerda que el compañero no es un enemigo al que humillar, sino un hermano que te presta su cuerpo para aprender.",
-                        hint: "El Budo busca formar seres humanos honorables, no agresores.",
+                        explanation: "¡Exacto! 'El Karate empieza y termina con respeto'. El saludo (Rei) recuerda que el compañero nos ayuda a crecer y superarnos mutuamente.",
+                        hint: "El Budo busca forjar carácter y respeto, no violencia.",
                         references: [
                             {
                                 title: "Karate-Do: Mi Camino de Vida",
@@ -380,33 +380,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-funcion-real-kiai",
                         type: "multiple_choice",
-                        prompt: "¿Cuál es la función biomecánica y energética real del grito marcial explosivo (Kiai) al ejecutar un golpe?",
-                        description: "La ciencia del impacto y la respiración diafragmática en el Karate tradicional.",
+                        prompt: "¿Para qué sirve el grito explosivo (Kiai) al golpear?",
+                        description: "Ciencia del impacto y respiración diafragmática.",
                         options: [
                             {
                                 id: "o1",
-                                text: "Distraer visualmente al adversario y deslumbrarlo con la vibración de las cuerdas vocales.",
+                                text: "👀 Para distraer al rival",
                                 isCorrect: false
                             },
                             {
                                 id: "o2",
-                                text: "Avisar obligatoriamente al público y árbitros de que la técnica ha sido completada con éxito.",
+                                text: "📢 Para avisar al público y jueces",
                                 isCorrect: false
                             },
                             {
                                 id: "o3",
-                                text: "Unificar la respiración, blindar el abdomen contra impactos y concentrar la potencia máxima (Kime).",
+                                text: "💥 Blindar el abdomen y enfocar máxima potencia (Kime)",
                                 isCorrect: true
                             },
                             {
                                 id: "o4",
-                                text: "Vaciar por completo los pulmones para fingir cansancio y engañar la estrategia del oponente.",
+                                text: "😮‍💨 Para fingir cansancio",
                                 isCorrect: false
                             }
                         ],
                         correctAnswerId: "o3",
-                        explanation: "¡Perfecto! 'Kiai' significa 'unión de la energía'. Al exhalar de golpe con el grito, los músculos abdominales se contraen como un escudo protegiendo los órganos vitales y transfieren el 100% de la masa corporal al impacto final.",
-                        hint: "Está directamente relacionado con la respiración diafragmática y la protección del torso.",
+                        explanation: "¡Perfecto! 'Kiai' significa unión de energía. Al exhalar con fuerza, el abdomen se tensa como un escudo y transmite toda la masa al impacto.",
+                        hint: "Se relaciona con la respiración y la protección del torso.",
                         references: [
                             {
                                 title: "Karate Dinámico",
@@ -421,33 +421,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-pilares-kihon-kata-kumite",
                         type: "multiple_choice",
-                        prompt: "¿Cuáles son los tres grandes pilares inseparables que estructuran el aprendizaje tradicional de un karateka?",
-                        description: "La tríada fundamental del entrenamiento marcial en el Dojo.",
+                        prompt: "¿Cuáles son los 3 pilares esenciales del Karate tradicional?",
+                        description: "La tríada formativa del dojo.",
                         options: [
                             {
                                 id: "o1",
-                                text: "Kihon (fundamentos y técnicas básicas), Kata (formas tradicionales) y Kumite (combate con compañero).",
+                                text: "🥋 Kihon (básicos), Kata (formas) y Kumite (combate)",
                                 isCorrect: true
                             },
                             {
                                 id: "o2",
-                                text: "Kamikaze (ataque suicida), Katana (esgrima de sable) y Kodokan (lucha cuerpo a cuerpo en suelo).",
+                                text: "🗡️ Katana, Kamikaze y Kodokan",
                                 isCorrect: false
                             },
                             {
                                 id: "o3",
-                                text: "Kyusho (puntos vitales), Kiai (gritos sonoros) y Karategi (uniforme blanco de tela pesada).",
+                                text: "⚡ Kyusho, Kiai y Karategi",
                                 isCorrect: false
                             },
                             {
                                 id: "o4",
-                                text: "Kizami (golpe adelantado), Keri (patadas voladoras) y Koshiki (armaduras medievales de hierro).",
+                                text: "👟 Kizami, Keri y Koshiki",
                                 isCorrect: false
                             }
                         ],
                         correctAnswerId: "o1",
-                        explanation: "¡Exacto! El Karate se apoya en una tríada indisoluble: Kihon (repetición metódica de golpes, bloqueos y posturas), Kata (secuencias formales que guardan la memoria del arte) y Kumite (aplicación táctica frente a un compañero).",
-                        hint: "Busca las tres 'K' esenciales: básicos, formas y combate.",
+                        explanation: "¡Exacto! El Karate se apoya en tres bases: Kihon (fundamentos), Kata (formas clásicas) y Kumite (combate con compañero).",
+                        hint: "Busca las tres 'K' esenciales del dojo.",
                         references: [
                             {
                                 title: "El Mejor Karate: Fundamentos",
@@ -462,33 +462,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-que-es-un-kata",
                         type: "multiple_choice",
-                        prompt: "En una época sin libros ni videos, ¿qué función vital cumplían los Katas para los maestros de Okinawa?",
-                        description: "La preservación cifrada del conocimiento de combate cuerpo a cuerpo.",
+                        prompt: "¿Qué función cumplían los Katas en la antigüedad marcial?",
+                        description: "Preservación del conocimiento de combate sin libros ni videos.",
                         options: [
                             {
                                 id: "o1",
-                                text: "Eran coreografías teatrales festivas diseñadas para entretener a las cortes diplomáticas chinas.",
+                                text: "🎭 Bailes festivos para la corte imperial",
                                 isCorrect: false
                             },
                             {
                                 id: "o2",
-                                text: "Eran rutinas de baile gimnástico creadas para que los niños aprendieran el ritmo militar del ejército.",
+                                text: "🤸 Gimnasia rítmica para niños",
                                 isCorrect: false
                             },
                             {
                                 id: "o3",
-                                text: "Eran ejercicios de calentamiento articular sin ninguna aplicación defensiva frente a agresiones reales.",
+                                text: "🧘 Calentamiento sin defensa real",
                                 isCorrect: false
                             },
                             {
                                 id: "o4",
-                                text: "Eran enciclopedias secretas en movimiento que guardaban técnicas de defensa, derribos y llaves (Bunkai).",
+                                text: "📚 Enciclopedias vivientes de defensa personal y derribos (Bunkai)",
                                 isCorrect: true
                             }
                         ],
                         correctAnswerId: "o4",
-                        explanation: "¡Exacto! Un Kata no es una danza estética: es una biblioteca viviente codificada. Cada movimiento oculta defensas contra estrangulamientos, luxaciones de muñeca, zancadillas y ataques a puntos vitales (*Bunkai*).",
-                        hint: "Los Katas servían como métodos de archivo y transmisión secreta de técnicas reales.",
+                        explanation: "¡Exacto! Un Kata es una biblioteca en movimiento: cada paso oculta llaves, derribos y defensas reales frente a agresiones.",
+                        hint: "Eran enciclopedias secretas de técnicas reales.",
                         references: [
                             {
                                 title: "Bubishi: La Biblia del Karate",
@@ -503,33 +503,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-ikken-hissatsu-control",
                         type: "multiple_choice",
-                        prompt: "¿Qué exige el principio tradicional 'Ikken Hissatsu' (que significa 'de un solo golpe, muerte certera') y por qué en el dojo los golpes se frenan a milímetros?",
-                        description: "'Ikken Hissatsu' (一拳必殺 - que significa 'de un solo golpe, muerte certera'): El equilibrio entre potencia máxima y control milimétrico.",
+                        prompt: "¿Qué exige la regla «Ikken Hissatsu» (Golpe Decisivo) en el dojo?",
+                        description: "El balance supremo entre potencia y autocontrol.",
                         options: [
                             {
                                 id: "o1",
-                                text: "Buscar la fractura o noquear al oponente en el primer segundo para finalizar rápido la práctica.",
+                                text: "💥 Buscar el nocaut inmediato del compañero",
                                 isCorrect: false
                             },
                             {
                                 id: "o2",
-                                text: "Comprometer la máxima concentración y potencia en un golpe, pero con el autocontrol absoluto de no dañar al compañero.",
+                                text: "🎯 Máxima potencia con autocontrol para no lesionar",
                                 isCorrect: true
                             },
                             {
                                 id: "o3",
-                                text: "Atacar con los ojos cerrados para desarrollar el sexto sentido y la intuición extrasensorial del combate.",
+                                text: "🙈 Golpear con los ojos cerrados",
                                 isCorrect: false
                             },
                             {
                                 id: "o4",
-                                text: "Frenar el ataque únicamente cuando el instructor dé la orden verbal con el silbato de entrenamiento.",
+                                text: "🛑 Detenerse solo con silbato",
                                 isCorrect: false
                             }
                         ],
                         correctAnswerId: "o2",
-                        explanation: "¡Extraordinario! 'Ikken Hissatsu' (一拳必殺) significa literalmente 'de un solo golpe, muerte certera' (o 'aniquilar de un solo golpe'). Enseña a comprometer el 100% de la energía mental y física en ese único impacto, pero dominando el freno milimétrico (*Sundome*) para cuidar con fraternidad a los compañeros de dojo.",
-                        hint: "El verdadero poder marcial se demuestra en la capacidad de controlar la fuerza destructiva.",
+                        explanation: "¡Extraordinario! 'Ikken Hissatsu' enseña a dar el 100% de potencia con el autocontrol milimétrico (Sundome) para cuidar a los compañeros.",
+                        hint: "El poder real es la capacidad de controlar la fuerza.",
                         references: [
                             {
                                 title: "Karate-Do Kyohan: El Texto Maestro",

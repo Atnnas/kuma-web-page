@@ -326,15 +326,15 @@ export function DidacticController() {
 
     return (
         <div className="w-full space-y-8 animate-in fade-in duration-700">
-            {/* VIEW MODE DUAL SELECTOR (TOP SWITCHER) */}
+            {/* VIEW MODE DUAL SELECTOR (TOP SWITCHER - ARCADE NEON) */}
             <div className="flex justify-center">
-                <div className="inline-flex items-center p-1.5 rounded-2xl bg-zinc-900/90 border border-white/10 shadow-2xl backdrop-blur-md">
+                <div className="inline-flex items-center p-1.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-2xl backdrop-blur-md">
                     <button
                         onClick={() => setViewMode("map")}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 ${
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
                             viewMode === "map"
-                                ? "bg-gradient-to-r from-amber-500 to-kuma-gold text-zinc-950 shadow-lg shadow-kuma-gold/25 scale-[1.02]"
-                                : "text-zinc-400 hover:text-white"
+                                ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black shadow-lg shadow-cyan-500/30 scale-[1.02]"
+                                : "text-slate-400 hover:text-white"
                         }`}
                     >
                         <Compass className="w-4 h-4" weight="fill" />
@@ -343,10 +343,10 @@ export function DidacticController() {
 
                     <button
                         onClick={() => setViewMode("encyclopedia")}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 ${
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
                             viewMode === "encyclopedia"
-                                ? "bg-gradient-to-r from-amber-500 to-kuma-gold text-zinc-950 shadow-lg shadow-kuma-gold/25 scale-[1.02]"
-                                : "text-zinc-400 hover:text-white"
+                                ? "bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black shadow-lg shadow-cyan-500/30 scale-[1.02]"
+                                : "text-slate-400 hover:text-white"
                         }`}
                     >
                         <BookOpen className="w-4 h-4" weight="fill" />
@@ -363,10 +363,10 @@ export function DidacticController() {
                         daysAbsent >= 14
                             ? "border-blue-500/60 bg-blue-950/70 text-blue-300 hover:bg-blue-900/80 shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-pulse"
                             : daysAbsent >= 7
-                            ? "border-red-500/60 bg-red-950/70 text-red-300 hover:bg-red-900/80 shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                            ? "border-rose-500/60 bg-rose-950/70 text-rose-300 hover:bg-rose-900/80 shadow-[0_0_15px_rgba(244,63,94,0.3)]"
                             : daysAbsent >= 4
                             ? "border-amber-500/60 bg-amber-950/70 text-amber-300 hover:bg-amber-900/80"
-                            : "border-kuma-gold/40 bg-zinc-900/90 text-kuma-gold hover:bg-zinc-800 shadow-[0_0_12px_rgba(234,179,8,0.2)]"
+                            : "border-cyan-400/50 bg-slate-900/90 text-cyan-300 hover:bg-slate-850 shadow-[0_0_15px_rgba(6,182,212,0.25)]"
                     }`}
                     title="Consultar estado de ánimo de Kuma Sensei"
                 >
@@ -379,7 +379,7 @@ export function DidacticController() {
                             : `Kuma Sensei: ${daysAbsent}d de ausencia`}
                     </span>
                     {decayedCount > 0 && (
-                        <span className="bg-red-500/30 text-red-300 px-2 py-0.5 rounded-full text-[10px] font-mono border border-red-500/40">
+                        <span className="bg-rose-500/30 text-rose-300 px-2 py-0.5 rounded-full text-[10px] font-mono border border-rose-500/40">
                             {decayedCount} {decayedCount === 1 ? "nivel decaído" : "niveles decaídos"}
                         </span>
                     )}
@@ -398,7 +398,7 @@ export function DidacticController() {
                 {isSuperAdmin && simulatedDays !== null && (
                     <button
                         onClick={() => setSimulatedDays(null)}
-                        className="text-[11px] font-bold text-zinc-400 hover:text-white underline cursor-pointer"
+                        className="text-[11px] font-bold text-slate-400 hover:text-white underline cursor-pointer"
                     >
                         Restablecer tiempo real
                     </button>
@@ -408,24 +408,24 @@ export function DidacticController() {
             {/* STUDENT CLOUD SYNC STATUS BAR */}
             <div className="flex items-center justify-center -mt-3">
                 {session?.user ? (
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs shadow-inner">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-400/50 text-emerald-300 text-xs shadow-[0_0_15px_rgba(16,185,129,0.2)]">
                         {isSyncing ? (
-                            <CloudArrowUp className="w-4 h-4 text-amber-400 animate-bounce" weight="fill" />
+                            <CloudArrowUp className="w-4 h-4 text-amber-300 animate-bounce" weight="fill" />
                         ) : (
                             <CloudCheck className="w-4 h-4 text-emerald-400" weight="fill" />
                         )}
                         <span className="font-medium">
                             Estudiante: <strong className="text-white">{session.user.name || session.user.email}</strong>
                         </span>
-                        <span className="text-[10px] text-emerald-400/80 uppercase font-black tracking-widest pl-1 border-l border-emerald-500/30">
+                        <span className="text-[10px] text-emerald-300/80 uppercase font-black tracking-widest pl-1 border-l border-emerald-500/30">
                             {isSyncing ? "Guardando..." : "Nube Sincronizada ☁️"}
                         </span>
                     </div>
                 ) : (
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900/60 border border-white/10 text-zinc-400 text-xs">
-                        <UserCircle className="w-4 h-4 text-zinc-400" weight="fill" />
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/70 text-slate-300 text-xs">
+                        <UserCircle className="w-4 h-4 text-cyan-400" weight="fill" />
                         <span>Modo Invitado (Progreso local) •</span>
-                        <Link href="/login" className="text-kuma-gold hover:underline font-bold transition-colors">
+                        <Link href="/login" className="text-cyan-400 hover:underline font-bold transition-colors">
                             Inicia sesión para guardar en tu cuenta de estudiante
                         </Link>
                     </div>
