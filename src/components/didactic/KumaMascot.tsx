@@ -111,8 +111,8 @@ export function KumaMascot({
     const [hasBrokenTrunk, setHasBrokenTrunk] = useState(false);
     const [isYoiDeepBreathing, setIsYoiDeepBreathing] = useState(false);
     const pokeCleanTimerRef = React.useRef<NodeJS.Timeout | null>(null);
-    const prevMoodRef = React.useRef(mood);
-    const prevTriggerRef = React.useRef(strikeTrigger);
+    const prevMoodRef = React.useRef<MascotMood | undefined>(undefined);
+    const prevTriggerRef = React.useRef<string | number | undefined>(undefined);
 
     // Pick speech message
     useEffect(() => {
@@ -121,13 +121,14 @@ export function KumaMascot({
         setMessageIndex(rand);
     }, [mood]);
 
-    // One-shot martial strike trigger: plays ONCE per correct answer / streak / trigger
+    // One-shot martial strike trigger: plays ONCE per correct answer / streak / trigger (including on initial mount)
     useEffect(() => {
         const isNowExcited = mood === "correct" || mood === "streak";
         const wasExcited = prevMoodRef.current === "correct" || prevMoodRef.current === "streak";
+        const isInitialExcited = prevMoodRef.current === undefined && isNowExcited;
         const triggerChanged = strikeTrigger !== undefined && strikeTrigger !== prevTriggerRef.current;
 
-        if ((isNowExcited && !wasExcited) || (isNowExcited && triggerChanged)) {
+        if (isInitialExcited || (isNowExcited && !wasExcited) || (isNowExcited && triggerChanged)) {
             setStrikeKey((k) => k + 1);
             setIsStriking(true);
             setHasBrokenTrunk(true);
@@ -610,32 +611,35 @@ export function KumaMascot({
                                   }
                                 : isExcited
                                 ? {
-                                      x: 0,
-                                      y: [0, -1.8, 0],
-                                      rotate: 0,
-                                      scaleX: 1,
-                                      scaleY: 1,
+                                      x: [0, -2, 2, -1, 0],
+                                      y: [0, -12, 0, -6, 0],
+                                      rotate: [0, -2.5, 2.5, -1.5, 0],
+                                      scaleY: [1, 1.06, 0.96, 1.02, 1],
+                                      scaleX: [1, 0.97, 1.03, 0.99, 1],
                                   }
                                 : isThinking
                                 ? {
-                                      y: [0, -4, 0],
-                                      rotate: [0, 3, -2, 2, 0],
+                                      y: [0, -8, 1, 0],
+                                      rotate: [0, 4, -3, 2, 0],
+                                      scaleY: [1, 1.03, 0.98, 1],
                                   }
                                 : isSad
                                 ? {
-                                      y: [0, 9, 3, 9, 0],
-                                      rotate: [0, -4, 4, -3, 0],
-                                      scaleY: [1, 0.94, 1.02, 0.94, 1],
+                                      y: [0, 8, 2, 8, 0],
+                                      rotate: [0, -5, 5, -4, 0],
+                                      scaleY: [1, 0.93, 1.02, 0.93, 1],
                                   }
                                 : isCompleted
                                 ? {
-                                      y: [0, 8, 0],
-                                      scaleY: [1, 0.94, 1],
+                                      y: [0, -14, 0, -6, 0],
+                                      rotate: [0, -3, 3, -1, 0],
+                                      scaleY: [1, 1.08, 0.95, 1],
                                   }
                                 : {
-                                      y: [0, -6, 0],
-                                      scaleY: [1, 1.02, 0.99, 1],
-                                      scaleX: [1, 0.99, 1.01, 1],
+                                      y: [0, -8, 0],
+                                      rotate: [0, 1.5, -1.5, 0],
+                                      scaleY: [1, 1.03, 0.98, 1],
+                                      scaleX: [1, 0.98, 1.02, 1],
                                   }
                         }
                         transition={
@@ -654,9 +658,9 @@ export function KumaMascot({
                                       ease: "easeInOut",
                                   }
                                 : isExcited
-                                ? { duration: 2.8, repeat: Infinity, ease: "easeInOut" }
+                                ? { duration: 1.1, repeat: Infinity, ease: "easeInOut" }
                                 : {
-                                      duration: isThinking ? 2.5 : isSad ? 1.8 : 3.4,
+                                      duration: isThinking ? 1.6 : isSad ? 1.6 : 2.2,
                                       repeat: Infinity,
                                       ease: "easeInOut",
                                   }
@@ -1589,14 +1593,19 @@ export function KumaMascot({
                                               scaleY: [0.95, 1.06, 0.98, 1],
                                               y: [2, -4, 1, 0],
                                           }
-                                        : { opacity: 1, scale: 1, y: [0, -1.5, 0] }
+                                        : {
+                                              opacity: 1,
+                                              scale: [1, 1.04, 0.98, 1],
+                                              y: [0, -5, 1, 0],
+                                          }
                                 }
                                 transition={
                                     isYoiDeepBreathing
                                         ? { duration: 1.8, times: [0, 0.32, 0.72, 1], ease: "easeInOut" }
                                         : {
-                                              scale: { type: "spring", stiffness: 360, damping: 24 },
-                                              y: { repeat: Infinity, duration: 2.8, ease: "easeInOut" },
+                                              repeat: Infinity,
+                                              duration: 1.1,
+                                              ease: "easeInOut",
                                           }
                                 }
                                 style={{ originX: "120px", originY: "204px" }}
