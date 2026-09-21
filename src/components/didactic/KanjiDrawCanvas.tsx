@@ -171,127 +171,218 @@ export function KanjiDrawCanvas({
         [activeKanji, onAllCompleted, onKanjiCompleted]
     );
 
-    // POINTER DOWN: Verify user starts at checkpoint 0
-    const handlePointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
-        if (isKanjiFinished || isDemonstrating || !currentTargetStroke) return;
-        e.currentTarget.setPointerCapture(e.pointerId);
-        const coords = getSvgCoords(e.clientX, e.clientY);
-        if (!coords) return;
+    // Refs to maintain real-time sync with 60Hz/120Hz touch events without stale closure lag
+    const isDrawingRef = useRef(false);
+    const currentTargetStrokeRef = useRef(currentTargetStroke);
+    currentTargetStrokeRef.current = currentTargetStroke;
+    const strokeGeometriesRef = useRef(strokeGeometries);
+    strokeGeometriesRef.current = strokeGeometries;
+    const highestCheckpointRef = useRef(highestCheckpoint);
+    highestCheckpointRef.current = highestCheckpoint;
+    const userPointsRef = useRef(userPoints);
+    userPointsRef.current = userPoints;
+    const strokeProgressRef = useRef(strokeProgress);
+    strokeProgressRef.current = strokeProgress;
+    const isKanjiFinishedRef = useRef(isKanjiFinished);
+    isKanjiFinishedRef.current = isKanjiFinished;
+    const isDemonstratingRef = useRef(isDemonstrating);
+    isDemonstratingRef.current = isDemonstrating;
 
-        const geom = strokeGeometries[currentTargetStroke.id];
-        if (!geom || geom.checkpoints.length === 0) return;
+    // UNIFIED DRAWING CORE (Supports both iOS Safari Touch & Desktop Pointer)
+    const startDrawing = useCallback(
+        (clientX: number, clientY: number) => {
+            if (isKanjiFinishedRef.current || isDemonstratingRef.current || !currentTargetStrokeRef.current) return;
+            const coords = getSvgCoords(clientX, clientY);
+            if (!coords) return;
 
-        const startPt = geom.checkpoints[0];
-        const distToStart = distance(coords, startPt);
+            const stroke = currentTargetStrokeRef.current;
+            const geom = strokeGeometriesRef.current[stroke.id];
+            if (!geom || geom.checkpoints.length === 0) return;
 
-        // Start radius: must touch close to the start dot (16 units)
-        if (distToStart < 16) {
-            setIsDrawing(true);
-            setUserPoints([coords]);
-            setCurrentPointer(coords);
-            setHighestCheckpoint(0);
-            setStrokeProgress(0.01);
-            setFeedbackTip(null);
-        } else {
-            setFeedbackTip(`Inicia exactamente en el punto rojo (${currentTargetStroke.id})`);
-            setTimeout(() => setFeedbackTip(null), 2500);
-        }
-    };
+            const startPt = geom.checkpoints[0];
+            const distToStart = distance(coords, startPt);
 
-    // POINTER MOVE: Strictly tether ink progression to user's exact projected position along curve
-    const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
-        if (!isDrawing || isKanjiFinished || isDemonstrating || !currentTargetStroke) return;
-        const coords = getSvgCoords(e.clientX, e.clientY);
-        if (!coords) return;
-
-        setUserPoints((prev) => [...prev, coords]);
-        setCurrentPointer(coords);
-
-        const geom = strokeGeometries[currentTargetStroke.id];
-        if (!geom) return;
-
-        const checkpoints = geom.checkpoints;
-        const total = checkpoints.length;
-        let currentK = highestCheckpoint;
-
-        // Strictly advance segment by segment based on actual user projection
-        while (currentK < total - 1) {
-            const p1 = checkpoints[currentK];
-            const p2 = checkpoints[currentK + 1];
-            const dx = p2.x - p1.x;
-            const dy = p2.y - p1.y;
-            const lenSq = dx * dx + dy * dy;
-
-            if (lenSq < 0.0001) {
-                currentK++;
-                continue;
-            }
-
-            // Project user touch onto segment [p1, p2]
-            const t = ((coords.x - p1.x) * dx + (coords.y - p1.y) * dy) / lenSq;
-            const clampedT = Math.max(0, Math.min(1, t));
-            const projX = p1.x + clampedT * dx;
-            const projY = p1.y + clampedT * dy;
-            const distToSeg = Math.hypot(coords.x - projX, coords.y - projY);
-
-            // User must be following along the curve (max tolerance: 16 units)
-            if (distToSeg > 16) {
-                // Outside path tolerance: do not advance ink ahead
-                break;
-            }
-
-            if (t >= 1) {
-                // User has passed this segment, advance to next segment
-                currentK++;
-            } else if (t > 0) {
-                // User is currently inside this segment!
-                // Ink progress is strictly locked to cursor's exact fractional position:
-                const exactFraction = (currentK + clampedT) / (total - 1);
-                setHighestCheckpoint(currentK);
-                setStrokeProgress(exactFraction);
-                return;
+            // Finger touch tolerance on mobile: 24 units
+            if (distToStart < 24) {
+                isDrawingRef.current = true;
+                setIsDrawing(true);
+                setUserPoints([coords]);
+                userPointsRef.current = [coords];
+                setCurrentPointer(coords);
+                highestCheckpointRef.current = 0;
+                setHighestCheckpoint(0);
+                strokeProgressRef.current = 0.02;
+                setStrokeProgress(0.02);
+                setFeedbackTip(null);
             } else {
-                // User is behind or at start of segment
-                break;
+                setFeedbackTip(`Toca en el círculo rojo (${stroke.id}) para iniciar`);
+                setTimeout(() => setFeedbackTip(null), 2000);
+            }
+        },
+        [getSvgCoords]
+    );
+
+    const moveDrawing = useCallback(
+        (clientX: number, clientY: number) => {
+            if (!isDrawingRef.current || isKanjiFinishedRef.current || isDemonstratingRef.current || !currentTargetStrokeRef.current) return;
+            const coords = getSvgCoords(clientX, clientY);
+            if (!coords) return;
+
+            setUserPoints((prev) => {
+                const next = [...prev, coords];
+                userPointsRef.current = next;
+                return next;
+            });
+            setCurrentPointer(coords);
+
+            const stroke = currentTargetStrokeRef.current;
+            const geom = strokeGeometriesRef.current[stroke.id];
+            if (!geom) return;
+
+            const checkpoints = geom.checkpoints;
+            const total = checkpoints.length;
+            const currentK = highestCheckpointRef.current;
+
+            // Lookahead segment search: scan up to 10 checkpoints forward
+            // This prevents rapid swipes / curves on 60Hz and 120Hz screens from stalling!
+            const maxLookahead = Math.min(total - 1, currentK + 10);
+            let bestK = currentK;
+            let bestDist = 999;
+            let bestT = 0;
+
+            for (let k = currentK; k < maxLookahead; k++) {
+                const p1 = checkpoints[k];
+                const p2 = checkpoints[k + 1];
+                const dx = p2.x - p1.x;
+                const dy = p2.y - p1.y;
+                const lenSq = dx * dx + dy * dy;
+                if (lenSq < 0.0001) continue;
+
+                const t = ((coords.x - p1.x) * dx + (coords.y - p1.y) * dy) / lenSq;
+                const clampedT = Math.max(0, Math.min(1, t));
+                const projX = p1.x + clampedT * dx;
+                const projY = p1.y + clampedT * dy;
+                const dist = Math.hypot(coords.x - projX, coords.y - projY);
+
+                if (dist < 24 && dist < bestDist) {
+                    bestDist = dist;
+                    bestK = k;
+                    bestT = clampedT;
+                }
+            }
+
+            if (bestDist < 24 && bestK >= currentK) {
+                highestCheckpointRef.current = bestK;
+                setHighestCheckpoint(bestK);
+                const fraction = (bestK + bestT) / (total - 1);
+                strokeProgressRef.current = fraction;
+                setStrokeProgress((prev) => Math.max(prev, fraction));
+            }
+        },
+        [getSvgCoords]
+    );
+
+    const endDrawing = useCallback(() => {
+        if (!isDrawingRef.current || !currentTargetStrokeRef.current) return;
+
+        const stroke = currentTargetStrokeRef.current;
+        const geom = strokeGeometriesRef.current[stroke.id];
+        if (geom) {
+            const totalCheckpoints = geom.checkpoints.length;
+            const endPt = geom.checkpoints[totalCheckpoints - 1];
+            const pts = userPointsRef.current;
+            const lastPt = pts.length > 0 ? pts[pts.length - 1] : null;
+            const distToEnd = lastPt ? distance(lastPt, endPt) : 999;
+
+            // Completion check: drawn >= 76% OR reached end point (< 28 units)
+            const hasPassedMajority = highestCheckpointRef.current >= Math.floor(totalCheckpoints * 0.76) || strokeProgressRef.current >= 0.76;
+            const isNearEnd = distToEnd < 28 && highestCheckpointRef.current >= Math.floor(totalCheckpoints * 0.45);
+
+            if (hasPassedMajority || isNearEnd) {
+                completeStroke(stroke.id);
+            } else {
+                setFeedbackTip("¡Traza todo el recorrido de la línea hasta el final!");
+                setTimeout(() => setFeedbackTip(null), 2000);
             }
         }
 
-        setHighestCheckpoint(currentK);
-        setStrokeProgress(currentK / (total - 1));
+        isDrawingRef.current = false;
+        setIsDrawing(false);
+        setStrokeProgress(0);
+        strokeProgressRef.current = 0;
+        setHighestCheckpoint(0);
+        highestCheckpointRef.current = 0;
+        setUserPoints([]);
+        userPointsRef.current = [];
+        setCurrentPointer(null);
+    }, [completeStroke]);
+
+    // NATIVE TOUCH LISTENERS (Direct non-passive listeners solve iOS Safari gesture hijacking & pointercancel)
+    useEffect(() => {
+        const el = svgRef.current;
+        if (!el) return;
+
+        const onTouchStart = (e: TouchEvent) => {
+            if (e.touches.length > 1) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            startDrawing(touch.clientX, touch.clientY);
+        };
+
+        const onTouchMove = (e: TouchEvent) => {
+            if (e.touches.length > 1) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            moveDrawing(touch.clientX, touch.clientY);
+        };
+
+        const onTouchEnd = (e: TouchEvent) => {
+            e.preventDefault();
+            endDrawing();
+        };
+
+        const onTouchCancel = (e: TouchEvent) => {
+            e.preventDefault();
+            endDrawing();
+        };
+
+        el.addEventListener("touchstart", onTouchStart, { passive: false });
+        el.addEventListener("touchmove", onTouchMove, { passive: false });
+        el.addEventListener("touchend", onTouchEnd, { passive: false });
+        el.addEventListener("touchcancel", onTouchCancel, { passive: false });
+
+        return () => {
+            el.removeEventListener("touchstart", onTouchStart);
+            el.removeEventListener("touchmove", onTouchMove);
+            el.removeEventListener("touchend", onTouchEnd);
+            el.removeEventListener("touchcancel", onTouchCancel);
+        };
+    }, [startDrawing, moveDrawing, endDrawing]);
+
+    // DESKTOP POINTER HANDLERS (Ignores touch to avoid duplicate events on hybrid devices)
+    const handlePointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
+        if (e.pointerType === "touch") return;
+        try {
+            e.currentTarget.setPointerCapture(e.pointerId);
+        } catch {
+            // Ignore capture error
+        }
+        startDrawing(e.clientX, e.clientY);
     };
 
-    // POINTER UP: Check if user completed the entire stroke (>= 85% of curve and near end)
+    const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
+        if (e.pointerType === "touch") return;
+        moveDrawing(e.clientX, e.clientY);
+    };
+
     const handlePointerUp = (e: React.PointerEvent<SVGSVGElement>) => {
-        if (!isDrawing || !currentTargetStroke) return;
+        if (e.pointerType === "touch") return;
         try {
             e.currentTarget.releasePointerCapture(e.pointerId);
         } catch {
             // Ignore capture release error
         }
-
-        const geom = strokeGeometries[currentTargetStroke.id];
-        if (geom) {
-            const totalCheckpoints = geom.checkpoints.length;
-            const required = Math.floor(totalCheckpoints * 0.85);
-            const endPt = geom.checkpoints[totalCheckpoints - 1];
-            const lastUserPt = userPoints[userPoints.length - 1] || currentPointer;
-            const distToEnd = lastUserPt ? distance(lastUserPt, endPt) : 999;
-
-            if ((highestCheckpoint >= required || strokeProgress >= 0.85) && distToEnd < 22) {
-                // Complete stroke!
-                completeStroke(currentTargetStroke.id);
-            } else {
-                // Incomplete: notify user to draw all the way to the end
-                setFeedbackTip("¡Traza todo el recorrido de la línea hasta el final!");
-                setTimeout(() => setFeedbackTip(null), 2500);
-            }
-        }
-
-        setIsDrawing(false);
-        setStrokeProgress(0);
-        setHighestCheckpoint(0);
-        setUserPoints([]);
-        setCurrentPointer(null);
+        endDrawing();
     };
 
     // Smooth spline interpolation for user's drawing ink (Deep Black Sumi-e on White Paper)
@@ -445,7 +536,7 @@ export function KanjiDrawCanvas({
             </AnimatePresence>
 
             {/* CALLIGRAPHY AUTHENTIC WHITE WASHI PAPER SHEET */}
-            <div className="relative w-full max-w-[340px] sm:max-w-[380px] aspect-square rounded-2xl overflow-hidden border-2 border-zinc-700 shadow-[0_25px_60px_rgba(0,0,0,0.85),inset_0_0_25px_rgba(215,200,175,0.15)] bg-gradient-to-b from-[#FFFDF9] via-[#FAF6EE] to-[#F5EFEB] touch-none">
+            <div className="relative w-full max-w-[300px] xs:max-w-[340px] sm:max-w-[380px] aspect-square rounded-2xl overflow-hidden border-2 border-zinc-700 shadow-[0_25px_60px_rgba(0,0,0,0.85),inset_0_0_25px_rgba(215,200,175,0.15)] bg-gradient-to-b from-[#FFFDF9] via-[#FAF6EE] to-[#F5EFEB] touch-none select-none">
                 {/* TRADITIONAL VERMILION PRACTICE GRID (米 Grid in Red Ink) */}
                 <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25" viewBox="0 0 100 100">
                         {/* Outer boundary */}
@@ -467,8 +558,14 @@ export function KanjiDrawCanvas({
                         onPointerDown={handlePointerDown}
                         onPointerMove={handlePointerMove}
                         onPointerUp={handlePointerUp}
+                        onPointerCancel={handlePointerUp}
                         onPointerLeave={handlePointerUp}
-                        style={{ touchAction: "none" }}
+                        style={{
+                            touchAction: "none",
+                            WebkitTouchCallout: "none",
+                            WebkitUserSelect: "none",
+                            userSelect: "none",
+                        }}
                     >
                         {/* 1. GHOST OUTLINE OF UNCOMPLETED STROKES (Faint Watercolor / Graphite on White Paper) */}
                         {showGuide &&

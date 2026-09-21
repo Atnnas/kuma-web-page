@@ -532,13 +532,14 @@ export function LessonSessionModal({
             <main className="flex-1 w-full overflow-y-auto overflow-x-hidden px-4 md:px-8 py-2 md:py-4 flex flex-col justify-center">
                 <div className="max-w-5xl mx-auto w-full my-auto flex flex-col justify-center py-1">
                     {!isCompleted && !isFailed ? (
-                        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 w-full">
-                            {/* LEFT: SENSEI MASCOT (3D RENDER) */}
-                            <div className="shrink-0 flex flex-col items-center justify-center md:w-60">
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-10 w-full">
+                            {/* LEFT: SENSEI MASCOT (Dynamic Responsive: Horizontal companion on mobile, 3D Sensei on desktop) */}
+                            <div className="w-full md:w-60 shrink-0 flex flex-col items-center justify-center">
                                 <KumaMascot
                                     mood={mascotMood}
                                     customMessage={customSpeech}
-                                    size="md"
+                                    size="responsive"
+                                    layout="responsive"
                                     showBubble={true}
                                     path={activePath}
                                     beltRank={activeBeltRank}
@@ -548,9 +549,9 @@ export function LessonSessionModal({
                                     <motion.div
                                         initial={{ scale: 0.8, opacity: 0 }}
                                         animate={{ scale: 1, opacity: 1 }}
-                                        className="mt-2.5 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#2B230E] border-2 border-[#FFC800] text-[#FFC800] text-xs font-black tracking-wider uppercase shadow-sm"
+                                        className="mt-1.5 md:mt-2.5 inline-flex items-center gap-1.5 px-3 py-0.5 md:py-1 rounded-full bg-[#2B230E] border-2 border-[#FFC800] text-[#FFC800] text-[11px] md:text-xs font-black tracking-wider uppercase shadow-sm"
                                     >
-                                        <Fire className="w-4 h-4 text-[#FFC800] animate-bounce" weight="fill" />
+                                        <Fire className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#FFC800] animate-bounce" weight="fill" />
                                         <span>Racha x{streak} 🔥</span>
                                     </motion.div>
                                 )}
@@ -876,7 +877,7 @@ export function LessonSessionModal({
                             animate={{ opacity: 1, scale: 1 }}
                             className="flex flex-col items-center justify-center py-6 text-center max-w-lg mx-auto w-full"
                         >
-                            <KumaMascot mood="completed" size="lg" showBubble={true} customMessage={customSpeech} path={activePath} beltRank={activeBeltRank} />
+                            <KumaMascot mood="completed" size="responsive" showBubble={true} customMessage={customSpeech} path={activePath} beltRank={activeBeltRank} />
 
                             <div className="mt-4">
                                 <span className="inline-block text-[#1CB0F6] font-black uppercase tracking-[0.25em] text-xs bg-[#0E2A47] px-3.5 py-1 rounded-full border-2 border-[#1CB0F6] shadow-sm">
@@ -936,7 +937,7 @@ export function LessonSessionModal({
                         >
                             <KumaMascot
                                 mood="wrong"
-                                size="lg"
+                                size="responsive"
                                 showBubble={true}
                                 path={activePath}
                                 beltRank={activeBeltRank}
@@ -1004,7 +1005,7 @@ export function LessonSessionModal({
                 Guaranteed to stay pinned at bottom without covering any content
             ========================================= */}
             {!isCompleted && !isFailed && (
-                <footer className="w-full shrink-0 border-t-2 border-[#1E293B] bg-[#0F172A] py-4 md:py-5 px-4 md:px-8 z-30 shadow-lg">
+                <footer className="w-full shrink-0 border-t-2 border-[#1E293B] bg-[#0F172A] py-3.5 md:py-5 pb-[max(0.875rem,env(safe-area-inset-bottom))] px-4 md:px-8 z-30 shadow-lg">
                     <div className="max-w-5xl mx-auto">
                         {answerStatus === "idle" ? (
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">

@@ -8,7 +8,7 @@ import { Fire, Sparkle, HeartBreak } from "@phosphor-icons/react";
 interface KumaMascotProps {
     mood?: MascotMood;
     customMessage?: string;
-    size?: "sm" | "md" | "lg" | "xl";
+    size?: "sm" | "md" | "lg" | "xl" | "responsive";
     showBubble?: boolean;
     className?: string;
     interactive?: boolean;
@@ -16,6 +16,7 @@ interface KumaMascotProps {
     path?: "tradicional" | "wkf";
     wkfColor?: "red" | "blue";
     beltRank?: BeltRank;
+    layout?: "vertical" | "horizontal" | "responsive";
 }
 
 const MOOD_MESSAGES: Record<MascotMood, string[]> = {
@@ -79,6 +80,7 @@ export function KumaMascot({
     path = "tradicional",
     wkfColor,
     beltRank,
+    layout = "vertical",
 }: KumaMascotProps) {
     const isWkfMode = path === "wkf";
     // Random WKF Protections: Red (AKA / 赤) or Blue (AO / 青)
@@ -208,6 +210,7 @@ export function KumaMascot({
         md: "w-40 h-40 md:w-48 md:h-48",
         lg: "w-52 h-52 md:w-64 md:h-64",
         xl: "w-64 h-64 md:w-80 md:h-80",
+        responsive: "w-16 h-16 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-48 md:h-48",
     };
 
     const isExcited = mood === "correct" || mood === "streak" || isPokePumping || isYoiDeepBreathing;
@@ -218,7 +221,15 @@ export function KumaMascot({
     const showTrunk = isStriking || hasBrokenTrunk;
 
     return (
-        <div className={`relative flex flex-col items-center select-none ${className}`}>
+        <div
+            className={`relative flex select-none ${
+                layout === "responsive"
+                    ? "flex-row md:flex-col items-center justify-center gap-3 md:gap-0 w-full"
+                    : layout === "horizontal"
+                    ? "flex-row items-center justify-center gap-3 w-full"
+                    : "flex-col items-center"
+            } ${className}`}
+        >
             {/* DUOLINGO STYLE FLOATING SPEECH BUBBLE */}
             <AnimatePresence mode="wait">
                 {showBubble && activeMessage && (
@@ -228,10 +239,16 @@ export function KumaMascot({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.9 }}
                         transition={{ type: "spring", stiffness: 450, damping: 24 }}
-                        className="mb-3 max-w-xs md:max-w-sm px-4 py-3 bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 border-2 border-kuma-gold/60 text-white rounded-3xl shadow-[0_12px_40px_rgba(0,0,0,0.9)] relative text-center z-30 backdrop-blur-xl"
+                        className={`border-2 border-kuma-gold/60 text-white shadow-lg relative z-30 backdrop-blur-xl ${
+                            layout === "responsive"
+                                ? "order-2 md:order-1 flex-1 md:flex-none min-w-0 mb-0 md:mb-3 max-w-none md:max-w-sm px-3.5 py-2 md:px-4 md:py-3 rounded-2xl md:rounded-3xl bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 text-left md:text-center"
+                                : layout === "horizontal"
+                                ? "order-2 flex-1 min-w-0 mb-0 max-w-none px-3.5 py-2 rounded-2xl bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 text-left"
+                                : "mb-3 max-w-xs md:max-w-sm px-4 py-3 bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 rounded-3xl text-center"
+                        }`}
                     >
                         {/* Kuma Dojo Official Logo Badge */}
-                        <div className="absolute -top-3 -right-2.5 w-7 h-7 rounded-full overflow-hidden border-2 border-kuma-gold shadow-[0_0_10px_rgba(245,158,11,0.6)] rotate-12 bg-black">
+                        <div className="absolute -top-2.5 -right-2 md:-top-3 md:-right-2.5 w-6 h-6 md:w-7 md:h-7 rounded-full overflow-hidden border-2 border-kuma-gold shadow-[0_0_10px_rgba(245,158,11,0.6)] rotate-12 bg-black">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src="/images/kuma-logo.jpg" alt="Kuma Logo" className="w-full h-full object-cover" />
                         </div>
@@ -239,7 +256,7 @@ export function KumaMascot({
                         {/* Top Golden Light Rim */}
                         <div className="absolute top-0 left-1/4 right-1/4 h-[2px] bg-gradient-to-r from-transparent via-kuma-gold to-transparent" />
 
-                        <p className="text-xs md:text-sm font-black tracking-wide leading-relaxed text-zinc-100 flex items-center justify-center gap-2">
+                        <p className="text-xs md:text-sm font-black tracking-wide leading-relaxed text-zinc-100 flex items-center justify-start md:justify-center gap-2">
                             {mood === "streak" && <Fire className="w-4 h-4 text-amber-400 shrink-0 animate-bounce" weight="fill" />}
                             {mood === "correct" && <Sparkle className="w-4 h-4 text-kuma-gold shrink-0 animate-spin" weight="fill" />}
                             {(mood === "wrong" || mood === "sad") && <HeartBreak className="w-4 h-4 text-red-400 shrink-0" weight="fill" />}
@@ -248,7 +265,18 @@ export function KumaMascot({
                         </p>
 
                         {/* Speech Bubble Arrow pointing to Kuma's mouth */}
-                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-zinc-950 border-r-2 border-b-2 border-kuma-gold/60 rotate-45" />
+                        {layout === "responsive" ? (
+                            <>
+                                {/* Mobile Arrow: points LEFT towards Kuma */}
+                                <div className="md:hidden absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-zinc-950 border-l-2 border-b-2 border-kuma-gold/60 rotate-45" />
+                                {/* Desktop Arrow: points DOWN towards Kuma */}
+                                <div className="hidden md:block absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-zinc-950 border-r-2 border-b-2 border-kuma-gold/60 rotate-45" />
+                            </>
+                        ) : layout === "horizontal" ? (
+                            <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-zinc-950 border-l-2 border-b-2 border-kuma-gold/60 rotate-45" />
+                        ) : (
+                            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-zinc-950 border-r-2 border-b-2 border-kuma-gold/60 rotate-45" />
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -256,7 +284,9 @@ export function KumaMascot({
             {/* MAIN CHARACTER CONTAINER */}
             <div
                 onClick={handlePoke}
-                className={`relative ${scaleClasses[size]} flex items-center justify-center cursor-pointer group`}
+                className={`relative ${
+                    layout === "responsive" ? "order-1 md:order-2 shrink-0" : layout === "horizontal" ? "order-1 shrink-0" : ""
+                } ${scaleClasses[size]} flex items-center justify-center cursor-pointer group`}
                 title={interactive ? "¡Toca a Kuma Sensei!" : undefined}
             >
                 {/* --- AURA PARTICLES & FIRE BURSTS --- */}
