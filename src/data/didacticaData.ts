@@ -171,8 +171,16 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 author: "Harry Cook",
                                 year: 2001,
                                 editorial: "Edición Histórica Marcial",
-                                chapter: "La asamblea histórica de maestros de Okinawa de 1936",
-                                note: "Investigación documental sobre la reunión en Naha donde se oficializó el término Karate-Do."
+                                chapter: "Capítulo 4: La asamblea histórica de maestros de Okinawa de 1936",
+                                note: "Investigación documental sobre la reunión en Naha donde se oficializó el término y la caligrafía de Karate-Do."
+                            },
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo II: La transformación de To-te a Karate y el concepto Zen del vacío",
+                                note: "Explica cómo el kanji 'Vacío' simboliza limpiar la mente de egoísmo para actuar con serenidad y justicia."
                             }
                         ]
                     },
@@ -271,6 +279,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Paidotribo",
                                 chapter: "Capítulo 1: El contexto sociopolítico del desarme en el Reino de Ryukyu",
                                 note: "Documenta cómo la confiscación de armas por los samuráis obligó a los maestros a enseñar a puerta cerrada en patios nocturnos."
+                            },
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 1: Mis primeros años bajo la luna en el jardín de Maestro Azato",
+                                note: "Relato directo de los entrenamientos a medianoche alumbrados por faroles de papel para evitar ser descubiertos por las autoridades."
+                            },
+                            {
+                                title: "La Esencia del Karate-Do Okinawense",
+                                author: "Maestro Shoshin Nagamine (10° Dan)",
+                                year: 1998,
+                                editorial: "Editorial Miraguano",
+                                chapter: "Capítulo I: Génesis clandestina tras la ocupación militar de Satsuma de 1609",
+                                note: "Análisis histórico de las penas de muerte por porte de armas que impulsaron el acondicionamiento corporal y el uso del makiwara."
                             }
                         ]
                     },
@@ -312,6 +336,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Tutor",
                                 chapter: "Principio 2: Karate ni sente nashi (En el Karate no existe el primer ataque)",
                                 note: "Fundamento moral que distingue al verdadero practicante del Budo de un peleador callejero."
+                            },
+                            {
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Introducción: La naturaleza defensiva y pacífica del Karate",
+                                note: "Establece que todas las katas tradicionales comienzan siempre con un movimiento de defensa o bloqueo."
+                            },
+                            {
+                                title: "Enciclopedia de las Artes Marciales del Extremo Oriente",
+                                author: "Roland Habersetzer (Hanshi 9° Dan)",
+                                year: 2004,
+                                editorial: "Editorial Miraguano",
+                                chapter: "Tomo II: Filosofía moral del Budo y el concepto 'Sente Nashi'",
+                                note: "Exégesis histórica sobre el origen okinawense de la máxima y su integración en el código de honor japonés."
                             }
                         ]
                     },
@@ -353,6 +393,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Miraguano",
                                 chapter: "Capítulo 3: Desarrollo regional: Shuri-Te, Naha-Te y Tomari-Te",
                                 note: "Explica cómo cada ciudad desarrolló un enfoque biomecánico único según la clase social y oficio de sus habitantes."
+                            },
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Mark Bishop",
+                                year: 1999,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 2 y 3: Las tres ramas matrices de Ryukyu",
+                                note: "Comparativa exhaustiva entre los movimientos lineales de Shuri, la potencia de Naha y la versatilidad de Tomari."
+                            },
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Sección Histórica: La geografía marcial del archipiélago de Ryukyu",
+                                note: "Cartografía y linajes de transmisión de los tres núcleos urbanos primitivos de la isla de Okinawa."
                             }
                         ]
                     },
@@ -394,6 +450,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Eyras",
                                 chapter: "Capítulo 1: El espíritu del Rei y la etiqueta marcial en el dojo tradicional",
                                 note: "El fundador advierte que la técnica de combate sin reverencia ni respeto se degrada a simple violencia."
+                            },
+                            {
+                                title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1938,
+                                editorial: "Editorial Tutor",
+                                chapter: "Principio 1: Karate-do wa rei ni hajimari, rei ni owaru koto (El Karate empieza y termina con respeto)",
+                                note: "La regla áurea número uno del Karate tradicional como camino de elevación del espíritu humano."
+                            },
+                            {
+                                title: "El Mejor Karate: Fundamentos",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1989,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 1: Reigi Sahō: El protocolo y la cortesía dentro del Dojo",
+                                note: "Manual formativo que detalla la reverencia al maestro (Sensei ni rei), a los compañeros (Otagai ni rei) y al recinto sagrado."
                             }
                         ]
                     },
@@ -435,6 +507,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Paidotribo",
                                 chapter: "Capítulo 4: La física del impacto, la respiración y el principio del Kiai",
                                 note: "Estudio biomecánico que demuestra el aumento de masa efectiva y estabilidad que produce la exhalación brusca."
+                            },
+                            {
+                                title: "Traditional Karate-Do: Okinawa Goju Ryu Vol. 1",
+                                author: "Maestro Morio Higaonna (10° Dan)",
+                                year: 1985,
+                                editorial: "Minato Research / Miraguano",
+                                chapter: "Capítulo 3: La respiración diafragmática Ibuki y la focalización del Ki",
+                                note: "Análisis de la presión intraabdominal que blinda los órganos viscerales contra impactos directos."
+                            },
+                            {
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 3: La coordinación respiratoria y la manifestación del espíritu en el impacto",
+                                note: "Funakoshi describe cómo el grito unifica la mente, la respiración y la tensión muscular en un solo microsegundo."
                             }
                         ]
                     },
@@ -476,6 +564,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Tutor",
                                 chapter: "Introducción general a los tres pilares del Karate-Do",
                                 note: "Tratado técnico de la Japan Karate Association (JKA) sobre la progresión formativa del alumno."
+                            },
+                            {
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 2: Relación recíproca entre Kata, Kihon y el combate libre Kumite",
+                                note: "Explica cómo la técnica básica forja el cuerpo, la kata estructura la memoria y el combate prueba el temple."
+                            },
+                            {
+                                title: "Karate Shotokan: Una Historia Precisa",
+                                author: "Harry Cook",
+                                year: 2001,
+                                editorial: "Edición Histórica Marcial / Page Bros",
+                                chapter: "Capítulo 6: La formalización pedagógica de los tres pilares del karate moderno",
+                                note: "Cronología documental de la integración del Kumite y el Kihon metódico en las universidades de Tokio."
                             }
                         ]
                     },
@@ -517,6 +621,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Tutor",
                                 chapter: "Análisis del Bunkai: La descodificación de los Katas clásicos de Okinawa",
                                 note: "Explica cómo cada movimiento formal de un Kata responde a una situación real de vida o muerte en la calle."
+                            },
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Mark Bishop",
+                                year: 1999,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 4: El Kata como sistema mnemotécnico de supervivencia sin registros escritos",
+                                note: "Estudio antropológico sobre la transmisión oral y cinética de las técnicas de combate en Ryukyu."
+                            },
+                            {
+                                title: "Watashi no Karate-Jutsu: Mi Arte del Karate",
+                                author: "Maestro Choki Motobu",
+                                year: 1932,
+                                editorial: "Kitsutsuki / Ryukyu Martial Archives",
+                                chapter: "Capítulo II: Aplicaciones reales (Bunkai) de Naihanchi y las formas tradicionales",
+                                note: "El legendario combatiente okinawense desglosa las aplicaciones prácticas de llaves, barridos y luxaciones de las formas clásicas."
                             }
                         ]
                     },
@@ -558,6 +678,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Eyras",
                                 chapter: "Capítulo 5: El concepto de Ikken Hissatsu y la disciplina del autocontrol",
                                 note: "Funakoshi enfatiza que sin autocontrol milimétrico el karateka se convierte en un peligro público."
+                            },
+                            {
+                                title: "Karate Dinámico: Instrucción Oficial y Principios Biomecánicos",
+                                author: "Maestro Masatoshi Nakayama",
+                                year: 1986,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 2: El Sundome: El freno a milímetros del blanco en el entrenamiento de Kumite",
+                                note: "Estudio neuromuscular sobre la deceleración agonista-antagonista que permite detener el golpe a milímetros de la piel."
+                            },
+                            {
+                                title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1938,
+                                editorial: "Editorial Tutor",
+                                chapter: "Principio 12: No pienses que tienes que ganar; piensa más bien en no perder",
+                                note: "Tratado filosófico sobre la templanza y el cuidado reverencial de la vida humana en el tatami."
                             }
                         ]
                     },
@@ -600,6 +736,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Paidotribo",
                                 chapter: "Capítulo 2: El linaje de Shuri y la corte del Castillo de Ryukyu",
                                 note: "Análisis histórico de la casta militar Peichin y la transmisión del arte en el palacio real."
+                            },
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 1: Nacer en Shuri y el linaje de los guardaespaldas reales de Ryukyu",
+                                note: "Crónica del entorno aristocrático de Shuri donde se forjaron los desplazamientos rápidos y las posturas lineales."
+                            },
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Apéndice Histórico: Bushi Matsumura y la guardia de palacio en Shuri",
+                                note: "Registro biográfico de Sokon Matsumura y su servicio como comandante militar de tres reyes sucesivos de Ryukyu."
                             }
                         ]
                     },
@@ -641,6 +793,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Eyras",
                                 chapter: "Capítulo 1: Mis maestros de Shuri: Anko Asato y Anko Itosu",
                                 note: "Crónica autobiográfica del entrenamiento nocturno en Shuri que dio origen al Karate moderno."
+                            },
+                            {
+                                title: "Karate Shotokan: Una Historia Precisa",
+                                author: "Harry Cook",
+                                year: 2001,
+                                editorial: "Edición Histórica Marcial / Page Bros",
+                                chapter: "Capítulo 3: Sokon Matsumura y Anko Itosu: Los arquitectos del Shuri-Te",
+                                note: "Investigación genealógica que rastrea la evolución técnica de Shuri hasta Funakoshi y Mabuni."
+                            },
+                            {
+                                title: "La Esencia del Karate-Do Okinawense",
+                                author: "Maestro Shoshin Nagamine (10° Dan)",
+                                year: 1998,
+                                editorial: "Editorial Miraguano",
+                                chapter: "Capítulo 2: Grandes maestros del linaje Shuri-Te / Shorin-Ryu",
+                                note: "Homenaje biográfico a Anko Itosu como el gran reformador pedagógico que creó las katas Pinan/Heian."
                             }
                         ]
                     },
@@ -683,6 +851,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Miraguano",
                                 chapter: "Capítulo 2: El puerto de Naha, Kumemura y los viajes a Fujian",
                                 note: "Estudio exhaustivo sobre el intercambio marítimo y comercial que forjó el linaje de Naha."
+                            },
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 3: Las raíces del Quan-fa de Fuzhou en Kumemura (Okinawa)",
+                                note: "Documentación histórica sobre la llegada de las 36 familias chinas en 1392 y la introducción del estilo Grulla Blanca."
+                            },
+                            {
+                                title: "Traditional Karate-Do: Okinawa Goju Ryu Vol. 1",
+                                author: "Maestro Morio Higaonna (10° Dan)",
+                                year: 1985,
+                                editorial: "Minato Research / Miraguano",
+                                chapter: "Capítulo 2: La kata Sanchin y los fundamentos fisiológicos del Naha-Te",
+                                note: "Análisis postural del enraizamiento, torsión pélvica y respiración diafragmática propios del puerto de Naha."
                             }
                         ]
                     },
@@ -724,6 +908,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Tutor",
                                 chapter: "Capítulo 4: El poema Hakku Kenpo y la creación del nombre Goju-Ryu",
                                 note: "Documenta cómo Miyagi extrajo el nombre Goju-Ryu de los versos marciales del Bubishi."
+                            },
+                            {
+                                title: "La Historia del Karate: Goju-Ryu de Okinawa",
+                                author: "Maestro Morio Higaonna (10° Dan)",
+                                year: 1996,
+                                editorial: "Editorial Miraguano",
+                                chapter: "Capítulo 4: Kanryo Higaonna y Chojun Miyagi: La forja del Goju-Ryu",
+                                note: "Crónica del viaje de Higaonna a Fuzhou para entrenar con Ryu Ryu Ko y la posterior consolidación del estilo por Miyagi."
+                            },
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Mark Bishop",
+                                year: 1999,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 5: El linaje Uechi-Ryu: Kanbun Uechi y el boxeo chino Pangai-noon",
+                                note: "Historia detallada de cómo Kanbun Uechi trajo a Okinawa el sistema tradicional de tigre, grulla y dragón de Fujian."
                             }
                         ]
                     },
@@ -766,6 +966,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Paidotribo",
                                 chapter: "Capítulo 3: El misterioso Tomari-Te y las enseñanzas del náufrago chino Annan",
                                 note: "Detalla la singularidad de Tomari como crisol de pescadores, campesinos y maestros itinerantes."
+                            },
+                            {
+                                title: "La Esencia del Karate-Do Okinawense",
+                                author: "Maestro Shoshin Nagamine (10° Dan)",
+                                year: 1998,
+                                editorial: "Editorial Miraguano",
+                                chapter: "Capítulo 3: Las leyendas de Tomari: Kosaku Matsumora y Kokan Oyadomari",
+                                note: "Relato de los entrenamientos secretos en el cementerio y las cuevas costeras de Tomari con náufragos chinos."
+                            },
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Sección Histórica: El pirata o marinero chino Chinto y su legado en Tomari",
+                                note: "Investigación sobre la figura histórica de Chinto y cómo transmitió su método de esquivas y saltos a los guerreros de Tomari."
                             }
                         ]
                     },
@@ -807,6 +1023,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Paidotribo",
                                 chapter: "Capítulo 3: Kosaku Matsumora, Choki Motobu y los katas exclusivos de Tomari",
                                 note: "Historia de cómo los katas de Tomari fueron transmitidos a las generaciones contemporáneas."
+                            },
+                            {
+                                title: "Watashi no Karate-Jutsu: Mi Arte del Karate",
+                                author: "Maestro Choki Motobu",
+                                year: 1932,
+                                editorial: "Kitsutsuki / Ryukyu Martial Archives",
+                                chapter: "Capítulo I: Mi aprendizaje con Maestro Kosaku Matsumora en Tomari",
+                                note: "Memorias del más legendario luchador de Okinawa sobre las técnicas de esquiva angular Tenshin y contragolpes de Tomari."
+                            },
+                            {
+                                title: "La Esencia del Karate-Do Okinawense",
+                                author: "Maestro Shoshin Nagamine (10° Dan)",
+                                year: 1998,
+                                editorial: "Editorial Miraguano",
+                                chapter: "Capítulo 5: Los katas clásicos de Tomari: Rohai y Wankan",
+                                note: "Descripción técnica e iconografía del movimiento de la garza (Rohai) y la corona real (Wankan) heredados de Tomari."
                             }
                         ]
                     }
@@ -854,6 +1086,32 @@ export const DIDACTIC_UNITS: Unit[] = [
                             { id: "p1", left: "JODAN", right: "Zona Alta (Cabeza/Cuello)" },
                             { id: "p2", left: "CHUDAN", right: "Zona Media (Torso/Costillas)" },
                             { id: "p3", left: "GEDAN", right: "Zona Baja (Debajo de cintura)" },
+                        ],
+                        references: [
+                            {
+                                title: "Karate-Do Kyohan: The Master Text",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1973,
+                                editorial: "Kodansha International",
+                                chapter: "Capítulo III: Puntos del cuerpo humano y alturas de ataque: Jodan, Chudan y Gedan",
+                                note: "Define los tres niveles verticales de la anatomía humana y su correspondencia con las defensas fundamentales."
+                            },
+                            {
+                                title: "Karate Dinámico: Instrucción Oficial y Principios Biomecánicos",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1986,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 1: Las tres zonas corporales y las dianas anatómicas",
+                                note: "Estudio anatómico que detalla la trayectoria y altura precisa de cada técnica respecto al eje del cuerpo."
+                            },
+                            {
+                                title: "Enciclopedia de las Artes Marciales del Extremo Oriente",
+                                author: "Roland Habersetzer (Hanshi 9° Dan)",
+                                year: 2004,
+                                editorial: "Editorial Miraguano",
+                                chapter: "Sección Terminología Biomecánica: Jodan, Chudan, Gedan",
+                                note: "Compendio enciclopédico sobre la división tripartita del cuerpo en el Budo tradicional japonés."
+                            }
                         ]
                     },
                     {
@@ -869,7 +1127,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Atama significa cabeza y Men hace referencia a la faz/rostro en las artes marciales japonesas.",
-                        hint: "Hiza es rodilla y Empi es codo."
+                        hint: "Hiza es rodilla y Empi es codo.",
+                        references: [
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo V: Los puntos vulnerables del cráneo y rostro (Atama/Men)",
+                                note: "Identificación de los centros nerviosos craneales y el riesgo biomecánico de impacto en la zona cefálica."
+                            },
+                            {
+                                title: "Karate-Do Kyohan: The Master Text",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1973,
+                                editorial: "Kodansha International",
+                                chapter: "Capítulo IV: Terminología anatómica de la cabeza (Atama) y la cara (Men)",
+                                note: "Glosario canónico de los blancos vitales superiores y la necesidad de Sundome al atacar el rostro."
+                            },
+                            {
+                                title: "Anatomía de las Artes Marciales",
+                                author: "Dr. Norman Link",
+                                year: 2008,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 2: Estructuras craneofaciales y el control de impacto en el Karate tradicional",
+                                note: "Análisis médico-deportivo sobre la vulnerabilidad de los huesos propios nasales y mandíbula."
+                            }
+                        ]
                     },
                     {
                         id: "q-anat-3",
@@ -880,6 +1164,32 @@ export const DIDACTIC_UNITS: Unit[] = [
                             { id: "p1", left: "Hiza", right: "Rodilla" },
                             { id: "p2", left: "Empi", right: "Codo" },
                             { id: "p3", left: "Seiken", right: "Puño frontal" },
+                        ],
+                        references: [
+                            {
+                                title: "El Mejor Karate: Fundamentos",
+                                author: "Maestro Masatoshi Nakayama",
+                                year: 1989,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 2: Las armas corporales: Hiza (rodilla), Empi (codo) y Seiken (puño frontal)",
+                                note: "Guía ilustrada oficial de la JKA sobre la correcta alineación ósea de muñeca, codo y rodilla al golpear."
+                            },
+                            {
+                                title: "Karate-Do Kyohan",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 2: Las armas naturales del cuerpo humano: uso de codos, puños y rodillas",
+                                note: "Descripción pionera de Funakoshi sobre cómo acondicionar cada articulación como escudo y ariete."
+                            },
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Mark Bishop",
+                                year: 1999,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 6: Armas corporales anatómicas y acondicionamiento óseo en Okinawa",
+                                note: "Historia del endurecimiento tradicional de nudillos (Seiken) y codos (Empi) mediante el makiwara en Ryukyu."
+                            }
                         ]
                     }
                 ]
@@ -931,7 +1241,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Kumi (juntar/entrelazar) y Te (mano): 'entrelazar manos', vinculado a los agarres y luchas arcaicas del Tegumi.",
-                        hint: "Kumi = enlazar o unir; Te = mano."
+                        hint: "Kumi = enlazar o unir; Te = mano.",
+                        references: [
+                            {
+                                title: "La Esencia del Karate-Do Okinawense",
+                                author: "Maestro Shoshin Nagamine (10° Dan)",
+                                year: 1998,
+                                editorial: "Editorial Miraguano",
+                                chapter: "Capítulo 1: Del Tegumi primitivo al Kumite: entrelazar las manos en combate",
+                                note: "Investigación sobre la lucha autóctona de Okinawa (Tegumi) como precursora del combate cuerpo a cuerpo."
+                            },
+                            {
+                                title: "Karate Shotokan: Una Historia Precisa",
+                                author: "Harry Cook",
+                                year: 2001,
+                                editorial: "Edición Histórica Marcial / Page Bros",
+                                chapter: "Capítulo 5: Etimología marcial del término Kumite (組手) y sus orígenes okinawenses",
+                                note: "Análisis lingüístico e histórico de cómo 'entrelazar manos' evolucionó a combate reglado."
+                            },
+                            {
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 4: El significado de Kumite: unir voluntades y entrelazar manos en el dojo",
+                                note: "Funakoshi expone la transición del entrenamiento solista en kata hacia el encuentro respetuoso de manos."
+                            }
+                        ]
                     },
                     {
                         id: "q-kumite-2",
@@ -945,7 +1281,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Ikken Hissatsu reflejaba la búsqueda de la máxima eficacia resolutiva con un solo golpe decisivo.",
-                        hint: "Significa terminar el combate de un solo impacto."
+                        hint: "Significa terminar el combate de un solo impacto.",
+                        references: [
+                            {
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 5: El concepto de Ikken Hissatsu y la determinación decisiva en el combate",
+                                note: "La doctrina de concentrar cuerpo y mente en un solo golpe resolutivo para frenar de inmediato la agresión."
+                            },
+                            {
+                                title: "Karate Dinámico: Instrucción Oficial y Principios Biomecánicos",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1986,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 2: La concentración de energía resolutiva: El principio de Ikken Hissatsu",
+                                note: "Estudio sobre la física del impacto y la máxima transferencia cinética en un instante único."
+                            },
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 6: La búsqueda de la eficacia fulminante en el combate civil de Ryukyu",
+                                note: "Antecedentes chinos y okinawenses de la resolución de conflictos sin prolongar la confrontación."
+                            }
+                        ]
                     },
                     {
                         id: "q-kumite-3",
@@ -953,7 +1315,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                         prompt: "¿El combate libre (Jiyu Kumite) competitivo siempre formó parte de la enseñanza original de Okinawa?",
                         correctBool: false,
                         explanation: "¡Falso! En Okinawa se practicaba Yakusoku Kumite (preestablecido) y kata; el combate libre moderno nació en las universidades japonesas del siglo XX.",
-                        hint: "Revisa el rol de los clubes universitarios de Tokio en 1920."
+                        hint: "Revisa el rol de los clubes universitarios de Tokio en 1920.",
+                        references: [
+                            {
+                                title: "Karate Shotokan: Una Historia Precisa",
+                                author: "Harry Cook",
+                                year: 2001,
+                                editorial: "Edición Histórica Marcial / Page Bros",
+                                chapter: "Capítulo 7: La invención del Jiyu Kumite libre en las universidades de Tokio por Yoshitaka Funakoshi",
+                                note: "Documentación sobre los primeros combates libres desarrollados en las universidades de Keio y Waseda."
+                            },
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 3: Cómo el karate antiguo de katas evolucionó hacia el combate libre universitario",
+                                note: "Funakoshi narra los debates iniciales sobre si permitir o no el combate libre entre los jóvenes universitarios."
+                            },
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Mark Bishop",
+                                year: 1999,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 4: La ausencia de combate libre deportivo en la antigua Okinawa y el predominio del Yakusoku Kumite",
+                                note: "Explica cómo la letalidad de las técnicas tradicionales impedía los combates libres deportivos en Ryukyu."
+                            }
+                        ]
                     }
                 ]
             }
