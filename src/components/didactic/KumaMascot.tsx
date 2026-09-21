@@ -207,11 +207,11 @@ export function KumaMascot({
 
     // Responsive dimensions
     const scaleClasses = {
-        sm: "w-28 h-28",
-        md: "w-40 h-40 md:w-48 md:h-48",
-        lg: "w-52 h-52 md:w-64 md:h-64",
+        sm: "w-32 h-32",
+        md: "w-48 h-48 sm:w-52 sm:h-52 md:w-56 md:h-56",
+        lg: "w-56 h-56 md:w-64 md:h-64",
         xl: "w-64 h-64 md:w-80 md:h-80",
-        responsive: "w-16 h-16 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-48 md:h-48",
+        responsive: "w-28 h-28 xs:w-32 xs:h-32 sm:w-40 sm:h-40 md:w-48 md:h-48",
     };
 
     const isExcited = mood === "correct" || mood === "streak" || isPokePumping || isYoiDeepBreathing;

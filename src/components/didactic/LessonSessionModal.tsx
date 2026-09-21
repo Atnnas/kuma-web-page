@@ -71,25 +71,24 @@ function QuestionBibliography({
 
             {isOpen && (
                 <div className={`mt-2 p-3 rounded-xl border ${containerBorder} backdrop-blur-md text-left space-y-2 max-w-xl animate-in fade-in slide-in-from-top-1 duration-200`}>
-                    {/* MOBILE ONLY: SENSEI SCHOLAR COMPANION CON ANIMACIÓN ACTIVA */}
-                    <div className="md:hidden flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-amber-950/70 via-[#1E293B] to-[#0F172A] border border-[#FFC800]/50 shadow-md overflow-hidden">
-                        <div className="w-20 h-20 shrink-0 flex items-center justify-center overflow-visible">
+                    {/* MOBILE ONLY: SENSEI SCHOLAR COMPANION CON POSTE Y ANIMACIÓN COMPLETA */}
+                    <div className="md:hidden w-full flex flex-col items-center justify-center p-3 rounded-2xl bg-gradient-to-b from-amber-950/70 via-[#1E293B] to-[#0F172A] border border-[#FFC800]/50 shadow-md overflow-visible">
+                        <div className="w-56 h-44 flex items-center justify-center overflow-visible relative">
                             <KumaMascot
-                                size="sm"
+                                size="md"
                                 mood={mascotMood}
                                 strikeTrigger={strikeTrigger}
                                 path={activePath}
                                 beltRank={activeBeltRank}
                                 showBubble={false}
                                 interactive={true}
-                                className="scale-90 origin-center"
                             />
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-[#FFC800] block mb-0.5">
-                                📜 Kuma Sensei Académico
+                        <div className="text-center mt-2">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-[#FFC800] block mb-1">
+                                📜 Kuma Sensei Académico (¡Tócalo para partir el poste!)
                             </span>
-                            <p className="text-[11px] text-amber-100/90 leading-tight font-serif italic">
+                            <p className="text-[11px] text-amber-100/90 leading-tight font-serif italic max-w-sm mx-auto">
                                 &ldquo;Un verdadero karateka forja tanto el puño como el intelecto con las fuentes de los grandes maestros.&rdquo;
                             </p>
                         </div>
@@ -1127,20 +1126,25 @@ export function LessonSessionModal({
                                 animate={{ opacity: 1, y: 0 }}
                                 className="p-4 md:p-5 rounded-2xl md:rounded-3xl bg-[#143818] border-2 border-[#58CC02] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-lg max-h-[65vh] overflow-y-auto"
                             >
-                                <div className="flex items-start gap-3.5 w-full">
-                                    {/* MOBILE ONLY: SENSEI ANIMATED MASCOT CELEBRATING TSUKI STRIKE */}
-                                    <div className="md:hidden flex items-center justify-center shrink-0 w-20 h-20 overflow-visible mt-0.5">
-                                        <KumaMascot
-                                            mood={streak >= 3 ? "streak" : "correct"}
-                                            strikeTrigger={`${currentIndex}-${answerStatus}-${streak}`}
-                                            path={activePath}
-                                            beltRank={activeBeltRank}
-                                            size="sm"
-                                            showBubble={false}
-                                            interactive={true}
-                                            className="scale-90 origin-center"
-                                        />
+                                <div className="flex flex-col md:flex-row items-start gap-3.5 w-full">
+                                    {/* MOBILE ONLY: FULL MARTIAL STAGE WITH POST BREAKING ANIMATION (EXACTLY LIKE DESKTOP) */}
+                                    <div className="md:hidden w-full flex flex-col items-center justify-center py-2 bg-gradient-to-b from-black/60 via-emerald-950/40 to-transparent rounded-2xl border border-emerald-500/30 overflow-visible mb-2">
+                                        <div className="w-56 h-44 flex items-center justify-center overflow-visible relative">
+                                            <KumaMascot
+                                                mood={streak >= 3 ? "streak" : "correct"}
+                                                strikeTrigger={`${currentIndex}-${answerStatus}-${streak}`}
+                                                path={activePath}
+                                                beltRank={activeBeltRank}
+                                                size="md"
+                                                showBubble={false}
+                                                interactive={true}
+                                            />
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-wider text-[#FFC800] mt-1 bg-black/70 px-3 py-0.5 rounded-full border border-[#FFC800]/40 shadow-sm">
+                                            💥 ¡Tsuki Certero: Poste Partido en Dos!
+                                        </span>
                                     </div>
+
                                     <CheckCircle className="hidden md:block w-8 h-8 text-[#58CC02] shrink-0 mt-0.5" weight="fill" />
                                     <div className="w-full">
                                         <div className="flex items-center gap-2 mb-0.5">
@@ -1187,20 +1191,25 @@ export function LessonSessionModal({
                                 animate={{ opacity: 1, y: 0 }}
                                 className="p-4 md:p-5 rounded-2xl md:rounded-3xl bg-[#2B1313] border-2 border-[#FF4B4B] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-lg max-h-[65vh] overflow-y-auto"
                             >
-                                <div className="flex items-start gap-3.5 w-full">
-                                    {/* MOBILE ONLY: SENSEI ANIMATED MASCOT REACTING TO INCORRECT TECHNIQUE */}
-                                    <div className="md:hidden flex items-center justify-center shrink-0 w-20 h-20 overflow-visible mt-0.5">
-                                        <KumaMascot
-                                            mood="wrong"
-                                            strikeTrigger={`${currentIndex}-${answerStatus}-${streak}`}
-                                            path={activePath}
-                                            beltRank={activeBeltRank}
-                                            size="sm"
-                                            showBubble={false}
-                                            interactive={true}
-                                            className="scale-90 origin-center"
-                                        />
+                                <div className="flex flex-col md:flex-row items-start gap-3.5 w-full">
+                                    {/* MOBILE ONLY: FULL MARTIAL STAGE ON WRONG ANSWER */}
+                                    <div className="md:hidden w-full flex flex-col items-center justify-center py-2 bg-gradient-to-b from-black/60 via-rose-950/40 to-transparent rounded-2xl border border-rose-500/30 overflow-visible mb-2">
+                                        <div className="w-56 h-44 flex items-center justify-center overflow-visible relative">
+                                            <KumaMascot
+                                                mood="wrong"
+                                                strikeTrigger={`${currentIndex}-${answerStatus}-${streak}`}
+                                                path={activePath}
+                                                beltRank={activeBeltRank}
+                                                size="md"
+                                                showBubble={false}
+                                                interactive={true}
+                                            />
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-wider text-rose-300 mt-1 bg-black/70 px-3 py-0.5 rounded-full border border-rose-500/40 shadow-sm">
+                                            🥋 Disciplina Marcial Kuma Sensei
+                                        </span>
                                     </div>
+
                                     <XCircle className="hidden md:block w-8 h-8 text-[#FF4B4B] shrink-0 mt-0.5" weight="fill" />
                                     <div className="w-full">
                                         <div className="flex items-center gap-2 mb-0.5">

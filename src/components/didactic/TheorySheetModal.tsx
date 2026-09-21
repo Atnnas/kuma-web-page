@@ -179,16 +179,16 @@ export function TheorySheetModal({
                                     </div>
                                 </div>
 
-                                {/* MOBILE ONLY: SENSEI SCHOLAR COMPANION */}
-                                <div className="md:hidden flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-amber-950/60 via-[#1E293B] to-[#0F172A] border border-[#FFC800]/40 shadow-sm overflow-hidden">
-                                    <div className="w-16 h-16 shrink-0 flex items-center justify-center overflow-visible">
-                                        <KumaMascot size="sm" mood="thinking" showBubble={false} interactive={true} className="scale-75 origin-center" />
+                                {/* MOBILE ONLY: SENSEI SCHOLAR COMPANION CON POSTE Y ANIMACIÓN COMPLETA */}
+                                <div className="md:hidden w-full flex flex-col items-center justify-center p-3 rounded-2xl bg-gradient-to-b from-amber-950/70 via-[#1E293B] to-[#0F172A] border border-[#FFC800]/50 shadow-md overflow-visible">
+                                    <div className="w-56 h-44 flex items-center justify-center overflow-visible relative">
+                                        <KumaMascot size="md" mood="thinking" showBubble={false} interactive={true} />
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <span className="text-[10px] font-black uppercase tracking-wider text-[#FFC800] block mb-0.5">
-                                            📜 Kuma Sensei Académico
+                                    <div className="text-center mt-2">
+                                        <span className="text-[10px] font-black uppercase tracking-wider text-[#FFC800] block mb-1">
+                                            📜 Kuma Sensei Académico (¡Tócalo para partir el poste!)
                                         </span>
-                                        <p className="text-[11px] text-amber-100/90 leading-tight font-serif italic">
+                                        <p className="text-[11px] text-amber-100/90 leading-tight font-serif italic max-w-sm mx-auto">
                                             &ldquo;Cada tratado antiguo contiene los secretos de los pioneros de Okinawa. ¡Léelos con respeto!&rdquo;
                                         </p>
                                     </div>
