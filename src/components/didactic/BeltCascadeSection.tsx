@@ -248,6 +248,7 @@ function MartialLevelBridge({
         : "M 115 0 C 115 28, 45 20, 45 48";
 
     const isFlowActive = isSourceCompleted;
+    const isFlowReady = isTargetUnlocked && !isSourceCompleted;
 
     return (
         <div className="relative w-44 md:w-56 h-12 md:h-14 -my-2 flex items-center justify-center pointer-events-none z-0">
@@ -263,6 +264,13 @@ function MartialLevelBridge({
                         <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.9" />
                         <stop offset="50%" stopColor="#FDE68A" stopOpacity="1" />
                         <stop offset="100%" stopColor="#D97706" stopOpacity="0.8" />
+                    </linearGradient>
+
+                    {/* Active Target Anticipation Gradient */}
+                    <linearGradient id={`readyFlow-${fromLeft ? "L" : "R"}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#FBBF24" stopOpacity="0.6" />
+                        <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#D97706" stopOpacity="0.9" />
                     </linearGradient>
 
                     {/* Dark Wrought Iron / Dormant Gradient */}
@@ -285,29 +293,36 @@ function MartialLevelBridge({
                 {/* Layer 1: Ambient Ethereal Glow Beam */}
                 <path
                     d={dPath}
-                    stroke={isFlowActive ? "#F59E0B" : "rgba(255,255,255,0.04)"}
-                    strokeWidth={isFlowActive ? "7" : "3"}
-                    strokeOpacity={isFlowActive ? "0.35" : "0.2"}
+                    stroke={isFlowActive ? "#F59E0B" : isFlowReady ? "#FBBF24" : "rgba(255,255,255,0.04)"}
+                    strokeWidth={isFlowActive ? "7" : isFlowReady ? "5" : "3"}
+                    strokeOpacity={isFlowActive ? "0.4" : isFlowReady ? "0.3" : "0.2"}
                     strokeLinecap="round"
-                    filter={isFlowActive ? `url(#qiGlow-${fromLeft ? "L" : "R"})` : undefined}
+                    filter={isFlowActive || isFlowReady ? `url(#qiGlow-${fromLeft ? "L" : "R"})` : undefined}
                 />
 
                 {/* Layer 2: Kumihimo Braided Silk Cord */}
                 <path
                     d={dPath}
-                    stroke={isFlowActive ? `url(#goldFlow-${fromLeft ? "L" : "R"})` : `url(#dormantFlow-${fromLeft ? "L" : "R"})`}
-                    strokeWidth="3.2"
-                    strokeDasharray={isFlowActive ? "5 3" : "4 4"}
+                    stroke={
+                        isFlowActive
+                            ? `url(#goldFlow-${fromLeft ? "L" : "R"})`
+                            : isFlowReady
+                            ? `url(#readyFlow-${fromLeft ? "L" : "R"})`
+                            : `url(#dormantFlow-${fromLeft ? "L" : "R"})`
+                    }
+                    strokeWidth={isFlowActive ? "3.5" : isFlowReady ? "3" : "2.6"}
+                    strokeDasharray={isFlowActive ? "5 3" : isFlowReady ? "4 2" : "4 4"}
                     strokeLinecap="round"
+                    className={isFlowReady ? "animate-pulse" : ""}
                 />
 
                 {/* Layer 3: Central Luminous Filament */}
-                {isFlowActive && (
+                {(isFlowActive || isFlowReady) && (
                     <path
                         d={dPath}
                         stroke="#FFFBEB"
-                        strokeWidth="1.2"
-                        strokeOpacity="0.85"
+                        strokeWidth={isFlowActive ? "1.2" : "0.8"}
+                        strokeOpacity={isFlowActive ? "0.9" : "0.6"}
                         strokeLinecap="round"
                     />
                 )}
@@ -317,7 +332,7 @@ function MartialLevelBridge({
                     {isFlowActive ? (
                         <>
                             {/* Outer pulsing ring */}
-                            <circle r="7" fill="#F59E0B" fillOpacity="0.2" className="animate-ping" />
+                            <circle r="7" fill="#F59E0B" fillOpacity="0.25" className="animate-ping" />
                             {/* Diamond Golden Talisman */}
                             <polygon
                                 points="0,-6 6,0 0,6 -6,0"
@@ -329,6 +344,12 @@ function MartialLevelBridge({
                             {/* Core white spark */}
                             <circle r="1.5" fill="#FFFFFF" />
                         </>
+                    ) : isFlowReady ? (
+                        <>
+                            <circle r="5" fill="#F59E0B" fillOpacity="0.2" className="animate-pulse" />
+                            <circle r="3" fill="#FBBF24" stroke="#B45309" strokeWidth="1" />
+                            <circle r="1" fill="#FFFFFF" />
+                        </>
                     ) : (
                         <>
                             {/* Inactive iron bead */}
@@ -338,7 +359,6 @@ function MartialLevelBridge({
                                 stroke="#52525B"
                                 strokeWidth="1"
                             />
-                            <circle r="1" fill="#71717A" />
                         </>
                     )}
                 </g>
@@ -612,6 +632,7 @@ export function BeltCascadeSection({
     onFocusBelt,
 }: BeltCascadeSectionProps) {
     const isDan = belt.category === "dan";
+    const isWhiteBelt = belt.category === "kyu" && belt.levelNumber === 10;
     const beltLevels = unit.levels;
 
     // Progression metrics for this belt
@@ -645,11 +666,61 @@ export function BeltCascadeSection({
                 className={`relative rounded-3xl p-6 md:p-8 backdrop-blur-xl border transition-all duration-500 overflow-hidden ${
                     isBeltCompleted
                         ? "bg-gradient-to-b from-zinc-900/95 via-zinc-950/95 to-black border-kuma-gold/50 shadow-[0_20px_50px_rgba(0,0,0,0.7)] ring-1 ring-kuma-gold/30"
+                        : isWhiteBelt && isBeltUnlocked
+                        ? "bg-gradient-to-b from-[#221d19]/95 via-[#171412]/95 to-[#0c0a09]/98 border-2 border-amber-300/50 shadow-[0_25px_60px_rgba(245,158,11,0.25),0_0_40px_rgba(255,200,0,0.12)] ring-1 ring-amber-400/40"
                         : isBeltUnlocked
                         ? "bg-gradient-to-b from-zinc-900/90 via-zinc-950/90 to-black border-white/15 hover:border-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.7)]"
                         : "bg-zinc-950/40 border-white/5 opacity-60 shadow-md"
                 }`}
             >
+                {/* SACRED ASANOHA & ILLUMINATED DOJO TATAMI BACKGROUND (EXCLUSIVO CINTURÓN BLANCO) */}
+                {isWhiteBelt && isBeltUnlocked && (
+                    <>
+                        {/* Golden Overhead Spotlight */}
+                        <div
+                            className="absolute -top-16 left-1/2 -translate-x-1/2 w-full max-w-lg h-72 rounded-full pointer-events-none blur-3xl opacity-40"
+                            style={{
+                                background:
+                                    "radial-gradient(ellipse at center, rgba(254, 240, 138, 0.45) 0%, rgba(245, 158, 11, 0.25) 45%, transparent 75%)",
+                            }}
+                        />
+
+                        {/* Geometric Asanoha (Hemp Leaf) Japanese Sacred Lattice Pattern */}
+                        <div
+                            className="absolute inset-0 pointer-events-none opacity-[0.09]"
+                            style={{
+                                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 52-30 52-30-52z' fill='none' stroke='%23fef08a' stroke-width='1.2'/%3E%3Cpath d='M30 0v104M0 52h60' stroke='%23fef08a' stroke-width='1.2'/%3E%3Cpath d='M0 0l60 104M60 0L0 104' stroke='%23fef08a' stroke-width='0.8'/%3E%3C/svg%3E")`,
+                                backgroundSize: "60px 104px",
+                            }}
+                        />
+
+                        {/* Tatami Weave Linear Floor Texture */}
+                        <div
+                            className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                            style={{
+                                backgroundImage:
+                                    "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(254, 240, 138, 0.3) 3px, rgba(254, 240, 138, 0.3) 4px)",
+                            }}
+                        />
+
+                        {/* Faint Sacred Calligraphy Watermark: 初心 (Shoshin - "Mente de Principiante") */}
+                        <div className="absolute right-4 bottom-10 pointer-events-none select-none opacity-[0.08] flex flex-col items-center">
+                            <span className="text-8xl md:text-9xl font-serif font-black text-amber-200 leading-none drop-shadow-[0_0_20px_rgba(245,158,11,0.5)]">
+                                初心
+                            </span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.35em] text-amber-200 mt-1">
+                                Shoshin
+                            </span>
+                        </div>
+
+                        {/* Decorative Golden Kamon Corner Brackets */}
+                        <div className="absolute top-2.5 left-2.5 w-6 h-6 border-t-2 border-l-2 border-amber-300/40 rounded-tl-sm pointer-events-none" />
+                        <div className="absolute top-2.5 right-2.5 w-6 h-6 border-t-2 border-r-2 border-amber-300/40 rounded-tr-sm pointer-events-none" />
+                        <div className="absolute bottom-2.5 left-2.5 w-6 h-6 border-b-2 border-l-2 border-amber-300/40 rounded-bl-sm pointer-events-none" />
+                        <div className="absolute bottom-2.5 right-2.5 w-6 h-6 border-b-2 border-r-2 border-amber-300/40 rounded-br-sm pointer-events-none" />
+                    </>
+                )}
+
                 {/* Ambient glow accent matching belt color (only if unlocked) */}
                 {isBeltUnlocked && (
                     <div
@@ -813,10 +884,22 @@ export function BeltCascadeSection({
 
                                             {/* Level Title and Tag */}
                                             <div className="mt-3 text-center max-w-[190px]">
-                                                <span className="block text-xs md:text-sm font-serif font-black text-white leading-tight drop-shadow">
+                                                <span
+                                                    className={`block text-xs md:text-sm font-serif font-black leading-tight drop-shadow transition-colors ${
+                                                        unlocked ? "text-white" : "text-zinc-400"
+                                                    }`}
+                                                >
                                                     {level.title}
                                                 </span>
-                                                <span className="text-[10px] text-kuma-gold/90 font-bold uppercase tracking-widest block mt-0.5">
+                                                <span
+                                                    className={`text-[10px] font-bold uppercase tracking-widest block mt-0.5 transition-colors ${
+                                                        completed
+                                                            ? "text-emerald-400"
+                                                            : unlocked
+                                                            ? "text-amber-300"
+                                                            : "text-zinc-500"
+                                                    }`}
+                                                >
                                                     {level.tag}
                                                 </span>
                                             </div>
@@ -828,7 +911,7 @@ export function BeltCascadeSection({
                                                 fromLeft={idx % 2 === 0}
                                                 isSourceCompleted={completed}
                                                 isTargetUnlocked={nextUnlocked}
-                                                beltColor={belt.strokeColor || belt.color}
+                                                beltColor={isWhiteBelt ? "#FFC800" : belt.strokeColor || belt.color}
                                             />
                                         )}
                                     </React.Fragment>

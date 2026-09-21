@@ -23,18 +23,18 @@ export function OkinawaMapOrb({
 }: OkinawaMapOrbProps) {
     return (
         <div className={`relative flex items-center justify-center select-none ${className}`}>
-            {/* Outer Ethereal Ki Aura */}
-            <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-amber-500/30 via-yellow-400/20 to-amber-600/30 blur-lg pointer-events-none animate-pulse" />
+            {/* Outer Luminous Ocean Ki Aura */}
+            <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-sky-400/30 via-cyan-300/30 to-amber-400/20 blur-lg pointer-events-none animate-pulse" />
 
-            {/* 3D Photorealistic Glass Orb Asset */}
-            <div className="relative w-full h-full rounded-full overflow-hidden shadow-[0_12px_28px_rgba(0,0,0,0.9),0_0_20px_rgba(245,158,11,0.4)] border border-amber-300/40">
+            {/* 3D Tactile Arcade Frame & Photorealistic Relief */}
+            <div className="relative w-full h-full rounded-full overflow-hidden bg-gradient-to-b from-[#1CB0F6] via-[#0288D1] to-[#01579B] border-t-2 border-t-sky-100 border-x-2 border-x-sky-300 border-b-[6px] border-b-[#003B66] shadow-[0_12px_26px_rgba(0,0,0,0.65),0_0_25px_rgba(28,176,246,0.5)]">
                 <Image
                     src="/images/didactic/okinawa_orb_3d.jpg"
                     alt="Mapa 3D de Okinawa - Cuna del Karate-Do"
                     fill
                     sizes="(max-width: 768px) 96px, 120px"
-                    className={`object-cover transform transition-transform duration-500 group-hover:scale-110 ${
-                        isCompleted ? "brightness-110" : "brightness-100"
+                    className={`object-cover transform transition-transform duration-500 group-hover:scale-110 mix-blend-screen opacity-95 ${
+                        isCompleted ? "brightness-115" : "brightness-105"
                     }`}
                     priority
                 />
@@ -45,15 +45,15 @@ export function OkinawaMapOrb({
                     style={{ left: "39%", top: "59%", transform: "translate(-50%, -50%)" }}
                 >
                     {/* Shockwave ripple */}
-                    <span className="absolute -inset-2 rounded-full bg-red-500/60 animate-ping" />
-                    <span className="absolute -inset-1 rounded-full bg-rose-400/80 animate-pulse" />
+                    <span className="absolute -inset-2.5 rounded-full bg-red-500/70 animate-ping" />
+                    <span className="absolute -inset-1 rounded-full bg-rose-400/90 animate-pulse" />
                     {/* Glowing Core */}
-                    <span className="relative block w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444,0_0_14px_#f87171] border border-white" />
+                    <span className="relative block w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444,0_0_16px_#f87171] border border-white" />
                 </div>
 
-                {/* Dynamic Specular Glass Reflection Sweep */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-white/40 pointer-events-none mix-blend-overlay" />
-                <div className="absolute top-1 left-3 w-7 h-3 rounded-[50%] bg-white/40 blur-[1px] -rotate-25 pointer-events-none" />
+                {/* Upper Curved Gloss / Acrylic Specular Reflection */}
+                <div className="absolute top-1.5 left-3 right-3 h-7 rounded-[50%] bg-gradient-to-b from-white/80 via-white/25 to-transparent pointer-events-none" />
+                <div className="absolute top-2.5 left-4 w-2.5 h-1.5 rounded-[50%] bg-white/90 blur-[0.4px] rotate-[-25deg] pointer-events-none" />
             </div>
 
             {/* Ethereal Floating Badge: Okinawa • N.1 */}
@@ -61,10 +61,10 @@ export function OkinawaMapOrb({
                 <motion.div
                     initial={{ y: 2, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black/90 border border-amber-400/80 shadow-[0_4px_12px_rgba(0,0,0,0.9),0_0_10px_rgba(245,158,11,0.5)] backdrop-blur-md shrink-0 whitespace-nowrap z-20"
+                    className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#003B66] border border-sky-300 shadow-[0_4px_12px_rgba(0,0,0,0.8),0_0_10px_rgba(28,176,246,0.5)] backdrop-blur-md shrink-0 whitespace-nowrap z-20"
                 >
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping shrink-0" />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-amber-300 font-serif leading-none drop-shadow-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping shrink-0" />
+                    <span className="text-[9px] font-black uppercase tracking-widest text-sky-100 font-serif leading-none drop-shadow-sm">
                         Okinawa {levelNumber ? `• N.${levelNumber}` : ""}
                     </span>
                 </motion.div>
