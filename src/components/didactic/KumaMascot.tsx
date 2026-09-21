@@ -205,13 +205,13 @@ export function KumaMascot({
         }, 6000);
     };
 
-    // Responsive dimensions
+    // Responsive dimensions (optimized for mobile phones like Galaxy S26 FE and desktop)
     const scaleClasses = {
-        sm: "w-32 h-32",
-        md: "w-48 h-48 sm:w-52 sm:h-52 md:w-56 md:h-56",
-        lg: "w-56 h-56 md:w-64 md:h-64",
-        xl: "w-64 h-64 md:w-80 md:h-80",
-        responsive: "w-28 h-28 xs:w-32 xs:h-32 sm:w-40 sm:h-40 md:w-48 md:h-48",
+        sm: "w-28 h-28 sm:w-32 sm:h-32",
+        md: "w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56",
+        lg: "w-44 h-44 sm:w-52 sm:h-52 md:w-64 md:h-64",
+        xl: "w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80",
+        responsive: "w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52",
     };
 
     const isExcited = mood === "correct" || mood === "streak" || isPokePumping || isYoiDeepBreathing;
@@ -223,7 +223,7 @@ export function KumaMascot({
 
     return (
         <div
-            className={`relative flex select-none ${
+            className={`relative flex select-none max-w-full ${
                 layout === "responsive"
                     ? "flex-row md:flex-col items-center justify-center gap-3 md:gap-0 w-full"
                     : layout === "horizontal"
@@ -245,7 +245,7 @@ export function KumaMascot({
                                 ? "order-2 md:order-1 flex-1 md:flex-none min-w-0 mb-0 md:mb-3 max-w-none md:max-w-sm px-3.5 py-2 md:px-4 md:py-3 rounded-2xl md:rounded-3xl bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 text-left md:text-center"
                                 : layout === "horizontal"
                                 ? "order-2 flex-1 min-w-0 mb-0 max-w-none px-3.5 py-2 rounded-2xl bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 text-left"
-                                : "mb-3 max-w-xs md:max-w-sm px-4 py-3 bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 rounded-3xl text-center"
+                                : "mb-3 w-full max-w-[270px] xs:max-w-[300px] sm:max-w-xs md:max-w-sm px-3.5 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 rounded-2xl sm:rounded-3xl text-center"
                         }`}
                     >
                         {/* Kuma Dojo Official Logo Badge */}

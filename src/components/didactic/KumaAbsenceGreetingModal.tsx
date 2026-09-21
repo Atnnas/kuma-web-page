@@ -117,19 +117,19 @@ export function KumaAbsenceGreetingModal({
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-[90] flex items-center justify-center p-4 md:p-6 bg-black/90 backdrop-blur-xl overflow-y-auto">
+            <div className="fixed inset-0 z-[90] flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/90 backdrop-blur-xl overflow-y-auto">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9, y: 25 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 25 }}
                     transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                    className="relative w-full max-w-xl bg-gradient-to-b from-zinc-900 via-zinc-950 to-black border-2 border-kuma-gold/40 rounded-3xl shadow-[0_0_60px_rgba(234,179,8,0.2)] overflow-hidden my-auto flex flex-col"
+                    className="relative w-full max-w-xl max-h-[92vh] overflow-y-auto bg-gradient-to-b from-zinc-900 via-zinc-950 to-black border-2 border-kuma-gold/40 rounded-3xl shadow-[0_0_60px_rgba(234,179,8,0.2)] my-auto flex flex-col"
                 >
                     {/* Top Golden Light Rim */}
                     <div className="absolute top-0 left-10 right-10 h-[2px] bg-gradient-to-r from-transparent via-kuma-gold to-transparent" />
 
                     {/* Header with Close */}
-                    <div className="relative px-6 pt-5 flex items-center justify-between z-20">
+                    <div className="relative px-4 sm:px-6 pt-5 flex items-center justify-between z-20">
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider border ${badgeBorder} shadow-sm`}>
                             {daysAbsent >= 14 ? (
                                 <ClockCounterClockwise className="w-3.5 h-3.5 animate-spin" />
@@ -153,11 +153,11 @@ export function KumaAbsenceGreetingModal({
                     </div>
 
                     {/* Mascot Area */}
-                    <div className="px-6 pt-4 pb-2 flex flex-col items-center justify-center">
+                    <div className="px-3 sm:px-6 pt-3 pb-2 flex flex-col items-center justify-center">
                         <KumaMascot
                             mood={mood}
                             customMessage={speechMessage}
-                            size="lg"
+                            size="responsive"
                             showBubble={true}
                             interactive={true}
                         />

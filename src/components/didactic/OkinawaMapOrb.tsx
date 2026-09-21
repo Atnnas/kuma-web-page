@@ -23,11 +23,11 @@ export function OkinawaMapOrb({
 }: OkinawaMapOrbProps) {
     return (
         <div className={`relative flex items-center justify-center select-none ${className}`}>
-            {/* Outer Luminous Ocean Ki Aura */}
-            <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-sky-400/30 via-cyan-300/30 to-amber-400/20 blur-lg pointer-events-none animate-pulse" />
+            {/* Outer Radioactive Cherenkov Plasma Aura */}
+            <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-cyan-400/50 via-sky-300/50 to-blue-600/40 blur-xl pointer-events-none animate-pulse" />
 
-            {/* 3D Tactile Arcade Frame & Photorealistic Relief */}
-            <div className="relative w-full h-full rounded-full overflow-hidden bg-gradient-to-b from-[#1CB0F6] via-[#0288D1] to-[#01579B] border-t-2 border-t-sky-100 border-x-2 border-x-sky-300 border-b-[6px] border-b-[#003B66] shadow-[0_12px_26px_rgba(0,0,0,0.65),0_0_25px_rgba(28,176,246,0.5)]">
+            {/* 3D Tactile Frame & Photorealistic Relief */}
+            <div className="relative w-full h-full rounded-full overflow-hidden bg-[radial-gradient(circle_at_35%_30%,_#E0FFFF_0%,_#00F5FF_30%,_#0288D1_65%,_#014373_100%)] border-t-2 border-t-white border-x-2 border-x-cyan-200 border-b-[6px] border-b-[#002B4D] shadow-[0_0_35px_rgba(0,245,255,0.95),0_0_70px_rgba(0,136,255,0.6),0_12px_26px_rgba(0,0,0,0.75)]">
                 {/* Sweeping Ocean Light Sheen */}
                 <motion.div
                     animate={{ x: ["-150%", "170%"] }}

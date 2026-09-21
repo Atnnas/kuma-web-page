@@ -496,7 +496,7 @@ export function DojoLingoMap({
             {/* --- RIGHT SIDEBAR: SENSEI COMPANION & QUICK ACCESS --- */}
             <div className="w-full lg:w-84 shrink-0 space-y-6 lg:sticky lg:top-24">
                 {/* SENSEI KUMA 3D AVATAR COMPANION */}
-                <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-b from-zinc-900/95 via-zinc-950/95 to-black border-2 border-kuma-gold/40 shadow-[0_20px_50px_rgba(0,0,0,0.85)] relative overflow-hidden flex flex-col items-center text-center">
+                <div className="p-4 sm:p-6 md:p-8 rounded-3xl bg-gradient-to-b from-zinc-900/95 via-zinc-950/95 to-black border-2 border-kuma-gold/40 shadow-[0_20px_50px_rgba(0,0,0,0.85)] relative overflow-hidden flex flex-col items-center text-center">
                     <div className="absolute -top-16 -right-16 w-48 h-48 bg-kuma-gold/15 rounded-full blur-3xl pointer-events-none" />
 
                     <div
@@ -506,7 +506,7 @@ export function DojoLingoMap({
                     >
                         <KumaMascot
                             mood={kumaMood}
-                            size="lg"
+                            size="responsive"
                             showBubble={true}
                             path={activePath}
                             wkfColor={wkfColor}
