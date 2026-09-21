@@ -30,8 +30,21 @@ export default auth((req) => {
             return NextResponse.redirect(new URL("/login", nextUrl));
         }
 
-        // Si no está activo, redirigir al home (o podrías crear una página de /pending-activation)
-        // Por ahora redirigimos al home con un parámetro de error para mostrar un mensaje
+        // Si no está activo, redirigir al home
+        if (isActive === false) {
+            return NextResponse.redirect(new URL("/?error=inactive", nextUrl));
+        }
+    }
+
+    // 3. Proteger Academia Kuma & Didáctica (Solo usuarios registrados y ACTIVOS)
+    if (nextUrl.pathname.startsWith("/resources/didactica")) {
+        if (!isLoggedIn) {
+            const loginUrl = new URL("/login", nextUrl);
+            loginUrl.searchParams.set("callbackUrl", nextUrl.pathname);
+            return NextResponse.redirect(loginUrl);
+        }
+
+        // Si no está activo, redirigir al home con aviso de activación requerida
         if (isActive === false) {
             return NextResponse.redirect(new URL("/?error=inactive", nextUrl));
         }

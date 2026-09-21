@@ -407,7 +407,7 @@ export function DidacticController() {
 
             {/* STUDENT CLOUD SYNC STATUS BAR */}
             <div className="flex items-center justify-center -mt-3">
-                {session?.user ? (
+                {session?.user && (
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-400/50 text-emerald-300 text-xs shadow-[0_0_15px_rgba(16,185,129,0.2)]">
                         {isSyncing ? (
                             <CloudArrowUp className="w-4 h-4 text-amber-300 animate-bounce" weight="fill" />
@@ -415,19 +415,11 @@ export function DidacticController() {
                             <CloudCheck className="w-4 h-4 text-emerald-400" weight="fill" />
                         )}
                         <span className="font-medium">
-                            Estudiante: <strong className="text-white">{session.user.name || session.user.email}</strong>
+                            Estudiante Oficial: <strong className="text-white">{session.user.name || session.user.email}</strong>
                         </span>
                         <span className="text-[10px] text-emerald-300/80 uppercase font-black tracking-widest pl-1 border-l border-emerald-500/30">
                             {isSyncing ? "Guardando..." : "Nube Sincronizada ☁️"}
                         </span>
-                    </div>
-                ) : (
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/70 text-slate-300 text-xs">
-                        <UserCircle className="w-4 h-4 text-cyan-400" weight="fill" />
-                        <span>Modo Invitado (Progreso local) •</span>
-                        <Link href="/login" className="text-cyan-400 hover:underline font-bold transition-colors">
-                            Inicia sesión para guardar en tu cuenta de estudiante
-                        </Link>
                     </div>
                 )}
             </div>

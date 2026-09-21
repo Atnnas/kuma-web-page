@@ -14,6 +14,7 @@ import { getBeltRank } from "@/data/beltRanks";
 import {
     Heart,
     X,
+    Check,
     Scroll,
     SpeakerHigh,
     SpeakerSlash,
@@ -670,7 +671,13 @@ export function LessonSessionModal({
 
                                             let buttonClass = "";
                                             if (isSelected) {
-                                                buttonClass = "bg-[#0E2A47] border-2 border-[#1CB0F6] border-b-4 border-b-[#1899D6] text-white shadow-sm translate-y-0.5";
+                                                if (answerStatus === "wrong") {
+                                                    buttonClass = "bg-[#2B1313] border-2 border-[#FF4B4B] border-b-4 border-b-[#EA2B2B] text-white shadow-sm translate-y-0.5";
+                                                } else if (answerStatus === "correct") {
+                                                    buttonClass = "bg-[#143818] border-2 border-[#58CC02] border-b-4 border-b-[#46A302] text-white shadow-sm translate-y-0.5";
+                                                } else {
+                                                    buttonClass = "bg-[#0E2A47] border-2 border-[#1CB0F6] border-b-4 border-b-[#1899D6] text-white shadow-sm translate-y-0.5";
+                                                }
                                                 if (isCorrectAnswer) {
                                                     buttonClass += " ring-2 ring-[#58CC02]";
                                                 }
@@ -695,7 +702,11 @@ export function LessonSessionModal({
                                                         <span
                                                             className={`w-7 h-7 rounded-lg border-2 text-xs font-black flex items-center justify-center shrink-0 ${
                                                                 isSelected
-                                                                    ? "bg-[#1CB0F6] border-[#1899D6] text-slate-950 font-black shadow-sm"
+                                                                    ? answerStatus === "wrong"
+                                                                        ? "bg-[#FF4B4B] border-[#EA2B2B] text-white font-black shadow-sm"
+                                                                        : answerStatus === "correct"
+                                                                        ? "bg-[#58CC02] border-[#46A302] text-slate-950 font-black shadow-sm"
+                                                                        : "bg-[#1CB0F6] border-[#1899D6] text-slate-950 font-black shadow-sm"
                                                                     : isCorrectAnswer
                                                                     ? "bg-[#58CC02] border-[#46A302] text-slate-950 font-black"
                                                                     : "bg-slate-800 border-slate-600 text-slate-300"
@@ -714,15 +725,27 @@ export function LessonSessionModal({
                                                             </span>
                                                         )}
                                                         <div
-                                                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                                                                 isSelected
-                                                                    ? "border-[#1CB0F6] bg-[#0E2A47]"
+                                                                    ? answerStatus === "wrong"
+                                                                        ? "border-[#FF4B4B] bg-[#2B1313]"
+                                                                        : answerStatus === "correct"
+                                                                        ? "border-[#58CC02] bg-[#143818]"
+                                                                        : "border-[#1CB0F6] bg-[#0E2A47]"
                                                                     : isCorrectAnswer
                                                                     ? "border-[#58CC02] bg-[#143818]"
                                                                     : "border-slate-600"
                                                             }`}
                                                         >
-                                                            {isSelected && <div className="w-2 h-2 rounded-full bg-[#1CB0F6]" />}
+                                                            {isSelected && (
+                                                                answerStatus === "wrong" ? (
+                                                                    <X className="w-3.5 h-3.5 text-[#FF4B4B]" weight="bold" />
+                                                                ) : answerStatus === "correct" ? (
+                                                                    <Check className="w-3.5 h-3.5 text-[#58CC02]" weight="bold" />
+                                                                ) : (
+                                                                    <div className="w-2 h-2 rounded-full bg-[#1CB0F6]" />
+                                                                )
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </button>
@@ -1120,19 +1143,25 @@ export function LessonSessionModal({
                                     <div className="w-full">
                                         <div className="flex items-center gap-2 mb-0.5">
                                             <span className="text-[11px] font-black uppercase tracking-wider text-white bg-[#FF4B4B] px-2.5 py-1 rounded-lg shadow-sm">
-                                                😢 Kuma Sensei te apoya: ¡Aprende del error!
+                                                🥋 Disciplina Marcial Kuma Sensei
                                             </span>
                                         </div>
                                         <h3 className="font-serif font-black text-[#FF4B4B] text-base md:text-lg">
-                                            Respuesta Incorrecta
+                                            Técnica Incorrecta
                                         </h3>
-                                        <p className="text-xs md:text-sm text-rose-100 mt-0.5 leading-relaxed">
-                                            {currentQuestion.explanation}
+                                        <p className="text-xs md:text-sm text-rose-100 mt-1 leading-relaxed">
+                                            En el tatami no se regalan respuestas. Para descubrir la técnica correcta y avanzar con honor, debes consultar el <strong>Pergamino Teórico</strong> de este nivel.
                                         </p>
-                                        <QuestionBibliography
-                                            references={currentQuestion.references || currentQuestion.bibliography}
-                                            variant="wrong"
-                                        />
+                                        <div className="mt-2.5">
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsTheoryOpen(true)}
+                                                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#2B230E] hover:bg-[#3D3012] border-2 border-[#FFC800] text-[#FFC800] text-xs font-black uppercase tracking-wider shadow-sm transition-all cursor-pointer"
+                                            >
+                                                <Scroll className="w-4 h-4 text-[#FFC800]" weight="duotone" />
+                                                <span>Estudiar Pergamino Teórico</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2.5 w-full lg:w-auto shrink-0 justify-end self-end lg:self-center">
