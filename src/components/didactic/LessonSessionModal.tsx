@@ -157,7 +157,7 @@ export function LessonSessionModal({
 }: LessonSessionModalProps) {
     const activePath: PathType = level.id.startsWith("wkf") ? "wkf" : "tradicional";
     const { data: session } = useSession();
-    const isSuperAdmin = (session?.user as any)?.role === "super_admin";
+    const isSuperAdmin = Boolean(session?.user && (session.user as any).role === "super_admin");
     const parentUnit = DIDACTIC_UNITS.find((u) => u.levels.some((lvl) => lvl.id === level.id));
     const activeBeltRank = beltRank || (parentUnit?.beltId ? getBeltRank(parentUnit.beltId) : undefined);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -1318,6 +1318,20 @@ function shuffleArray<T>(array: T[]): T[] {
                                                 <span>Estudiar Pergamino Teórico</span>
                                             </button>
                                         </div>
+                                        {isSuperAdmin && (
+                                            <div className="mt-2.5 p-2.5 rounded-xl bg-amber-950/60 border border-[#FFC800]/50 text-amber-200 text-xs">
+                                                <span className="font-bold text-[#FFC800]">🛡️ [Exclusivo Super Admin] Respuesta correcta: </span>
+                                                <span className="text-white font-semibold">
+                                                    {currentQuestion.type === "multiple_choice" || currentQuestion.type === "image_choice" ? (
+                                                        currentQuestion.options?.find((o) => o.isCorrect || o.id === currentQuestion.correctAnswerId)?.text
+                                                    ) : currentQuestion.type === "true_false" ? (
+                                                        currentQuestion.correctBool ? "Verdadero" : "Falso"
+                                                    ) : currentQuestion.type === "matching" ? (
+                                                        currentQuestion.pairs?.map((p) => `${p.left} ➔ ${p.right}`).join(" | ")
+                                                    ) : null}
+                                                </span>
+                                            </div>
+                                        )}
                                         <QuestionBibliography
                                             references={currentQuestion.references || currentQuestion.bibliography || level.theory?.references}
                                             variant="wrong"
