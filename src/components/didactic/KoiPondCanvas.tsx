@@ -20,7 +20,7 @@ export type KoiVariety =
 interface SpineJoint {
     x: number;
     y: number;
-    angle: number;
+    angle: number; // Siempre apunta hacia ADELANTE (en dirección al morro)
 }
 
 interface FishSpot {
@@ -40,7 +40,7 @@ interface KoiFish {
     baseSpeed: number;
     maxSpeed: number;
     size: number;
-    depth: number; // 0.6 (profundo) a 1.0 (superficie)
+    depth: number;
     variety: KoiVariety;
     swimCycle: number;
     swimCycleSpeed: number;
@@ -97,7 +97,6 @@ export function KoiPondCanvas({
         let height = 0;
         let dpr = 1;
 
-        // Seguimiento del cursor / toque interactivo
         const mouse = {
             x: -1000,
             y: -1000,
@@ -122,14 +121,14 @@ export function KoiPondCanvas({
         window.addEventListener("resize", handleResize);
 
         // ====================================================================
-        // ANATOMÍA ORGÁNICA CONTINUA: 16 VÉRTEBRAS PARA CINEMÁTICA INVERSA
+        // ANATOMÍA ORGÁNICA CONTINUA (16 VÉRTEBRAS SIN CORTES NI DISCONTINUIDADES)
         // ====================================================================
-        // Radios anatómicos hidrodinámicos calibrados (Cabeza -> Branquias -> Tórax -> Vientre -> Cola)
+        // Progresión suave de radios desde el morro redondeado hasta el pedúnculo caudal
         const baseRadii = [
-            7, 12, 16.5, 19, 20.5, 20, 18.5, 16.5, 14, 11.5, 9, 7, 5, 3.5, 2.5, 1.8,
+            8.5, 12.5, 16.5, 19.5, 21.5, 21.5, 20.5, 19.0, 17.0, 14.5, 12.0, 9.5, 7.5, 5.5, 4.0, 2.5,
         ];
         const numJoints = baseRadii.length;
-        const baseSegmentDist = 9.2;
+        const baseSegmentDist = 9.4;
 
         const allVarieties: KoiVariety[] = [
             "kohaku",
@@ -149,7 +148,7 @@ export function KoiPondCanvas({
             const startX = Math.random() * (width || window.innerWidth);
             const startY = Math.random() * (height || window.innerHeight);
             const startAngle = Math.random() * Math.PI * 2;
-            const size = 0.85 + Math.random() * 0.45; // 0.85 a 1.3x
+            const size = 0.85 + Math.random() * 0.45;
             const depth = 0.75 + Math.random() * 0.25;
             const segmentDist = baseSegmentDist * size;
             const variety = allVarieties[index % allVarieties.length];
@@ -163,7 +162,6 @@ export function KoiPondCanvas({
                 });
             }
 
-            // Colores base y acentos según la variedad Nishikigoi
             let baseColor = "#FAFAF9";
             let secondaryColor = "#E11D48";
             let accentColor = "#18181B";
@@ -172,14 +170,13 @@ export function KoiPondCanvas({
 
             switch (variety) {
                 case "kohaku":
-                    baseColor = "#FDFBF7"; // Blanco perla
-                    secondaryColor = "#E11D48"; // Rojo carmesí Hi
-                    // 3-4 manchas escarlata en la espalda
+                    baseColor = "#FDFBF7";
+                    secondaryColor = "#E11D48";
                     for (let s = 0; s < 3; s++) {
                         spots.push({
                             jointIndex: 2 + s * 4,
-                            offsetAngle: (Math.random() - 0.5) * 0.5,
-                            radiusX: (12 + Math.random() * 8) * size,
+                            offsetAngle: (Math.random() - 0.5) * 0.4,
+                            radiusX: (13 + Math.random() * 7) * size,
                             radiusY: (10 + Math.random() * 6) * size,
                             color: "#E11D48",
                         });
@@ -187,51 +184,49 @@ export function KoiPondCanvas({
                     break;
 
                 case "yamabuki":
-                    baseColor = "#F59E0B"; // Oro ámbar metálico
-                    secondaryColor = "#FDE68A"; // Reflejo oro claro
+                    baseColor = "#F59E0B";
+                    secondaryColor = "#FDE68A";
                     accentColor = "#B45309";
                     break;
 
                 case "sanke":
                     baseColor = "#FDFBF7";
-                    secondaryColor = "#DC2626"; // Bermellón
-                    // Manchas rojas
+                    secondaryColor = "#DC2626";
                     for (let s = 0; s < 3; s++) {
                         spots.push({
                             jointIndex: 2 + s * 4,
-                            offsetAngle: (Math.random() - 0.5) * 0.6,
-                            radiusX: (11 + Math.random() * 7) * size,
-                            radiusY: (9 + Math.random() * 5) * size,
+                            offsetAngle: (Math.random() - 0.5) * 0.5,
+                            radiusX: (12 + Math.random() * 7) * size,
+                            radiusY: (10 + Math.random() * 5) * size,
                             color: "#DC2626",
                         });
                     }
-                    // Manchas negras Sumi
                     for (let s = 0; s < 2; s++) {
                         spots.push({
                             jointIndex: 4 + s * 5,
-                            offsetAngle: (Math.random() - 0.5) * 0.8,
-                            radiusX: (6 + Math.random() * 5) * size,
-                            radiusY: (6 + Math.random() * 4) * size,
+                            offsetAngle: (Math.random() - 0.5) * 0.7,
+                            radiusX: (7 + Math.random() * 5) * size,
+                            radiusY: (7 + Math.random() * 4) * size,
                             color: "#18181B",
                         });
                     }
                     break;
 
                 case "showa":
-                    baseColor = "#18181B"; // Negro carbón de base
-                    secondaryColor = "#EF4444"; // Manchas fuego
-                    accentColor = "#F8FAFC"; // Manchas blancas
+                    baseColor = "#18181B";
+                    secondaryColor = "#EF4444";
+                    accentColor = "#F8FAFC";
                     for (let s = 0; s < 3; s++) {
                         spots.push({
                             jointIndex: 1 + s * 4,
-                            offsetAngle: (Math.random() - 0.5) * 0.6,
-                            radiusX: (11 + Math.random() * 7) * size,
-                            radiusY: (9 + Math.random() * 6) * size,
+                            offsetAngle: (Math.random() - 0.5) * 0.5,
+                            radiusX: (12 + Math.random() * 7) * size,
+                            radiusY: (10 + Math.random() * 6) * size,
                             color: "#EF4444",
                         });
                         spots.push({
                             jointIndex: 3 + s * 4,
-                            offsetAngle: (Math.random() - 0.5) * 0.6,
+                            offsetAngle: (Math.random() - 0.5) * 0.5,
                             radiusX: (8 + Math.random() * 5) * size,
                             radiusY: (7 + Math.random() * 5) * size,
                             color: "#F8FAFC",
@@ -240,13 +235,13 @@ export function KoiPondCanvas({
                     break;
 
                 case "hi_utsuri":
-                    baseColor = "#18181B"; // Negro azabache
-                    secondaryColor = "#FF3B00"; // Rojo fuego intenso
+                    baseColor = "#18181B";
+                    secondaryColor = "#FF3B00";
                     for (let s = 0; s < 4; s++) {
                         spots.push({
                             jointIndex: 1 + s * 3,
-                            offsetAngle: (Math.random() - 0.5) * 0.7,
-                            radiusX: (11 + Math.random() * 7) * size,
+                            offsetAngle: (Math.random() - 0.5) * 0.6,
+                            radiusX: (12 + Math.random() * 7) * size,
                             radiusY: (9 + Math.random() * 6) * size,
                             color: "#FF3B00",
                         });
@@ -254,13 +249,13 @@ export function KoiPondCanvas({
                     break;
 
                 case "ki_utsuri":
-                    baseColor = "#18181B"; // Negro ébano
-                    secondaryColor = "#FACC15"; // Amarillo limón canario
+                    baseColor = "#18181B";
+                    secondaryColor = "#FACC15";
                     for (let s = 0; s < 4; s++) {
                         spots.push({
                             jointIndex: 1 + s * 3,
-                            offsetAngle: (Math.random() - 0.5) * 0.7,
-                            radiusX: (11 + Math.random() * 7) * size,
+                            offsetAngle: (Math.random() - 0.5) * 0.6,
+                            radiusX: (12 + Math.random() * 7) * size,
                             radiusY: (9 + Math.random() * 6) * size,
                             color: "#FACC15",
                         });
@@ -268,48 +263,46 @@ export function KoiPondCanvas({
                     break;
 
                 case "shiro_utsuri":
-                    baseColor = "#18181B"; // Negro carbón
-                    secondaryColor = "#F8FAFC"; // Blanco marfil
+                    baseColor = "#18181B";
+                    secondaryColor = "#F8FAFC";
                     for (let s = 0; s < 4; s++) {
                         spots.push({
                             jointIndex: 1 + s * 3,
-                            offsetAngle: (Math.random() - 0.5) * 0.7,
-                            radiusX: (11 + Math.random() * 8) * size,
-                            radiusY: (9 + Math.random() * 7) * size,
+                            offsetAngle: (Math.random() - 0.5) * 0.6,
+                            radiusX: (12 + Math.random() * 8) * size,
+                            radiusY: (10 + Math.random() * 7) * size,
                             color: "#F8FAFC",
                         });
                     }
                     break;
 
                 case "tancho":
-                    baseColor = "#FAFAF9"; // Blanco níveo inmaculado
+                    baseColor = "#FAFAF9";
                     secondaryColor = "#E11D48";
-                    // Único disco solar carmesí sagrado en la frente
                     spots.push({
-                        jointIndex: 0,
+                        jointIndex: 1,
                         offsetAngle: 0,
-                        radiusX: 9 * size,
-                        radiusY: 9 * size,
+                        radiusX: 10 * size,
+                        radiusY: 10 * size,
                         color: "#DC2626",
                     });
                     break;
 
                 case "asagi":
-                    baseColor = "#334155"; // Azul índigo / pizarra
-                    secondaryColor = "#F97316"; // Naranja coral brillante en aletas y costados
+                    baseColor = "#334155";
+                    secondaryColor = "#F97316";
                     accentColor = "#64748B";
-                    // Manchas coral en flancos
                     for (let s = 0; s < 4; s++) {
                         spots.push({
                             jointIndex: 3 + s * 3,
-                            offsetAngle: 0.7,
+                            offsetAngle: 0.65,
                             radiusX: 8 * size,
                             radiusY: 6 * size,
                             color: "#FB923C",
                         });
                         spots.push({
                             jointIndex: 3 + s * 3,
-                            offsetAngle: -0.7,
+                            offsetAngle: -0.65,
                             radiusX: 8 * size,
                             radiusY: 6 * size,
                             color: "#FB923C",
@@ -318,21 +311,21 @@ export function KoiPondCanvas({
                     break;
 
                 case "midori":
-                    baseColor = "#14532D"; // Verde jade musgo
-                    secondaryColor = "#FDE047"; // Destellos oro
+                    baseColor = "#14532D";
+                    secondaryColor = "#FDE047";
                     for (let s = 0; s < 3; s++) {
                         spots.push({
                             jointIndex: 2 + s * 4,
                             offsetAngle: (Math.random() - 0.5) * 0.5,
-                            radiusX: (10 + Math.random() * 6) * size,
-                            radiusY: (8 + Math.random() * 5) * size,
+                            radiusX: (11 + Math.random() * 6) * size,
+                            radiusY: (9 + Math.random() * 5) * size,
                             color: "#166534",
                         });
                     }
                     break;
 
                 case "karasugoi":
-                    baseColor = "#09090B"; // Negro total cuervo
+                    baseColor = "#09090B";
                     secondaryColor = "#27272A";
                     accentColor = "rgba(255, 255, 255, 0.4)";
                     break;
@@ -421,7 +414,6 @@ export function KoiPondCanvas({
             addRipple(px, py, 110, 1.4);
             setTimeout(() => addRipple(px, py, 70, 1.1), 160);
 
-            // Coletazo de reacción asustada al tocar el agua cerca
             fishes.forEach((fish) => {
                 const dx = fish.x - px;
                 const dy = fish.y - py;
@@ -447,10 +439,9 @@ export function KoiPondCanvas({
         const render = () => {
             tick++;
 
-            // 1. Limpieza de cuadro
             ctx.clearRect(0, 0, width, height);
 
-            // 2. Fondo zen de agua oscura con gradiente atmosférico
+            // Fondo zen de agua oscura con gradiente atmosférico
             const bgGrad = ctx.createRadialGradient(
                 width * 0.5,
                 height * 0.45,
@@ -465,7 +456,7 @@ export function KoiPondCanvas({
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, width, height);
 
-            // 3. Cáusticas de agua sutiles (luz refractada en el fondo del estanque)
+            // Cáusticas de agua sutiles (luz refractada en el lecho)
             const causticAlpha = 0.03 + Math.sin(tick * 0.02) * 0.015;
             ctx.fillStyle = `rgba(56, 189, 248, ${causticAlpha})`;
             for (let c = 0; c < 5; c++) {
@@ -476,7 +467,7 @@ export function KoiPondCanvas({
                 ctx.fill();
             }
 
-            // 4. Ondas espontáneas de gotas
+            // Ondas espontáneas
             if (tick % 180 === 0 && Math.random() < 0.6) {
                 addRipple(
                     Math.random() * width,
@@ -486,7 +477,7 @@ export function KoiPondCanvas({
                 );
             }
 
-            // 5. Dibujar y propagar ondas de agua
+            // Actualizar ondas de agua
             for (let i = ripples.length - 1; i >= 0; i--) {
                 const r = ripples[i];
                 r.radius += r.speed;
@@ -514,26 +505,22 @@ export function KoiPondCanvas({
                 ctx.restore();
             }
 
-            // 6. Actualizar y dibujar cada Pez Koi
-            // Ordenar por profundidad para correcta oclusión 3D (peces más profundos van detrás)
+            // Ordenar peces por profundidad
             fishes.sort((a, b) => a.depth - b.depth);
 
             fishes.forEach((fish) => {
-                // A) Navegación autónoma fluida
                 fish.turnTimer--;
                 if (fish.turnTimer <= 0) {
                     fish.turnTimer = 45 + Math.floor(Math.random() * 120);
                     fish.targetAngle += (Math.random() - 0.5) * 1.2;
                 }
 
-                // Evasión suave de límites
                 const pad = 90;
                 if (fish.x < pad) fish.targetAngle = 0 + (Math.random() - 0.5) * 0.5;
                 else if (fish.x > width - pad) fish.targetAngle = Math.PI + (Math.random() - 0.5) * 0.5;
                 if (fish.y < pad) fish.targetAngle = Math.PI * 0.5 + (Math.random() - 0.5) * 0.5;
                 else if (fish.y > height - pad) fish.targetAngle = -Math.PI * 0.5 + (Math.random() - 0.5) * 0.5;
 
-                // Evasión del cursor / tacto
                 if (mouse.hasMoved && Date.now() - mouse.lastMoveTime < 2500) {
                     const mdx = fish.x - mouse.x;
                     const mdy = fish.y - mouse.y;
@@ -545,49 +532,46 @@ export function KoiPondCanvas({
                     }
                 }
 
-                // Inercia de velocidad
                 fish.speed += (fish.baseSpeed - fish.speed) * 0.025;
 
-                // Suavizado del giro angular
                 let diffAngle = fish.targetAngle - fish.angle;
                 while (diffAngle < -Math.PI) diffAngle += Math.PI * 2;
                 while (diffAngle > Math.PI) diffAngle -= Math.PI * 2;
                 fish.angle += diffAngle * 0.04;
 
-                // Avance de la cabeza
                 fish.x += Math.cos(fish.angle) * fish.speed;
                 fish.y += Math.sin(fish.angle) * fish.speed;
 
-                // Ciclo ondulatorio
                 fish.swimCycle += fish.swimCycleSpeed * (fish.speed / fish.baseSpeed);
                 const headWag = Math.sin(fish.swimCycle) * 0.12 * (fish.speed / fish.baseSpeed);
 
-                // B) Cinemática Inversa (IK): La cabeza guía y las 16 vértebras siguen la estela
+                // ============================================================
+                // CINEMÁTICA INVERSA (IK) ESTRICTAMENTE COHERENTE HACIA ADELANTE
+                // ============================================================
+                // Joint 0 apunta hacia adelante en la dirección de la cabeza
                 fish.spine[0].x = fish.x;
                 fish.spine[0].y = fish.y;
                 fish.spine[0].angle = fish.angle + headWag;
 
+                // Todas las vértebras 1..N-1 se orientan apuntando hacia la vértebra anterior (HACIA ADELANTE)
                 for (let j = 1; j < fish.spineLength; j++) {
                     const prev = fish.spine[j - 1];
                     const curr = fish.spine[j];
-                    const dx = curr.x - prev.x;
-                    const dy = curr.y - prev.y;
+                    const dx = prev.x - curr.x;
+                    const dy = prev.y - curr.y;
                     const dist = Math.hypot(dx, dy) || 1;
-                    const segAngle = Math.atan2(dy, dx);
 
-                    curr.x = prev.x + (dx / dist) * fish.segmentDistance;
-                    curr.y = prev.y + (dy / dist) * fish.segmentDistance;
-                    curr.angle = segAngle;
+                    curr.x = prev.x - (dx / dist) * fish.segmentDistance;
+                    curr.y = prev.y - (dy / dist) * fish.segmentDistance;
+                    // curr.angle apunta de curr hacia prev (HACIA EL MORRO DEL PEZ)
+                    curr.angle = Math.atan2(dy, dx);
                 }
 
-                // C) RENDERIZADO DEL PEZ:
-                // Sombra en el fondo (profundidad 3D en el agua)
-                drawRealisticFish(ctx, fish, true);
-                // Pez real con curvas Bézier hidrodinámicas
-                drawRealisticFish(ctx, fish, false);
+                drawOrganicKoi(ctx, fish, true);
+                drawOrganicKoi(ctx, fish, false);
             });
 
-            // 7. Nenúfares / Hojas de loto flotantes
+            // Nenúfares en superficie
             lilyPads.forEach((pad) => {
                 const px = pad.xRatio * width + Math.sin(tick * pad.driftSpeed + pad.driftPhase) * 18;
                 const py = pad.yRatio * height + Math.cos(tick * pad.driftSpeed + pad.driftPhase) * 15;
@@ -600,65 +584,63 @@ export function KoiPondCanvas({
         };
 
         // ====================================================================
-        // RENDERIZADO REALISTA ULTRA-FLUIDO CON CURVAS BÉZIER CONTINUAS
+        // RENDERIZADO ANATÓMICO ORGÁNICO DEL PEZ KOI (SIN CORTES NI PICOS)
         // ====================================================================
-        function drawRealisticFish(c: CanvasRenderingContext2D, fish: KoiFish, isShadow: boolean) {
+        function drawOrganicKoi(c: CanvasRenderingContext2D, fish: KoiFish, isShadow: boolean) {
             c.save();
 
-            // Desplazamiento de sombra proporcional a la profundidad
-            const shadowDistance = 22 * fish.depth;
+            const shadowDist = 22 * fish.depth;
             if (isShadow) {
-                c.translate(shadowDistance * 0.6, shadowDistance * 0.9);
+                c.translate(shadowDist * 0.6, shadowDist * 0.9);
                 c.fillStyle = "rgba(0, 5, 12, 0.28)";
             }
 
-            // Puntos anatómicos laterales izquierdo y derecho
+            // Calcular contornos laterales: Izquierda (+PI/2) y Derecha (-PI/2) respecto al ángulo que apunta ADELANTE
             const leftPoints: { x: number; y: number }[] = [];
             const rightPoints: { x: number; y: number }[] = [];
 
             for (let i = 0; i < fish.spineLength; i++) {
                 const joint = fish.spine[i];
                 const r = fish.bodyRadii[i];
-                // Onda de propagación lateral para la curvatura sinuosa
-                const waveOffset = Math.sin(fish.swimCycle - i * 0.42) * (r * 0.18);
-                const normalAngle = joint.angle + Math.PI * 0.5;
+                const waveOffset = Math.sin(fish.swimCycle - i * 0.42) * (r * 0.16);
+                const leftNorm = joint.angle - Math.PI * 0.5;
+                const rightNorm = joint.angle + Math.PI * 0.5;
 
                 leftPoints.push({
-                    x: joint.x + Math.cos(normalAngle) * (r + waveOffset),
-                    y: joint.y + Math.sin(normalAngle) * (r + waveOffset),
+                    x: joint.x + Math.cos(leftNorm) * (r + waveOffset),
+                    y: joint.y + Math.sin(leftNorm) * (r + waveOffset),
                 });
                 rightPoints.push({
-                    x: joint.x - Math.cos(normalAngle) * (r - waveOffset),
-                    y: joint.y - Math.sin(normalAngle) * (r - waveOffset),
+                    x: joint.x + Math.cos(rightNorm) * (r - waveOffset),
+                    y: joint.y + Math.sin(rightNorm) * (r - waveOffset),
                 });
             }
 
             // ----------------------------------------------------------------
-            // 1. ALETAS PECTORALES ARTICULADAS CON VELO Y RADIOS TRANSLÚCIDOS
+            // 1. ALETAS PECTORALES (EN VÉRTEBRA 3, APUNTANDO HACIA ATRÁS-AFUERA)
             // ----------------------------------------------------------------
-            const pecJoint = fish.spine[2];
-            const pecAngle = pecJoint.angle;
+            const pecJoint = fish.spine[3];
             const pecFlap = Math.sin(fish.swimCycle) * 0.32;
-            const pecSize = 38 * fish.size * fish.depth;
+            const pecSize = 36 * fish.size * fish.depth;
 
-            // Aleta pectoral izquierda
-            drawFlowingFin(
+            // Aleta izquierda: apunta hacia atrás y a la izquierda (joint.angle + PI + 0.6)
+            drawPectoralFin(
                 c,
-                leftPoints[2].x,
-                leftPoints[2].y,
-                pecAngle + Math.PI * 0.42 + pecFlap,
+                leftPoints[3].x,
+                leftPoints[3].y,
+                pecJoint.angle + Math.PI - 0.65 + pecFlap,
                 pecSize,
                 fish.variety,
                 fish.baseColor,
                 isShadow
             );
 
-            // Aleta pectoral derecha
-            drawFlowingFin(
+            // Aleta derecha: apunta hacia atrás y a la derecha (joint.angle + PI - 0.6)
+            drawPectoralFin(
                 c,
-                rightPoints[2].y ? rightPoints[2].x : pecJoint.x,
-                rightPoints[2].y ? rightPoints[2].y : pecJoint.y,
-                pecAngle - Math.PI * 0.42 - pecFlap,
+                rightPoints[3].x,
+                rightPoints[3].y,
+                pecJoint.angle + Math.PI + 0.65 - pecFlap,
                 pecSize,
                 fish.variety,
                 fish.baseColor,
@@ -666,27 +648,26 @@ export function KoiPondCanvas({
             );
 
             // ----------------------------------------------------------------
-            // 2. ALETAS VENTRALES / PÉLVICAS (Más pequeñas, en vértebra 8)
+            // 2. ALETAS PÉLVICAS / VENTRALES (EN VÉRTEBRA 8)
             // ----------------------------------------------------------------
             const pelvJoint = fish.spine[8];
-            const pelvAngle = pelvJoint.angle;
             const pelvSize = 22 * fish.size * fish.depth;
 
-            drawFlowingFin(
+            drawPectoralFin(
                 c,
                 leftPoints[8].x,
                 leftPoints[8].y,
-                pelvAngle + Math.PI * 0.35 + pecFlap * 0.5,
+                pelvJoint.angle + Math.PI - 0.45 + pecFlap * 0.5,
                 pelvSize,
                 fish.variety,
                 fish.baseColor,
                 isShadow
             );
-            drawFlowingFin(
+            drawPectoralFin(
                 c,
                 rightPoints[8].x,
                 rightPoints[8].y,
-                pelvAngle - Math.PI * 0.35 - pecFlap * 0.5,
+                pelvJoint.angle + Math.PI + 0.45 - pecFlap * 0.5,
                 pelvSize,
                 fish.variety,
                 fish.baseColor,
@@ -694,11 +675,13 @@ export function KoiPondCanvas({
             );
 
             // ----------------------------------------------------------------
-            // 3. ALETA CAUDAL VELO (COLA ONDULANTE EN ABANICO DE DOBLE LÓBULO)
+            // 3. ALETA CAUDAL VELO (COLA ONDULANTE ORIENTADA ESTRICTAMENTE ATRÁS)
             // ----------------------------------------------------------------
+            // La última vértebra apunta hacia adelante; la cola va a (joint.angle + PI)
             const tailJoint = fish.spine[fish.spineLength - 1];
-            const tailAngle = tailJoint.angle + Math.sin(fish.swimCycle - 1.4) * 0.38;
-            const tailLength = 52 * fish.size * fish.depth;
+            const tailWag = Math.sin(fish.swimCycle - 1.4) * 0.4;
+            const tailAngle = tailJoint.angle + Math.PI + tailWag; // Estrictamente hacia atrás en el agua
+            const tailLength = 54 * fish.size * fish.depth;
 
             drawCaudalVeilTail(
                 c,
@@ -713,30 +696,50 @@ export function KoiPondCanvas({
             );
 
             // ----------------------------------------------------------------
-            // 4. CUERPO HIDRODINÁMICO CONTINUO CON CURVAS BÉZIER SUAVES (SPLINES)
+            // 4. CUERPO HIDRODINÁMICO UNIFICADO (MORRO REDONDO SIN PICOS CORTADOS)
             // ----------------------------------------------------------------
             c.beginPath();
 
-            // Cúpula frontal redondeada de la cabeza
             const head = fish.spine[0];
-            const snoutDistance = fish.bodyRadii[0] * 1.5;
-            const snoutX = head.x + Math.cos(head.angle) * snoutDistance;
-            const snoutY = head.y + Math.sin(head.angle) * snoutDistance;
+            const snoutRadius = fish.bodyRadii[0];
+            // Morro frontal redondeado
+            const snoutTipX = head.x + Math.cos(head.angle) * (snoutRadius * 1.15);
+            const snoutTipY = head.y + Math.sin(head.angle) * (snoutRadius * 1.15);
 
-            c.moveTo(snoutX, snoutY);
+            c.moveTo(snoutTipX, snoutTipY);
 
-            // Curva suave hacia el flanco izquierdo mediante interpolación cuadrática (sin cortes angulares)
-            drawSplineCurve(c, leftPoints, snoutX, snoutY);
+            // Transición continua alrededor de la curvatura del morro izquierdo
+            const snoutCtrlLX = head.x + Math.cos(head.angle) * snoutRadius + Math.cos(head.angle - Math.PI * 0.5) * (snoutRadius * 0.85);
+            const snoutCtrlLY = head.y + Math.sin(head.angle) * snoutRadius + Math.sin(head.angle - Math.PI * 0.5) * (snoutRadius * 0.85);
+            c.quadraticCurveTo(snoutCtrlLX, snoutCtrlLY, leftPoints[0].x, leftPoints[0].y);
 
-            // Extremo de la cola
-            const lastJoint = fish.spine[fish.spineLength - 1];
-            c.lineTo(lastJoint.x, lastJoint.y);
+            // Flanco izquierdo completo mediante spline suave
+            for (let i = 0; i < leftPoints.length - 1; i++) {
+                const xc = (leftPoints[i].x + leftPoints[i + 1].x) * 0.5;
+                const yc = (leftPoints[i].y + leftPoints[i + 1].y) * 0.5;
+                c.quadraticCurveTo(leftPoints[i].x, leftPoints[i].y, xc, yc);
+            }
+            c.lineTo(leftPoints[leftPoints.length - 1].x, leftPoints[leftPoints.length - 1].y);
 
-            // Retorno por el flanco derecho hacia el morro
-            const reversedRight = [...rightPoints].reverse();
-            drawSplineCurve(c, reversedRight, lastJoint.x, lastJoint.y);
+            // Cierre curvo en el pedúnculo caudal (sin corte plano)
+            const lastSpine = fish.spine[fish.spineLength - 1];
+            const tailTipX = lastSpine.x - Math.cos(lastSpine.angle) * 3;
+            const tailTipY = lastSpine.y - Math.sin(lastSpine.angle) * 3;
+            c.quadraticCurveTo(tailTipX, tailTipY, rightPoints[rightPoints.length - 1].x, rightPoints[rightPoints.length - 1].y);
 
-            c.lineTo(snoutX, snoutY);
+            // Flanco derecho de regreso hacia el morro
+            for (let i = rightPoints.length - 1; i > 0; i--) {
+                const xc = (rightPoints[i].x + rightPoints[i - 1].x) * 0.5;
+                const yc = (rightPoints[i].y + rightPoints[i - 1].y) * 0.5;
+                c.quadraticCurveTo(rightPoints[i].x, rightPoints[i].y, xc, yc);
+            }
+            c.lineTo(rightPoints[0].x, rightPoints[0].y);
+
+            // Cierre suave de la curvatura del morro derecho
+            const snoutCtrlRX = head.x + Math.cos(head.angle) * snoutRadius + Math.cos(head.angle + Math.PI * 0.5) * (snoutRadius * 0.85);
+            const snoutCtrlRY = head.y + Math.sin(head.angle) * snoutRadius + Math.sin(head.angle + Math.PI * 0.5) * (snoutRadius * 0.85);
+            c.quadraticCurveTo(snoutCtrlRX, snoutCtrlRY, snoutTipX, snoutTipY);
+
             c.closePath();
 
             if (isShadow) {
@@ -746,37 +749,36 @@ export function KoiPondCanvas({
             }
 
             // ----------------------------------------------------------------
-            // 5. COLORACIÓN, VOLUMEN 3D Y TEXTURA DE LA PIEL
+            // 5. COLORACIÓN BASE Y SOMBREADO 3D DE VOLUMEN
             // ----------------------------------------------------------------
             c.fillStyle = fish.baseColor;
             c.fill();
 
-            // Sombreado de volumen cilíndrico dorsal/ventral
-            const dorsalNormalX = Math.cos(head.angle + Math.PI * 0.5) * 22;
-            const dorsalNormalY = Math.sin(head.angle + Math.PI * 0.5) * 22;
+            // Sombreado cilíndrico suave en los flancos
+            const dorsalNormX = Math.cos(head.angle - Math.PI * 0.5) * 20;
+            const dorsalNormY = Math.sin(head.angle - Math.PI * 0.5) * 20;
 
             const volumeGrad = c.createLinearGradient(
-                head.x + dorsalNormalX,
-                head.y + dorsalNormalY,
-                head.x - dorsalNormalX,
-                head.y - dorsalNormalY
+                head.x + dorsalNormX,
+                head.y + dorsalNormY,
+                head.x - dorsalNormX,
+                head.y - dorsalNormY
             );
             volumeGrad.addColorStop(0, "rgba(255, 255, 255, 0.45)");
-            volumeGrad.addColorStop(0.48, "rgba(255, 255, 255, 0.05)");
-            volumeGrad.addColorStop(1, "rgba(0, 0, 0, 0.32)");
+            volumeGrad.addColorStop(0.5, "rgba(255, 255, 255, 0.05)");
+            volumeGrad.addColorStop(1, "rgba(0, 0, 0, 0.28)");
             c.fillStyle = volumeGrad;
             c.fill();
 
-            // Borde translúcido suave de escamas
-            c.strokeStyle = "rgba(255, 255, 255, 0.15)";
+            c.strokeStyle = "rgba(255, 255, 255, 0.12)";
             c.lineWidth = 1;
             c.stroke();
 
             // ----------------------------------------------------------------
-            // 6. MANCHAS NISHIKIGOI CON MÁSCARA ORGÁNICA INTERNA
+            // 6. MANCHAS NISHIKIGOI CON BLEND INTEGRADO
             // ----------------------------------------------------------------
             c.save();
-            c.clip(); // Máscara dentro del contorno Bézier suave
+            c.clip();
 
             fish.spots.forEach((spot) => {
                 const j = fish.spine[Math.min(spot.jointIndex, fish.spineLength - 1)];
@@ -793,7 +795,7 @@ export function KoiPondCanvas({
                 );
                 spotGrad.addColorStop(0, spot.color);
                 spotGrad.addColorStop(0.85, spot.color);
-                spotGrad.addColorStop(1, "rgba(0, 0, 0, 0.05)");
+                spotGrad.addColorStop(1, "rgba(0, 0, 0, 0.02)");
 
                 c.beginPath();
                 c.ellipse(spotX, spotY, spot.radiusX, spot.radiusY, j.angle, 0, Math.PI * 2);
@@ -801,99 +803,83 @@ export function KoiPondCanvas({
                 c.fill();
             });
 
-            // Reflejo iridiscente de escamas a lo largo de la columna vertebral
+            // Reflejo iridiscente en la cresta de la columna
             c.beginPath();
             for (let i = 2; i < fish.spineLength - 3; i++) {
                 const j = fish.spine[i];
                 c.arc(j.x, j.y, fish.bodyRadii[i] * 0.35, 0, Math.PI * 2);
             }
-            c.fillStyle = "rgba(255, 255, 255, 0.09)";
+            c.fillStyle = "rgba(255, 255, 255, 0.08)";
             c.fill();
 
             c.restore();
 
             // ----------------------------------------------------------------
-            // 7. ALETA DORSAL (SOBRE LA COLUMNA VERTEBRAL)
+            // 7. ALETA DORSAL
             // ----------------------------------------------------------------
             c.beginPath();
             const dorsalStart = fish.spine[3];
-            const dorsalEnd = fish.spine[10];
             c.moveTo(dorsalStart.x, dorsalStart.y);
             for (let i = 4; i <= 10; i++) {
                 const j = fish.spine[i];
                 c.lineTo(j.x, j.y);
             }
-            c.strokeStyle = fish.variety === "yamabuki" ? "rgba(251, 191, 36, 0.6)" : "rgba(255, 255, 255, 0.5)";
-            c.lineWidth = 2.2 * fish.size;
+            c.strokeStyle = fish.variety === "yamabuki" ? "rgba(251, 191, 36, 0.65)" : "rgba(255, 255, 255, 0.55)";
+            c.lineWidth = 2.4 * fish.size;
             c.stroke();
 
             // ----------------------------------------------------------------
-            // 8. CABEZA, OJOS Y BIGOTES (HIGE - 髭) DEL KOI JAPONÉS
+            // 8. OJOS INTEGRADOS EN EL CRÁNEO Y BIGOTES (HIGE - 髭)
             // ----------------------------------------------------------------
-            const eyeDist = fish.bodyRadii[0] * 0.85;
-            const eyeAngle1 = head.angle + Math.PI * 0.45;
-            const eyeAngle2 = head.angle - Math.PI * 0.45;
-            const eyeR = Math.max(1.8, 2.8 * fish.size * fish.depth);
+            const eyeJoint = fish.spine[1];
+            const eyeNorm = eyeJoint.angle - Math.PI * 0.5;
+            const eyeDist = fish.bodyRadii[1] * 0.72;
+            const eyeR = Math.max(1.8, 2.6 * fish.size * fish.depth);
 
-            // Ojo izquierdo y derecho
-            drawEye(c, head.x + Math.cos(eyeAngle1) * eyeDist, head.y + Math.sin(eyeAngle1) * eyeDist, eyeR);
-            drawEye(c, head.x + Math.cos(eyeAngle2) * eyeDist, head.y + Math.sin(eyeAngle2) * eyeDist, eyeR);
+            drawEye(c, eyeJoint.x + Math.cos(eyeNorm) * eyeDist, eyeJoint.y + Math.sin(eyeNorm) * eyeDist, eyeR);
+            drawEye(c, eyeJoint.x - Math.cos(eyeNorm) * eyeDist, eyeJoint.y - Math.sin(eyeNorm) * eyeDist, eyeR);
 
-            // Bigotes táctiles del Koi (barbels) en las comisuras de la boca
-            const barbelLength = 12 * fish.size;
-            const barbelAngleL = head.angle + Math.PI * 0.65;
-            const barbelAngleR = head.angle - Math.PI * 0.65;
+            // Bigotes táctiles del pez Koi en las comisuras del morro
+            const barbelLen = 10 * fish.size;
+            const bAngleL = head.angle - Math.PI * 0.55;
+            const bAngleR = head.angle + Math.PI * 0.55;
 
             c.beginPath();
-            c.moveTo(snoutX, snoutY);
+            c.moveTo(snoutTipX, snoutTipY);
             c.quadraticCurveTo(
-                snoutX + Math.cos(barbelAngleL) * (barbelLength * 0.6),
-                snoutY + Math.sin(barbelAngleL) * (barbelLength * 0.6),
-                snoutX + Math.cos(barbelAngleL + 0.3) * barbelLength,
-                snoutY + Math.sin(barbelAngleL + 0.3) * barbelLength
+                snoutTipX + Math.cos(bAngleL) * (barbelLen * 0.6),
+                snoutTipY + Math.sin(bAngleL) * (barbelLen * 0.6),
+                snoutTipX + Math.cos(bAngleL + 0.2) * barbelLen,
+                snoutTipY + Math.sin(bAngleL + 0.2) * barbelLen
             );
-            c.moveTo(snoutX, snoutY);
+            c.moveTo(snoutTipX, snoutTipY);
             c.quadraticCurveTo(
-                snoutX + Math.cos(barbelAngleR) * (barbelLength * 0.6),
-                snoutY + Math.sin(barbelAngleR) * (barbelLength * 0.6),
-                snoutX + Math.cos(barbelAngleR - 0.3) * barbelLength,
-                snoutY + Math.sin(barbelAngleR - 0.3) * barbelLength
+                snoutTipX + Math.cos(bAngleR) * (barbelLen * 0.6),
+                snoutTipY + Math.sin(bAngleR) * (barbelLen * 0.6),
+                snoutTipX + Math.cos(bAngleR - 0.2) * barbelLen,
+                snoutTipY + Math.sin(bAngleR - 0.2) * barbelLen
             );
-            c.strokeStyle = "rgba(255, 255, 255, 0.4)";
-            c.lineWidth = 1;
+            c.strokeStyle = "rgba(255, 255, 255, 0.35)";
+            c.lineWidth = 0.9;
             c.stroke();
 
             c.restore();
         }
 
-        // Dibuja curva spline suave conectando puntos con puntos medios (sin esquinas duras)
-        function drawSplineCurve(c: CanvasRenderingContext2D, pts: { x: number; y: number }[], startX: number, startY: number) {
-            if (pts.length < 2) return;
-            c.lineTo(pts[0].x, pts[0].y);
-
-            for (let i = 0; i < pts.length - 1; i++) {
-                const xc = (pts[i].x + pts[i + 1].x) * 0.5;
-                const yc = (pts[i].y + pts[i + 1].y) * 0.5;
-                c.quadraticCurveTo(pts[i].x, pts[i].y, xc, yc);
-            }
-            c.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
-        }
-
         function drawEye(c: CanvasRenderingContext2D, x: number, y: number, r: number) {
-            // Esclerótica
             c.beginPath();
             c.arc(x, y, r, 0, Math.PI * 2);
-            c.fillStyle = "#0F172A";
+            c.fillStyle = "#09090B";
             c.fill();
-            // Brillo pupilar especular
+
             c.beginPath();
-            c.arc(x - r * 0.35, y - r * 0.35, r * 0.38, 0, Math.PI * 2);
-            c.fillStyle = "rgba(255, 255, 255, 0.9)";
+            c.arc(x - r * 0.3, y - r * 0.3, r * 0.38, 0, Math.PI * 2);
+            c.fillStyle = "rgba(255, 255, 255, 0.92)";
             c.fill();
         }
 
-        // Aleta translúcida con velo y radios finos estriados
-        function drawFlowingFin(
+        // Aleta pectoral orientada suavemente hacia atrás
+        function drawPectoralFin(
             c: CanvasRenderingContext2D,
             baseX: number,
             baseY: number,
@@ -909,8 +895,8 @@ export function KoiPondCanvas({
 
             c.beginPath();
             c.moveTo(0, 0);
-            c.bezierCurveTo(length * 0.45, length * 0.5, length * 0.85, length * 0.3, length, length * 0.05);
-            c.bezierCurveTo(length * 0.75, -length * 0.25, length * 0.35, -length * 0.2, 0, 0);
+            c.bezierCurveTo(length * 0.4, length * 0.42, length * 0.85, length * 0.25, length, length * 0.05);
+            c.bezierCurveTo(length * 0.72, -length * 0.2, length * 0.32, -length * 0.15, 0, 0);
             c.closePath();
 
             if (isShadow) {
@@ -920,7 +906,7 @@ export function KoiPondCanvas({
                 const finGrad = c.createLinearGradient(0, 0, length, 0);
                 if (variety === "yamabuki") {
                     finGrad.addColorStop(0, "rgba(245, 158, 11, 0.8)");
-                    finGrad.addColorStop(0.5, "rgba(251, 191, 36, 0.45)");
+                    finGrad.addColorStop(0.55, "rgba(251, 191, 36, 0.45)");
                     finGrad.addColorStop(1, "rgba(254, 240, 138, 0.15)");
                 } else if (variety === "hi_utsuri" || variety === "asagi") {
                     finGrad.addColorStop(0, "rgba(249, 115, 22, 0.85)");
@@ -934,14 +920,14 @@ export function KoiPondCanvas({
                 c.fillStyle = finGrad;
                 c.fill();
 
-                // Radios de la aleta (fin rays delicados)
+                // Radios de la aleta
                 c.beginPath();
                 for (let r = 1; r <= 4; r++) {
                     const frac = r / 5;
                     c.moveTo(0, 0);
-                    c.quadraticCurveTo(length * 0.5, length * (0.25 - frac * 0.1), length * 0.9, length * (frac * 0.15 - 0.05));
+                    c.quadraticCurveTo(length * 0.45, length * (0.22 - frac * 0.1), length * 0.88, length * (frac * 0.14 - 0.04));
                 }
-                c.strokeStyle = "rgba(255, 255, 255, 0.22)";
+                c.strokeStyle = "rgba(255, 255, 255, 0.25)";
                 c.lineWidth = 0.8;
                 c.stroke();
             }
@@ -949,12 +935,12 @@ export function KoiPondCanvas({
             c.restore();
         }
 
-        // Aleta caudal velo (cola de mariposa con abanico amplio y fluido)
+        // Aleta caudal velo (flotando estrictamente HACIA ATRÁS en el agua)
         function drawCaudalVeilTail(
             c: CanvasRenderingContext2D,
             baseX: number,
             baseY: number,
-            angle: number,
+            angle: number, // Ya contiene rotación de 180° hacia atrás
             length: number,
             variety: KoiVariety,
             baseColor: string,
@@ -963,21 +949,29 @@ export function KoiPondCanvas({
         ) {
             c.save();
             c.translate(baseX, baseY);
-            c.rotate(angle);
+            c.rotate(angle); // +X se extiende directamente hacia atrás en el agua
 
-            // Abanico bilobulado fluido
+            const flare = length * 0.65;
+            const baseW = 3.5;
+
+            // Abanico bilobulado fluido que se ensancha hacia atrás
             c.beginPath();
             c.moveTo(0, 0);
-            c.bezierCurveTo(-length * 0.35, length * 0.55, -length * 0.75, length * 0.8, -length, length * 0.5);
-            c.bezierCurveTo(-length * 0.65, length * 0.15, -length * 0.65, -length * 0.15, -length, -length * 0.5);
-            c.bezierCurveTo(-length * 0.75, -length * 0.8, -length * 0.35, -length * 0.55, 0, 0);
+            // Lóbulo superior abriéndose hacia atrás (+X)
+            c.bezierCurveTo(length * 0.35, baseW * 1.5, length * 0.7, flare * 0.85, length, flare);
+            // Muesca central del abanico
+            c.quadraticCurveTo(length * 0.78, flare * 0.3, length * 0.65, 0);
+            // Lóbulo inferior abriéndose hacia atrás (+X)
+            c.quadraticCurveTo(length * 0.78, -flare * 0.3, length, -flare);
+            // Retorno a la base
+            c.bezierCurveTo(length * 0.7, -flare * 0.85, length * 0.35, -baseW * 1.5, 0, 0);
             c.closePath();
 
             if (isShadow) {
                 c.fillStyle = "rgba(0, 4, 10, 0.22)";
                 c.fill();
             } else {
-                const tailGrad = c.createLinearGradient(0, 0, -length, 0);
+                const tailGrad = c.createLinearGradient(0, 0, length, 0);
                 if (variety === "yamabuki") {
                     tailGrad.addColorStop(0, "rgba(245, 158, 11, 0.85)");
                     tailGrad.addColorStop(0.5, "rgba(251, 191, 36, 0.45)");
@@ -994,14 +988,14 @@ export function KoiPondCanvas({
                 c.fillStyle = tailGrad;
                 c.fill();
 
-                // Radios finos estriados de la cola (rayas de velo)
+                // Radios de seda estriados de la cola
                 c.beginPath();
                 for (let r = -3; r <= 3; r++) {
-                    const spread = (r / 3) * (length * 0.42);
+                    const spread = (r / 3) * (flare * 0.82);
                     c.moveTo(0, 0);
-                    c.quadraticCurveTo(-length * 0.5, spread * 0.6, -length * 0.92, spread);
+                    c.quadraticCurveTo(length * 0.48, spread * 0.5, length * 0.92, spread);
                 }
-                c.strokeStyle = "rgba(255, 255, 255, 0.2)";
+                c.strokeStyle = "rgba(255, 255, 255, 0.22)";
                 c.lineWidth = 0.9;
                 c.stroke();
             }
@@ -1023,7 +1017,6 @@ export function KoiPondCanvas({
             c.save();
             c.translate(x, y);
 
-            // Sombra en el fondo del estanque
             c.beginPath();
             c.arc(12, 18, radius, 0, Math.PI * 2);
             c.fillStyle = "rgba(0, 5, 12, 0.25)";
@@ -1050,7 +1043,6 @@ export function KoiPondCanvas({
             c.lineWidth = 1.5;
             c.stroke();
 
-            // Nervaduras radiales
             c.strokeStyle = "rgba(187, 247, 208, 0.16)";
             c.lineWidth = 1;
             const numVeins = 7;
@@ -1062,7 +1054,6 @@ export function KoiPondCanvas({
                 c.stroke();
             }
 
-            // Centro de la hoja
             c.beginPath();
             c.arc(0, 0, 3.5, 0, Math.PI * 2);
             c.fillStyle = "rgba(254, 240, 138, 0.45)";
