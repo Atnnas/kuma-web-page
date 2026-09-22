@@ -118,6 +118,10 @@ interface LilyPad {
     offsetY: number;
     velX: number;
     velY: number;
+    tiltX: number;
+    tiltY: number;
+    tiltVelX: number;
+    tiltVelY: number;
     dewDroplets: { relX: number; relY: number; r: number }[];
 }
 
@@ -476,6 +480,10 @@ export function KoiPondCanvas({
                 offsetY: 0,
                 velX: 0,
                 velY: 0,
+                tiltX: 0,
+                tiltY: 0,
+                tiltVelX: 0,
+                tiltVelY: 0,
                 dewDroplets: [
                     { relX: -14, relY: -10, r: 2.8 },
                     { relX: 16, relY: 12, r: 3.4 },
@@ -495,6 +503,10 @@ export function KoiPondCanvas({
                 offsetY: 0,
                 velX: 0,
                 velY: 0,
+                tiltX: 0,
+                tiltY: 0,
+                tiltVelX: 0,
+                tiltVelY: 0,
                 dewDroplets: [
                     { relX: -18, relY: 8, r: 3.5 },
                     { relX: 12, relY: -16, r: 2.4 },
@@ -513,6 +525,10 @@ export function KoiPondCanvas({
                 offsetY: 0,
                 velX: 0,
                 velY: 0,
+                tiltX: 0,
+                tiltY: 0,
+                tiltVelX: 0,
+                tiltVelY: 0,
                 dewDroplets: [
                     { relX: -12, relY: -20, r: 4.0 },
                     { relX: 20, relY: -8, r: 2.6 },
@@ -532,6 +548,10 @@ export function KoiPondCanvas({
                 offsetY: 0,
                 velX: 0,
                 velY: 0,
+                tiltX: 0,
+                tiltY: 0,
+                tiltVelX: 0,
+                tiltVelY: 0,
                 dewDroplets: [
                     { relX: -15, relY: -12, r: 3.2 },
                     { relX: 14, relY: 14, r: 2.5 },
@@ -549,6 +569,10 @@ export function KoiPondCanvas({
                 offsetY: 0,
                 velX: 0,
                 velY: 0,
+                tiltX: 0,
+                tiltY: 0,
+                tiltVelX: 0,
+                tiltVelY: 0,
                 dewDroplets: [
                     { relX: -10, relY: 10, r: 2.5 },
                     { relX: 12, relY: -8, r: 2.8 },
@@ -566,6 +590,10 @@ export function KoiPondCanvas({
                 offsetY: 0,
                 velX: 0,
                 velY: 0,
+                tiltX: 0,
+                tiltY: 0,
+                tiltVelX: 0,
+                tiltVelY: 0,
                 dewDroplets: [
                     { relX: -12, relY: -14, r: 3.0 },
                     { relX: 15, relY: 10, r: 2.6 },
@@ -574,26 +602,28 @@ export function KoiPondCanvas({
         ];
 
         // ====================================================================
-        // LUCIÉRNAGAS ZEN (HOTARU 蛍) - LUCES BIOLUMINISCENTES ETÉREAS
+        // LUCIÉRNAGAS ZEN (HOTARU 蛍) - PUNTOS PEQUEÑITOS ETÉREOS Y DISIMULADOS
         // ====================================================================
-        const fireflyCount = 9;
+        const fireflyCount = 6;
         const fireflies: Firefly[] = [];
 
         const wakeFirefly = (f: Firefly, initialFlying = false) => {
             f.seed = Math.random() * 1000;
-            f.size = 2.4 + Math.random() * 1.5;
-            f.hue = 58 + Math.random() * 26; // Oro ámbar cálido (58-68) a verde lima místico (72-84)
+            // Puntos diminutos muy sutiles (~1.0 a 1.6px de radio)
+            f.size = 1.0 + Math.random() * 0.6;
+            f.hue = 52 + Math.random() * 18; // Oro ámbar cálido y suave (52-70)
             f.pulsePhase = Math.random() * Math.PI * 2;
-            f.pulseSpeed = 0.028 + Math.random() * 0.022;
-            f.speed = 0.35 + Math.random() * 0.35;
-            f.turnSpeed = 0.008 + Math.random() * 0.012;
-            f.z = 0.3 + Math.random() * 0.55;
-            f.maxAlpha = 0.85 + Math.random() * 0.15;
-            f.maxTimer = 480 + Math.floor(Math.random() * 550); // 16 a 30 segundos de vuelo
+            f.pulseSpeed = 0.024 + Math.random() * 0.02;
+            f.speed = 0.3 + Math.random() * 0.3;
+            f.turnSpeed = 0.006 + Math.random() * 0.01;
+            f.z = 0.3 + Math.random() * 0.5;
+            // Opacidad atenuada, muy disimulada y mágica
+            f.maxAlpha = 0.45 + Math.random() * 0.25;
+            f.maxTimer = 400 + Math.floor(Math.random() * 450); // 13 a 25 segundos de vuelo
             f.trail = [];
 
             if (initialFlying) {
-                // Al inicio, 3 ya sobrevuelan el estanque
+                // Al inicio, solo 2 vuelan suavemente
                 f.state = "flying";
                 f.x = Math.random() * (width || window.innerWidth);
                 f.y = Math.random() * (height || window.innerHeight);
@@ -601,14 +631,13 @@ export function KoiPondCanvas({
                 f.alpha = f.maxAlpha;
                 f.timer = Math.floor(Math.random() * f.maxTimer);
             } else {
-                // Nacimiento natural: emergen suavemente cerca de un nenúfar o en el margen
                 f.state = "awakening";
                 f.alpha = 0;
-                f.timer = 70; // 70 fotogramas de encendido gradual
+                f.timer = 80; // Aparición muy suave
                 if (Math.random() < 0.6 && lilyPads.length > 0) {
                     const pad = lilyPads[Math.floor(Math.random() * lilyPads.length)];
-                    f.x = pad.xRatio * (width || window.innerWidth) + (Math.random() - 0.5) * 35;
-                    f.y = pad.yRatio * (height || window.innerHeight) + (Math.random() - 0.5) * 35;
+                    f.x = pad.xRatio * (width || window.innerWidth) + (Math.random() - 0.5) * 30;
+                    f.y = pad.yRatio * (height || window.innerHeight) + (Math.random() - 0.5) * 30;
                 } else {
                     f.x = Math.random() < 0.5 ? -20 : (width || window.innerWidth) + 20;
                     f.y = Math.random() * (height || window.innerHeight);
@@ -626,24 +655,24 @@ export function KoiPondCanvas({
                 x: 0,
                 y: 0,
                 z: 0.5,
-                speed: 0.4,
+                speed: 0.35,
                 angle: 0,
-                turnSpeed: 0.01,
-                size: 3,
+                turnSpeed: 0.008,
+                size: 1.2,
                 pulsePhase: 0,
-                pulseSpeed: 0.04,
-                hue: 70,
+                pulseSpeed: 0.03,
+                hue: 60,
                 alpha: 0,
-                maxAlpha: 0.9,
-                timer: i < 3 ? 0 : 160 + Math.floor(Math.random() * 450),
-                maxTimer: 500,
+                maxAlpha: 0.5,
+                timer: i < 2 ? 0 : 200 + Math.floor(Math.random() * 500),
+                maxTimer: 450,
                 seed: i * 42,
                 trail: [],
             };
-            if (i < 3) {
+            if (i < 2) {
                 wakeFirefly(f, true);
             } else {
-                f.timer = 180 + Math.floor(Math.random() * 500); // Entran de vez en vez
+                f.timer = 220 + Math.floor(Math.random() * 600);
             }
             fireflies.push(f);
         }
@@ -891,7 +920,7 @@ export function KoiPondCanvas({
             const padPositions: { x: number; y: number; pad: LilyPad }[] = [];
 
             lilyPads.forEach((pad) => {
-                // Oleaje orgánico multi-frecuencia
+                // Oleaje orgánico multi-frecuencia en coordenadas x, y
                 const currentX =
                     Math.sin(tick * pad.driftSpeed + pad.driftPhase) * 18 +
                     Math.sin(tick * pad.driftSpeed * 2.7 + pad.driftPhase) * 5;
@@ -902,29 +931,61 @@ export function KoiPondCanvas({
                 const basePosX = pad.xRatio * width + currentX;
                 const basePosY = pad.yRatio * height + currentY;
 
-                // Interacción reactiva: estela de los peces koi empuja suavemente las hojas flotantes
+                // Balanceo e inclinación natural por paso de ondas de agua
+                const waveTiltX = Math.sin(tick * 0.016 + pad.driftPhase) * 0.045;
+                const waveTiltY = Math.cos(tick * 0.014 + pad.driftPhase) * 0.04;
+
+                // Interacción reactiva: estela de los peces koi empuja e INCLINA las hojas flotantes
                 fishes.forEach((fish) => {
                     const fdx = basePosX - fish.x;
                     const fdy = basePosY - fish.y;
                     const fdist = Math.hypot(fdx, fdy);
-                    if (fdist < pad.radius + 38 && fdist > 1) {
-                        const pushStrength = (1 - fdist / (pad.radius + 38)) * (fish.speed / fish.baseSpeed) * 0.16;
+                    if (fdist < pad.radius + 40 && fdist > 1) {
+                        const pushStrength = (1 - fdist / (pad.radius + 40)) * (fish.speed / fish.baseSpeed) * 0.18;
                         pad.velX += (fdx / fdist) * pushStrength;
                         pad.velY += (fdy / fdist) * pushStrength;
+
+                        // Cabeceo e inclinación física provocada por la ola del pez
+                        pad.tiltVelX += (fdx / fdist) * pushStrength * 0.15;
+                        pad.tiltVelY += (fdy / fdist) * pushStrength * 0.15;
+
+                        // Ondas concéntricas suaves de tensión superficial
+                        if (Math.random() < 0.03) {
+                            addRipple(basePosX, basePosY, pad.radius * 1.3, 0.6);
+                        }
                     }
                 });
 
-                // Fricción y resorte amortiguado
+                // Fricción y resorte amortiguado de traslación
                 pad.velX *= 0.94;
                 pad.velY *= 0.94;
                 pad.offsetX = (pad.offsetX + pad.velX) * 0.95;
                 pad.offsetY = (pad.offsetY + pad.velY) * 0.95;
 
+                // Amortiguación de inclinación física (efecto muelle de flotación en agua)
+                pad.tiltVelX *= 0.88;
+                pad.tiltVelY *= 0.88;
+                pad.tiltX = waveTiltX + (pad.tiltX - waveTiltX + pad.tiltVelX) * 0.88;
+                pad.tiltY = waveTiltY + (pad.tiltY - waveTiltY + pad.tiltVelY) * 0.88;
+
                 const finalX = basePosX + pad.offsetX;
                 const finalY = basePosY + pad.offsetY;
-                const rot = pad.angle + Math.sin(tick * 0.0008 + pad.driftPhase) * 0.12;
+                const rot = pad.angle + Math.sin(tick * 0.0008 + pad.driftPhase) * 0.1;
 
-                drawLilyPad(ctx, finalX, finalY, pad.radius, rot, pad.notchAngle, pad.dewDroplets, tick);
+                drawLilyPad(
+                    ctx,
+                    finalX,
+                    finalY,
+                    pad.radius,
+                    rot,
+                    pad.notchAngle,
+                    pad.dewDroplets,
+                    tick,
+                    pad.tiltX,
+                    pad.tiltY,
+                    pad.velX,
+                    pad.velY
+                );
 
                 padPositions.push({ x: finalX, y: finalY, pad });
             });
@@ -1689,6 +1750,29 @@ export function KoiPondCanvas({
         // ====================================================================
         // DIBUJO DE NENÚFARES (LILY PADS FLOTANTES CON ROCÍO ASATSUYU)
         // ====================================================================
+        // ====================================================================
+        // DIBUJO DE NENÚFARES (LILY PADS FLOTANTES CON ROCÍO ASATSUYU)
+        // ====================================================================
+        function traceLilyPadShape(
+            c: CanvasRenderingContext2D,
+            radius: number,
+            startAngle: number,
+            endAngle: number
+        ) {
+            c.beginPath();
+            c.moveTo(0, 0);
+            const steps = 38;
+            for (let i = 0; i <= steps; i++) {
+                const a = startAngle + (endAngle - startAngle) * (i / steps);
+                // Ondulaciones orgánicas sutiles del borde vegetal vivo
+                const lobe = radius + Math.sin(a * 7) * 1.4;
+                const px = Math.cos(a) * lobe;
+                const py = Math.sin(a) * lobe;
+                c.lineTo(px, py);
+            }
+            c.closePath();
+        }
+
         function drawLilyPad(
             c: CanvasRenderingContext2D,
             x: number,
@@ -1697,41 +1781,35 @@ export function KoiPondCanvas({
             rotation: number,
             notchWidth = 0.65,
             dewDroplets: { relX: number; relY: number; r: number }[] = [],
-            tick = 0
+            tick = 0,
+            tiltX = 0,
+            tiltY = 0,
+            velX = 0,
+            velY = 0
         ) {
             c.save();
             c.translate(x, y);
 
-            // Sombra suave en el lecho del estanque
-            c.beginPath();
-            c.arc(12, 18, radius, 0, Math.PI * 2);
-            c.fillStyle = "rgba(0, 5, 14, 0.28)";
-            c.fill();
-
-            // Halo acuático sutil de contacto superficial
-            c.beginPath();
-            c.arc(0, 0, radius + 2, 0, Math.PI * 2);
-            c.strokeStyle = "rgba(56, 189, 248, 0.12)";
-            c.lineWidth = 3;
-            c.stroke();
-
-            c.rotate(rotation);
-
             const startAngle = notchWidth * 0.5;
             const endAngle = Math.PI * 2 - notchWidth * 0.5;
 
-            // Borde orgánico con leves ondulaciones
-            c.beginPath();
-            c.moveTo(0, 0);
-            const steps = 36;
-            for (let i = 0; i <= steps; i++) {
-                const a = startAngle + (endAngle - startAngle) * (i / steps);
-                const lobe = radius + Math.sin(a * 7) * 1.4;
-                const px = Math.cos(a) * lobe;
-                const py = Math.sin(a) * lobe;
-                c.lineTo(px, py);
-            }
-            c.closePath();
+            // 1. Sombra suave en el lecho del estanque: TIENE LA MISMA FORMA EXACTA Y MUESCA
+            // (Eliminado cualquier círculo genérico desacoplado que deje líneas extrañas)
+            c.save();
+            c.translate(8 + tiltX * 14, 12 + tiltY * 14);
+            c.rotate(rotation);
+            c.scale(1 + tiltX * 0.35, 1 - tiltX * 0.25);
+            traceLilyPadShape(c, radius, startAngle, endAngle);
+            c.fillStyle = "rgba(0, 5, 14, 0.22)";
+            c.fill();
+            c.restore();
+
+            // 2. Inclinación y balanceo tridimensional sobre el agua
+            c.rotate(rotation);
+            c.scale(1 + tiltX * 0.45, 1 + tiltY * 0.45);
+
+            // Cuerpo vegetal del nenúfar
+            traceLilyPadShape(c, radius, startAngle, endAngle);
 
             const padGrad = c.createRadialGradient(0, 0, radius * 0.15, 0, 0, radius);
             padGrad.addColorStop(0, "#16A34A"); // Verde esmeralda vivo
@@ -1741,13 +1819,13 @@ export function KoiPondCanvas({
             c.fillStyle = padGrad;
             c.fill();
 
-            // Ribete exterior verde lima
-            c.strokeStyle = "rgba(134, 239, 172, 0.32)";
-            c.lineWidth = 1.5;
+            // Ribete ceroso propio de la hoja (fino, suave y 100% sobre el borde de la hoja)
+            c.strokeStyle = "rgba(134, 239, 172, 0.22)";
+            c.lineWidth = 1.1;
             c.stroke();
 
             // Nervaduras radiales orgánicas
-            c.strokeStyle = "rgba(187, 247, 208, 0.2)";
+            c.strokeStyle = "rgba(187, 247, 208, 0.18)";
             c.lineWidth = 1;
             const numVeins = 8;
             for (let v = 0; v < numVeins; v++) {
@@ -1767,21 +1845,22 @@ export function KoiPondCanvas({
 
             // Tallo central / punto de inserción
             c.beginPath();
-            c.arc(0, 0, 4, 0, Math.PI * 2);
+            c.arc(0, 0, 3.8, 0, Math.PI * 2);
             c.fillStyle = "rgba(254, 240, 138, 0.5)";
             c.fill();
 
             // Gotitas de rocío sobre la hoja cerosa (Asatsuyu 朝露)
+            // Reaccionan físicamente a la inclinación del agua
             dewDroplets.forEach((drop) => {
-                const wobbleX = Math.sin(tick * 0.05 + drop.relX) * 0.35;
-                const wobbleY = Math.cos(tick * 0.05 + drop.relY) * 0.35;
-                const dx = drop.relX + wobbleX;
-                const dy = drop.relY + wobbleY;
+                const inertiaX = -tiltX * 22 - velX * 2.5 + Math.sin(tick * 0.05 + drop.relX) * 0.3;
+                const inertiaY = -tiltY * 22 - velY * 2.5 + Math.cos(tick * 0.05 + drop.relY) * 0.3;
+                const dx = drop.relX + inertiaX;
+                const dy = drop.relY + inertiaY;
 
                 // Sombra de la gota
                 c.beginPath();
-                c.ellipse(dx + 0.8, dy + 1.2, drop.r, drop.r * 0.75, 0.4, 0, Math.PI * 2);
-                c.fillStyle = "rgba(0, 5, 14, 0.35)";
+                c.ellipse(dx + 0.7, dy + 1.1, drop.r, drop.r * 0.75, 0.4, 0, Math.PI * 2);
+                c.fillStyle = "rgba(0, 5, 14, 0.3)";
                 c.fill();
 
                 // Esfera acuática cristalina
@@ -2159,121 +2238,50 @@ export function KoiPondCanvas({
         }
 
         // ====================================================================
-        // DIBUJO DE LUCIÉRNAGAS ZEN (HOTARU 蛍) - BIOLUMINISCENCIA ETÉREA PURA
+        // DIBUJO DE LUCIÉRNAGAS ZEN (HOTARU 蛍) - PUNTOS PEQUEÑITOS ETÉREOS Y DISIMULADOS
         // ====================================================================
-        function drawFirefly(c: CanvasRenderingContext2D, f: Firefly, tick: number) {
+        function drawFirefly(c: CanvasRenderingContext2D, f: Firefly, _tick: number) {
             if (f.alpha <= 0.01) return;
 
-            // Respiración orgánica no-lineal (curva suave de bioluminiscencia)
+            // Pulsación suave y armónica (ritmo respiratorio zen continuo y suave)
             const sinPulse = Math.sin(f.pulsePhase);
-            const pulse = 0.35 + 0.65 * Math.pow(Math.max(0, sinPulse), 2.2);
+            const pulse = 0.4 + 0.6 * (0.5 + 0.5 * sinPulse);
             const breathAlpha = f.alpha * pulse;
+            if (breathAlpha <= 0.01) return;
 
             c.save();
-            // Modo óptico aditivo: crea auténtico resplandor y bloom lumínico sobre el estanque oscuro
             c.globalCompositeOperation = "screen";
 
-            // 1. Reflejo líquido sutil sobre el estanque (ondas distorsionadas por la superficie)
-            const reflY = f.y + f.z * 18;
-            const waterRippleOffset = Math.sin(tick * 0.035 + f.y * 0.05) * 2.5;
-            const reflRadX = f.size * (6 + pulse * 8);
-            const reflRadY = f.size * (2.2 + pulse * 2.8);
+            const flyY = f.y - f.z * 18;
 
-            const reflGrad = c.createRadialGradient(
-                f.x + waterRippleOffset,
-                reflY,
-                0,
-                f.x + waterRippleOffset,
-                reflY,
-                reflRadX
-            );
-            reflGrad.addColorStop(0, `hsla(${f.hue}, 95%, 72%, ${breathAlpha * 0.32})`);
-            reflGrad.addColorStop(0.45, `hsla(${f.hue}, 90%, 60%, ${breathAlpha * 0.12})`);
+            // 1. Reflejo sutil y diminuto sobre la superficie del estanque
+            const reflY = f.y + f.z * 10;
+            const reflRad = Math.max(1.2, f.size * 2.0);
+            const reflGrad = c.createRadialGradient(f.x, reflY, 0, f.x, reflY, reflRad);
+            reflGrad.addColorStop(0, `hsla(${f.hue}, 90%, 75%, ${breathAlpha * 0.12})`);
             reflGrad.addColorStop(1, `hsla(${f.hue}, 85%, 50%, 0)`);
-
             c.beginPath();
-            c.ellipse(f.x + waterRippleOffset, reflY, reflRadX, reflRadY, 0, 0, Math.PI * 2);
+            c.arc(f.x, reflY, reflRad, 0, Math.PI * 2);
             c.fillStyle = reflGrad;
             c.fill();
 
-            // 2. Estela efímera de polvo de estrellas (Stardust Trail)
-            f.trail.forEach((tp) => {
-                if (tp.alpha > 0.02) {
-                    const trailRad = f.size * 3.8;
-                    const tGrad = c.createRadialGradient(tp.x, tp.y, 0, tp.x, tp.y, trailRad);
-                    tGrad.addColorStop(0, `hsla(${f.hue}, 95%, 75%, ${tp.alpha * 0.45})`);
-                    tGrad.addColorStop(0.5, `hsla(${f.hue}, 90%, 65%, ${tp.alpha * 0.18})`);
-                    tGrad.addColorStop(1, `hsla(${f.hue}, 85%, 55%, 0)`);
-
-                    c.beginPath();
-                    c.arc(tp.x, tp.y, trailRad, 0, Math.PI * 2);
-                    c.fillStyle = tGrad;
-                    c.fill();
-                }
-            });
-
-            // 3. Luciérnaga en el aire (altitud z)
-            const flyY = f.y - f.z * 22;
-
-            // Capa A: Vaho atmosférico amplio y difuso (Atmospheric Vapor Bloom)
-            const vaporRad = f.size * (14 + pulse * 22);
-            const vaporGrad = c.createRadialGradient(f.x, flyY, 0, f.x, flyY, vaporRad);
-            vaporGrad.addColorStop(0, `hsla(${f.hue}, 95%, 70%, ${breathAlpha * 0.28})`);
-            vaporGrad.addColorStop(0.35, `hsla(${f.hue}, 90%, 60%, ${breathAlpha * 0.12})`);
-            vaporGrad.addColorStop(0.7, `hsla(${f.hue}, 85%, 55%, ${breathAlpha * 0.04})`);
-            vaporGrad.addColorStop(1, `hsla(${f.hue}, 85%, 50%, 0)`);
-
+            // 2. Micro-halo etéreo difuminado (resplandor diminuto de 3 a 5px, muy suave)
+            const haloRad = Math.max(2.8, f.size * 3.2);
+            const haloGrad = c.createRadialGradient(f.x, flyY, 0, f.x, flyY, haloRad);
+            haloGrad.addColorStop(0, `hsla(${f.hue}, 95%, 80%, ${breathAlpha * 0.45})`);
+            haloGrad.addColorStop(0.5, `hsla(${f.hue}, 90%, 65%, ${breathAlpha * 0.14})`);
+            haloGrad.addColorStop(1, `hsla(${f.hue}, 85%, 50%, 0)`);
             c.beginPath();
-            c.arc(f.x, flyY, vaporRad, 0, Math.PI * 2);
-            c.fillStyle = vaporGrad;
+            c.arc(f.x, flyY, haloRad, 0, Math.PI * 2);
+            c.fillStyle = haloGrad;
             c.fill();
 
-            // Capa B: Corona radiante bioluminiscente cálida (Corona Halo)
-            const coronaRad = f.size * (5 + pulse * 9);
-            const coronaGrad = c.createRadialGradient(f.x, flyY, 0, f.x, flyY, coronaRad);
-            coronaGrad.addColorStop(0, `hsla(${f.hue}, 100%, 84%, ${breathAlpha * 0.85})`);
-            coronaGrad.addColorStop(0.4, `hsla(${f.hue}, 95%, 70%, ${breathAlpha * 0.45})`);
-            coronaGrad.addColorStop(0.8, `hsla(${f.hue}, 90%, 60%, ${breathAlpha * 0.15})`);
-            coronaGrad.addColorStop(1, `hsla(${f.hue}, 85%, 55%, 0)`);
-
+            // 3. Punto pequeñito central (chispa diminuta, discreta y etérea ~0.8 a 1.2px)
+            const dotRad = Math.max(0.65, f.size * 0.7);
             c.beginPath();
-            c.arc(f.x, flyY, coronaRad, 0, Math.PI * 2);
-            c.fillStyle = coronaGrad;
+            c.arc(f.x, flyY, dotRad, 0, Math.PI * 2);
+            c.fillStyle = `rgba(255, 255, 240, ${breathAlpha * 0.85})`;
             c.fill();
-
-            // Capa C: Núcleo de plasma blanco-oro incandescente (sin borde cortado)
-            const coreRad = f.size * (1.6 + pulse * 1.6);
-            const coreGrad = c.createRadialGradient(f.x, flyY, 0, f.x, flyY, coreRad);
-            coreGrad.addColorStop(0, `rgba(255, 255, 245, ${breathAlpha * 0.95})`);
-            coreGrad.addColorStop(0.4, `hsla(${f.hue}, 100%, 90%, ${breathAlpha * 0.85})`);
-            coreGrad.addColorStop(0.75, `hsla(${f.hue}, 100%, 78%, ${breathAlpha * 0.4})`);
-            coreGrad.addColorStop(1, `hsla(${f.hue}, 100%, 70%, 0)`);
-
-            c.beginPath();
-            c.arc(f.x, flyY, coreRad, 0, Math.PI * 2);
-            c.fillStyle = coreGrad;
-            c.fill();
-
-            // Capa D: Destello de estrella sutil en el clímax de la pulsación (Diffraction Sparkle)
-            if (pulse > 0.78 && f.alpha > 0.4) {
-                const sparkleIntensity = (pulse - 0.78) * 4.5 * f.alpha;
-                const flareLen = f.size * (3.5 + pulse * 3.5);
-
-                c.strokeStyle = `rgba(255, 255, 250, ${sparkleIntensity * 0.65})`;
-                c.lineWidth = 0.85;
-
-                // Destello horizontal
-                c.beginPath();
-                c.moveTo(f.x - flareLen, flyY);
-                c.lineTo(f.x + flareLen, flyY);
-                c.stroke();
-
-                // Destello vertical
-                c.beginPath();
-                c.moveTo(f.x, flyY - flareLen * 0.75);
-                c.lineTo(f.x, flyY + flareLen * 0.75);
-                c.stroke();
-            }
 
             c.restore();
         }
