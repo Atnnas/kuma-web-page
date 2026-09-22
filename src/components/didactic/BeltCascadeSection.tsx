@@ -674,24 +674,14 @@ export function BeltCascadeSection({
                 if (isBeltUnlocked) onFocusBelt?.(belt.id);
             }}
         >
-            {/* 1. FLOATING CEREMONIAL BELT SHRINE BANNER (TORII / OBI BRIDGE) */}
-            <div
-                className={`relative rounded-3xl p-5 md:p-6 backdrop-blur-xl border transition-all duration-500 shadow-2xl overflow-hidden ${
-                    isBeltCompleted
-                        ? "bg-zinc-950/75 border-kuma-gold/50 shadow-[0_15px_40px_rgba(0,0,0,0.85)] ring-1 ring-kuma-gold/30"
-                        : isWhiteBelt && isBeltUnlocked
-                        ? "bg-[#181411]/80 border-amber-300/50 shadow-[0_15px_45px_rgba(245,158,11,0.2)] ring-1 ring-amber-400/40"
-                        : isBeltUnlocked
-                        ? "bg-zinc-950/70 border-white/15 hover:border-white/25 shadow-[0_15px_40px_rgba(0,0,0,0.85)]"
-                        : "bg-zinc-950/50 border-white/5 opacity-70 shadow-md"
-                }`}
-            >
+            {/* 1. FLOATING BELT HEADER (100% TRANSPARENT OVER WATER - NO BOX) */}
+            <div className="relative w-full py-4 transition-all duration-500">
                 {/* Floating ambient spotlight for white belt */}
                 {isWhiteBelt && isBeltUnlocked && (
                     <>
                         <motion.div
                             animate={{
-                                opacity: [0.3, 0.5, 0.3],
+                                opacity: [0.25, 0.45, 0.25],
                                 scale: [1, 1.05, 1],
                             }}
                             transition={{
@@ -702,7 +692,7 @@ export function BeltCascadeSection({
                             className="absolute -top-16 left-1/2 -translate-x-1/2 w-full max-w-lg h-56 rounded-full pointer-events-none blur-3xl"
                             style={{
                                 background:
-                                    "radial-gradient(ellipse at center, rgba(254, 240, 138, 0.4) 0%, rgba(245, 158, 11, 0.2) 45%, transparent 75%)",
+                                    "radial-gradient(ellipse at center, rgba(254, 240, 138, 0.35) 0%, rgba(245, 158, 11, 0.15) 45%, transparent 75%)",
                             }}
                         />
 
@@ -750,8 +740,8 @@ export function BeltCascadeSection({
                     />
                 )}
 
-                {/* REALISTIC OBI BANNER AT THE TOP */}
-                <div className="mb-5">
+                {/* REALISTIC OBI BANNER AT THE TOP (FLOATING FREELY ON WATER) */}
+                <div className="mb-4">
                     <BeltObiVisual
                         belt={belt}
                         isCompleted={isBeltCompleted}
@@ -759,8 +749,8 @@ export function BeltCascadeSection({
                     />
                 </div>
 
-                {/* BELT HEADER IDENTITY (EMBLEM, NAME, JAPANESE, THEME) */}
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-white/10">
+                {/* BELT HEADER IDENTITY (EMBLEM, NAME, JAPANESE, THEME) - BORDERLESS */}
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
                     <div className="flex items-center gap-3.5">
                         {/* Circular Emblem */}
                         <BeltCircularEmblem belt={belt} isLocked={!isBeltUnlocked} />
@@ -768,18 +758,13 @@ export function BeltCascadeSection({
                         <div>
                             <div className="flex items-center gap-2 flex-wrap mb-1">
                                 <span
-                                    className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border"
+                                    className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border bg-black/40 backdrop-blur-sm"
                                     style={{
-                                        backgroundColor: !isBeltUnlocked
-                                            ? "rgba(255,255,255,0.03)"
-                                            : isDan
-                                            ? "rgba(245,158,11,0.1)"
-                                            : `${belt.color}15`,
                                         borderColor: !isBeltUnlocked
                                             ? "rgba(255,255,255,0.1)"
                                             : isDan
-                                            ? "rgba(245,158,11,0.4)"
-                                            : `${belt.strokeColor}40`,
+                                            ? "rgba(245,158,11,0.5)"
+                                            : `${belt.strokeColor}50`,
                                         color: !isBeltUnlocked
                                             ? "#71717A"
                                             : isDan
@@ -808,16 +793,16 @@ export function BeltCascadeSection({
                                     </motion.span>
                                 )}
 
-                                <span className="text-[11px] text-zinc-400 font-bold tracking-wider">
+                                <span className="text-[11px] text-zinc-300 font-bold tracking-wider drop-shadow">
                                     {belt.japaneseName.includes("—") ? belt.japaneseName.split("—")[1].trim() : belt.japaneseName}
                                 </span>
                             </div>
 
-                            <h3 className="text-xl md:text-2xl font-serif font-black text-white leading-tight">
+                            <h3 className="text-xl md:text-2xl font-serif font-black text-white leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
                                 {belt.name}
                             </h3>
 
-                            <p className="text-xs text-kuma-gold/90 font-medium mt-0.5">
+                            <p className="text-xs text-amber-300 font-medium mt-0.5 drop-shadow">
                                 {belt.theme}
                             </p>
                         </div>
@@ -826,19 +811,19 @@ export function BeltCascadeSection({
                     {/* Progress / Lock Status Badge */}
                     <div className="flex items-center md:flex-col md:items-end justify-between shrink-0">
                         {isBeltCompleted ? (
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 text-xs font-black shadow-md">
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-black shadow-lg backdrop-blur-sm">
                                 <CheckCircle className="w-4 h-4 text-emerald-400" weight="fill" />
                                 <span>Cinturón Superado</span>
                             </div>
                         ) : isBeltUnlocked ? (
                             <div className="flex flex-col items-end">
-                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300 text-xs font-black">
+                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-black/50 border border-amber-500/40 text-amber-300 text-xs font-black backdrop-blur-sm shadow-md">
                                     <Sparkle className="w-3.5 h-3.5 text-amber-400" weight="fill" />
                                     <span>
                                         {completedLevelsCount} / {beltLevels.length} Grados
                                     </span>
                                 </div>
-                                <div className="w-24 h-1.5 bg-black/60 rounded-full mt-2 overflow-hidden border border-white/10">
+                                <div className="w-24 h-1.5 bg-black/60 rounded-full mt-2 overflow-hidden border border-white/20">
                                     <div
                                         className="h-full bg-gradient-to-r from-amber-500 to-kuma-gold transition-all duration-500"
                                         style={{
@@ -848,7 +833,7 @@ export function BeltCascadeSection({
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/60 text-zinc-400 text-xs font-bold shadow-sm">
+                            <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-zinc-950/70 border border-zinc-700/60 text-zinc-400 text-xs font-bold shadow-md backdrop-blur-sm">
                                 <Lock className="w-3.5 h-3.5 text-zinc-400" weight="fill" />
                                 <span>Sellado</span>
                             </div>
@@ -856,11 +841,13 @@ export function BeltCascadeSection({
                     </div>
                 </div>
 
-                {/* Philosophical Motto */}
-                <div className="mt-3 text-[11px] text-zinc-400 italic bg-white/[0.02] px-3.5 py-1.5 rounded-xl border border-white/5 flex items-center gap-2">
-                    <span className="text-kuma-gold font-serif font-black select-none">&ldquo;</span>
-                    <span className="leading-snug">{belt.motto}</span>
-                    <span className="text-kuma-gold font-serif font-black select-none">&rdquo;</span>
+                {/* Philosophical Motto - Floating delicately over the pond */}
+                <div className="mt-2 text-center">
+                    <p className="text-xs text-zinc-300/90 italic drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] inline-block px-4 py-1 rounded-full bg-black/30 backdrop-blur-[2px] border border-white/5">
+                        <span className="text-amber-400 font-serif font-black mr-1">&ldquo;</span>
+                        {belt.motto}
+                        <span className="text-amber-400 font-serif font-black ml-1">&rdquo;</span>
+                    </p>
                 </div>
 
                 {/* AVISO DE ACTUALIZACIÓN DEL MÓDULO CON NUEVAS PREGUNTAS */}
@@ -868,7 +855,7 @@ export function BeltCascadeSection({
                     <motion.div
                         initial={{ opacity: 0, y: -6 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mt-3.5 p-3 rounded-2xl bg-gradient-to-r from-amber-950/80 via-zinc-950/90 to-amber-950/80 border-2 border-yellow-400/50 shadow-[0_0_15px_rgba(245,158,11,0.2)] flex items-center gap-3 text-xs text-amber-100"
+                        className="mt-3 p-3 rounded-2xl bg-black/60 backdrop-blur-md border border-yellow-400/50 shadow-[0_0_15px_rgba(245,158,11,0.2)] flex items-center gap-3 text-xs text-amber-100"
                     >
                         <BellRinging className="w-5 h-5 text-yellow-400 shrink-0 animate-bounce" weight="fill" />
                         <div>
@@ -884,8 +871,8 @@ export function BeltCascadeSection({
 
                 {/* LOCKED: THE BELT REMAINS CLOSED AND DOES NOT REVEAL ITS LESSONS */}
                 {!isBeltUnlocked && (
-                    <div className="mt-5 p-5 md:p-6 rounded-2xl bg-black/60 border border-white/10 flex flex-col items-center text-center">
-                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-zinc-900/90 border border-zinc-700/80 flex items-center justify-center text-zinc-500 mb-3 shadow-inner">
+                    <div className="mt-4 p-5 rounded-2xl bg-black/50 backdrop-blur-md border border-white/10 flex flex-col items-center text-center max-w-md mx-auto">
+                        <div className="w-12 h-12 rounded-full bg-zinc-900/90 border border-zinc-700/80 flex items-center justify-center text-zinc-500 mb-2 shadow-inner">
                             <Lock className="w-6 h-6 text-zinc-400" weight="duotone" />
                         </div>
 
@@ -893,21 +880,17 @@ export function BeltCascadeSection({
                             Cinturón Cerrado & Sellado
                         </h4>
 
-                        <p className="text-xs text-zinc-400 mt-2 max-w-md leading-relaxed">
+                        <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed">
                             {prevBelt ? (
                                 <>
-                                    Para abrir este cinturón y revelar sus grados de aprendizaje,
-                                     debes superar todas las clases y lecciones de{" "}
-                                    <span className="text-kuma-gold font-bold">{prevBelt.name}</span>.
+                                    Para abrir este cinturón y revelar sus piedras de aprendizaje,
+                                     debes superar todas las clases de{" "}
+                                    <span className="text-amber-400 font-bold">{prevBelt.name}</span>.
                                 </>
                             ) : (
                                 <>Supera los grados anteriores para abrir este cinturón.</>
                             )}
                         </p>
-
-                        <div className="mt-4 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-                            🔒 {beltLevels.length} grados de aprendizaje en el estanque
-                        </div>
                     </div>
                 )}
             </div>
@@ -921,7 +904,7 @@ export function BeltCascadeSection({
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="relative my-10 py-2 flex flex-col items-center"
+                    className="relative my-8 py-2 flex flex-col items-center"
                 >
                     <div className="relative z-10 w-full flex flex-col items-center">
                         {beltLevels.map((level, idx) => {
@@ -956,17 +939,17 @@ export function BeltCascadeSection({
                                             hasNewQuestions={updatedLevelIds.includes(level.id)}
                                         />
 
-                                        {/* TÍTULO Y ETIQUETA EN CÁPSULA TRASLÚCIDA DE CRISTAL */}
-                                        <div className="mt-2 text-center max-w-[210px] px-3.5 py-1.5 rounded-2xl bg-black/75 backdrop-blur-md border border-white/10 shadow-xl">
+                                        {/* TÍTULO Y ETIQUETA FLOTANTES DIRECTAMENTE SOBRE EL AGUA (SIN CAJA) */}
+                                        <div className="mt-2 text-center max-w-[200px]">
                                             <span
-                                                className={`block text-xs md:text-sm font-serif font-black leading-tight drop-shadow transition-colors ${
+                                                className={`block text-xs md:text-sm font-serif font-black leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] transition-colors ${
                                                     unlocked ? "text-white" : "text-zinc-400"
                                                 }`}
                                             >
                                                 {level.title}
                                             </span>
                                             <span
-                                                className={`text-[10px] font-bold uppercase tracking-widest block mt-0.5 transition-colors ${
+                                                className={`text-[10px] font-bold uppercase tracking-widest block mt-0.5 transition-colors drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] ${
                                                     completed
                                                         ? "text-emerald-400"
                                                         : unlocked
