@@ -126,7 +126,7 @@ interface LilyPad {
 }
 
 interface PondFrog {
-    state: "perched" | "crouching" | "jumping" | "diving" | "hidden";
+    state: "perched" | "crouching" | "jumping" | "diving" | "surfacing" | "hidden";
     currentPadIndex: number;
     targetPadIndex: number;
     x: number;
@@ -145,6 +145,8 @@ interface PondFrog {
     idleTimer: number;
     crouchTimer: number;
     diveTimer: number;
+    surfaceTimer: number;
+    isWaterLaunch: boolean;
     size: number;
 }
 
@@ -715,7 +717,7 @@ export function KoiPondCanvas({
             targetY: 0,
             jumpProgress: 0,
             jumpDuration: 46,
-            jumpAltitude: 95,
+            jumpAltitude: 80,
             angle: -0.4,
             breathPhase: 0,
             blinkTimer: 160 + Math.floor(Math.random() * 160),
@@ -723,6 +725,8 @@ export function KoiPondCanvas({
             idleTimer: 240 + Math.floor(Math.random() * 200), // Salta cada 15 a 30s
             crouchTimer: 0,
             diveTimer: 0,
+            surfaceTimer: 0,
+            isWaterLaunch: false,
             size: 0.95,
         };
 
@@ -750,12 +754,13 @@ export function KoiPondCanvas({
             addRipple(px, py, 115, 1.4);
             setTimeout(() => addRipple(px, py, 75, 1.1), 160);
 
-            // Interacción táctil: asustar a la rana posada para que salte
-            if (frog.state === "perched") {
+            // Interacción táctil: asustar a la rana posada o flotando para que salte
+            if (frog.state === "perched" || frog.state === "surfacing") {
                 const distToFrog = Math.hypot(px - frog.x, py - frog.y);
                 if (distToFrog < 75) {
                     frog.idleTimer = 0;
-                    frog.crouchTimer = 12;
+                    frog.surfaceTimer = 0;
+                    frog.crouchTimer = 10;
                     frog.state = "crouching";
                 }
             }
@@ -996,21 +1001,22 @@ export function KoiPondCanvas({
             const currentPadPos = padPositions[frog.currentPadIndex] || padPositions[0];
 
             if (currentPadPos) {
+                // Parpadeo espontáneo
+                frog.blinkTimer--;
+                if (frog.blinkTimer <= 0) {
+                    frog.isBlinking = true;
+                    if (frog.blinkTimer < -10) {
+                        frog.isBlinking = false;
+                        frog.blinkTimer = 180 + Math.floor(Math.random() * 200);
+                    }
+                }
+
                 if (frog.state === "perched") {
                     // Se mantiene anclada con gracia al nenúfar que flota
                     frog.x = currentPadPos.x + 6;
                     frog.y = currentPadPos.y + 4;
                     frog.breathPhase += 0.075;
-
-                    // Parpadeo espontáneo
-                    frog.blinkTimer--;
-                    if (frog.blinkTimer <= 0) {
-                        frog.isBlinking = true;
-                        if (frog.blinkTimer < -10) {
-                            frog.isBlinking = false;
-                            frog.blinkTimer = 180 + Math.floor(Math.random() * 200);
-                        }
-                    }
+                    frog.isWaterLaunch = false;
 
                     // Temporizador para el salto Zen espontáneo (Bashō: kawazu tobikomu mizu no oto)
                     frog.idleTimer--;
@@ -1018,40 +1024,101 @@ export function KoiPondCanvas({
                         frog.state = "crouching";
                         frog.crouchTimer = 22; // Preparación muscular
                     }
+                } else if (frog.state === "surfacing") {
+                    // Flotando y asomándose en el agua abierta cerca de un nenúfar
+                    frog.breathPhase += 0.06;
+                    frog.surfaceTimer--;
+
+                    // Ondas suaves periódicas en la superficie del agua
+                    if (frog.surfaceTimer % 18 === 0) {
+                        addRipple(frog.x, frog.y, 28, 0.45);
+                    }
+
+                    if (frog.surfaceTimer <= 0) {
+                        frog.state = "crouching";
+                        frog.crouchTimer = 18; // Se prepara para saltar desde el agua a la hoja
+                    }
                 } else if (frog.state === "crouching") {
-                    frog.x = currentPadPos.x + 6;
-                    frog.y = currentPadPos.y + 4;
+                    if (!frog.isWaterLaunch) {
+                        // Sigue anclada al nenúfar mientras se prepara
+                        frog.x = currentPadPos.x + 6;
+                        frog.y = currentPadPos.y + 4;
+                    }
                     frog.crouchTimer--;
 
-                    // Al agazaparse, determina el destino del salto
+                    // Al terminar la preparación muscular, determina el destino del salto
                     if (frog.crouchTimer <= 0) {
-                        const diveIntoPond = Math.random() < 0.35; // 35% de bucear al estanque
-                        if (diveIntoPond || padPositions.length < 2) {
-                            // Salta hacia un área despejada de agua zen
-                            const angleSpread = (Math.random() - 0.5) * Math.PI * 0.8;
-                            const jumpDist = 90 + Math.random() * 80;
-                            frog.targetX = Math.max(60, Math.min(width - 60, frog.x + Math.cos(frog.angle + angleSpread) * jumpDist));
-                            frog.targetY = Math.max(60, Math.min(height - 60, frog.y + Math.sin(frog.angle + angleSpread) * jumpDist));
-                            frog.targetPadIndex = -1; // Marcador de agua abierta
+                        if (frog.isWaterLaunch) {
+                            // SALTO DESDE EL AGUA HACIA EL NENÚFAR
+                            const targetPad = padPositions[frog.targetPadIndex] || currentPadPos;
+                            frog.startX = frog.x;
+                            frog.startY = frog.y;
+                            frog.targetX = targetPad.x + 4;
+                            frog.targetY = targetPad.y + 4;
+                            frog.angle = Math.atan2(frog.targetY - frog.startY, frog.targetX - frog.startX);
+                            frog.jumpProgress = 0;
+                            frog.jumpAltitude = Math.min(80, Math.max(45, Math.hypot(frog.targetX - frog.startX, frog.targetY - frog.startY) * 0.45));
+                            frog.state = "jumping";
+
+                            // Impulso y salpicadura potente al despegar desde el agua
+                            addRipple(frog.x, frog.y, 65, 1.4);
+                            spawnSplash(frog.x, frog.y, 12);
                         } else {
-                            // Salta hacia otro nenúfar
-                            let nextPadIdx = (frog.currentPadIndex + 1 + Math.floor(Math.random() * (padPositions.length - 1))) % padPositions.length;
-                            if (nextPadIdx === frog.currentPadIndex) nextPadIdx = (nextPadIdx + 1) % padPositions.length;
-                            frog.targetPadIndex = nextPadIdx;
-                            frog.targetX = padPositions[nextPadIdx].x + 4;
-                            frog.targetY = padPositions[nextPadIdx].y + 4;
+                            // SALTO DESDE UN NENÚFAR
+                            // Buscar únicamente hojas CERCANAS (distancia máxima de salto: 220px)
+                            const MAX_PAD_JUMP_DIST = 220;
+                            const nearbyPads = padPositions
+                                .map((p, idx) => ({
+                                    idx,
+                                    x: p.x,
+                                    y: p.y,
+                                    dist: Math.hypot(p.x - frog.x, p.y - frog.y),
+                                }))
+                                .filter((p) => p.idx !== frog.currentPadIndex && p.dist <= MAX_PAD_JUMP_DIST);
+
+                            // Si hay hojas cercanas, 50% de probabilidad de saltar a hoja cercana o al agua.
+                            // Si NO hay hojas cercanas, salta 100% al agua ("si no que salte al agua").
+                            const jumpToNearbyLeaf = nearbyPads.length > 0 && Math.random() < 0.5;
+
+                            if (jumpToNearbyLeaf) {
+                                // Elegir una de las hojas cercanas
+                                const chosen = nearbyPads[Math.floor(Math.random() * nearbyPads.length)];
+                                frog.targetPadIndex = chosen.idx;
+                                frog.targetX = chosen.x + 4;
+                                frog.targetY = chosen.y + 4;
+                            } else {
+                                // Salta hacia el agua abierta cerca del nenúfar
+                                const jumpDist = 80 + Math.random() * 45;
+                                const angleSpread = (Math.random() - 0.5) * Math.PI * 0.85;
+                                let jumpAngle = frog.angle + angleSpread;
+                                let testX = frog.x + Math.cos(jumpAngle) * jumpDist;
+                                let testY = frog.y + Math.sin(jumpAngle) * jumpDist;
+
+                                // Asegurar que caiga dentro del estanque
+                                if (testX < 70 || testX > width - 70 || testY < 70 || testY > height - 70) {
+                                    jumpAngle = Math.atan2(height / 2 - frog.y, width / 2 - frog.x) + (Math.random() - 0.5) * 0.4;
+                                    testX = frog.x + Math.cos(jumpAngle) * jumpDist;
+                                    testY = frog.y + Math.sin(jumpAngle) * jumpDist;
+                                }
+
+                                frog.targetPadIndex = -1; // -1 indica agua abierta
+                                frog.targetX = Math.max(50, Math.min(width - 50, testX));
+                                frog.targetY = Math.max(50, Math.min(height - 50, testY));
+                            }
+
+                            frog.startX = frog.x;
+                            frog.startY = frog.y;
+                            frog.jumpProgress = 0;
+                            frog.angle = Math.atan2(frog.targetY - frog.startY, frog.targetX - frog.startX);
+                            frog.jumpAltitude = Math.min(80, Math.max(45, Math.hypot(frog.targetX - frog.startX, frog.targetY - frog.startY) * 0.42));
+                            frog.state = "jumping";
+
+                            // Impulso sobre el nenúfar del que despega
+                            addRipple(frog.x, frog.y, 45, 1.2);
+                            currentPadPos.pad.velX -= Math.cos(frog.angle) * 1.6;
+                            currentPadPos.pad.velY -= Math.sin(frog.angle) * 1.6;
+                            currentPadPos.pad.tiltVelY -= 0.06;
                         }
-
-                        frog.startX = frog.x;
-                        frog.startY = frog.y;
-                        frog.jumpProgress = 0;
-                        frog.angle = Math.atan2(frog.targetY - frog.startY, frog.targetX - frog.startX);
-                        frog.state = "jumping";
-
-                        // Impulso de despegue y ondas
-                        addRipple(frog.x, frog.y, 45, 1.2);
-                        currentPadPos.pad.velX -= Math.cos(frog.angle) * 1.6;
-                        currentPadPos.pad.velY -= Math.sin(frog.angle) * 1.6;
                     }
                 } else if (frog.state === "jumping") {
                     frog.jumpProgress += 0.024; // ~42 fotogramas de vuelo parabólico
@@ -1061,19 +1128,22 @@ export function KoiPondCanvas({
                         frog.y = frog.targetY;
 
                         if (frog.targetPadIndex >= 0 && padPositions[frog.targetPadIndex]) {
-                            // Aterrizaje suave sobre otro nenúfar
+                            // Aterrizaje sobre un nenúfar (sea desde otra hoja o desde el agua)
                             frog.currentPadIndex = frog.targetPadIndex;
                             frog.state = "perched";
+                            frog.isWaterLaunch = false;
                             frog.idleTimer = 400 + Math.floor(Math.random() * 450); // 15 a 30s de calma
                             addRipple(frog.x, frog.y, 42, 1.0);
                             padPositions[frog.targetPadIndex].pad.velY += 1.8;
+                            padPositions[frog.targetPadIndex].pad.tiltVelY += 0.08;
+                            spawnSplash(frog.x, frog.y, 7);
                         } else {
-                            // ¡Zambullida en el estanque! (Bashō)
+                            // ¡Zambullida en el agua abierta del estanque!
                             frog.state = "diving";
-                            frog.diveTimer = 280 + Math.floor(Math.random() * 320); // 10 a 20s bajo el agua
+                            frog.diveTimer = 220 + Math.floor(Math.random() * 260); // 5 a 10s sumergida
                             addRipple(frog.x, frog.y, 95, 1.5);
                             setTimeout(() => addRipple(frog.x, frog.y, 65, 1.1), 140);
-                            spawnSplash(frog.x, frog.y, 14);
+                            spawnSplash(frog.x, frog.y, 16);
                         }
                     } else {
                         frog.x = frog.startX + (frog.targetX - frog.startX) * frog.jumpProgress;
@@ -1082,15 +1152,30 @@ export function KoiPondCanvas({
                 } else if (frog.state === "diving") {
                     frog.diveTimer--;
                     if (frog.diveTimer <= 0) {
-                        // Emerge pacíficamente sobre un nenúfar aleatorio
-                        const newPadIdx = Math.floor(Math.random() * padPositions.length);
-                        frog.currentPadIndex = newPadIdx;
-                        frog.x = padPositions[newPadIdx].x + 6;
-                        frog.y = padPositions[newPadIdx].y + 4;
-                        frog.angle = (Math.random() - 0.5) * Math.PI;
-                        frog.state = "perched";
-                        frog.idleTimer = 350 + Math.floor(Math.random() * 350);
-                        addRipple(frog.x, frog.y, 50, 1.1);
+                        // Selecciona un nenúfar de destino y asoma primero en el agua cerca de esa hoja
+                        const targetPadIdx = Math.floor(Math.random() * padPositions.length);
+                        const targetPad = padPositions[targetPadIdx];
+
+                        // Punto en el agua a distancia natural de salto (80 a 130px de la hoja)
+                        const approachAngle = Math.random() * Math.PI * 2;
+                        const distFromPad = 80 + Math.random() * 45;
+                        let waterX = targetPad.x + Math.cos(approachAngle) * distFromPad;
+                        let waterY = targetPad.y + Math.sin(approachAngle) * distFromPad;
+
+                        waterX = Math.max(60, Math.min(width - 60, waterX));
+                        waterY = Math.max(60, Math.min(height - 60, waterY));
+
+                        frog.x = waterX;
+                        frog.y = waterY;
+                        frog.startX = waterX;
+                        frog.startY = waterY;
+                        frog.targetPadIndex = targetPadIdx;
+                        frog.angle = Math.atan2(targetPad.y - waterY, targetPad.x - waterX);
+                        frog.isWaterLaunch = true;
+                        frog.state = "surfacing";
+                        frog.surfaceTimer = 40; // Se asoma en el agua ~1 segundo antes de impulsarse
+                        addRipple(waterX, waterY, 45, 0.9);
+                        spawnSplash(waterX, waterY, 8);
                     }
                 }
 
@@ -2092,7 +2177,7 @@ export function KoiPondCanvas({
             y: number,
             altitude: number,
             angle: number,
-            state: "perched" | "crouching" | "jumping" | "diving" | "hidden",
+            state: "perched" | "crouching" | "jumping" | "diving" | "surfacing" | "hidden",
             jumpProgress: number,
             breathPhase: number,
             isBlinking: boolean,
@@ -2101,6 +2186,17 @@ export function KoiPondCanvas({
             if (state === "hidden") return;
 
             c.save();
+
+            // Anillo sutil de contacto con el agua cuando está asomada/flotando
+            if (state === "surfacing") {
+                c.save();
+                c.beginPath();
+                c.ellipse(x, y + 2, 17 * size, 11 * size, angle, 0, Math.PI * 2);
+                c.strokeStyle = "rgba(186, 230, 253, 0.4)";
+                c.lineWidth = 1.0;
+                c.stroke();
+                c.restore();
+            }
 
             // 1. Sombra sobre la superficie (desacoplada en altitud)
             const shadowScale = Math.max(0.4, 1 - altitude * 0.005);
