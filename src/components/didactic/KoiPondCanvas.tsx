@@ -40,6 +40,7 @@ interface KoiFish {
     baseSpeed: number;
     maxSpeed: number;
     size: number;
+    baseSize: number;
     depth: number; // 0.65 (profundo, más etéreo y difuso) a 1.0 (cerca de superficie)
     variety: KoiVariety;
     swimCycle: number;
@@ -179,6 +180,17 @@ export function KoiPondCanvas({
             lastMoveTime: 0,
         };
 
+        // ====================================================================
+        // ESCALA RESPONSIVA ARMÓNICA PARA SMARTPHONES (GALAXY S26 ULTRA, ETC.)
+        // ====================================================================
+        const getResponsiveScale = (w: number) => {
+            if (w <= 480) return 0.65; // Smartphones: reducción armónica ~35% para que los peces y hojas no se vean gigantes
+            if (w <= 768) return 0.78; // Tablets
+            return 1.0; // Desktop y pantallas amplias
+        };
+
+        const fishes: KoiFish[] = [];
+
         const handleResize = () => {
             if (!canvas) return;
             dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -190,6 +202,14 @@ export function KoiPondCanvas({
             canvas.style.width = `${width}px`;
             canvas.style.height = `${height}px`;
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            // Re-escalar peces armónicamente si cambia el tamaño o rotación de pantalla
+            const currentScale = getResponsiveScale(width);
+            fishes.forEach((fish) => {
+                fish.size = fish.baseSize * currentScale;
+                fish.segmentDistance = baseSegmentDist * fish.size;
+                fish.bodyRadii = baseRadii.map((r) => r * fish.size * fish.depth);
+            });
         };
 
         handleResize();
@@ -223,7 +243,9 @@ export function KoiPondCanvas({
             const startX = Math.random() * (width || window.innerWidth);
             const startY = Math.random() * (height || window.innerHeight);
             const startAngle = Math.random() * Math.PI * 2;
-            const size = 0.9 + Math.random() * 0.45;
+            const baseSize = 0.85 + Math.random() * 0.4;
+            const currentScale = getResponsiveScale(width || window.innerWidth);
+            const size = baseSize * currentScale;
             const depth = 0.72 + Math.random() * 0.28; // Profundidad en el agua
             const segmentDist = baseSegmentDist * size;
             const variety = allVarieties[index % allVarieties.length];
@@ -429,6 +451,7 @@ export function KoiPondCanvas({
                 baseSpeed,
                 maxSpeed: baseSpeed * 2.6,
                 size,
+                baseSize,
                 depth,
                 variety,
                 swimCycle: Math.random() * Math.PI * 2,
@@ -446,7 +469,9 @@ export function KoiPondCanvas({
             };
         };
 
-        const fishes: KoiFish[] = Array.from({ length: fishCount }, (_, i) => createFish(i));
+        for (let i = 0; i < fishCount; i++) {
+            fishes.push(createFish(i));
+        }
 
         // ====================================================================
         // ONDAS CONCÉNTRICAS (RIPPLES)
@@ -468,11 +493,12 @@ export function KoiPondCanvas({
 
         // ====================================================================
         // NENÚFARES Y HOJAS DE LOTO FLOTANTES (JARDÍN JAPONÉS)
+        // Posiciones armónicas y bordes seguros para evitar cortes en mobile
         // ====================================================================
         const lilyPads: LilyPad[] = [
             {
-                xRatio: 0.09,
-                yRatio: 0.16,
+                xRatio: 0.16,
+                yRatio: 0.14,
                 radius: 54,
                 angle: 0.4,
                 notchAngle: 0.65,
@@ -494,8 +520,8 @@ export function KoiPondCanvas({
                 ],
             },
             {
-                xRatio: 0.89,
-                yRatio: 0.22,
+                xRatio: 0.84,
+                yRatio: 0.20,
                 radius: 58,
                 angle: 1.8,
                 notchAngle: 0.72,
@@ -516,9 +542,9 @@ export function KoiPondCanvas({
                 ],
             },
             {
-                xRatio: 0.15,
-                yRatio: 0.78,
-                radius: 64,
+                xRatio: 0.20,
+                yRatio: 0.80,
+                radius: 62,
                 angle: 3.2,
                 notchAngle: 0.68,
                 driftSpeed: 0.0007,
@@ -539,7 +565,7 @@ export function KoiPondCanvas({
                 ],
             },
             {
-                xRatio: 0.86,
+                xRatio: 0.80,
                 yRatio: 0.84,
                 radius: 52,
                 angle: 4.5,
@@ -560,9 +586,9 @@ export function KoiPondCanvas({
                 ],
             },
             {
-                xRatio: 0.05,
-                yRatio: 0.48,
-                radius: 42,
+                xRatio: 0.18,
+                yRatio: 0.46,
+                radius: 44,
                 angle: 2.3,
                 notchAngle: 0.62,
                 driftSpeed: 0.0008,
@@ -581,8 +607,8 @@ export function KoiPondCanvas({
                 ],
             },
             {
-                xRatio: 0.93,
-                yRatio: 0.54,
+                xRatio: 0.82,
+                yRatio: 0.52,
                 radius: 48,
                 angle: 5.1,
                 notchAngle: 0.7,
@@ -922,19 +948,28 @@ export function KoiPondCanvas({
             // ================================================================
             // 6. NENÚFARES EN SUPERFICIE CON DINÁMICA DE ESTELA Y ROCÍO
             // ================================================================
+            const mobileScale = getResponsiveScale(width);
             const padPositions: { x: number; y: number; pad: LilyPad }[] = [];
 
             lilyPads.forEach((pad) => {
-                // Oleaje orgánico multi-frecuencia en coordenadas x, y
-                const currentX =
-                    Math.sin(tick * pad.driftSpeed + pad.driftPhase) * 18 +
-                    Math.sin(tick * pad.driftSpeed * 2.7 + pad.driftPhase) * 5;
-                const currentY =
-                    Math.cos(tick * pad.driftSpeed + pad.driftPhase) * 15 +
-                    Math.cos(tick * pad.driftSpeed * 2.1 + pad.driftPhase) * 4;
+                // Radio proporcional adaptado al tamaño de pantalla (para que en Galaxy S26 Ultra y smartphones se vea refinado y no gigante)
+                const effectiveRadius = pad.radius * mobileScale;
 
-                const basePosX = pad.xRatio * width + currentX;
-                const basePosY = pad.yRatio * height + currentY;
+                // Margen estricto para evitar que la hoja se corte en los bordes de la pantalla
+                const marginX = effectiveRadius + 14;
+                const marginY = effectiveRadius + 18;
+
+                // Oleaje orgánico multi-frecuencia en coordenadas x, y (amplitud escalada a la pantalla)
+                const currentX =
+                    (Math.sin(tick * pad.driftSpeed + pad.driftPhase) * 12 +
+                    Math.sin(tick * pad.driftSpeed * 2.7 + pad.driftPhase) * 4) * mobileScale;
+                const currentY =
+                    (Math.cos(tick * pad.driftSpeed + pad.driftPhase) * 10 +
+                    Math.cos(tick * pad.driftSpeed * 2.1 + pad.driftPhase) * 3) * mobileScale;
+
+                // Posición base acotada dentro de los márgenes seguros
+                const safeBaseX = Math.max(marginX, Math.min(width - marginX, pad.xRatio * width));
+                const safeBaseY = Math.max(marginY, Math.min(height - marginY, pad.yRatio * height));
 
                 // Balanceo e inclinación natural por paso de ondas de agua
                 const waveTiltX = Math.sin(tick * 0.016 + pad.driftPhase) * 0.045;
@@ -942,11 +977,11 @@ export function KoiPondCanvas({
 
                 // Interacción reactiva: estela de los peces koi empuja e INCLINA las hojas flotantes
                 fishes.forEach((fish) => {
-                    const fdx = basePosX - fish.x;
-                    const fdy = basePosY - fish.y;
+                    const fdx = (safeBaseX + currentX) - fish.x;
+                    const fdy = (safeBaseY + currentY) - fish.y;
                     const fdist = Math.hypot(fdx, fdy);
-                    if (fdist < pad.radius + 40 && fdist > 1) {
-                        const pushStrength = (1 - fdist / (pad.radius + 40)) * (fish.speed / fish.baseSpeed) * 0.18;
+                    if (fdist < effectiveRadius + 35 && fdist > 1) {
+                        const pushStrength = (1 - fdist / (effectiveRadius + 35)) * (fish.speed / fish.baseSpeed) * 0.18;
                         pad.velX += (fdx / fdist) * pushStrength;
                         pad.velY += (fdy / fdist) * pushStrength;
 
@@ -956,7 +991,7 @@ export function KoiPondCanvas({
 
                         // Ondas concéntricas suaves de tensión superficial
                         if (Math.random() < 0.03) {
-                            addRipple(basePosX, basePosY, pad.radius * 1.3, 0.6);
+                            addRipple(safeBaseX + currentX, safeBaseY + currentY, effectiveRadius * 1.3, 0.6);
                         }
                     }
                 });
@@ -973,15 +1008,22 @@ export function KoiPondCanvas({
                 pad.tiltX = waveTiltX + (pad.tiltX - waveTiltX + pad.tiltVelX) * 0.88;
                 pad.tiltY = waveTiltY + (pad.tiltY - waveTiltY + pad.tiltVelY) * 0.88;
 
-                const finalX = basePosX + pad.offsetX;
-                const finalY = basePosY + pad.offsetY;
+                // Posición final: NUNCA se cortará con ningún borde de pantalla (mínimo 6px de separación total)
+                const finalX = Math.max(
+                    effectiveRadius + 6,
+                    Math.min(width - effectiveRadius - 6, safeBaseX + currentX + pad.offsetX)
+                );
+                const finalY = Math.max(
+                    effectiveRadius + 6,
+                    Math.min(height - effectiveRadius - 6, safeBaseY + currentY + pad.offsetY)
+                );
                 const rot = pad.angle + Math.sin(tick * 0.0008 + pad.driftPhase) * 0.1;
 
                 drawLilyPad(
                     ctx,
                     finalX,
                     finalY,
-                    pad.radius,
+                    effectiveRadius,
                     rot,
                     pad.notchAngle,
                     pad.dewDroplets,
@@ -1057,7 +1099,7 @@ export function KoiPondCanvas({
                             frog.targetY = targetPad.y + 4;
                             frog.angle = Math.atan2(frog.targetY - frog.startY, frog.targetX - frog.startX);
                             frog.jumpProgress = 0;
-                            frog.jumpAltitude = Math.min(80, Math.max(45, Math.hypot(frog.targetX - frog.startX, frog.targetY - frog.startY) * 0.45));
+                            frog.jumpAltitude = Math.min(80 * mobileScale, Math.max(38 * mobileScale, Math.hypot(frog.targetX - frog.startX, frog.targetY - frog.startY) * 0.45));
                             frog.state = "jumping";
 
                             // Impulso y salpicadura potente al despegar desde el agua
@@ -1065,8 +1107,8 @@ export function KoiPondCanvas({
                             spawnSplash(frog.x, frog.y, 12);
                         } else {
                             // SALTO DESDE UN NENÚFAR
-                            // Buscar únicamente hojas CERCANAS (distancia máxima de salto: 220px)
-                            const MAX_PAD_JUMP_DIST = 220;
+                            // Buscar únicamente hojas CERCANAS (distancia máxima de salto adaptada a mobile)
+                            const MAX_PAD_JUMP_DIST = 220 * mobileScale;
                             const nearbyPads = padPositions
                                 .map((p, idx) => ({
                                     idx,
@@ -1088,7 +1130,7 @@ export function KoiPondCanvas({
                                 frog.targetY = chosen.y + 4;
                             } else {
                                 // Salta hacia el agua abierta cerca del nenúfar
-                                const jumpDist = 80 + Math.random() * 45;
+                                const jumpDist = (80 + Math.random() * 45) * mobileScale;
                                 const angleSpread = (Math.random() - 0.5) * Math.PI * 0.85;
                                 let jumpAngle = frog.angle + angleSpread;
                                 let testX = frog.x + Math.cos(jumpAngle) * jumpDist;
@@ -1110,7 +1152,7 @@ export function KoiPondCanvas({
                             frog.startY = frog.y;
                             frog.jumpProgress = 0;
                             frog.angle = Math.atan2(frog.targetY - frog.startY, frog.targetX - frog.startX);
-                            frog.jumpAltitude = Math.min(80, Math.max(45, Math.hypot(frog.targetX - frog.startX, frog.targetY - frog.startY) * 0.42));
+                            frog.jumpAltitude = Math.min(80 * mobileScale, Math.max(38 * mobileScale, Math.hypot(frog.targetX - frog.startX, frog.targetY - frog.startY) * 0.42));
                             frog.state = "jumping";
 
                             // Impulso sobre el nenúfar del que despega
@@ -1195,7 +1237,7 @@ export function KoiPondCanvas({
                         frog.jumpProgress,
                         frog.breathPhase,
                         frog.isBlinking,
-                        frog.size
+                        frog.size * mobileScale
                     );
                 }
             }
@@ -1935,40 +1977,44 @@ export function KoiPondCanvas({
             c.fill();
 
             // Gotitas de rocío sobre la hoja cerosa (Asatsuyu 朝露)
-            // Reaccionan físicamente a la inclinación del agua
+            // Reaccionan físicamente a la inclinación del agua y escalan con el radio de la hoja
+            const dropScale = radius / 55;
             dewDroplets.forEach((drop) => {
-                const inertiaX = -tiltX * 22 - velX * 2.5 + Math.sin(tick * 0.05 + drop.relX) * 0.3;
-                const inertiaY = -tiltY * 22 - velY * 2.5 + Math.cos(tick * 0.05 + drop.relY) * 0.3;
-                const dx = drop.relX + inertiaX;
-                const dy = drop.relY + inertiaY;
+                const scaledRelX = drop.relX * dropScale;
+                const scaledRelY = drop.relY * dropScale;
+                const scaledR = Math.max(1.3, drop.r * dropScale);
+                const inertiaX = -tiltX * 18 - velX * 2.0 + Math.sin(tick * 0.05 + scaledRelX) * 0.25;
+                const inertiaY = -tiltY * 18 - velY * 2.0 + Math.cos(tick * 0.05 + scaledRelY) * 0.25;
+                const dx = scaledRelX + inertiaX;
+                const dy = scaledRelY + inertiaY;
 
                 // Sombra de la gota
                 c.beginPath();
-                c.ellipse(dx + 0.7, dy + 1.1, drop.r, drop.r * 0.75, 0.4, 0, Math.PI * 2);
+                c.ellipse(dx + 0.7, dy + 1.1, scaledR, scaledR * 0.75, 0.4, 0, Math.PI * 2);
                 c.fillStyle = "rgba(0, 5, 14, 0.3)";
                 c.fill();
 
                 // Esfera acuática cristalina
                 const dropGrad = c.createRadialGradient(
-                    dx - drop.r * 0.3,
-                    dy - drop.r * 0.3,
+                    dx - scaledR * 0.3,
+                    dy - scaledR * 0.3,
                     0.2,
                     dx,
                     dy,
-                    drop.r
+                    scaledR
                 );
                 dropGrad.addColorStop(0, "rgba(255, 255, 255, 0.85)");
                 dropGrad.addColorStop(0.35, "rgba(224, 242, 254, 0.6)");
                 dropGrad.addColorStop(0.8, "rgba(56, 189, 248, 0.28)");
                 dropGrad.addColorStop(1, "rgba(14, 165, 233, 0.12)");
                 c.beginPath();
-                c.arc(dx, dy, drop.r, 0, Math.PI * 2);
+                c.arc(dx, dy, scaledR, 0, Math.PI * 2);
                 c.fillStyle = dropGrad;
                 c.fill();
 
                 // Destello especular de luz cenital
                 c.beginPath();
-                c.arc(dx - drop.r * 0.35, dy - drop.r * 0.35, drop.r * 0.32, 0, Math.PI * 2);
+                c.arc(dx - scaledR * 0.35, dy - scaledR * 0.35, scaledR * 0.32, 0, Math.PI * 2);
                 c.fillStyle = "rgba(255, 255, 255, 0.95)";
                 c.fill();
             });
