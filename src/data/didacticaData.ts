@@ -1067,7 +1067,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                     ],
                     images: [
                         {
-                            src: "/images/didactic/kuma_human_body_karate.jpg",
+                            src: "/images/didactic/kuma_pixar_anatomia_cuerpo.jpg",
                             alt: "Kuma Sensei Pixar 3D: Mapa del Cuerpo Humano en Karate",
                             caption: "Fig 1. Mapa anatómico de Kuma Sensei: Partes del cuerpo en japonés y español"
                         },
@@ -1088,19 +1088,19 @@ export const DIDACTIC_UNITS: Unit[] = [
                             title: "Seiken, Empi y Shuto: Armas de la Mano",
                             desc: "Puño cerrado, mano espada y el codo como un ariete súper duro.",
                             badge: "Brazos y Manos",
-                            image: "/images/didactic/kuma_human_body_karate.jpg"
+                            image: "/images/didactic/kuma_pixar_anatomia_cuerpo.jpg"
                         },
                         {
                             title: "Koshi y Tanden: El Motor de Poder",
                             desc: "La fuerza nace al girar la cadera (Koshi) y concentrarse en el abdomen (Tanden).",
                             badge: "Fuerza y Centro",
-                            image: "/images/didactic/kuma_human_body_karate.jpg"
+                            image: "/images/didactic/kuma_pixar_anatomia_cuerpo.jpg"
                         },
                         {
                             title: "Hiza, Sune y Ashi: Escudos de la Pierna",
                             desc: "Rodilla para saltar y defender, espinilla como escudo y pie para pisar fuerte.",
                             badge: "Piernas Fuertes",
-                            image: "/images/didactic/kuma_human_body_karate.jpg"
+                            image: "/images/didactic/kuma_pixar_anatomia_cuerpo.jpg"
                         }
                     ],
                     references: [
@@ -1213,7 +1213,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                         id: "q-cuerpo-3",
                         type: "image_choice",
                         prompt: "Mira a Kuma Sensei en la imagen. ¿Qué término señala la CABEZA y el ROSTRO?",
-                        image: "/images/didactic/kuma_human_body_karate.jpg",
+                        image: "/images/didactic/kuma_pixar_anatomia_cuerpo.jpg",
                         options: [
                             { id: "o1", text: "頭部 / 面 (Atama / Men) - Cabeza y Rostro", isCorrect: true },
                             { id: "o2", text: "腰 / 腹 (Koshi / Hara) - Cadera y Abdomen", isCorrect: false },
