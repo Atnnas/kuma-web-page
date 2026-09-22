@@ -78,20 +78,31 @@ interface SplashDroplet {
     gravity: number;
 }
 
-interface Firefly {
+interface FireflyTrailPoint {
     x: number;
     y: number;
-    z: number; // 0.2 a 1.0 (altitud sobre agua)
-    vx: number;
-    vy: number;
+    alpha: number;
+}
+
+interface Firefly {
+    id: number;
+    state: "dormant" | "awakening" | "flying" | "fading";
+    x: number;
+    y: number;
+    z: number; // 0.25 a 1.2 (altitud sobre agua)
+    speed: number;
+    angle: number;
+    turnSpeed: number;
     size: number;
     pulsePhase: number;
     pulseSpeed: number;
-    hue: number; // 60 a 90 (oro cálido a verde lima hotaru)
+    hue: number; // 58 (oro cálido ámbar) a 84 (verde lima bioluminiscente)
     alpha: number;
-    targetAlpha: number;
-    life: number;
-    maxLife: number;
+    maxAlpha: number;
+    timer: number;
+    maxTimer: number;
+    seed: number;
+    trail: FireflyTrailPoint[];
 }
 
 interface LilyPad {
@@ -563,45 +574,77 @@ export function KoiPondCanvas({
         ];
 
         // ====================================================================
-        // LUCIÉRNAGAS ZEN (HOTARU 蛍) - LUCES BIOLUMINISCENTES VOLADORAS
+        // LUCIÉRNAGAS ZEN (HOTARU 蛍) - LUCES BIOLUMINISCENTES ETÉREAS
         // ====================================================================
-        const fireflyCount = 12;
+        const fireflyCount = 9;
         const fireflies: Firefly[] = [];
 
-        const resetFirefly = (f: Firefly, initial = false) => {
-            f.x = Math.random() * (width || window.innerWidth);
-            f.y = Math.random() * (height || window.innerHeight);
-            f.z = 0.25 + Math.random() * 0.75;
-            f.vx = (Math.random() - 0.5) * 0.45;
-            f.vy = (Math.random() - 0.5) * 0.45;
-            f.size = 2.2 + Math.random() * 1.6;
+        const wakeFirefly = (f: Firefly, initialFlying = false) => {
+            f.seed = Math.random() * 1000;
+            f.size = 2.4 + Math.random() * 1.5;
+            f.hue = 58 + Math.random() * 26; // Oro ámbar cálido (58-68) a verde lima místico (72-84)
             f.pulsePhase = Math.random() * Math.PI * 2;
-            f.pulseSpeed = 0.035 + Math.random() * 0.03;
-            // Tonos tradicionales Hotaru: oro ámbar cálido (60-70) a verde lima radiante (75-88)
-            f.hue = 62 + Math.random() * 26;
-            f.alpha = initial ? Math.random() * 0.8 : 0;
-            f.targetAlpha = 0.65 + Math.random() * 0.35;
-            f.maxLife = 350 + Math.floor(Math.random() * 450);
-            f.life = initial ? Math.floor(Math.random() * f.maxLife) : 0;
+            f.pulseSpeed = 0.028 + Math.random() * 0.022;
+            f.speed = 0.35 + Math.random() * 0.35;
+            f.turnSpeed = 0.008 + Math.random() * 0.012;
+            f.z = 0.3 + Math.random() * 0.55;
+            f.maxAlpha = 0.85 + Math.random() * 0.15;
+            f.maxTimer = 480 + Math.floor(Math.random() * 550); // 16 a 30 segundos de vuelo
+            f.trail = [];
+
+            if (initialFlying) {
+                // Al inicio, 3 ya sobrevuelan el estanque
+                f.state = "flying";
+                f.x = Math.random() * (width || window.innerWidth);
+                f.y = Math.random() * (height || window.innerHeight);
+                f.angle = Math.random() * Math.PI * 2;
+                f.alpha = f.maxAlpha;
+                f.timer = Math.floor(Math.random() * f.maxTimer);
+            } else {
+                // Nacimiento natural: emergen suavemente cerca de un nenúfar o en el margen
+                f.state = "awakening";
+                f.alpha = 0;
+                f.timer = 70; // 70 fotogramas de encendido gradual
+                if (Math.random() < 0.6 && lilyPads.length > 0) {
+                    const pad = lilyPads[Math.floor(Math.random() * lilyPads.length)];
+                    f.x = pad.xRatio * (width || window.innerWidth) + (Math.random() - 0.5) * 35;
+                    f.y = pad.yRatio * (height || window.innerHeight) + (Math.random() - 0.5) * 35;
+                } else {
+                    f.x = Math.random() < 0.5 ? -20 : (width || window.innerWidth) + 20;
+                    f.y = Math.random() * (height || window.innerHeight);
+                }
+                const targetX = (width || window.innerWidth) * (0.25 + Math.random() * 0.5);
+                const targetY = (height || window.innerHeight) * (0.25 + Math.random() * 0.5);
+                f.angle = Math.atan2(targetY - f.y, targetX - f.x) + (Math.random() - 0.5) * 0.5;
+            }
         };
 
         for (let i = 0; i < fireflyCount; i++) {
             const f: Firefly = {
+                id: i,
+                state: "dormant",
                 x: 0,
                 y: 0,
                 z: 0.5,
-                vx: 0,
-                vy: 0,
+                speed: 0.4,
+                angle: 0,
+                turnSpeed: 0.01,
                 size: 3,
                 pulsePhase: 0,
                 pulseSpeed: 0.04,
-                hue: 75,
+                hue: 70,
                 alpha: 0,
-                targetAlpha: 0.8,
-                life: 0,
-                maxLife: 400,
+                maxAlpha: 0.9,
+                timer: i < 3 ? 0 : 160 + Math.floor(Math.random() * 450),
+                maxTimer: 500,
+                seed: i * 42,
+                trail: [],
             };
-            resetFirefly(f, true);
+            if (i < 3) {
+                wakeFirefly(f, true);
+            } else {
+                f.timer = 180 + Math.floor(Math.random() * 500); // Entran de vez en vez
+            }
             fireflies.push(f);
         }
 
@@ -1032,37 +1075,78 @@ export function KoiPondCanvas({
             }
 
             // ================================================================
-            // 9. LUCIÉRNAGAS ZEN (HOTARU 蛍) - LUCES BIOLUMINISCENTES
+            // 9. LUCIÉRNAGAS ZEN (HOTARU 蛍) - LUCES BIOLUMINISCENTES ETÉREAS
             // ================================================================
             fireflies.forEach((f) => {
-                f.life++;
                 f.pulsePhase += f.pulseSpeed;
 
-                // Vuelo orgánico suave y tridimensional
-                f.vx += (Math.random() - 0.5) * 0.08;
-                f.vy += (Math.random() - 0.5) * 0.08;
-                f.vx = Math.max(-0.65, Math.min(0.65, f.vx));
-                f.vy = Math.max(-0.65, Math.min(0.65, f.vy));
-
-                f.x += f.vx;
-                f.y += f.vy;
-
-                // Ondulación vertical suave en el aire
-                f.z = Math.max(0.2, Math.min(1.0, f.z + Math.sin(tick * 0.02 + f.pulsePhase) * 0.006));
-
-                // Desvanecimiento suave en nacimiento y fin de vida
-                if (f.life < 60) {
-                    f.alpha = (f.life / 60) * f.targetAlpha;
-                } else if (f.life > f.maxLife - 60) {
-                    f.alpha = Math.max(0, ((f.maxLife - f.life) / 60) * f.targetAlpha);
-                } else {
-                    f.alpha = f.targetAlpha;
+                if (f.state === "dormant") {
+                    f.timer--;
+                    if (f.timer <= 0) {
+                        wakeFirefly(f, false);
+                    }
+                    return;
                 }
 
-                // Reiniciar si sale del estanque o expira vida
-                if (f.life >= f.maxLife || f.x < -40 || f.x > width + 40 || f.y < -40 || f.y > height + 40) {
-                    resetFirefly(f);
+                if (f.state === "awakening") {
+                    f.timer--;
+                    f.alpha = Math.min(f.maxAlpha, f.alpha + f.maxAlpha / 70);
+                    // Suave ascenso desde la superficie hacia el aire
+                    f.z = Math.min(0.75, f.z + 0.006);
+                    if (f.timer <= 0) {
+                        f.state = "flying";
+                        f.timer = f.maxTimer;
+                    }
+                } else if (f.state === "flying") {
+                    f.timer--;
+                    // Deriva harmónica suave y cinematográfica (sin saltos bruscos)
+                    f.angle += Math.sin(tick * f.turnSpeed + f.seed) * 0.016;
+                    f.x += Math.cos(f.angle) * f.speed;
+                    f.y += Math.sin(f.angle) * f.speed;
+                    // Flotación tridimensional sutil en z
+                    f.z = Math.max(0.25, Math.min(1.15, f.z + Math.sin(tick * 0.02 + f.seed) * 0.005));
+
+                    // Estela de condensación de luz (stardust trail)
+                    if (tick % 3 === 0) {
+                        f.trail.unshift({
+                            x: f.x,
+                            y: f.y - f.z * 22,
+                            alpha: f.alpha * 0.45,
+                        });
+                        if (f.trail.length > 7) f.trail.pop();
+                    }
+
+                    // Transición a desvanecimiento al expirar tiempo o alejarse del estanque
+                    if (
+                        f.timer <= 0 ||
+                        f.x < -80 ||
+                        f.x > width + 80 ||
+                        f.y < -80 ||
+                        f.y > height + 80
+                    ) {
+                        f.state = "fading";
+                        f.timer = 80;
+                    }
+                } else if (f.state === "fading") {
+                    f.timer--;
+                    f.alpha = Math.max(0, f.alpha - f.maxAlpha / 80);
+                    f.x += Math.cos(f.angle) * (f.speed * 0.7);
+                    f.y += Math.sin(f.angle) * (f.speed * 0.7);
+
+                    if (f.timer <= 0 || f.alpha <= 0.01) {
+                        f.state = "dormant";
+                        f.alpha = 0;
+                        f.trail = [];
+                        // Reposo zen antes de volver a despertar ("de vez en vez")
+                        f.timer = 200 + Math.floor(Math.random() * 500);
+                        return;
+                    }
                 }
+
+                // Atenuación suave de los puntos de la estela
+                f.trail.forEach((tp) => {
+                    tp.alpha *= 0.92;
+                });
 
                 drawFirefly(ctx, f, tick);
             });
@@ -2075,46 +2159,121 @@ export function KoiPondCanvas({
         }
 
         // ====================================================================
-        // DIBUJO DE LUCIÉRNAGAS ZEN (HOTARU 蛍) - LUCES BIOLUMINISCENTES
+        // DIBUJO DE LUCIÉRNAGAS ZEN (HOTARU 蛍) - BIOLUMINISCENCIA ETÉREA PURA
         // ====================================================================
         function drawFirefly(c: CanvasRenderingContext2D, f: Firefly, tick: number) {
             if (f.alpha <= 0.01) return;
 
-            const pulse = 0.35 + 0.65 * Math.pow(Math.sin(f.pulsePhase), 2);
-
-            // 1. Reflejo sobre el estanque oscuro bajo la luciérnaga
-            const reflY = f.y + f.z * 18;
-            const reflRad = f.size * (3.5 + pulse * 4.5);
+            // Respiración orgánica no-lineal (curva suave de bioluminiscencia)
+            const sinPulse = Math.sin(f.pulsePhase);
+            const pulse = 0.35 + 0.65 * Math.pow(Math.max(0, sinPulse), 2.2);
+            const breathAlpha = f.alpha * pulse;
 
             c.save();
+            // Modo óptico aditivo: crea auténtico resplandor y bloom lumínico sobre el estanque oscuro
+            c.globalCompositeOperation = "screen";
+
+            // 1. Reflejo líquido sutil sobre el estanque (ondas distorsionadas por la superficie)
+            const reflY = f.y + f.z * 18;
+            const waterRippleOffset = Math.sin(tick * 0.035 + f.y * 0.05) * 2.5;
+            const reflRadX = f.size * (6 + pulse * 8);
+            const reflRadY = f.size * (2.2 + pulse * 2.8);
+
+            const reflGrad = c.createRadialGradient(
+                f.x + waterRippleOffset,
+                reflY,
+                0,
+                f.x + waterRippleOffset,
+                reflY,
+                reflRadX
+            );
+            reflGrad.addColorStop(0, `hsla(${f.hue}, 95%, 72%, ${breathAlpha * 0.32})`);
+            reflGrad.addColorStop(0.45, `hsla(${f.hue}, 90%, 60%, ${breathAlpha * 0.12})`);
+            reflGrad.addColorStop(1, `hsla(${f.hue}, 85%, 50%, 0)`);
+
             c.beginPath();
-            c.ellipse(f.x, reflY, reflRad * 1.2, reflRad * 0.5, 0, 0, Math.PI * 2);
-            const reflGrad = c.createRadialGradient(f.x, reflY, 0, f.x, reflY, reflRad * 1.2);
-            reflGrad.addColorStop(0, `hsla(${f.hue}, 95%, 70%, ${f.alpha * pulse * 0.22})`);
-            reflGrad.addColorStop(1, `hsla(${f.hue}, 95%, 60%, 0)`);
+            c.ellipse(f.x + waterRippleOffset, reflY, reflRadX, reflRadY, 0, 0, Math.PI * 2);
             c.fillStyle = reflGrad;
             c.fill();
 
-            // 2. Luciérnaga en el aire (elevada en altitud z)
+            // 2. Estela efímera de polvo de estrellas (Stardust Trail)
+            f.trail.forEach((tp) => {
+                if (tp.alpha > 0.02) {
+                    const trailRad = f.size * 3.8;
+                    const tGrad = c.createRadialGradient(tp.x, tp.y, 0, tp.x, tp.y, trailRad);
+                    tGrad.addColorStop(0, `hsla(${f.hue}, 95%, 75%, ${tp.alpha * 0.45})`);
+                    tGrad.addColorStop(0.5, `hsla(${f.hue}, 90%, 65%, ${tp.alpha * 0.18})`);
+                    tGrad.addColorStop(1, `hsla(${f.hue}, 85%, 55%, 0)`);
+
+                    c.beginPath();
+                    c.arc(tp.x, tp.y, trailRad, 0, Math.PI * 2);
+                    c.fillStyle = tGrad;
+                    c.fill();
+                }
+            });
+
+            // 3. Luciérnaga en el aire (altitud z)
             const flyY = f.y - f.z * 22;
 
-            // Halo bioluminiscente exterior radiante
-            const haloRad = f.size * (6 + pulse * 14);
-            const auraGrad = c.createRadialGradient(f.x, flyY, 0, f.x, flyY, haloRad);
-            auraGrad.addColorStop(0, `hsla(${f.hue}, 100%, 80%, ${f.alpha * pulse * 0.75})`);
-            auraGrad.addColorStop(0.35, `hsla(${f.hue}, 95%, 65%, ${f.alpha * pulse * 0.38})`);
-            auraGrad.addColorStop(1, `hsla(${f.hue}, 95%, 55%, 0)`);
+            // Capa A: Vaho atmosférico amplio y difuso (Atmospheric Vapor Bloom)
+            const vaporRad = f.size * (14 + pulse * 22);
+            const vaporGrad = c.createRadialGradient(f.x, flyY, 0, f.x, flyY, vaporRad);
+            vaporGrad.addColorStop(0, `hsla(${f.hue}, 95%, 70%, ${breathAlpha * 0.28})`);
+            vaporGrad.addColorStop(0.35, `hsla(${f.hue}, 90%, 60%, ${breathAlpha * 0.12})`);
+            vaporGrad.addColorStop(0.7, `hsla(${f.hue}, 85%, 55%, ${breathAlpha * 0.04})`);
+            vaporGrad.addColorStop(1, `hsla(${f.hue}, 85%, 50%, 0)`);
 
             c.beginPath();
-            c.arc(f.x, flyY, haloRad, 0, Math.PI * 2);
-            c.fillStyle = auraGrad;
+            c.arc(f.x, flyY, vaporRad, 0, Math.PI * 2);
+            c.fillStyle = vaporGrad;
             c.fill();
 
-            // Núcleo blanco-dorado incandescente
+            // Capa B: Corona radiante bioluminiscente cálida (Corona Halo)
+            const coronaRad = f.size * (5 + pulse * 9);
+            const coronaGrad = c.createRadialGradient(f.x, flyY, 0, f.x, flyY, coronaRad);
+            coronaGrad.addColorStop(0, `hsla(${f.hue}, 100%, 84%, ${breathAlpha * 0.85})`);
+            coronaGrad.addColorStop(0.4, `hsla(${f.hue}, 95%, 70%, ${breathAlpha * 0.45})`);
+            coronaGrad.addColorStop(0.8, `hsla(${f.hue}, 90%, 60%, ${breathAlpha * 0.15})`);
+            coronaGrad.addColorStop(1, `hsla(${f.hue}, 85%, 55%, 0)`);
+
             c.beginPath();
-            c.arc(f.x, flyY, f.size * 0.9 * (0.8 + pulse * 0.4), 0, Math.PI * 2);
-            c.fillStyle = `rgba(255, 255, 245, ${f.alpha * (0.7 + pulse * 0.3)})`;
+            c.arc(f.x, flyY, coronaRad, 0, Math.PI * 2);
+            c.fillStyle = coronaGrad;
             c.fill();
+
+            // Capa C: Núcleo de plasma blanco-oro incandescente (sin borde cortado)
+            const coreRad = f.size * (1.6 + pulse * 1.6);
+            const coreGrad = c.createRadialGradient(f.x, flyY, 0, f.x, flyY, coreRad);
+            coreGrad.addColorStop(0, `rgba(255, 255, 245, ${breathAlpha * 0.95})`);
+            coreGrad.addColorStop(0.4, `hsla(${f.hue}, 100%, 90%, ${breathAlpha * 0.85})`);
+            coreGrad.addColorStop(0.75, `hsla(${f.hue}, 100%, 78%, ${breathAlpha * 0.4})`);
+            coreGrad.addColorStop(1, `hsla(${f.hue}, 100%, 70%, 0)`);
+
+            c.beginPath();
+            c.arc(f.x, flyY, coreRad, 0, Math.PI * 2);
+            c.fillStyle = coreGrad;
+            c.fill();
+
+            // Capa D: Destello de estrella sutil en el clímax de la pulsación (Diffraction Sparkle)
+            if (pulse > 0.78 && f.alpha > 0.4) {
+                const sparkleIntensity = (pulse - 0.78) * 4.5 * f.alpha;
+                const flareLen = f.size * (3.5 + pulse * 3.5);
+
+                c.strokeStyle = `rgba(255, 255, 250, ${sparkleIntensity * 0.65})`;
+                c.lineWidth = 0.85;
+
+                // Destello horizontal
+                c.beginPath();
+                c.moveTo(f.x - flareLen, flyY);
+                c.lineTo(f.x + flareLen, flyY);
+                c.stroke();
+
+                // Destello vertical
+                c.beginPath();
+                c.moveTo(f.x, flyY - flareLen * 0.75);
+                c.lineTo(f.x, flyY + flareLen * 0.75);
+                c.stroke();
+            }
 
             c.restore();
         }
