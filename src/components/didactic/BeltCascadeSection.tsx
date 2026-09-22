@@ -15,7 +15,7 @@ import {
     ShieldWarning,
     BellRinging,
 } from "@phosphor-icons/react";
-import { EtherealMartialOrb } from "./EtherealMartialOrb";
+import { FloatingSteppingStone } from "./FloatingSteppingStone";
 
 interface BeltCascadeSectionProps {
     unit: Unit;
@@ -674,77 +674,52 @@ export function BeltCascadeSection({
                 if (isBeltUnlocked) onFocusBelt?.(belt.id);
             }}
         >
-            {/* ENCAPSULATED BELT CARD */}
+            {/* 1. FLOATING CEREMONIAL BELT SHRINE BANNER (TORII / OBI BRIDGE) */}
             <div
-                className={`relative rounded-3xl p-6 md:p-8 backdrop-blur-xl border transition-all duration-500 overflow-hidden ${
+                className={`relative rounded-3xl p-5 md:p-6 backdrop-blur-xl border transition-all duration-500 shadow-2xl overflow-hidden ${
                     isBeltCompleted
-                        ? "bg-gradient-to-b from-zinc-900/95 via-zinc-950/95 to-black border-kuma-gold/50 shadow-[0_20px_50px_rgba(0,0,0,0.7)] ring-1 ring-kuma-gold/30"
+                        ? "bg-zinc-950/75 border-kuma-gold/50 shadow-[0_15px_40px_rgba(0,0,0,0.85)] ring-1 ring-kuma-gold/30"
                         : isWhiteBelt && isBeltUnlocked
-                        ? "bg-gradient-to-b from-[#221d19]/95 via-[#171412]/95 to-[#0c0a09]/98 border-2 border-amber-300/50 shadow-[0_25px_60px_rgba(245,158,11,0.25),0_0_40px_rgba(255,200,0,0.12)] ring-1 ring-amber-400/40"
+                        ? "bg-[#181411]/80 border-amber-300/50 shadow-[0_15px_45px_rgba(245,158,11,0.2)] ring-1 ring-amber-400/40"
                         : isBeltUnlocked
-                        ? "bg-gradient-to-b from-zinc-900/90 via-zinc-950/90 to-black border-white/15 hover:border-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.7)]"
-                        : "bg-zinc-950/40 border-white/5 opacity-60 shadow-md"
+                        ? "bg-zinc-950/70 border-white/15 hover:border-white/25 shadow-[0_15px_40px_rgba(0,0,0,0.85)]"
+                        : "bg-zinc-950/50 border-white/5 opacity-70 shadow-md"
                 }`}
             >
-                {/* SACRED ASANOHA & ILLUMINATED DOJO TATAMI BACKGROUND (EXCLUSIVO CINTURÓN BLANCO) */}
+                {/* Floating ambient spotlight for white belt */}
                 {isWhiteBelt && isBeltUnlocked && (
                     <>
-                        {/* Breathing Golden Overhead Spotlight */}
                         <motion.div
                             animate={{
-                                opacity: [0.35, 0.58, 0.35],
-                                scale: [1, 1.08, 1],
+                                opacity: [0.3, 0.5, 0.3],
+                                scale: [1, 1.05, 1],
                             }}
                             transition={{
                                 repeat: Infinity,
                                 duration: 4.5,
                                 ease: "easeInOut",
                             }}
-                            className="absolute -top-16 left-1/2 -translate-x-1/2 w-full max-w-lg h-72 rounded-full pointer-events-none blur-3xl"
+                            className="absolute -top-16 left-1/2 -translate-x-1/2 w-full max-w-lg h-56 rounded-full pointer-events-none blur-3xl"
                             style={{
                                 background:
-                                    "radial-gradient(ellipse at center, rgba(254, 240, 138, 0.5) 0%, rgba(245, 158, 11, 0.28) 45%, transparent 75%)",
+                                    "radial-gradient(ellipse at center, rgba(254, 240, 138, 0.4) 0%, rgba(245, 158, 11, 0.2) 45%, transparent 75%)",
                             }}
                         />
 
-                        {/* Geometric Asanoha (Hemp Leaf) Japanese Sacred Lattice Pattern */}
-                        <div
-                            className="absolute inset-0 pointer-events-none opacity-[0.09]"
-                            style={{
-                                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 52-30 52-30-52z' fill='none' stroke='%23fef08a' stroke-width='1.2'/%3E%3Cpath d='M30 0v104M0 52h60' stroke='%23fef08a' stroke-width='1.2'/%3E%3Cpath d='M0 0l60 104M60 0L0 104' stroke='%23fef08a' stroke-width='0.8'/%3E%3C/svg%3E")`,
-                                backgroundSize: "60px 104px",
-                            }}
-                        />
-
-                        {/* Tatami Weave Linear Floor Texture */}
-                        <div
-                            className="absolute inset-0 pointer-events-none opacity-[0.06]"
-                            style={{
-                                backgroundImage:
-                                    "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(254, 240, 138, 0.3) 3px, rgba(254, 240, 138, 0.3) 4px)",
-                            }}
-                        />
-
-                        {/* Enchanted Wandering Fireflies (Luciérnagas Mágicas que Danzan de un Lado a Otro) */}
+                        {/* Enchanted Wandering Fireflies */}
                         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                             {[
-                                { left: "12%", bottom: "2%", size: 4, dur: 7.2, delay: 0, xPath: [0, 35, -25, 40, -15, 0] },
-                                { left: "28%", bottom: "8%", size: 3.5, dur: 6.5, delay: 1.4, xPath: [0, -30, 20, -35, 10, 0] },
-                                { left: "48%", bottom: "1%", size: 5, dur: 8.4, delay: 0.6, xPath: [0, 45, -35, 25, -20, 0] },
-                                { left: "65%", bottom: "12%", size: 4, dur: 7.0, delay: 2.2, xPath: [0, -40, 30, -20, 15, 0] },
-                                { left: "82%", bottom: "5%", size: 4.5, dur: 7.8, delay: 1.8, xPath: [0, 30, -45, 20, -10, 0] },
-                                { left: "20%", bottom: "22%", size: 3, dur: 6.2, delay: 3.0, xPath: [0, -25, 35, -15, 20, 0] },
-                                { left: "75%", bottom: "18%", size: 4.5, dur: 7.5, delay: 2.5, xPath: [0, 35, -30, 40, -15, 0] },
-                                { left: "38%", bottom: "15%", size: 3.8, dur: 8.0, delay: 4.1, xPath: [0, -35, 25, -40, 20, 0] },
-                                { left: "90%", bottom: "10%", size: 3.2, dur: 6.8, delay: 1.1, xPath: [0, -30, 15, -25, 10, 0] },
+                                { left: "15%", bottom: "10%", size: 3.5, dur: 7.2, delay: 0, xPath: [0, 25, -20, 30, 0] },
+                                { left: "45%", bottom: "15%", size: 4, dur: 8.4, delay: 0.6, xPath: [0, 35, -25, 20, 0] },
+                                { left: "75%", bottom: "8%", size: 3.8, dur: 7.0, delay: 2.2, xPath: [0, -30, 20, -15, 0] },
                             ].map((pt, i) => (
                                 <motion.div
                                     key={i}
                                     animate={{
-                                        y: [0, -90, -190, -290, -400],
+                                        y: [0, -40, -90, -130],
                                         x: pt.xPath,
-                                        opacity: [0, 0.95, 0.25, 1, 0.35, 0.9, 0],
-                                        scale: [0.6, 1.4, 0.7, 1.5, 0.8, 1.2, 0.3],
+                                        opacity: [0, 0.9, 0.3, 0.9, 0],
+                                        scale: [0.6, 1.3, 0.8, 1.2, 0.3],
                                     }}
                                     transition={{
                                         repeat: Infinity,
@@ -758,23 +733,17 @@ export function BeltCascadeSection({
                                         width: `${pt.size}px`,
                                         height: `${pt.size}px`,
                                     }}
-                                    className="absolute rounded-full bg-yellow-100 shadow-[0_0_8px_#fef08a,0_0_16px_#fde047,0_0_24px_#f59e0b]"
+                                    className="absolute rounded-full bg-yellow-100 shadow-[0_0_8px_#fef08a,0_0_16px_#fde047]"
                                 />
                             ))}
                         </div>
-
-                        {/* Decorative Golden Kamon Corner Brackets */}
-                        <div className="absolute top-2.5 left-2.5 w-6 h-6 border-t-2 border-l-2 border-amber-300/40 rounded-tl-sm pointer-events-none" />
-                        <div className="absolute top-2.5 right-2.5 w-6 h-6 border-t-2 border-r-2 border-amber-300/40 rounded-tr-sm pointer-events-none" />
-                        <div className="absolute bottom-2.5 left-2.5 w-6 h-6 border-b-2 border-l-2 border-amber-300/40 rounded-bl-sm pointer-events-none" />
-                        <div className="absolute bottom-2.5 right-2.5 w-6 h-6 border-b-2 border-r-2 border-amber-300/40 rounded-br-sm pointer-events-none" />
                     </>
                 )}
 
-                {/* Ambient glow accent matching belt color (only if unlocked) */}
+                {/* Ambient glow accent matching belt color */}
                 {isBeltUnlocked && (
                     <div
-                        className="absolute -top-24 -right-24 w-64 h-64 rounded-full blur-3xl pointer-events-none"
+                        className="absolute -top-20 -right-20 w-48 h-48 rounded-full blur-3xl pointer-events-none"
                         style={{
                             backgroundColor: isDan ? "rgba(245,158,11,0.15)" : `${belt.color}20`,
                         }}
@@ -782,7 +751,7 @@ export function BeltCascadeSection({
                 )}
 
                 {/* REALISTIC OBI BANNER AT THE TOP */}
-                <div className="mb-6">
+                <div className="mb-5">
                     <BeltObiVisual
                         belt={belt}
                         isCompleted={isBeltCompleted}
@@ -791,7 +760,7 @@ export function BeltCascadeSection({
                 </div>
 
                 {/* BELT HEADER IDENTITY (EMBLEM, NAME, JAPANESE, THEME) */}
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-white/10">
                     <div className="flex items-center gap-3.5">
                         {/* Circular Emblem */}
                         <BeltCircularEmblem belt={belt} isLocked={!isBeltUnlocked} />
@@ -913,97 +882,9 @@ export function BeltCascadeSection({
                     </motion.div>
                 )}
 
-                {/* ================================================================= */}
-                {/* CONDITIONAL DISPLAY: UNLOCKED vs LOCKED STATE                     */}
-                {/* User rule: "que los cinturones no se abran y no se muestren hasta */}
-                {/* que se avancen al cinturón al ganar las clases"                   */}
-                {/* ================================================================= */}
-                {isBeltUnlocked ? (
-                    /* UNLOCKED: THE BELT OPENS AND REVEALS ITS GRADES TO SOLVE */
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        transition={{ duration: 0.5 }}
-                        className="relative mt-8 pt-2 pb-4 flex flex-col items-center"
-                    >
-                        {/* Atmospheric subtle vertical light spine behind the levels */}
-                        {beltLevels.length > 1 && (
-                            <div className="absolute top-8 bottom-8 left-1/2 -translate-x-1/2 w-[1px] bg-gradient-to-b from-transparent via-amber-500/20 to-transparent pointer-events-none z-0" />
-                        )}
-
-                        <div className="relative z-10 w-full flex flex-col items-center">
-                            {beltLevels.map((level, idx) => {
-                                const unlocked = isLevelUnlocked(level);
-                                const completed = progress.completedLevelIds.includes(level.id);
-                                const stars = progress.levelStars[level.id] || 0;
-                                const nextLevel = beltLevels[idx + 1];
-                                const nextUnlocked = nextLevel ? isLevelUnlocked(nextLevel) : false;
-
-                                const offsetClass =
-                                    beltLevels.length > 1
-                                        ? idx % 2 === 0
-                                            ? "-translate-x-6 md:-translate-x-10"
-                                            : "translate-x-6 md:translate-x-10"
-                                        : "translate-x-0";
-
-                                return (
-                                    <React.Fragment key={level.id}>
-                                        <div
-                                            className={`flex flex-col items-center transition-all duration-300 my-2 ${offsetClass}`}
-                                        >
-                                            {/* ETHEREAL 3D VOLUMETRIC MARTIAL ORB (DESOPILANTE Y PREMIUM) */}
-                                            <EtherealMartialOrb
-                                                level={level}
-                                                isCompleted={completed}
-                                                isUnlocked={unlocked}
-                                                isDan={isDan}
-                                                stars={stars}
-                                                onClick={() => {
-                                                    if (unlocked) onSelectLevel(level);
-                                                }}
-                                                hasNewQuestions={updatedLevelIds.includes(level.id)}
-                                            />
-
-                                            {/* Level Title and Tag */}
-                                            <div className="mt-3 text-center max-w-[190px]">
-                                                <span
-                                                    className={`block text-xs md:text-sm font-serif font-black leading-tight drop-shadow transition-colors ${
-                                                        unlocked ? "text-white" : "text-zinc-400"
-                                                    }`}
-                                                >
-                                                    {level.title}
-                                                </span>
-                                                <span
-                                                    className={`text-[10px] font-bold uppercase tracking-widest block mt-0.5 transition-colors ${
-                                                        completed
-                                                            ? "text-emerald-400"
-                                                            : unlocked
-                                                            ? "text-amber-300"
-                                                            : "text-zinc-500"
-                                                    }`}
-                                                >
-                                                    {level.tag}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Dynamic S-Curve Martial Qi Stream connecting alternating orbs */}
-                                        {idx < beltLevels.length - 1 && (
-                                            <MartialLevelBridge
-                                                fromLeft={idx % 2 === 0}
-                                                isSourceCompleted={completed}
-                                                isTargetUnlocked={nextUnlocked}
-                                                beltColor={isWhiteBelt ? "#FFC800" : belt.strokeColor || belt.color}
-                                            />
-                                        )}
-                                    </React.Fragment>
-                                );
-                            })}
-                        </div>
-                    </motion.div>
-                ) : (
-                    /* LOCKED: THE BELT REMAINS CLOSED AND DOES NOT REVEAL ITS LESSONS */
-                    <div className="mt-6 p-6 md:p-8 rounded-2xl bg-black/60 border border-white/10 flex flex-col items-center text-center">
+                {/* LOCKED: THE BELT REMAINS CLOSED AND DOES NOT REVEAL ITS LESSONS */}
+                {!isBeltUnlocked && (
+                    <div className="mt-5 p-5 md:p-6 rounded-2xl bg-black/60 border border-white/10 flex flex-col items-center text-center">
                         <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-zinc-900/90 border border-zinc-700/80 flex items-center justify-center text-zinc-500 mb-3 shadow-inner">
                             <Lock className="w-6 h-6 text-zinc-400" weight="duotone" />
                         </div>
@@ -1025,11 +906,94 @@ export function BeltCascadeSection({
                         </p>
 
                         <div className="mt-4 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-                            🔒 {beltLevels.length} grados de aprendizaje encapsulados
+                            🔒 {beltLevels.length} grados de aprendizaje en el estanque
                         </div>
                     </div>
                 )}
             </div>
+
+            {/* ================================================================= */}
+            {/* 2. PIEDRAS FLOTANTES EN EL ESTANQUE ZEN (TOBI-ISHI 飛び石)        */}
+            {/* ¡SIN CAJA ENVOLVENTE! FLOTAN DIRECTAMENTE SOBRE EL AGUA Y PECES KOI */}
+            {/* ================================================================= */}
+            {isBeltUnlocked && (
+                <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="relative my-10 py-2 flex flex-col items-center"
+                >
+                    <div className="relative z-10 w-full flex flex-col items-center">
+                        {beltLevels.map((level, idx) => {
+                            const unlocked = isLevelUnlocked(level);
+                            const completed = progress.completedLevelIds.includes(level.id);
+                            const stars = progress.levelStars[level.id] || 0;
+                            const nextLevel = beltLevels[idx + 1];
+                            const nextUnlocked = nextLevel ? isLevelUnlocked(nextLevel) : false;
+
+                            const offsetClass =
+                                beltLevels.length > 1
+                                    ? idx % 2 === 0
+                                        ? "-translate-x-7 md:-translate-x-14"
+                                        : "translate-x-7 md:translate-x-14"
+                                    : "translate-x-0";
+
+                            return (
+                                <React.Fragment key={level.id}>
+                                    <div
+                                        className={`flex flex-col items-center transition-all duration-300 my-4 ${offsetClass}`}
+                                    >
+                                        {/* PIEDRA FLOTANTE ZEN DE ESTANQUE (TOBI-ISHI) */}
+                                        <FloatingSteppingStone
+                                            level={level}
+                                            isCompleted={completed}
+                                            isUnlocked={unlocked}
+                                            isDan={isDan}
+                                            stars={stars}
+                                            onClick={() => {
+                                                if (unlocked) onSelectLevel(level);
+                                            }}
+                                            hasNewQuestions={updatedLevelIds.includes(level.id)}
+                                        />
+
+                                        {/* TÍTULO Y ETIQUETA EN CÁPSULA TRASLÚCIDA DE CRISTAL */}
+                                        <div className="mt-2 text-center max-w-[210px] px-3.5 py-1.5 rounded-2xl bg-black/75 backdrop-blur-md border border-white/10 shadow-xl">
+                                            <span
+                                                className={`block text-xs md:text-sm font-serif font-black leading-tight drop-shadow transition-colors ${
+                                                    unlocked ? "text-white" : "text-zinc-400"
+                                                }`}
+                                            >
+                                                {level.title}
+                                            </span>
+                                            <span
+                                                className={`text-[10px] font-bold uppercase tracking-widest block mt-0.5 transition-colors ${
+                                                    completed
+                                                        ? "text-emerald-400"
+                                                        : unlocked
+                                                        ? "text-amber-300"
+                                                        : "text-zinc-500"
+                                                }`}
+                                            >
+                                                {level.tag}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* CORRIENTE ACUÁTICA DE AGUA ENTRE PIEDRAS (NAGARE 流) */}
+                                    {idx < beltLevels.length - 1 && (
+                                        <MartialLevelBridge
+                                            fromLeft={idx % 2 === 0}
+                                            isSourceCompleted={completed}
+                                            isTargetUnlocked={nextUnlocked}
+                                            beltColor={isWhiteBelt ? "#FFC800" : belt.strokeColor || belt.color}
+                                        />
+                                    )}
+                                </React.Fragment>
+                            );
+                        })}
+                    </div>
+                </motion.div>
+            )}
 
             {/* INTER-BELT CASCADE CONNECTOR: CEREMONIAL KUMIHIMO CORD & OCTAGONAL KAMON SEAL */}
             {!isLast && (
