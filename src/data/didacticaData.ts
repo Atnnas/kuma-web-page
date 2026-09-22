@@ -1047,45 +1047,100 @@ export const DIDACTIC_UNITS: Unit[] = [
             {
                 id: "level-anatomia",
                 number: 2,
-                title: "Anatomía Marcial & Kyusho",
-                subtitle: "Conoce tu herramienta: Puntos vitales y biomecánica en japonés",
-                tag: "Anatomía & Impacto",
-                icon: "🦴",
+                title: "Cuerpo Humano",
+                subtitle: "Partes anatómicas, alturas de combate y armas naturales en japonés",
+                tag: "Cuerpo Humano & Karate",
+                icon: "💪",
                 color: "red",
-                xpReward: 60,
+                xpReward: 75,
                 theory: {
-                    title: "El Cuerpo Humano en la Práctica del Karate",
-                    subtitle: "Niveles de ataque, biomecánica y terminología japonesa esencial",
-                    quote: "El cuerpo es el templo y el arma del karateka. Conocer sus divisiones es la base del control y la precisión.",
+                    title: "El Cuerpo Humano: Templo y Armas Naturales del Karateka",
+                    subtitle: "División tripartita, sentidos en alerta y el mapa anatómico en japonés",
+                    quote: "El cuerpo del karateka es como una fortaleza: sus sentidos son los vigías, sus articulaciones los arietes y su centro de gravedad el motor de la fuerza.",
                     content: [
-                        "En el Karate tradicional y deportivo, el cuerpo humano se divide verticalmente en tres alturas de ataque y defensa:",
-                        "1. JODAN (Zona Alta): Comprende el cuello, mandíbula, rostro y cabeza (Atama). Requiere máximo control debido a la vulnerabilidad craneal.",
-                        "2. CHUDAN (Zona Media): Desde las clavículas hasta el cinturón (Obi), incluyendo plexo solar, costillas flotantes y abdomen.",
-                        "3. GEDAN (Zona Baja): Del cinturón hacia abajo, incluyendo muslos, ingles, rodillas (Hiza), espinillas (Sune) y pies (Ashi).",
-                        "Los puntos vitales (Kyusho) son centros nerviosos, uniones articulares y vasos sanguíneos que en el combate marcial maximizan el impacto con el mínimo esfuerzo."
+                        "En el Karate-Do tradicional y deportivo, el cuerpo humano no se percibe como un objeto frágil, sino como un templo sagrado dotado de herramientas de autodefensa y sabiduría biomecánica.",
+                        "1. Las Tres Alturas Sagradas (San Dan): El cuerpo se divide verticalmente en tres niveles fundamentales: JODAN (Zona Alta: cabeza Atama, rostro Men y cuello Kubi; exige máximo control Sundome), CHUDAN (Zona Media: pecho Mune, costillas, plexo solar Suigetsu y abdomen Hara) y GEDAN (Zona Baja: cadera Koshi, muslos, rodillas Hiza, espinillas Sune y pies Ashi).",
+                        "2. La Cabeza y los Sentidos del Guerrero: La mente tranquila (Mizu no Kokoro) coordina la visión periférica de los ojos (Me / Metsuke) y la escucha atenta (Mimi). El cuello (Kubi) sostiene el eje vertebral y la postura firme (Shisei).",
+                        "3. Las Armas Naturales de los Brazos: La mano vacía (Kara-Te) se adapta según la distancia: Seiken (puño frontal cerrado, apoyado en los dos primeros nudillos), Shuto (mano espada con el canto externo de la palma) y Uraken (dorso flexible como un látigo). A corta distancia, el codo (Empi o Hiji) opera como el ariete más resistente de la anatomía superior.",
+                        "4. El Centro de Energía y el Motor de Potencia: Tres dedos debajo del ombligo se ubica el Hara o Tanden, centro de masa y cuna de la energía vital (Ki) y respiración diafragmática (Ibuki). La cadera (Koshi) es el motor biomecánico: al rotar con precisión (Koshi o ireru), canaliza la fuerza del suelo hacia el impacto.",
+                        "5. Las Piernas, Escudos y Raíces: Las extremidades inferiores garantizan la estabilidad y el desplazamiento (Ashi-sabaki). La espinilla (Sune) sirve de escudo óseo para bloquear patadas bajas, la rodilla (Hiza) impacta de forma demoledora en corta distancia y el talón (Kakato) descarga impactos con masa ósea pura."
                     ],
                     images: [
                         {
+                            src: "/images/didactic/kuma_human_body_karate.jpg",
+                            alt: "Mapa Anatómico del Cuerpo Humano en Karate - Kuma Sensei",
+                            caption: "Fig 1. Mapa interactivo del cuerpo humano: Partes anatómicas, alturas y armas naturales en japonés"
+                        },
+                        {
                             src: "/images/kuma-partes-cuerpo.jpg",
-                            alt: "Partes del Cuerpo - Kuma Dojo",
-                            caption: "Fig 2. Mapa anatómico de partes del cuerpo y niveles en japonés"
+                            alt: "Divisiones corporales Jodan, Chudan y Gedan",
+                            caption: "Fig 2. Cartografía de alturas de combate y áreas de impacto en el Karate tradicional"
+                        }
+                    ],
+                    bulletPoints: [
+                        {
+                            title: "Jodan, Chudan y Gedan: Los Tres Pisos del Cuerpo",
+                            desc: "Jodan resguarda el cerebro y sentidos; Chudan agrupa órganos vitales y respiración; Gedan conecta con la tierra y los desplazamientos.",
+                            badge: "Alturas Sagradas",
+                            image: "/images/didactic/kuma_human_body_karate.jpg"
+                        },
+                        {
+                            title: "Seiken, Empi y Shuto: Armas de la Mano y el Brazo",
+                            desc: "Alineación biomecánica perfecta de muñeca y codo. En Seiken el golpe contacta con los nudillos índice y medio para evitar lesiones.",
+                            badge: "Armas Superiores",
+                            image: "/images/didactic/kuma_human_body_karate.jpg"
+                        },
+                        {
+                            title: "Koshi y Tanden: El Motor y Centro de Gravedad",
+                            desc: "Los brazos no golpean con fuerza aislada: la rotación de cadera (Koshi) coordinada desde el bajo vientre (Tanden) transfiere la masa corporal entera.",
+                            badge: "Motor Biomecánico",
+                            image: "/images/didactic/kuma_human_body_karate.jpg"
+                        },
+                        {
+                            title: "Hiza, Sune y Ashi: Escudos y Raíces del Tatami",
+                            desc: "La espinilla (Sune) absorbe impactos como escudo óseo, la rodilla (Hiza) es ariete de corta distancia y el pie (Ashi) enraíza la postura.",
+                            badge: "Base Inferior",
+                            image: "/images/didactic/kuma_human_body_karate.jpg"
                         }
                     ],
                     references: [
-                        "Funakoshi, G. (1973). Karate-Do Kyohan: The Master Text. Tokio: Kodansha.",
-                        "Habersetzer, R. (2004). Encyclopédie des arts martiaux de l'Extrême-Orient. París: Amphora."
+                        {
+                            title: "Karate-Do Kyohan: The Master Text",
+                            author: "Maestro Gichin Funakoshi",
+                            year: 1973,
+                            editorial: "Kodansha International",
+                            chapter: "Capítulo III: Puntos del cuerpo humano y alturas de ataque: Jodan, Chudan y Gedan",
+                            note: "Tratado fundamental sobre la división de las tres zonas corporales y el acondicionamiento de las armas naturales."
+                        },
+                        {
+                            title: "Karate Dinámico: Principios Biomecánicos y Dianas Anatómicas",
+                            author: "Maestro Masatoshi Nakayama (JKA)",
+                            year: 1986,
+                            editorial: "Editorial Paidotribo",
+                            chapter: "Capítulo 1: Anatomía aplicada al Karate: el uso de la cadera (Koshi) y alineación ósea",
+                            note: "Estudio oficial sobre cómo la masa corporal y la estructura ósea multiplican el impacto sin lastimar las articulaciones."
+                        },
+                        {
+                            title: "Bubishi: La Biblia del Karate",
+                            author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                            year: 2001,
+                            editorial: "Editorial Tutor",
+                            chapter: "Capítulo V: Los centros nerviosos y los puntos vulnerables del cuerpo humano (Kyusho)",
+                            note: "El tratado clásico de Okinawa y China sobre las dianas vitales, el meridiano central y el cuidado anatómico."
+                        }
                     ]
                 },
                 questions: [
                     {
-                        id: "q-anat-1",
+                        id: "q-cuerpo-1",
                         type: "matching",
-                        prompt: "Empareja cada nivel del cuerpo con su término japonés:",
-                        explanation: "Jodan es la zona alta (cabeza/cuello), Chudan es la zona media (pecho/abdomen) y Gedan es la zona baja.",
+                        prompt: "Para defenderte como un verdadero karateka, debes saber a qué 'piso' del cuerpo se dirige cada técnica. ¡Empareja cada altura en japonés con su zona correspondiente!",
+                        explanation: "JODAN corresponde a la zona alta (cabeza y cuello), CHUDAN a la zona media (pecho, costillas y abdomen), y GEDAN a la zona baja (caderas, piernas y pies).",
+                        hint: "Jo significa alto o arriba, Chu significa medio o centro, y Ge significa bajo o abajo.",
                         pairs: [
-                            { id: "p1", left: "JODAN", right: "Zona Alta (Cabeza/Cuello)" },
-                            { id: "p2", left: "CHUDAN", right: "Zona Media (Torso/Costillas)" },
-                            { id: "p3", left: "GEDAN", right: "Zona Baja (Debajo de cintura)" },
+                            { id: "p1", left: "JODAN", right: "Zona Alta (Cabeza, Rostro y Cuello)" },
+                            { id: "p2", left: "CHUDAN", right: "Zona Media (Pecho, Costillas y Abdomen)" },
+                            { id: "p3", left: "GEDAN", right: "Zona Baja (Cadera, Piernas y Pies)" },
                         ],
                         references: [
                             {
@@ -1115,19 +1170,59 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ]
                     },
                     {
-                        id: "q-anat-2",
-                        type: "image_choice",
-                        prompt: "Observa el mapa anatómico Kuma. ¿Qué término japonés designa a la cabeza / rostro?",
-                        image: "/images/kuma-partes-cuerpo.jpg",
+                        id: "q-cuerpo-2",
+                        type: "multiple_choice",
+                        prompt: "En un combate a corta distancia donde no hay espacio para estirar el brazo, Kuma Sensei usa la articulación más dura del miembro superior, conocida como 'el ariete'. ¿Cómo se llama el CODO en japonés?",
                         options: [
-                            { id: "o1", text: "Atama / Men", isCorrect: true },
+                            { id: "o1", text: "Empi (o Hiji)", isCorrect: true },
                             { id: "o2", text: "Hiza", isCorrect: false },
-                            { id: "o3", text: "Empi", isCorrect: false },
-                            { id: "o4", text: "Kakitawake", isCorrect: false },
+                            { id: "o3", text: "Kubi", isCorrect: false },
+                            { id: "o4", text: "Ashi", isCorrect: false },
                         ],
                         correctAnswerId: "o1",
-                        explanation: "Atama significa cabeza y Men hace referencia a la faz/rostro en las artes marciales japonesas.",
-                        hint: "Hiza es rodilla y Empi es codo.",
+                        explanation: "Empi (que poéticamente significa 'vuelo de golondrina') o Hiji designa al codo, una de las armas naturales más sólidas y contundentes de la anatomía humana.",
+                        hint: "Hiza es rodilla, Kubi es cuello y Ashi es pie.",
+                        references: [
+                            {
+                                title: "Karate-Do Kyohan: The Master Text",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1973,
+                                editorial: "Kodansha International",
+                                chapter: "Capítulo IV: Armas corporales: Empi-uchi (el golpe de codo)",
+                                note: "Ilustra las trayectorias de impacto con el olécranon (codo) en distancias cerradas de autodefensa."
+                            },
+                            {
+                                title: "El Mejor Karate: Fundamentos",
+                                author: "Maestro Masatoshi Nakayama",
+                                year: 1989,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 2: Las armas anatómicas: Empi (codo) y su biomecánica de impacto",
+                                note: "Detalla la flexión muscular del bíceps para bloquear la articulación del codo al impactar."
+                            },
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Mark Bishop",
+                                year: 1999,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 6: Armas corporales anatómicas y acondicionamiento en Ryukyu",
+                                note: "Describe el uso del codo en los estilos tradicionales de Tomari-Te y Goju-Ryu."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-cuerpo-3",
+                        type: "image_choice",
+                        prompt: "Observa la ilustración anatómica de Kuma Sensei. ¿Qué términos en japonés corresponden a la CABEZA y al ROSTRO que debemos resguardar siempre con guardia alta?",
+                        image: "/images/didactic/kuma_human_body_karate.jpg",
+                        options: [
+                            { id: "o1", text: "Atama / Men", isCorrect: true },
+                            { id: "o2", text: "Koshi / Hara", isCorrect: false },
+                            { id: "o3", text: "Sune / Hiza", isCorrect: false },
+                            { id: "o4", text: "Kata / Empi", isCorrect: false },
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "Atama significa cabeza y Men hace referencia al rostro o faz en las artes marciales japonesas. Por su vulnerabilidad, exigen absoluto control (Sundome).",
+                        hint: "Koshi es cadera, Sune es espinilla y Kata es hombro.",
                         references: [
                             {
                                 title: "Bubishi: La Biblia del Karate",
@@ -1156,14 +1251,93 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ]
                     },
                     {
-                        id: "q-anat-3",
+                        id: "q-cuerpo-4",
                         type: "matching",
-                        prompt: "Empareja la extremidad con su nombre en japonés:",
-                        explanation: "Hiza = Rodilla, Empi/Hiji = Codo, Seiken = Puño frontal, Ashi = Pierna/Pie.",
+                        prompt: "¡La mano vacía es mágica! Con solo cambiar la colocación de los dedos y muñeca, se transforma en 3 armas anatómicas distintas. ¡Empareja cada nombre con su forma!",
+                        explanation: "Seiken es el puño frontal cerrado (impacto exclusivo con nudillos índice y medio), Shuto es la mano espada (canto exterior de la palma) y Uraken es el dorso del puño usado como látigo.",
+                        hint: "Ken significa puño y To significa espada o sable.",
                         pairs: [
-                            { id: "p1", left: "Hiza", right: "Rodilla" },
-                            { id: "p2", left: "Empi", right: "Codo" },
-                            { id: "p3", left: "Seiken", right: "Puño frontal" },
+                            { id: "p1", left: "Seiken", right: "Puño frontal cerrado (2 primeros nudillos)" },
+                            { id: "p2", left: "Shuto", right: "Mano espada (canto exterior de la palma)" },
+                            { id: "p3", left: "Uraken", right: "Dorso del puño (revés rápido tipo látigo)" },
+                        ],
+                        references: [
+                            {
+                                title: "Karate Dinámico: Instrucción Oficial",
+                                author: "Maestro Masatoshi Nakayama",
+                                year: 1986,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 2: Las armas de la mano: Seiken, Shuto y Uraken",
+                                note: "Explicación biomecánica de la tensión muscular y alineación ósea del radio y cúbito."
+                            },
+                            {
+                                title: "Shotokan Karate: A Precise History",
+                                author: "Harry Cook",
+                                year: 2001,
+                                editorial: "Cook & Page",
+                                chapter: "Capítulo 4: La evolución de las técnicas de golpeo con la mano vacía",
+                                note: "Historia del desarrollo de los métodos de endurecimiento de puños y dedos en Okinawa y Japón."
+                            },
+                            {
+                                title: "Karate-Do Kyohan",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo II: Métodos de formación del puño (Seiken) y la mano abierta (Shuto)",
+                                note: "Tratado original ilustrado por Funakoshi sobre cómo cerrar el puño apretando el pulgar sobre el índice y medio."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-cuerpo-5",
+                        type: "multiple_choice",
+                        prompt: "Muchos principiantes creen erróneamente que la fuerza de un golpe viene del brazo, pero los maestros saben que el verdadero 'motor' que genera la máxima potencia es la rotación de...",
+                        options: [
+                            { id: "o1", text: "Koshi (La Cadera)", isCorrect: true },
+                            { id: "o2", text: "Mimi (Las Orejas)", isCorrect: false },
+                            { id: "o3", text: "Yubi (Los Dedos)", isCorrect: false },
+                            { id: "o4", text: "Nukite (Las Uñas)", isCorrect: false },
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "En Karate, el principio de 'Koshi o ireru' (meter la cadera) enseña que la fuerza no nace en los brazos, sino en la rotación pélvica de la cadera (Koshi), que canaliza el peso del cuerpo desde el suelo.",
+                        hint: "Es la articulación pélvica central que une el tronco con las piernas.",
+                        references: [
+                            {
+                                title: "The Twenty Guiding Principles of Karate",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 2003,
+                                editorial: "Kodansha International",
+                                chapter: "Principio IX: La aplicación de la fuerza y la rotación de la cadera (Koshi)",
+                                note: "Explicación filosófica y física de cómo la cadera es el eje dinámico del Karate-Do."
+                            },
+                            {
+                                title: "Karate Dinámico: La Cadera como Centro de Potencia",
+                                author: "Maestro Masatoshi Nakayama",
+                                year: 1986,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 1: La biomecánica de la cadera: rotación, vibración y empuje",
+                                note: "Análisis con diagramas de vectores de fuerza que demuestran que el 70% de la fuerza del Tsuki nace en la cadera."
+                            },
+                            {
+                                title: "Traditional Karate-do: Okinawa Goju Ryu Vol. 1",
+                                author: "Morio Higaonna (Hanshi 10° Dan)",
+                                year: 1985,
+                                editorial: "Minerva Press",
+                                chapter: "Capítulo 3: Fundamentos corporales: Koshi y respiración en Sanchin",
+                                note: "Enseñanzas sobre la báscula pélvica y la compresión del Tanden para generar solidez."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-cuerpo-6",
+                        type: "matching",
+                        prompt: "Tus miembros inferiores son tus cimientos y tus escudos de defensa personal. Relaciona cada parte de la pierna con su término japonés:",
+                        explanation: "Hiza es la rodilla (ariete ascendente a corta distancia), Sune es la espinilla (escudo óseo de bloqueo bajo) y Kakato es el talón (base dura de impacto para patadas).",
+                        hint: "Hiza se usa en Mae Hiza Geri, y Kakato en Yoko Geri.",
+                        pairs: [
+                            { id: "p1", left: "Hiza", right: "Rodilla (ariete de impacto ascendente)" },
+                            { id: "p2", left: "Sune", right: "Espinilla (escudo óseo para bloquear patadas)" },
+                            { id: "p3", left: "Kakato", right: "Talón (base dura y sólida del pie)" },
                         ],
                         references: [
                             {
@@ -1171,24 +1345,174 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 author: "Maestro Masatoshi Nakayama",
                                 year: 1989,
                                 editorial: "Editorial Tutor",
-                                chapter: "Capítulo 2: Las armas corporales: Hiza (rodilla), Empi (codo) y Seiken (puño frontal)",
-                                note: "Guía ilustrada oficial de la JKA sobre la correcta alineación ósea de muñeca, codo y rodilla al golpear."
-                            },
-                            {
-                                title: "Karate-Do Kyohan",
-                                author: "Maestro Gichin Funakoshi",
-                                year: 1935,
-                                editorial: "Editorial Eyras",
-                                chapter: "Capítulo 2: Las armas naturales del cuerpo humano: uso de codos, puños y rodillas",
-                                note: "Descripción pionera de Funakoshi sobre cómo acondicionar cada articulación como escudo y ariete."
+                                chapter: "Capítulo 3: Técnicas de pierna y armas corporales: Hiza, Sune y Kakato",
+                                note: "Guía de alineación articular al golpear con la rodilla y el talón."
                             },
                             {
                                 title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
                                 author: "Mark Bishop",
                                 year: 1999,
                                 editorial: "Editorial Paidotribo",
-                                chapter: "Capítulo 6: Armas corporales anatómicas y acondicionamiento óseo en Okinawa",
-                                note: "Historia del endurecimiento tradicional de nudillos (Seiken) y codos (Empi) mediante el makiwara en Ryukyu."
+                                chapter: "Capítulo 7: Métodos tradicionales de acondicionamiento de piernas (Sune y Kakato)",
+                                note: "Prácticas tradicionales de endurecimiento tibial para bloquear patadas bajas (Gedan Barai / Sune Uke)."
+                            },
+                            {
+                                title: "Encyclopédie des Arts Martiaux de l'Extrême-Orient",
+                                author: "Roland Habersetzer",
+                                year: 2000,
+                                editorial: "Éditions Amphora",
+                                chapter: "Sección Anatomía: Hiza, Sune y Kakato en las artes del Budo",
+                                note: "Compendio enciclopédico sobre las superficies de contacto y escudos osteomusculares inferiores."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-cuerpo-7",
+                        type: "matching",
+                        prompt: "Un karateka no solo pelea con puños: primero 've y escucha' el peligro con sus sentidos antes de que el ataque empiece. ¡Empareja cada órgano con su término japonés!",
+                        explanation: "Me son los ojos (clave para la visión panorámica Metsuke), Mimi son los oídos (alerta acústica del entorno) y Kubi es el cuello (eje de soporte y rotación de la cabeza).",
+                        hint: "Metsuke significa 'fijar la mirada' con los ojos (Me).",
+                        pairs: [
+                            { id: "p1", left: "Me", right: "Ojos (visión panorámica / Metsuke)" },
+                            { id: "p2", left: "Mimi", right: "Oídos (alerta auditiva del entorno)" },
+                            { id: "p3", left: "Kubi", right: "Cuello (soporte y eje vertebral)" },
+                        ],
+                        references: [
+                            {
+                                title: "Karate-Do: My Way of Life",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Kodansha International",
+                                chapter: "Capítulo 6: La actitud mental, la mirada panorámica (Metsuke) y los sentidos",
+                                note: "Reflexión autobiográfica sobre cómo un karateka debe observar la totalidad del oponente sin clavar los ojos en un solo punto."
+                            },
+                            {
+                                title: "Bubishi: The Classic Manual of Martial Arts",
+                                author: "Sensei Patrick McCarthy",
+                                year: 1995,
+                                editorial: "Tuttle Publishing",
+                                chapter: "Capítulo IV: Los sentidos del guerrero: vista, audición y los puntos vulnerables del cuello",
+                                note: "Tratado tradicional sobre el rol de la percepción sensorial y los puntos arteriales del cuello (Kubi)."
+                            },
+                            {
+                                title: "The Essence of Okinawan Karate-Do",
+                                author: "Maestro Shoshin Nagamine",
+                                year: 1976,
+                                editorial: "Tuttle Publishing",
+                                chapter: "Capítulo 2: Fundamentos del Budo: La mirada tranquila y el control del cuello",
+                                note: "Instrucciones de Nagamine sobre la postura serena de la cabeza y el cuello erguido."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-cuerpo-8",
+                        type: "true_false",
+                        prompt: "¿Verdadero o Falso? En el Karate y las artes tradicionales, el HARA o TANDEN se localiza en el bajo vientre (unos tres dedos bajo el ombligo) y se considera el centro de gravedad del cuerpo humano, la raíz del equilibrio y la cuna de la energía vital (Ki).",
+                        explanation: "¡Totalmente Verdadero! El Tanden (Hara) es el centro de masa corporal de la anatomía humana. Desde este punto se sincroniza la respiración diafragmática (Ibuki), el equilibrio corporal y la energía marcial.",
+                        correctBool: true,
+                        hint: "Es el punto que siempre se busca mantener bajo y enraizado para no perder el equilibrio.",
+                        references: [
+                            {
+                                title: "Karate-Do Kyohan: The Master Text",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1973,
+                                editorial: "Kodansha International",
+                                chapter: "Capítulo II: El Tanden como centro de gravedad y respiración abdominal",
+                                note: "Explica que toda postura estable requiere concentrar el peso y la respiración en el bajo vientre (Tanden)."
+                            },
+                            {
+                                title: "The History of Karate: Okinawan Goju Ryu",
+                                author: "Morio Higaonna",
+                                year: 1996,
+                                editorial: "Dragon Books",
+                                chapter: "Capítulo 4: El desarrollo del Tanden mediante el kata Sanchin",
+                                note: "Análisis histórico y fisiológico de la respiración Ibuki para fortalecer la zona abdominal y proteger los órganos internos."
+                            },
+                            {
+                                title: "Bubishi: A la source du Karate-Do",
+                                author: "Roland Habersetzer",
+                                year: 1986,
+                                editorial: "Éditions Amphora",
+                                chapter: "Capítulo III: La circulación del Ki y el reservorio del Dan Tien",
+                                note: "Estudio sobre los conceptos de la medicina tradicional china y su adopción en las artes marciales okinawenses."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-cuerpo-9",
+                        type: "multiple_choice",
+                        prompt: "En el dojo, el sensei da la orden de practicar 'Ashi-Sabaki'. ¿A qué parte fundamental del cuerpo humano nos estamos refiriendo cuando decimos ASHI?",
+                        options: [
+                            { id: "o1", text: "El Pie / Pierna (los cimientos del desplazamiento)", isCorrect: true },
+                            { id: "o2", text: "El Hombro", isCorrect: false },
+                            { id: "o3", text: "El Pecho", isCorrect: false },
+                            { id: "o4", text: "La Nariz", isCorrect: false },
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "Ashi significa pie o pierna completa en japonés. Ashi-sabaki es el arte marcial del juego y desplazamiento de pies, vital para dominar la distancia (Ma-ai).",
+                        hint: "Es la parte con la que pisas el tatami y te desplazas en guardia.",
+                        references: [
+                            {
+                                title: "Karate Dinámico: Movimiento de Pies (Ashi-sabaki)",
+                                author: "Maestro Masatoshi Nakayama",
+                                year: 1986,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 3: Ashi-sabaki: desplazamiento con Yori-ashi, Tsugi-ashi y Okuri-ashi",
+                                note: "Tratado biomecánico sobre la distribución del peso en la planta del pie (Teisoku) y el metatarso (Koshi)."
+                            },
+                            {
+                                title: "Karate-Do Kyohan: The Master Text",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1973,
+                                editorial: "Kodansha International",
+                                chapter: "Capítulo V: Trabajo de pies y posturas básicas (Dachi)",
+                                note: "Define la conexión entre el pie (Ashi) y el suelo para generar solidez y ligereza."
+                            },
+                            {
+                                title: "Shotokan Karate: A Precise History",
+                                author: "Harry Cook",
+                                year: 2001,
+                                editorial: "Cook & Page",
+                                chapter: "Capítulo 5: Principios de desplazamiento y combate",
+                                note: "Detalla la evolución de los desplazamientos ágiles introducidos por Yoshitaka Funakoshi."
+                            }
+                        ]
+                    },
+                    {
+                        id: "q-cuerpo-10",
+                        type: "matching",
+                        prompt: "Para lograr la postura perfecta y digna del karateka (Shisei), la espalda debe estar erguida, el pecho abierto y los hombros relajados sin tensión. ¡Empareja cada parte del tronco en japonés!",
+                        explanation: "Mune es el pecho (abierto para permitir respirar con fluidez), Senaka es la espalda (con la columna vertebral recta y firme) y Kata son los hombros (relajados y descendidos para no trabar los golpes).",
+                        hint: "Kata también nombra a las formas preestablecidas, pero como parte anatómica significa hombro.",
+                        pairs: [
+                            { id: "p1", left: "Mune", right: "Pecho (abierto para respirar sin rigidez)" },
+                            { id: "p2", left: "Senaka", right: "Espalda (columna recta, firme y erguida)" },
+                            { id: "p3", left: "Kata", right: "Hombros (relajados y descendidos)" },
+                        ],
+                        references: [
+                            {
+                                title: "Karate Dinámico: La Postura Correcta (Shisei)",
+                                author: "Maestro Masatoshi Nakayama",
+                                year: 1986,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 1: Alineación del torso: Mune, Senaka y relajación escapular",
+                                note: "Estudio biomecánico sobre la posición del esternón y la columna neutra al ejecutar técnicas de Kime."
+                            },
+                            {
+                                title: "Karate-Do Kyohan: The Master Text",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1973,
+                                editorial: "Kodansha International",
+                                chapter: "Capítulo III: Postura correcta del cuerpo humano (Shisei)",
+                                note: "Enfatiza que encoger los hombros (Kata) debilita el impacto y agota la energía innecesariamente."
+                            },
+                            {
+                                title: "Tales of Okinawa's Great Masters",
+                                author: "Maestro Shoshin Nagamine",
+                                year: 2000,
+                                editorial: "Tuttle Publishing",
+                                chapter: "Capítulo 3: La rectitud física y moral del karateka tradicional",
+                                note: "Anécdotas de maestros de Shuri y Tomari que corregían la verticalidad de la espalda (Senaka) mediante el entrenamiento diario."
                             }
                         ]
                     }

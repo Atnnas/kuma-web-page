@@ -110,26 +110,8 @@ export function DidacticController() {
                         return unit ? unit.levels.some((l) => updatedLevelIds.includes(l.id)) : false;
                     });
 
-                    // REGLA DEL DOJO: Si hay nuevas preguntas en un nivel específico, el progreso de estrellas baja
-                    // EXCLUSIVAMENTE en los niveles actualizados para exigir maestría del nuevo temario
-                    let starsDecreased = false;
-                    const adjustedStars = { ...(progress.levelStars || {}) };
-                    updatedLevelIds.forEach((lvlId) => {
-                        const currentStars = adjustedStars[lvlId] || 0;
-                        if (currentStars > 0) {
-                            adjustedStars[lvlId] = Math.max(0, currentStars - 1);
-                            starsDecreased = true;
-                        }
-                    });
-
-                    if (starsDecreased) {
-                        const updatedProg: UserDidacticProgress = {
-                            ...progress,
-                            levelStars: adjustedStars,
-                        };
-                        saveProgress(updatedProg);
-                    }
-
+                    // GARANTÍA DEL DOJO: El progreso del atleta (estrellas, niveles, XP) NUNCA se pierde ni disminuye.
+                    // Se avisa de la existencia de nuevas preguntas para su disfrute y práctica voluntaria.
                     setCatalogUpdate({
                         hasNewQuestions: true,
                         newQuestionsCount: newCount,
@@ -168,24 +150,7 @@ export function DidacticController() {
                         return unit ? unit.levels.some((l) => updatedLevelIds.includes(l.id)) : false;
                     });
 
-                    let starsDecreased = false;
-                    const adjustedStars = { ...(progress.levelStars || {}) };
-                    updatedLevelIds.forEach((lvlId) => {
-                        const currentStars = adjustedStars[lvlId] || 0;
-                        if (currentStars > 0) {
-                            adjustedStars[lvlId] = Math.max(0, currentStars - 1);
-                            starsDecreased = true;
-                        }
-                    });
-
-                    if (starsDecreased) {
-                        const updatedProg: UserDidacticProgress = {
-                            ...progress,
-                            levelStars: adjustedStars,
-                        };
-                        saveProgress(updatedProg);
-                    }
-
+                    // GARANTÍA DEL DOJO: El progreso del atleta (estrellas, niveles, XP) NUNCA se pierde ni disminuye.
                     setCatalogUpdate({
                         hasNewQuestions: true,
                         newQuestionsCount: newCount,
@@ -634,7 +599,7 @@ export function DidacticController() {
                                                 Nuevos pergaminos y preguntas añadidas
                                             </h4>
                                             <p className="text-xs text-slate-300 mt-0.5">
-                                                Se han incorporado <strong className="text-yellow-300">+{catalogUpdate.newQuestionsCount} nuevas preguntas</strong> a los módulos marciales. Debido al nuevo temario, <span className="text-amber-200 font-bold">el progreso de estrellas de los niveles actualizados ha disminuido</span> para que evalúes los nuevos conocimientos y reconquistes la maestría total (3/3).
+                                                Se han incorporado <strong className="text-yellow-300">+{catalogUpdate.newQuestionsCount} nuevas preguntas</strong> a los módulos marciales. <span className="text-emerald-300 font-bold">¡Tu progreso y estrellas están totalmente seguros!</span> Te invitamos a entrenar y descubrir los nuevos retos para perfeccionar tu técnica.
                                             </p>
                                         </div>
                                     </div>
