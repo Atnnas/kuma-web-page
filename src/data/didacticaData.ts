@@ -1048,58 +1048,58 @@ export const DIDACTIC_UNITS: Unit[] = [
                 id: "level-anatomia",
                 number: 2,
                 title: "Cuerpo Humano",
-                subtitle: "Partes anatómicas, alturas de combate y armas naturales en japonés",
+                subtitle: "Partes anatómicas, alturas y armas naturales en japonés",
                 tag: "Cuerpo Humano & Karate",
                 icon: "💪",
                 color: "red",
                 xpReward: 75,
                 theory: {
-                    title: "El Cuerpo Humano: Templo y Armas Naturales del Karateka",
-                    subtitle: "División tripartita, sentidos en alerta y el mapa anatómico en japonés",
-                    quote: "El cuerpo del karateka es como una fortaleza: sus sentidos son los vigías, sus articulaciones los arietes y su centro de gravedad el motor de la fuerza.",
+                    title: "El Cuerpo Humano: Superpoderes y Armas Naturales de Kuma Sensei",
+                    subtitle: "¡Aprende las partes del cuerpo y alturas en japonés jugando!",
+                    quote: "El cuerpo es tu mejor amigo y tu escudo. ¡Conocer cada parte en japonés te hace más fuerte y ágil!",
                     content: [
-                        "En el Karate-Do tradicional y deportivo, el cuerpo humano no se percibe como un objeto frágil, sino como un templo sagrado dotado de herramientas de autodefensa y sabiduría biomecánica.",
-                        "1. Las Tres Alturas Sagradas (San Dan): El cuerpo se divide verticalmente en tres niveles fundamentales: JODAN (Zona Alta: cabeza Atama, rostro Men y cuello Kubi; exige máximo control Sundome), CHUDAN (Zona Media: pecho Mune, costillas, plexo solar Suigetsu y abdomen Hara) y GEDAN (Zona Baja: cadera Koshi, muslos, rodillas Hiza, espinillas Sune y pies Ashi).",
-                        "2. La Cabeza y los Sentidos del Guerrero: La mente tranquila (Mizu no Kokoro) coordina la visión periférica de los ojos (Me / Metsuke) y la escucha atenta (Mimi). El cuello (Kubi) sostiene el eje vertebral y la postura firme (Shisei).",
-                        "3. Las Armas Naturales de los Brazos: La mano vacía (Kara-Te) se adapta según la distancia: Seiken (puño frontal cerrado, apoyado en los dos primeros nudillos), Shuto (mano espada con el canto externo de la palma) y Uraken (dorso flexible como un látigo). A corta distancia, el codo (Empi o Hiji) opera como el ariete más resistente de la anatomía superior.",
-                        "4. El Centro de Energía y el Motor de Potencia: Tres dedos debajo del ombligo se ubica el Hara o Tanden, centro de masa y cuna de la energía vital (Ki) y respiración diafragmática (Ibuki). La cadera (Koshi) es el motor biomecánico: al rotar con precisión (Koshi o ireru), canaliza la fuerza del suelo hacia el impacto.",
-                        "5. Las Piernas, Escudos y Raíces: Las extremidades inferiores garantizan la estabilidad y el desplazamiento (Ashi-sabaki). La espinilla (Sune) sirve de escudo óseo para bloquear patadas bajas, la rodilla (Hiza) impacta de forma demoledora en corta distancia y el talón (Kakato) descarga impactos con masa ósea pura."
+                        "¡Bienvenido al mapa del cuerpo de Kuma Sensei! En Karate-Do, nuestro cuerpo tiene 3 alturas principales (pisos) y muchas herramientas secretas para defenderse:",
+                        "1. Los Tres Pisos del Cuerpo: Arriba está 上段 (JODAN), que cuida la cabeza y rostro. Al medio está 中段 (CHUDAN), donde están el pecho y la pancita. Y abajo está 下段 (GEDAN), para piernas y pies.",
+                        "2. Cabeza y Sentidos: Los ojos 目 (Me) miran todo alrededor con atención (Metsuke), los oídos 耳 (Mimi) escuchan los pasos y la cabeza 頭部 (Atama) piensa con calma.",
+                        "3. Las Manos y Brazos Mágicos: Tu mano se convierte en 正拳 (Seiken - puño cerrado), 手刀 (Shuto - mano espada) y 裏拳 (Uraken - revés rápido). ¡Y el codo 猿臂 (Empi) es durísimo como una roca!",
+                        "4. El Motor Secreto: La fuerza de tus golpes no viene del brazo, ¡viene de girar la cadera 腰 (Koshi) y respirar desde la pancita 腹 / 丹田 (Hara/Tanden)!",
+                        "5. Piernas Fuertes: La rodilla 膝 (Hiza) sube como resorte, la espinilla 脛 (Sune) es tu escudo para bloquear y el pie 足 (Ashi) se enraíza fuerte en el tatami."
                     ],
                     images: [
                         {
                             src: "/images/didactic/kuma_human_body_karate.jpg",
-                            alt: "Mapa Anatómico del Cuerpo Humano en Karate - Kuma Sensei",
-                            caption: "Fig 1. Mapa interactivo del cuerpo humano: Partes anatómicas, alturas y armas naturales en japonés"
+                            alt: "Kuma Sensei Pixar 3D: Mapa del Cuerpo Humano en Karate",
+                            caption: "Fig 1. Mapa anatómico de Kuma Sensei: Partes del cuerpo en japonés y español"
                         },
                         {
-                            src: "/images/kuma-partes-cuerpo.jpg",
-                            alt: "Divisiones corporales Jodan, Chudan y Gedan",
-                            caption: "Fig 2. Cartografía de alturas de combate y áreas de impacto en el Karate tradicional"
+                            src: "/images/didactic/kuma_pixar_alturas_karate.jpg",
+                            alt: "Kuma Sensei Pixar 3D: Las 3 Alturas Jodan, Chudan y Gedan",
+                            caption: "Fig 2. Los tres pisos del cuerpo humano en Karate: Jodan (Alto), Chudan (Medio) y Gedan (Bajo)"
                         }
                     ],
                     bulletPoints: [
                         {
-                            title: "Jodan, Chudan y Gedan: Los Tres Pisos del Cuerpo",
-                            desc: "Jodan resguarda el cerebro y sentidos; Chudan agrupa órganos vitales y respiración; Gedan conecta con la tierra y los desplazamientos.",
-                            badge: "Alturas Sagradas",
+                            title: "Jodan, Chudan y Gedan: Los 3 Pisos",
+                            desc: "Jodan es la cabeza, Chudan el pecho y pancita, y Gedan las piernas y pies.",
+                            badge: "Alturas del Cuerpo",
+                            image: "/images/didactic/kuma_pixar_alturas_karate.jpg"
+                        },
+                        {
+                            title: "Seiken, Empi y Shuto: Armas de la Mano",
+                            desc: "Puño cerrado, mano espada y el codo como un ariete súper duro.",
+                            badge: "Brazos y Manos",
                             image: "/images/didactic/kuma_human_body_karate.jpg"
                         },
                         {
-                            title: "Seiken, Empi y Shuto: Armas de la Mano y el Brazo",
-                            desc: "Alineación biomecánica perfecta de muñeca y codo. En Seiken el golpe contacta con los nudillos índice y medio para evitar lesiones.",
-                            badge: "Armas Superiores",
+                            title: "Koshi y Tanden: El Motor de Poder",
+                            desc: "La fuerza nace al girar la cadera (Koshi) y concentrarse en el abdomen (Tanden).",
+                            badge: "Fuerza y Centro",
                             image: "/images/didactic/kuma_human_body_karate.jpg"
                         },
                         {
-                            title: "Koshi y Tanden: El Motor y Centro de Gravedad",
-                            desc: "Los brazos no golpean con fuerza aislada: la rotación de cadera (Koshi) coordinada desde el bajo vientre (Tanden) transfiere la masa corporal entera.",
-                            badge: "Motor Biomecánico",
-                            image: "/images/didactic/kuma_human_body_karate.jpg"
-                        },
-                        {
-                            title: "Hiza, Sune y Ashi: Escudos y Raíces del Tatami",
-                            desc: "La espinilla (Sune) absorbe impactos como escudo óseo, la rodilla (Hiza) es ariete de corta distancia y el pie (Ashi) enraíza la postura.",
-                            badge: "Base Inferior",
+                            title: "Hiza, Sune y Ashi: Escudos de la Pierna",
+                            desc: "Rodilla para saltar y defender, espinilla como escudo y pie para pisar fuerte.",
+                            badge: "Piernas Fuertes",
                             image: "/images/didactic/kuma_human_body_karate.jpg"
                         }
                     ],
@@ -1134,13 +1134,13 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-1",
                         type: "matching",
-                        prompt: "Para defenderte como un verdadero karateka, debes saber a qué 'piso' del cuerpo se dirige cada técnica. ¡Empareja cada altura en japonés con su zona correspondiente!",
-                        explanation: "上段 (JODAN) corresponde a la zona alta (cabeza y cuello), 中段 (CHUDAN) a la zona media (pecho, costillas y abdomen), y 下段 (GEDAN) a la zona baja (caderas, piernas y pies).",
-                        hint: "上 (Jo) significa alto/arriba, 中 (Chu) significa medio/centro, y 下 (Ge) significa bajo/abajo.",
+                        prompt: "En Karate dividimos el cuerpo en 3 alturas. ¡Empareja cada una con su piso!",
+                        explanation: "¡Eso es! Jodan es arriba (cabeza), Chudan al medio (pecho) y Gedan abajo (piernas y pies).",
+                        hint: "Jo = Alto, Chu = Medio, Ge = Bajo.",
                         pairs: [
-                            { id: "p1", left: "上段 (JODAN)", right: "Zona Alta (Cabeza, Rostro y Cuello)" },
-                            { id: "p2", left: "中段 (CHUDAN)", right: "Zona Media (Pecho, Costillas y Abdomen)" },
-                            { id: "p3", left: "下段 (GEDAN)", right: "Zona Baja (Cadera, Piernas y Pies)" },
+                            { id: "p1", left: "上段 (JODAN)", right: "Zona Alta (Cabeza)" },
+                            { id: "p2", left: "中段 (CHUDAN)", right: "Zona Media (Pecho y Torso)" },
+                            { id: "p3", left: "下段 (GEDAN)", right: "Zona Baja (Piernas y Pies)" },
                         ],
                         references: [
                             {
@@ -1172,7 +1172,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-2",
                         type: "multiple_choice",
-                        prompt: "En un combate a corta distancia donde no hay espacio para estirar el brazo, Kuma Sensei usa la articulación más dura del miembro superior, conocida como 'el ariete'. ¿Cómo se llama el CODO en japonés?",
+                        prompt: "¿Cómo se llama el CODO en japonés? (El arma más dura del brazo para corta distancia)",
                         options: [
                             { id: "o1", text: "猿臂 (Empi / Hiji) - Codo", isCorrect: true },
                             { id: "o2", text: "膝 (Hiza) - Rodilla", isCorrect: false },
@@ -1180,8 +1180,8 @@ export const DIDACTIC_UNITS: Unit[] = [
                             { id: "o4", text: "足 (Ashi) - Pie / Pierna", isCorrect: false },
                         ],
                         correctAnswerId: "o1",
-                        explanation: "猿臂 (Empi, que significa 'vuelo de golondrina') o 肘 (Hiji) designa al codo, una de las armas naturales más sólidas y contundentes de la anatomía humana.",
-                        hint: "膝 (Hiza) es rodilla, 首 (Kubi) es cuello y 足 (Ashi) es pie.",
+                        explanation: "¡Muy bien! 猿臂 (Empi) o 肘 (Hiji) es el codo en japonés, una articulación fuertísima.",
+                        hint: "Hiza es rodilla y Ashi es pie.",
                         references: [
                             {
                                 title: "Karate-Do Kyohan: The Master Text",
@@ -1212,17 +1212,17 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-3",
                         type: "image_choice",
-                        prompt: "Observa la ilustración anatómica de Kuma Sensei (空手道 人体図). ¿Qué términos en japonés corresponden a la CABEZA y al ROSTRO que debemos resguardar siempre con guardia alta?",
+                        prompt: "Mira a Kuma Sensei en la imagen. ¿Qué término señala la CABEZA y el ROSTRO?",
                         image: "/images/didactic/kuma_human_body_karate.jpg",
                         options: [
-                            { id: "o1", text: "頭部 / 面 (Atama / Men) - Cabeza / Rostro", isCorrect: true },
-                            { id: "o2", text: "腰 / 腹 (Koshi / Hara) - Cadera / Abdomen", isCorrect: false },
-                            { id: "o3", text: "脛 / 膝 (Sune / Hiza) - Espinilla / Rodilla", isCorrect: false },
-                            { id: "o4", text: "肩 / 猿臂 (Kata / Empi) - Hombro / Codo", isCorrect: false },
+                            { id: "o1", text: "頭部 / 面 (Atama / Men) - Cabeza y Rostro", isCorrect: true },
+                            { id: "o2", text: "腰 / 腹 (Koshi / Hara) - Cadera y Abdomen", isCorrect: false },
+                            { id: "o3", text: "脛 / 膝 (Sune / Hiza) - Espinilla y Rodilla", isCorrect: false },
+                            { id: "o4", text: "肩 / 猿臂 (Kata / Empi) - Hombro y Codo", isCorrect: false },
                         ],
                         correctAnswerId: "o1",
-                        explanation: "頭部 (Atama) significa cabeza y 面 (Men) hace referencia al rostro en japonés marcial. Por su vulnerabilidad cerebral, exigen absoluto control (寸止め / Sundome).",
-                        hint: "Observa la parte superior del mapa donde se señala 頭部 (Atama).",
+                        explanation: "¡Excelente! 頭部 (Atama) es cabeza y 面 (Men) es el rostro. ¡Siempre debemos protegerlos!",
+                        hint: "Está arriba de todo en el cartel de Kuma Sensei.",
                         references: [
                             {
                                 title: "Bubishi: La Biblia del Karate",
@@ -1253,13 +1253,13 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-4",
                         type: "matching",
-                        prompt: "¡La mano vacía es mágica! Con solo cambiar la colocación de los dedos y muñeca, se transforma en 3 armas anatómicas distintas. ¡Empareja cada nombre con su forma!",
-                        explanation: "正拳 (Seiken) es el puño frontal cerrado (impacto exclusivo con nudillos índice y medio), 手刀 (Shuto) es la mano espada (canto exterior de la palma) y 裏拳 (Uraken) es el dorso del puño usado como látigo.",
-                        hint: "拳 (Ken) significa puño y 刀 (To) significa espada o sable.",
+                        prompt: "¡La mano del karateka se transforma! Empareja cada golpe de mano:",
+                        explanation: "¡Genial! Seiken es el puño cerrado, Shuto la mano espada y Uraken el revés de puño.",
+                        hint: "Ken significa puño y To significa espada.",
                         pairs: [
-                            { id: "p1", left: "正拳 (Seiken)", right: "Puño frontal cerrado (2 primeros nudillos)" },
-                            { id: "p2", left: "手刀 (Shuto)", right: "Mano espada (canto exterior de la palma)" },
-                            { id: "p3", left: "裏拳 (Uraken)", right: "Dorso del puño (revés rápido tipo látigo)" },
+                            { id: "p1", left: "正拳 (Seiken)", right: "Puño frontal cerrado" },
+                            { id: "p2", left: "手刀 (Shuto)", right: "Mano espada (canto abierto)" },
+                            { id: "p3", left: "裏拳 (Uraken)", right: "Dorso del puño (revés rápido)" },
                         ],
                         references: [
                             {
@@ -1291,16 +1291,16 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-5",
                         type: "multiple_choice",
-                        prompt: "Muchos principiantes creen erróneamente que la fuerza de un golpe viene del brazo, pero los maestros saben que el verdadero 'motor' que genera la máxima potencia es la rotación de...",
+                        prompt: "¿De dónde viene la verdadera fuerza de un golpe de karate?",
                         options: [
                             { id: "o1", text: "腰 (Koshi) - La Cadera", isCorrect: true },
                             { id: "o2", text: "耳 (Mimi) - Las Orejas", isCorrect: false },
                             { id: "o3", text: "指 (Yubi) - Los Dedos", isCorrect: false },
-                            { id: "o4", text: "貫手 (Nukite) - Mano Lanza", isCorrect: false },
+                            { id: "o4", text: "鼻 (Hana) - La Nariz", isCorrect: false },
                         ],
                         correctAnswerId: "o1",
-                        explanation: "En Karate, el principio de 'Koshi o ireru' (meter la cadera 腰) enseña que la fuerza no nace en los brazos, sino en la rotación pélvica de la cadera, que canaliza el peso corporal desde el suelo.",
-                        hint: "Es la articulación pélvica central que une el tronco con las piernas.",
+                        explanation: "¡Correcto! La fuerza nace al girar la cadera (Koshi), no solo de los brazos.",
+                        hint: "Es la articulación de la cintura que gira con fuerza.",
                         references: [
                             {
                                 title: "The Twenty Guiding Principles of Karate",
@@ -1331,13 +1331,13 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-6",
                         type: "matching",
-                        prompt: "Tus miembros inferiores son tus cimientos y tus escudos de defensa personal. Relaciona cada parte de la pierna con su término en japonés:",
-                        explanation: "膝 (Hiza) es la rodilla (ariete ascendente a corta distancia), 脛 (Sune) es la espinilla (escudo óseo de bloqueo bajo) y 踵 (Kakato) es el talón (base dura de impacto para patadas).",
-                        hint: "Hiza se usa en Mae Hiza Geri, y Kakato en Yoko Geri.",
+                        prompt: "¡Tus piernas también son escudos y arietes! Empareja cada parte:",
+                        explanation: "¡Perfecto! Hiza es la rodilla, Sune la espinilla de escudo y Kakato el talón duro.",
+                        hint: "Hiza se usa en los rodillazos de karate.",
                         pairs: [
-                            { id: "p1", left: "膝 (Hiza)", right: "Rodilla (ariete de impacto ascendente)" },
-                            { id: "p2", left: "脛 (Sune)", right: "Espinilla (escudo óseo para bloquear patadas)" },
-                            { id: "p3", left: "踵 (Kakato)", right: "Talón (base dura y sólida del pie)" },
+                            { id: "p1", left: "膝 (Hiza)", right: "Rodilla" },
+                            { id: "p2", left: "脛 (Sune)", right: "Espinilla" },
+                            { id: "p3", left: "踵 (Kakato)", right: "Talón" },
                         ],
                         references: [
                             {
@@ -1369,13 +1369,13 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-7",
                         type: "matching",
-                        prompt: "Un karateka no solo pelea con puños: primero 've y escucha' el peligro con sus sentidos antes de que el ataque empiece. ¡Empareja cada órgano con su término en japonés!",
-                        explanation: "目 (Me) son los ojos (clave para la visión panorámica 目付け / Metsuke), 耳 (Mimi) son los oídos (alerta acústica del entorno) y 首 (Kubi) es el cuello (eje de soporte y rotación de la cabeza).",
-                        hint: "Metsuke significa 'fijar la mirada' con los ojos (目 / Me).",
+                        prompt: "Un karateka siempre está muy atento. Empareja cada sentido del cuerpo:",
+                        explanation: "¡Bien hecho! Me son los ojos para ver, Mimi los oídos para escuchar y Kubi el cuello.",
+                        hint: "Metsuke es la mirada atenta con los ojos (Me).",
                         pairs: [
-                            { id: "p1", left: "目 (Me)", right: "Ojos (visión panorámica / Metsuke)" },
-                            { id: "p2", left: "耳 (Mimi)", right: "Oídos (alerta auditiva del entorno)" },
-                            { id: "p3", left: "首 (Kubi)", right: "Cuello (soporte y eje vertebral)" },
+                            { id: "p1", left: "目 (Me)", right: "Ojos (Visión alerta)" },
+                            { id: "p2", left: "耳 (Mimi)", right: "Oídos (Escucha atenta)" },
+                            { id: "p3", left: "首 (Kubi)", right: "Cuello (Soporte de la cabeza)" },
                         ],
                         references: [
                             {
@@ -1407,10 +1407,10 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-8",
                         type: "true_false",
-                        prompt: "¿Verdadero o Falso? En el Karate-Do, el 腹 / 丹田 (Hara / Tanden) se localiza en el bajo vientre (unos tres dedos bajo el ombligo) y se considera el centro de gravedad del cuerpo humano, la raíz del equilibrio y la cuna de la energía vital (気 / Ki).",
-                        explanation: "¡Totalmente Verdadero! El 丹田 (Tanden) o 腹 (Hara) es el centro de masa corporal de la anatomía humana. Desde este punto se sincroniza la respiración diafragmática (息吹 / Ibuki), el equilibrio corporal y la energía marcial.",
+                        prompt: "¿Verdadero o Falso? El 腹 (Hara / Tanden) está en la pancita y es el centro de equilibrio del karateka.",
+                        explanation: "¡Verdadero! El Hara o Tanden en el bajo abdomen es el centro de equilibrio y respiración profunda.",
                         correctBool: true,
-                        hint: "Es el punto que siempre se busca mantener bajo y enraizado para no perder el equilibrio.",
+                        hint: "Queda unos deditos debajo del ombligo.",
                         references: [
                             {
                                 title: "Karate-Do Kyohan: The Master Text",
@@ -1441,16 +1441,16 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-9",
                         type: "multiple_choice",
-                        prompt: "En el dojo, el sensei da la orden de practicar 'Ashi-Sabaki' (足捌き). ¿A qué parte fundamental del cuerpo humano nos estamos refiriendo cuando decimos 足 (Ashi)?",
+                        prompt: "Cuando el Sensei dice '¡Ashi!' en el tatami, ¿a qué parte se refiere?",
                         options: [
-                            { id: "o1", text: "足 (Ashi) - El Pie / Pierna (base del desplazamiento)", isCorrect: true },
-                            { id: "o2", text: "肩 (Kata) - El Hombro", isCorrect: false },
-                            { id: "o3", text: "胸 (Mune) - El Pecho", isCorrect: false },
-                            { id: "o4", text: "鼻 (Hana) - La Nariz", isCorrect: false },
+                            { id: "o1", text: "足 (Ashi) - Pie / Pierna", isCorrect: true },
+                            { id: "o2", text: "肩 (Kata) - Hombro", isCorrect: false },
+                            { id: "o3", text: "胸 (Mune) - Pecho", isCorrect: false },
+                            { id: "o4", text: "耳 (Mimi) - Oreja", isCorrect: false },
                         ],
                         correctAnswerId: "o1",
-                        explanation: "足 (Ashi) significa pie o pierna en japonés. 足捌き (Ashi-sabaki) es el arte marcial del juego y desplazamiento de pies, vital para dominar la distancia (間合い / Ma-ai).",
-                        hint: "Es la parte con la que pisas el tatami y te desplazas en guardia.",
+                        explanation: "¡Así es! 足 (Ashi) significa pie o pierna, la base para caminar y desplazarse en el dojo.",
+                        hint: "Es con lo que pisas fuerte el tatami.",
                         references: [
                             {
                                 title: "Karate Dinámico: Movimiento de Pies (Ashi-sabaki)",
@@ -1481,13 +1481,13 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-10",
                         type: "matching",
-                        prompt: "Para lograr la postura perfecta y digna del karateka (姿勢 / Shisei), la espalda debe estar erguida, el pecho abierto y los hombros relajados sin tensión. ¡Empareja cada parte del tronco en japonés con su traducción!",
-                        explanation: "胸 (Mune) es el pecho (abierto para permitir respirar con fluidez), 背中 (Senaka) es la espalda (con la columna vertebral recta y firme) y 肩 (Kata) son los hombros (relajados y descendidos para no trabar los golpes).",
-                        hint: "Kata nombra a las formas preestablecidas (型), pero como parte anatómica (肩) significa hombro.",
+                        prompt: "Para pararte derechito como un karateka (Shisei), empareja el tronco:",
+                        explanation: "¡Excelente! Pecho abierto (Mune), espalda recta (Senaka) y hombros abajo (Kata).",
+                        hint: "Mune es pecho y Senaka espalda.",
                         pairs: [
-                            { id: "p1", left: "胸 (Mune)", right: "Pecho (abierto para respirar sin rigidez)" },
-                            { id: "p2", left: "背中 (Senaka)", right: "Espalda (columna recta, firme y erguida)" },
-                            { id: "p3", left: "肩 (Kata)", right: "Hombros (relajados y descendidos)" },
+                            { id: "p1", left: "胸 (Mune)", right: "Pecho (abierto sin tensión)" },
+                            { id: "p2", left: "背中 (Senaka)", right: "Espalda (columna derechita)" },
+                            { id: "p3", left: "肩 (Kata)", right: "Hombros (relajados)" },
                         ],
                         references: [
                             {
