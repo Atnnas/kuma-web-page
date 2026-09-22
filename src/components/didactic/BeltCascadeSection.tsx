@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Unit, Level, BeltRank, UserDidacticProgress, BeltRankId } from "@/types/didactica";
 import {
@@ -636,6 +637,9 @@ export function BeltCascadeSection({
     hasNewQuestions = false,
     updatedLevelIds = [],
 }: BeltCascadeSectionProps) {
+    const { data: session } = useSession();
+    const isSuperAdmin = Boolean(session?.user && (session.user as any).role === "super_admin");
+
     const isDan = belt.category === "dan";
     const isWhiteBelt = belt.category === "kyu" && belt.levelNumber === 10;
     const beltLevels = unit.levels;
@@ -651,6 +655,7 @@ export function BeltCascadeSection({
 
     // Check unlock state for levels within this belt (only relevant if the belt itself is unlocked)
     const isLevelUnlocked = (level: Level) => {
+        if (isSuperAdmin) return true; // Super admin can inspect and test all levels
         if (!isBeltUnlocked) return false;
         const globalIdx = allPathLevels.findIndex((l) => l.id === level.id);
         if (globalIdx <= 0) return true; // Very first level of 10° Kyu is always unlocked

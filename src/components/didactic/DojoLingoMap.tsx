@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DIDACTIC_UNITS } from "@/data/didacticaData";
 import { PathType, Level, UserDidacticProgress, BeltRankId, MascotMood } from "@/types/didactica";
@@ -54,6 +55,9 @@ export function DojoLingoMap({
     updatedUnitIds = [],
     updatedLevelIds = [],
 }: DojoLingoMapProps) {
+    const { data: session } = useSession();
+    const isSuperAdmin = Boolean(session?.user && (session.user as any).role === "super_admin");
+
     const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
     const [theoryLevel, setTheoryLevel] = useState<Level | null>(null);
     const [wkfColor, setWkfColor] = useState<"red" | "blue">(() => (Math.random() < 0.5 ? "red" : "blue"));
@@ -357,7 +361,7 @@ export function DojoLingoMap({
                                     : true;
                                 const currentBeltStarted = unit.levels.some((l) => progress.completedLevelIds.includes(l.id));
 
-                                const isBeltUnlocked = isFirstBelt || prevBeltWon || currentBeltStarted;
+                                const isBeltUnlocked = isSuperAdmin || isFirstBelt || prevBeltWon || currentBeltStarted;
 
                                 const nextUnit = idx < tradUnits.length - 1 ? tradUnits[idx + 1] : null;
                                 const nextBelt = nextUnit ? getBeltRank(nextUnit.beltId || "") : null;

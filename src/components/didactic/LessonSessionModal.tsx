@@ -889,6 +889,16 @@ function shuffleArray<T>(array: T[]): T[] {
                                 {/* MATCHING WITH SOLID CONNECTING CARDS */}
                                 {currentQuestion.type === "matching" && currentQuestion.pairs && (
                                     <div className="space-y-2.5">
+                                        {isSuperAdmin && (
+                                            <div className="p-2.5 rounded-xl bg-amber-950/60 border border-[#FFC800]/40 text-amber-200 text-xs flex items-center gap-2 flex-wrap mb-2 shadow-sm">
+                                                <span className="font-bold text-[#FFC800]">🛡️ [Pares Correctos Super Admin]:</span>
+                                                {currentQuestion.pairs.map((p) => (
+                                                    <span key={p.id} className="bg-black/50 px-2 py-0.5 rounded border border-white/10 text-[11px]">
+                                                        {p.left} ➔ <strong className="text-white">{p.right}</strong>
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
                                         <p className="text-xs text-slate-400 italic">
                                             Toca un concepto en japonés a la izquierda y su traducción a la derecha:
                                         </p>
