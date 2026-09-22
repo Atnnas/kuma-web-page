@@ -66,6 +66,34 @@ interface WaterRipple {
     lineWidth: number;
 }
 
+interface SplashDroplet {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    vz: number;
+    z: number;
+    radius: number;
+    alpha: number;
+    gravity: number;
+}
+
+interface Firefly {
+    x: number;
+    y: number;
+    z: number; // 0.2 a 1.0 (altitud sobre agua)
+    vx: number;
+    vy: number;
+    size: number;
+    pulsePhase: number;
+    pulseSpeed: number;
+    hue: number; // 60 a 90 (oro cálido a verde lima hotaru)
+    alpha: number;
+    targetAlpha: number;
+    life: number;
+    maxLife: number;
+}
+
 interface LilyPad {
     xRatio: number;
     yRatio: number;
@@ -74,6 +102,35 @@ interface LilyPad {
     notchAngle: number;
     driftSpeed: number;
     driftPhase: number;
+    // Dinámica reactiva de estela de peces y corriente
+    offsetX: number;
+    offsetY: number;
+    velX: number;
+    velY: number;
+    dewDroplets: { relX: number; relY: number; r: number }[];
+}
+
+interface PondFrog {
+    state: "perched" | "crouching" | "jumping" | "diving" | "hidden";
+    currentPadIndex: number;
+    targetPadIndex: number;
+    x: number;
+    y: number;
+    startX: number;
+    startY: number;
+    targetX: number;
+    targetY: number;
+    jumpProgress: number; // 0 a 1
+    jumpDuration: number;
+    jumpAltitude: number; // elevación parabólica z
+    angle: number;
+    breathPhase: number;
+    blinkTimer: number;
+    isBlinking: boolean;
+    idleTimer: number;
+    crouchTimer: number;
+    diveTimer: number;
+    size: number;
 }
 
 export function KoiPondCanvas({
@@ -396,13 +453,206 @@ export function KoiPondCanvas({
         // NENÚFARES Y HOJAS DE LOTO FLOTANTES (JARDÍN JAPONÉS)
         // ====================================================================
         const lilyPads: LilyPad[] = [
-            { xRatio: 0.09, yRatio: 0.16, radius: 52, angle: 0.4, notchAngle: 0.65, driftSpeed: 0.0006, driftPhase: 0 },
-            { xRatio: 0.89, yRatio: 0.22, radius: 58, angle: 1.8, notchAngle: 0.72, driftSpeed: 0.0005, driftPhase: 2.1 },
-            { xRatio: 0.15, yRatio: 0.78, radius: 64, angle: 3.2, notchAngle: 0.68, driftSpeed: 0.0007, driftPhase: 4.2 },
-            { xRatio: 0.86, yRatio: 0.84, radius: 50, angle: 4.5, notchAngle: 0.75, driftSpeed: 0.0004, driftPhase: 1.2 },
-            { xRatio: 0.05, yRatio: 0.48, radius: 40, angle: 2.3, notchAngle: 0.62, driftSpeed: 0.0008, driftPhase: 3.5 },
-            { xRatio: 0.93, yRatio: 0.54, radius: 46, angle: 5.1, notchAngle: 0.7, driftSpeed: 0.0005, driftPhase: 5.1 },
+            {
+                xRatio: 0.09,
+                yRatio: 0.16,
+                radius: 54,
+                angle: 0.4,
+                notchAngle: 0.65,
+                driftSpeed: 0.0006,
+                driftPhase: 0,
+                offsetX: 0,
+                offsetY: 0,
+                velX: 0,
+                velY: 0,
+                dewDroplets: [
+                    { relX: -14, relY: -10, r: 2.8 },
+                    { relX: 16, relY: 12, r: 3.4 },
+                    { relX: -8, relY: 18, r: 2.0 },
+                    { relX: 18, relY: -14, r: 2.2 },
+                ],
+            },
+            {
+                xRatio: 0.89,
+                yRatio: 0.22,
+                radius: 58,
+                angle: 1.8,
+                notchAngle: 0.72,
+                driftSpeed: 0.0005,
+                driftPhase: 2.1,
+                offsetX: 0,
+                offsetY: 0,
+                velX: 0,
+                velY: 0,
+                dewDroplets: [
+                    { relX: -18, relY: 8, r: 3.5 },
+                    { relX: 12, relY: -16, r: 2.4 },
+                    { relX: 15, relY: 15, r: 2.8 },
+                ],
+            },
+            {
+                xRatio: 0.15,
+                yRatio: 0.78,
+                radius: 64,
+                angle: 3.2,
+                notchAngle: 0.68,
+                driftSpeed: 0.0007,
+                driftPhase: 4.2,
+                offsetX: 0,
+                offsetY: 0,
+                velX: 0,
+                velY: 0,
+                dewDroplets: [
+                    { relX: -12, relY: -20, r: 4.0 },
+                    { relX: 20, relY: -8, r: 2.6 },
+                    { relX: -22, relY: 14, r: 3.1 },
+                    { relX: 10, relY: 22, r: 2.2 },
+                ],
+            },
+            {
+                xRatio: 0.86,
+                yRatio: 0.84,
+                radius: 52,
+                angle: 4.5,
+                notchAngle: 0.75,
+                driftSpeed: 0.0004,
+                driftPhase: 1.2,
+                offsetX: 0,
+                offsetY: 0,
+                velX: 0,
+                velY: 0,
+                dewDroplets: [
+                    { relX: -15, relY: -12, r: 3.2 },
+                    { relX: 14, relY: 14, r: 2.5 },
+                ],
+            },
+            {
+                xRatio: 0.05,
+                yRatio: 0.48,
+                radius: 42,
+                angle: 2.3,
+                notchAngle: 0.62,
+                driftSpeed: 0.0008,
+                driftPhase: 3.5,
+                offsetX: 0,
+                offsetY: 0,
+                velX: 0,
+                velY: 0,
+                dewDroplets: [
+                    { relX: -10, relY: 10, r: 2.5 },
+                    { relX: 12, relY: -8, r: 2.8 },
+                ],
+            },
+            {
+                xRatio: 0.93,
+                yRatio: 0.54,
+                radius: 48,
+                angle: 5.1,
+                notchAngle: 0.7,
+                driftSpeed: 0.0005,
+                driftPhase: 5.1,
+                offsetX: 0,
+                offsetY: 0,
+                velX: 0,
+                velY: 0,
+                dewDroplets: [
+                    { relX: -12, relY: -14, r: 3.0 },
+                    { relX: 15, relY: 10, r: 2.6 },
+                ],
+            },
         ];
+
+        // ====================================================================
+        // LUCIÉRNAGAS ZEN (HOTARU 蛍) - LUCES BIOLUMINISCENTES VOLADORAS
+        // ====================================================================
+        const fireflyCount = 12;
+        const fireflies: Firefly[] = [];
+
+        const resetFirefly = (f: Firefly, initial = false) => {
+            f.x = Math.random() * (width || window.innerWidth);
+            f.y = Math.random() * (height || window.innerHeight);
+            f.z = 0.25 + Math.random() * 0.75;
+            f.vx = (Math.random() - 0.5) * 0.45;
+            f.vy = (Math.random() - 0.5) * 0.45;
+            f.size = 2.2 + Math.random() * 1.6;
+            f.pulsePhase = Math.random() * Math.PI * 2;
+            f.pulseSpeed = 0.035 + Math.random() * 0.03;
+            // Tonos tradicionales Hotaru: oro ámbar cálido (60-70) a verde lima radiante (75-88)
+            f.hue = 62 + Math.random() * 26;
+            f.alpha = initial ? Math.random() * 0.8 : 0;
+            f.targetAlpha = 0.65 + Math.random() * 0.35;
+            f.maxLife = 350 + Math.floor(Math.random() * 450);
+            f.life = initial ? Math.floor(Math.random() * f.maxLife) : 0;
+        };
+
+        for (let i = 0; i < fireflyCount; i++) {
+            const f: Firefly = {
+                x: 0,
+                y: 0,
+                z: 0.5,
+                vx: 0,
+                vy: 0,
+                size: 3,
+                pulsePhase: 0,
+                pulseSpeed: 0.04,
+                hue: 75,
+                alpha: 0,
+                targetAlpha: 0.8,
+                life: 0,
+                maxLife: 400,
+            };
+            resetFirefly(f, true);
+            fireflies.push(f);
+        }
+
+        // ====================================================================
+        // GOTAS DE SALPICADURA DE AGUA (WATER SPLASH PARTICLES)
+        // ====================================================================
+        const splashDroplets: SplashDroplet[] = [];
+
+        const spawnSplash = (x: number, y: number, count = 12) => {
+            for (let i = 0; i < count; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const spd = 1.2 + Math.random() * 2.8;
+                splashDroplets.push({
+                    x,
+                    y,
+                    vx: Math.cos(ang) * spd,
+                    vy: Math.sin(ang) * spd * 0.75,
+                    vz: 3.5 + Math.random() * 4.2,
+                    z: 0,
+                    radius: 1.2 + Math.random() * 1.8,
+                    alpha: 0.9,
+                    gravity: 0.22,
+                });
+            }
+        };
+
+        // ====================================================================
+        // RANA JAPONESA DE ÁRBOL PROCEDURAL (NIHON AMAGAERU 蛙)
+        // ====================================================================
+        const frog: PondFrog = {
+            state: "perched",
+            currentPadIndex: 1,
+            targetPadIndex: 1,
+            x: 0,
+            y: 0,
+            startX: 0,
+            startY: 0,
+            targetX: 0,
+            targetY: 0,
+            jumpProgress: 0,
+            jumpDuration: 46,
+            jumpAltitude: 95,
+            angle: -0.4,
+            breathPhase: 0,
+            blinkTimer: 160 + Math.floor(Math.random() * 160),
+            isBlinking: false,
+            idleTimer: 240 + Math.floor(Math.random() * 200), // Salta cada 15 a 30s
+            crouchTimer: 0,
+            diveTimer: 0,
+            size: 0.95,
+        };
 
         // ====================================================================
         // EVENTOS INTERACTIVOS (MOUSE & TOUCH)
@@ -427,6 +677,16 @@ export function KoiPondCanvas({
 
             addRipple(px, py, 115, 1.4);
             setTimeout(() => addRipple(px, py, 75, 1.1), 160);
+
+            // Interacción táctil: asustar a la rana posada para que salte
+            if (frog.state === "perched") {
+                const distToFrog = Math.hypot(px - frog.x, py - frog.y);
+                if (distToFrog < 75) {
+                    frog.idleTimer = 0;
+                    frog.crouchTimer = 12;
+                    frog.state = "crouching";
+                }
+            }
 
             fishes.forEach((fish) => {
                 const dx = fish.x - px;
@@ -582,13 +842,229 @@ export function KoiPondCanvas({
                 drawEtherealKoi(ctx, fish, false);
             });
 
-            // Nenúfares en superficie
-            lilyPads.forEach((pad) => {
-                const px = pad.xRatio * width + Math.sin(tick * pad.driftSpeed + pad.driftPhase) * 18;
-                const py = pad.yRatio * height + Math.cos(tick * pad.driftSpeed + pad.driftPhase) * 15;
-                const rot = pad.angle + Math.sin(tick * 0.0008 + pad.driftPhase) * 0.08;
+            // ================================================================
+            // 6. NENÚFARES EN SUPERFICIE CON DINÁMICA DE ESTELA Y ROCÍO
+            // ================================================================
+            const padPositions: { x: number; y: number; pad: LilyPad }[] = [];
 
-                drawLilyPad(ctx, px, py, pad.radius, rot, pad.notchAngle);
+            lilyPads.forEach((pad) => {
+                // Oleaje orgánico multi-frecuencia
+                const currentX =
+                    Math.sin(tick * pad.driftSpeed + pad.driftPhase) * 18 +
+                    Math.sin(tick * pad.driftSpeed * 2.7 + pad.driftPhase) * 5;
+                const currentY =
+                    Math.cos(tick * pad.driftSpeed + pad.driftPhase) * 15 +
+                    Math.cos(tick * pad.driftSpeed * 2.1 + pad.driftPhase) * 4;
+
+                const basePosX = pad.xRatio * width + currentX;
+                const basePosY = pad.yRatio * height + currentY;
+
+                // Interacción reactiva: estela de los peces koi empuja suavemente las hojas flotantes
+                fishes.forEach((fish) => {
+                    const fdx = basePosX - fish.x;
+                    const fdy = basePosY - fish.y;
+                    const fdist = Math.hypot(fdx, fdy);
+                    if (fdist < pad.radius + 38 && fdist > 1) {
+                        const pushStrength = (1 - fdist / (pad.radius + 38)) * (fish.speed / fish.baseSpeed) * 0.16;
+                        pad.velX += (fdx / fdist) * pushStrength;
+                        pad.velY += (fdy / fdist) * pushStrength;
+                    }
+                });
+
+                // Fricción y resorte amortiguado
+                pad.velX *= 0.94;
+                pad.velY *= 0.94;
+                pad.offsetX = (pad.offsetX + pad.velX) * 0.95;
+                pad.offsetY = (pad.offsetY + pad.velY) * 0.95;
+
+                const finalX = basePosX + pad.offsetX;
+                const finalY = basePosY + pad.offsetY;
+                const rot = pad.angle + Math.sin(tick * 0.0008 + pad.driftPhase) * 0.12;
+
+                drawLilyPad(ctx, finalX, finalY, pad.radius, rot, pad.notchAngle, pad.dewDroplets, tick);
+
+                padPositions.push({ x: finalX, y: finalY, pad });
+            });
+
+            // ================================================================
+            // 7. RANA JAPONESA DE ÁRBOL PROCEDURAL (NIHON AMAGAERU 蛙)
+            // ================================================================
+            const currentPadPos = padPositions[frog.currentPadIndex] || padPositions[0];
+
+            if (currentPadPos) {
+                if (frog.state === "perched") {
+                    // Se mantiene anclada con gracia al nenúfar que flota
+                    frog.x = currentPadPos.x + 6;
+                    frog.y = currentPadPos.y + 4;
+                    frog.breathPhase += 0.075;
+
+                    // Parpadeo espontáneo
+                    frog.blinkTimer--;
+                    if (frog.blinkTimer <= 0) {
+                        frog.isBlinking = true;
+                        if (frog.blinkTimer < -10) {
+                            frog.isBlinking = false;
+                            frog.blinkTimer = 180 + Math.floor(Math.random() * 200);
+                        }
+                    }
+
+                    // Temporizador para el salto Zen espontáneo (Bashō: kawazu tobikomu mizu no oto)
+                    frog.idleTimer--;
+                    if (frog.idleTimer <= 0) {
+                        frog.state = "crouching";
+                        frog.crouchTimer = 22; // Preparación muscular
+                    }
+                } else if (frog.state === "crouching") {
+                    frog.x = currentPadPos.x + 6;
+                    frog.y = currentPadPos.y + 4;
+                    frog.crouchTimer--;
+
+                    // Al agazaparse, determina el destino del salto
+                    if (frog.crouchTimer <= 0) {
+                        const diveIntoPond = Math.random() < 0.35; // 35% de bucear al estanque
+                        if (diveIntoPond || padPositions.length < 2) {
+                            // Salta hacia un área despejada de agua zen
+                            const angleSpread = (Math.random() - 0.5) * Math.PI * 0.8;
+                            const jumpDist = 90 + Math.random() * 80;
+                            frog.targetX = Math.max(60, Math.min(width - 60, frog.x + Math.cos(frog.angle + angleSpread) * jumpDist));
+                            frog.targetY = Math.max(60, Math.min(height - 60, frog.y + Math.sin(frog.angle + angleSpread) * jumpDist));
+                            frog.targetPadIndex = -1; // Marcador de agua abierta
+                        } else {
+                            // Salta hacia otro nenúfar
+                            let nextPadIdx = (frog.currentPadIndex + 1 + Math.floor(Math.random() * (padPositions.length - 1))) % padPositions.length;
+                            if (nextPadIdx === frog.currentPadIndex) nextPadIdx = (nextPadIdx + 1) % padPositions.length;
+                            frog.targetPadIndex = nextPadIdx;
+                            frog.targetX = padPositions[nextPadIdx].x + 4;
+                            frog.targetY = padPositions[nextPadIdx].y + 4;
+                        }
+
+                        frog.startX = frog.x;
+                        frog.startY = frog.y;
+                        frog.jumpProgress = 0;
+                        frog.angle = Math.atan2(frog.targetY - frog.startY, frog.targetX - frog.startX);
+                        frog.state = "jumping";
+
+                        // Impulso de despegue y ondas
+                        addRipple(frog.x, frog.y, 45, 1.2);
+                        currentPadPos.pad.velX -= Math.cos(frog.angle) * 1.6;
+                        currentPadPos.pad.velY -= Math.sin(frog.angle) * 1.6;
+                    }
+                } else if (frog.state === "jumping") {
+                    frog.jumpProgress += 0.024; // ~42 fotogramas de vuelo parabólico
+                    if (frog.jumpProgress >= 1) {
+                        frog.jumpProgress = 1;
+                        frog.x = frog.targetX;
+                        frog.y = frog.targetY;
+
+                        if (frog.targetPadIndex >= 0 && padPositions[frog.targetPadIndex]) {
+                            // Aterrizaje suave sobre otro nenúfar
+                            frog.currentPadIndex = frog.targetPadIndex;
+                            frog.state = "perched";
+                            frog.idleTimer = 400 + Math.floor(Math.random() * 450); // 15 a 30s de calma
+                            addRipple(frog.x, frog.y, 42, 1.0);
+                            padPositions[frog.targetPadIndex].pad.velY += 1.8;
+                        } else {
+                            // ¡Zambullida en el estanque! (Bashō)
+                            frog.state = "diving";
+                            frog.diveTimer = 280 + Math.floor(Math.random() * 320); // 10 a 20s bajo el agua
+                            addRipple(frog.x, frog.y, 95, 1.5);
+                            setTimeout(() => addRipple(frog.x, frog.y, 65, 1.1), 140);
+                            spawnSplash(frog.x, frog.y, 14);
+                        }
+                    } else {
+                        frog.x = frog.startX + (frog.targetX - frog.startX) * frog.jumpProgress;
+                        frog.y = frog.startY + (frog.targetY - frog.startY) * frog.jumpProgress;
+                    }
+                } else if (frog.state === "diving") {
+                    frog.diveTimer--;
+                    if (frog.diveTimer <= 0) {
+                        // Emerge pacíficamente sobre un nenúfar aleatorio
+                        const newPadIdx = Math.floor(Math.random() * padPositions.length);
+                        frog.currentPadIndex = newPadIdx;
+                        frog.x = padPositions[newPadIdx].x + 6;
+                        frog.y = padPositions[newPadIdx].y + 4;
+                        frog.angle = (Math.random() - 0.5) * Math.PI;
+                        frog.state = "perched";
+                        frog.idleTimer = 350 + Math.floor(Math.random() * 350);
+                        addRipple(frog.x, frog.y, 50, 1.1);
+                    }
+                }
+
+                // Dibujar la rana si no está sumergida
+                if (frog.state !== "diving") {
+                    const altitude =
+                        frog.state === "jumping"
+                            ? Math.sin(frog.jumpProgress * Math.PI) * frog.jumpAltitude
+                            : 0;
+                    drawProceduralFrog(
+                        ctx,
+                        frog.x,
+                        frog.y,
+                        altitude,
+                        frog.angle,
+                        frog.state,
+                        frog.jumpProgress,
+                        frog.breathPhase,
+                        frog.isBlinking,
+                        frog.size
+                    );
+                }
+            }
+
+            // ================================================================
+            // 8. GOTAS DE SALPICADURA DE AGUA (WATER SPLASH PARTICLES)
+            // ================================================================
+            for (let s = splashDroplets.length - 1; s >= 0; s--) {
+                const d = splashDroplets[s];
+                d.x += d.vx;
+                d.y += d.vy;
+                d.z += d.vz;
+                d.vz -= d.gravity;
+                d.alpha -= 0.024;
+
+                if (d.alpha <= 0.01 || (d.z <= 0 && d.vz < 0)) {
+                    if (d.z <= 0) addRipple(d.x, d.y, 15, 0.8);
+                    splashDroplets.splice(s, 1);
+                    continue;
+                }
+
+                drawSplashDroplet(ctx, d);
+            }
+
+            // ================================================================
+            // 9. LUCIÉRNAGAS ZEN (HOTARU 蛍) - LUCES BIOLUMINISCENTES
+            // ================================================================
+            fireflies.forEach((f) => {
+                f.life++;
+                f.pulsePhase += f.pulseSpeed;
+
+                // Vuelo orgánico suave y tridimensional
+                f.vx += (Math.random() - 0.5) * 0.08;
+                f.vy += (Math.random() - 0.5) * 0.08;
+                f.vx = Math.max(-0.65, Math.min(0.65, f.vx));
+                f.vy = Math.max(-0.65, Math.min(0.65, f.vy));
+
+                f.x += f.vx;
+                f.y += f.vy;
+
+                // Ondulación vertical suave en el aire
+                f.z = Math.max(0.2, Math.min(1.0, f.z + Math.sin(tick * 0.02 + f.pulsePhase) * 0.006));
+
+                // Desvanecimiento suave en nacimiento y fin de vida
+                if (f.life < 60) {
+                    f.alpha = (f.life / 60) * f.targetAlpha;
+                } else if (f.life > f.maxLife - 60) {
+                    f.alpha = Math.max(0, ((f.maxLife - f.life) / 60) * f.targetAlpha);
+                } else {
+                    f.alpha = f.targetAlpha;
+                }
+
+                // Reiniciar si sale del estanque o expira vida
+                if (f.life >= f.maxLife || f.x < -40 || f.x > width + 40 || f.y < -40 || f.y > height + 40) {
+                    resetFirefly(f);
+                }
+
+                drawFirefly(ctx, f, tick);
             });
 
             animationFrameId = requestAnimationFrame(render);
@@ -1127,7 +1603,7 @@ export function KoiPondCanvas({
         }
 
         // ====================================================================
-        // DIBUJO DE NENÚFARES (LILY PADS FLOTANTES)
+        // DIBUJO DE NENÚFARES (LILY PADS FLOTANTES CON ROCÍO ASATSUYU)
         // ====================================================================
         function drawLilyPad(
             c: CanvasRenderingContext2D,
@@ -1135,51 +1611,509 @@ export function KoiPondCanvas({
             y: number,
             radius: number,
             rotation: number,
-            notchWidth = 0.65
+            notchWidth = 0.65,
+            dewDroplets: { relX: number; relY: number; r: number }[] = [],
+            tick = 0
         ) {
             c.save();
             c.translate(x, y);
 
+            // Sombra suave en el lecho del estanque
             c.beginPath();
             c.arc(12, 18, radius, 0, Math.PI * 2);
-            c.fillStyle = "rgba(0, 5, 14, 0.25)";
+            c.fillStyle = "rgba(0, 5, 14, 0.28)";
             c.fill();
+
+            // Halo acuático sutil de contacto superficial
+            c.beginPath();
+            c.arc(0, 0, radius + 2, 0, Math.PI * 2);
+            c.strokeStyle = "rgba(56, 189, 248, 0.12)";
+            c.lineWidth = 3;
+            c.stroke();
 
             c.rotate(rotation);
 
             const startAngle = notchWidth * 0.5;
             const endAngle = Math.PI * 2 - notchWidth * 0.5;
 
+            // Borde orgánico con leves ondulaciones
             c.beginPath();
             c.moveTo(0, 0);
-            c.arc(0, 0, radius, startAngle, endAngle);
+            const steps = 36;
+            for (let i = 0; i <= steps; i++) {
+                const a = startAngle + (endAngle - startAngle) * (i / steps);
+                const lobe = radius + Math.sin(a * 7) * 1.4;
+                const px = Math.cos(a) * lobe;
+                const py = Math.sin(a) * lobe;
+                c.lineTo(px, py);
+            }
             c.closePath();
 
-            const padGrad = c.createRadialGradient(0, 0, radius * 0.2, 0, 0, radius);
-            padGrad.addColorStop(0, "#15803D");
-            padGrad.addColorStop(0.7, "#14532D");
-            padGrad.addColorStop(1, "#052E16");
+            const padGrad = c.createRadialGradient(0, 0, radius * 0.15, 0, 0, radius);
+            padGrad.addColorStop(0, "#16A34A"); // Verde esmeralda vivo
+            padGrad.addColorStop(0.55, "#15803D");
+            padGrad.addColorStop(0.85, "#14532D");
+            padGrad.addColorStop(1, "#052E16"); // Verde bosque zen profundo
             c.fillStyle = padGrad;
             c.fill();
 
-            c.strokeStyle = "rgba(134, 239, 172, 0.25)";
+            // Ribete exterior verde lima
+            c.strokeStyle = "rgba(134, 239, 172, 0.32)";
             c.lineWidth = 1.5;
             c.stroke();
 
-            c.strokeStyle = "rgba(187, 247, 208, 0.16)";
+            // Nervaduras radiales orgánicas
+            c.strokeStyle = "rgba(187, 247, 208, 0.2)";
             c.lineWidth = 1;
-            const numVeins = 7;
+            const numVeins = 8;
             for (let v = 0; v < numVeins; v++) {
                 const vAngle = startAngle + (endAngle - startAngle) * ((v + 0.5) / numVeins);
+                const vx = Math.cos(vAngle) * (radius * 0.86);
+                const vy = Math.sin(vAngle) * (radius * 0.86);
                 c.beginPath();
                 c.moveTo(0, 0);
-                c.lineTo(Math.cos(vAngle) * (radius * 0.85), Math.sin(vAngle) * (radius * 0.85));
+                c.quadraticCurveTo(
+                    Math.cos(vAngle + 0.04) * (radius * 0.48),
+                    Math.sin(vAngle + 0.04) * (radius * 0.48),
+                    vx,
+                    vy
+                );
                 c.stroke();
             }
 
+            // Tallo central / punto de inserción
             c.beginPath();
-            c.arc(0, 0, 3.5, 0, Math.PI * 2);
-            c.fillStyle = "rgba(254, 240, 138, 0.45)";
+            c.arc(0, 0, 4, 0, Math.PI * 2);
+            c.fillStyle = "rgba(254, 240, 138, 0.5)";
+            c.fill();
+
+            // Gotitas de rocío sobre la hoja cerosa (Asatsuyu 朝露)
+            dewDroplets.forEach((drop) => {
+                const wobbleX = Math.sin(tick * 0.05 + drop.relX) * 0.35;
+                const wobbleY = Math.cos(tick * 0.05 + drop.relY) * 0.35;
+                const dx = drop.relX + wobbleX;
+                const dy = drop.relY + wobbleY;
+
+                // Sombra de la gota
+                c.beginPath();
+                c.ellipse(dx + 0.8, dy + 1.2, drop.r, drop.r * 0.75, 0.4, 0, Math.PI * 2);
+                c.fillStyle = "rgba(0, 5, 14, 0.35)";
+                c.fill();
+
+                // Esfera acuática cristalina
+                const dropGrad = c.createRadialGradient(
+                    dx - drop.r * 0.3,
+                    dy - drop.r * 0.3,
+                    0.2,
+                    dx,
+                    dy,
+                    drop.r
+                );
+                dropGrad.addColorStop(0, "rgba(255, 255, 255, 0.85)");
+                dropGrad.addColorStop(0.35, "rgba(224, 242, 254, 0.6)");
+                dropGrad.addColorStop(0.8, "rgba(56, 189, 248, 0.28)");
+                dropGrad.addColorStop(1, "rgba(14, 165, 233, 0.12)");
+                c.beginPath();
+                c.arc(dx, dy, drop.r, 0, Math.PI * 2);
+                c.fillStyle = dropGrad;
+                c.fill();
+
+                // Destello especular de luz cenital
+                c.beginPath();
+                c.arc(dx - drop.r * 0.35, dy - drop.r * 0.35, drop.r * 0.32, 0, Math.PI * 2);
+                c.fillStyle = "rgba(255, 255, 255, 0.95)";
+                c.fill();
+            });
+
+            c.restore();
+        }
+
+        // ====================================================================
+        // ANATOMÍA PROCEDURAL VECTORIAL: RANA JAPONESA DE ÁRBOL (NIHON AMAGAERU 蛙)
+        // ====================================================================
+        function drawFrogEye(c: CanvasRenderingContext2D, ex: number, ey: number, isBlinking: boolean) {
+            c.save();
+            c.translate(ex, ey);
+
+            // Bulto orbital craneal
+            c.beginPath();
+            c.arc(0, 0, 4.2, 0, Math.PI * 2);
+            c.fillStyle = "#15803D";
+            c.fill();
+            c.strokeStyle = "rgba(15, 23, 42, 0.45)";
+            c.lineWidth = 0.8;
+            c.stroke();
+
+            if (isBlinking) {
+                // Párpado cerrado
+                c.beginPath();
+                c.arc(0, 0, 3.8, 0, Math.PI);
+                c.fillStyle = "#16A34A";
+                c.fill();
+                c.beginPath();
+                c.moveTo(-3.5, 0);
+                c.lineTo(3.5, 0);
+                c.strokeStyle = "#0F172A";
+                c.lineWidth = 1.2;
+                c.stroke();
+            } else {
+                // Iris dorado / ámbar resplandeciente
+                const eyeGrad = c.createRadialGradient(-0.8, -0.8, 0.5, 0, 0, 3.6);
+                eyeGrad.addColorStop(0, "#FDE047");
+                eyeGrad.addColorStop(0.5, "#F59E0B");
+                eyeGrad.addColorStop(1, "#B45309");
+                c.beginPath();
+                c.arc(0, 0, 3.5, 0, Math.PI * 2);
+                c.fillStyle = eyeGrad;
+                c.fill();
+
+                // Pupila horizontal característica de anfibio
+                c.fillStyle = "#09090B";
+                c.beginPath();
+                c.ellipse(0, 0, 2.6, 1.0, 0, 0, Math.PI * 2);
+                c.fill();
+
+                // Reflejo especular blanco
+                c.fillStyle = "#FFFFFF";
+                c.beginPath();
+                c.arc(-1.1, -1.1, 0.8, 0, Math.PI * 2);
+                c.fill();
+            }
+
+            c.restore();
+        }
+
+        function drawPerchedHindLeg(c: CanvasRenderingContext2D, side: number, compress: number) {
+            c.save();
+            // Muslo plegado en Z junto al flanco
+            c.beginPath();
+            c.ellipse(-7, side * 11 * compress, 8, 4.5, side * 0.35, 0, Math.PI * 2);
+            c.fillStyle = "#15803D";
+            c.fill();
+            c.strokeStyle = "rgba(22, 101, 52, 0.4)";
+            c.lineWidth = 0.8;
+            c.stroke();
+
+            // Pantorrilla plegada
+            c.beginPath();
+            c.ellipse(-2, side * 13 * compress, 7, 3.2, -side * 0.4, 0, Math.PI * 2);
+            c.fillStyle = "#16A34A";
+            c.fill();
+
+            // Pie largo descansando hacia adelante
+            c.beginPath();
+            c.moveTo(-2, side * 14 * compress);
+            c.lineTo(7, side * 12 * compress);
+            c.strokeStyle = "#22C55E";
+            c.lineWidth = 1.8;
+            c.lineCap = "round";
+            c.stroke();
+
+            // Dedos y ventosas
+            for (let d = -1; d <= 1; d++) {
+                c.beginPath();
+                c.arc(7 + d * 1.5, side * 12 * compress + d * 1.2, 1.0, 0, Math.PI * 2);
+                c.fillStyle = "#86EFAC";
+                c.fill();
+            }
+            c.restore();
+        }
+
+        function drawJumpingHindLeg(c: CanvasRenderingContext2D, side: number) {
+            c.save();
+            // Muslo potente estirado hacia atrás
+            c.beginPath();
+            c.moveTo(-10, side * 5);
+            c.quadraticCurveTo(-18, side * 11, -26, side * 8);
+            c.strokeStyle = "#15803D";
+            c.lineWidth = 4.8;
+            c.lineCap = "round";
+            c.stroke();
+
+            // Pantorrilla estilizada
+            c.beginPath();
+            c.moveTo(-26, side * 8);
+            c.quadraticCurveTo(-35, side * 9, -42, side * 6);
+            c.strokeStyle = "#16A34A";
+            c.lineWidth = 3.6;
+            c.lineCap = "round";
+            c.stroke();
+
+            // Membrana interdigital de natación translúcida
+            c.beginPath();
+            c.moveTo(-42, side * 6);
+            c.lineTo(-51, side * 11);
+            c.quadraticCurveTo(-53, side * 6, -52, side * 2);
+            c.closePath();
+            c.fillStyle = "rgba(134, 239, 172, 0.45)";
+            c.fill();
+
+            // Dedos largos y estilizados extendidos hacia atrás
+            for (let t = 0; t < 4; t++) {
+                const toeSpread = (t - 1.5) * 3.2;
+                c.beginPath();
+                c.moveTo(-42, side * 6);
+                c.lineTo(-50 - (3 - Math.abs(t - 1.5)) * 2, side * 6 + toeSpread);
+                c.strokeStyle = "#22C55E";
+                c.lineWidth = 1.3;
+                c.lineCap = "round";
+                c.stroke();
+
+                c.beginPath();
+                c.arc(-50 - (3 - Math.abs(t - 1.5)) * 2, side * 6 + toeSpread, 1.1, 0, Math.PI * 2);
+                c.fillStyle = "#86EFAC";
+                c.fill();
+            }
+            c.restore();
+        }
+
+        function drawPerchedForeleg(c: CanvasRenderingContext2D, side: number, compress: number) {
+            c.save();
+            c.beginPath();
+            c.moveTo(5, side * 7);
+            c.quadraticCurveTo(8, side * 11 * compress, 10, side * 9 * compress);
+            c.strokeStyle = "#16A34A";
+            c.lineWidth = 2.4;
+            c.lineCap = "round";
+            c.stroke();
+
+            // 4 dedos delicados con ventosas redondeadas apoyados en la hoja
+            for (let d = -1.5; d <= 1.5; d += 1) {
+                const dx = 10 + Math.cos(side * 0.4 + d * 0.35) * 3.5;
+                const dy = side * 9 * compress + Math.sin(side * 0.4 + d * 0.35) * 3.5;
+                c.beginPath();
+                c.moveTo(10, side * 9 * compress);
+                c.lineTo(dx, dy);
+                c.strokeStyle = "#22C55E";
+                c.lineWidth = 1.1;
+                c.stroke();
+
+                c.beginPath();
+                c.arc(dx, dy, 1.1, 0, Math.PI * 2);
+                c.fillStyle = "#86EFAC";
+                c.fill();
+            }
+            c.restore();
+        }
+
+        function drawJumpingForeleg(c: CanvasRenderingContext2D, side: number) {
+            c.save();
+            c.beginPath();
+            c.moveTo(6, side * 7);
+            c.quadraticCurveTo(15, side * 12, 20, side * 8);
+            c.strokeStyle = "#16A34A";
+            c.lineWidth = 2.2;
+            c.lineCap = "round";
+            c.stroke();
+
+            for (let d = -1; d <= 1; d++) {
+                const dx = 20 + Math.cos(d * 0.4) * 4;
+                const dy = side * 8 + Math.sin(d * 0.4) * 3.5;
+                c.beginPath();
+                c.moveTo(20, side * 8);
+                c.lineTo(dx, dy);
+                c.strokeStyle = "#4ADE80";
+                c.lineWidth = 1.1;
+                c.stroke();
+                c.beginPath();
+                c.arc(dx, dy, 1.0, 0, Math.PI * 2);
+                c.fillStyle = "#86EFAC";
+                c.fill();
+            }
+            c.restore();
+        }
+
+        function drawProceduralFrog(
+            c: CanvasRenderingContext2D,
+            x: number,
+            y: number,
+            altitude: number,
+            angle: number,
+            state: "perched" | "crouching" | "jumping" | "diving" | "hidden",
+            jumpProgress: number,
+            breathPhase: number,
+            isBlinking: boolean,
+            size: number
+        ) {
+            if (state === "hidden") return;
+
+            c.save();
+
+            // 1. Sombra sobre la superficie (desacoplada en altitud)
+            const shadowScale = Math.max(0.4, 1 - altitude * 0.005);
+            const shadowAlpha = Math.max(0.12, 0.35 - altitude * 0.0025);
+            c.save();
+            c.translate(x + altitude * 0.25, y + altitude * 0.45);
+            c.rotate(angle);
+            c.scale(shadowScale * size, shadowScale * size);
+            c.beginPath();
+            c.ellipse(0, 0, 16, 11, 0, 0, Math.PI * 2);
+            c.fillStyle = `rgba(0, 5, 14, ${shadowAlpha})`;
+            c.fill();
+            c.restore();
+
+            // 2. Posición 3D de la rana (elevada por altitude)
+            const frogY = y - altitude;
+            c.translate(x, frogY);
+            c.rotate(angle);
+            c.scale(size, size);
+
+            const isJumping = state === "jumping";
+            const isCrouching = state === "crouching";
+            const compress = isCrouching ? 0.8 : 1.0;
+
+            // PATAS TRASERAS
+            if (isJumping) {
+                drawJumpingHindLeg(c, -1);
+                drawJumpingHindLeg(c, 1);
+            } else {
+                drawPerchedHindLeg(c, -1, compress);
+                drawPerchedHindLeg(c, 1, compress);
+            }
+
+            // CUERPO (Torso piriforme de rana)
+            c.save();
+            c.scale(compress, 1);
+
+            // Gradiente dorsal verde jade
+            const bodyGrad = c.createRadialGradient(2, 0, 2, 0, 0, 16);
+            bodyGrad.addColorStop(0, "#4ADE80"); // Verde brillante dorsal
+            bodyGrad.addColorStop(0.45, "#16A34A"); // Verde jade fresco
+            bodyGrad.addColorStop(0.85, "#15803D"); // Verde musgo
+            bodyGrad.addColorStop(1, "#14532D"); // Verde bosque oscuro
+
+            c.beginPath();
+            c.moveTo(14, 0); // Hocico anterior
+            c.bezierCurveTo(13, 8, 5, 13, -5, 12); // Flanco derecho
+            c.bezierCurveTo(-12, 11, -15, 6, -14, 0); // Pelvis posterior
+            c.bezierCurveTo(-15, -6, -12, -11, -5, -12); // Flanco izquierdo
+            c.bezierCurveTo(5, -13, 13, -8, 14, 0); // Retorno
+            c.closePath();
+            c.fillStyle = bodyGrad;
+            c.fill();
+
+            // Vientre crema claro
+            c.beginPath();
+            c.ellipse(-1, 0, 9, 6.5, 0, 0, Math.PI * 2);
+            c.fillStyle = "rgba(254, 240, 138, 0.28)";
+            c.fill();
+
+            // Máscara lateral oscura típica de rana japonesa (Nihon Amagaeru)
+            c.strokeStyle = "rgba(15, 23, 42, 0.7)";
+            c.lineWidth = 1.3;
+            c.beginPath();
+            c.moveTo(13, -2);
+            c.quadraticCurveTo(10, -7, 2, -11);
+            c.stroke();
+            c.beginPath();
+            c.moveTo(13, 2);
+            c.quadraticCurveTo(10, 7, 2, 11);
+            c.stroke();
+
+            // Saco bucal / garganta palpitante
+            if (!isJumping) {
+                const sacExpansion = Math.max(0, Math.sin(breathPhase)) * 2.2;
+                if (sacExpansion > 0.2) {
+                    c.beginPath();
+                    c.arc(11, 0, 3.5 + sacExpansion, -Math.PI * 0.5, Math.PI * 0.5);
+                    c.fillStyle = "rgba(254, 240, 138, 0.45)";
+                    c.fill();
+                }
+            }
+
+            // Línea dorsal vertebral de luz
+            c.strokeStyle = "rgba(255, 255, 255, 0.3)";
+            c.lineWidth = 0.9;
+            c.beginPath();
+            c.moveTo(10, 0);
+            c.lineTo(-10, 0);
+            c.stroke();
+
+            c.restore(); // fin escala compresión
+
+            // PATAS DELANTERAS
+            if (isJumping) {
+                drawJumpingForeleg(c, -1);
+                drawJumpingForeleg(c, 1);
+            } else {
+                drawPerchedForeleg(c, -1, compress);
+                drawPerchedForeleg(c, 1, compress);
+            }
+
+            // OJOS DORADOS CON PUPILA HORIZONTAL
+            drawFrogEye(c, 8, -7.5, isBlinking);
+            drawFrogEye(c, 8, 7.5, isBlinking);
+
+            // Orificios nasales diminutos
+            c.fillStyle = "rgba(15, 23, 42, 0.8)";
+            c.beginPath();
+            c.arc(13.2, -1.4, 0.6, 0, Math.PI * 2);
+            c.arc(13.2, 1.4, 0.6, 0, Math.PI * 2);
+            c.fill();
+
+            c.restore();
+        }
+
+        // ====================================================================
+        // DIBUJO DE PARTÍCULAS: GOTAS DE AGUA (SPLASH DROPLETS)
+        // ====================================================================
+        function drawSplashDroplet(c: CanvasRenderingContext2D, d: SplashDroplet) {
+            if (d.alpha <= 0.01) return;
+            const dropY = d.y - d.z;
+            c.save();
+            c.beginPath();
+            c.arc(d.x, dropY, d.radius, 0, Math.PI * 2);
+            c.fillStyle = `rgba(224, 242, 254, ${d.alpha * 0.9})`;
+            c.fill();
+
+            // Reflejo especular
+            c.beginPath();
+            c.arc(d.x - d.radius * 0.3, dropY - d.radius * 0.3, d.radius * 0.35, 0, Math.PI * 2);
+            c.fillStyle = `rgba(255, 255, 255, ${d.alpha})`;
+            c.fill();
+            c.restore();
+        }
+
+        // ====================================================================
+        // DIBUJO DE LUCIÉRNAGAS ZEN (HOTARU 蛍) - LUCES BIOLUMINISCENTES
+        // ====================================================================
+        function drawFirefly(c: CanvasRenderingContext2D, f: Firefly, tick: number) {
+            if (f.alpha <= 0.01) return;
+
+            const pulse = 0.35 + 0.65 * Math.pow(Math.sin(f.pulsePhase), 2);
+
+            // 1. Reflejo sobre el estanque oscuro bajo la luciérnaga
+            const reflY = f.y + f.z * 18;
+            const reflRad = f.size * (3.5 + pulse * 4.5);
+
+            c.save();
+            c.beginPath();
+            c.ellipse(f.x, reflY, reflRad * 1.2, reflRad * 0.5, 0, 0, Math.PI * 2);
+            const reflGrad = c.createRadialGradient(f.x, reflY, 0, f.x, reflY, reflRad * 1.2);
+            reflGrad.addColorStop(0, `hsla(${f.hue}, 95%, 70%, ${f.alpha * pulse * 0.22})`);
+            reflGrad.addColorStop(1, `hsla(${f.hue}, 95%, 60%, 0)`);
+            c.fillStyle = reflGrad;
+            c.fill();
+
+            // 2. Luciérnaga en el aire (elevada en altitud z)
+            const flyY = f.y - f.z * 22;
+
+            // Halo bioluminiscente exterior radiante
+            const haloRad = f.size * (6 + pulse * 14);
+            const auraGrad = c.createRadialGradient(f.x, flyY, 0, f.x, flyY, haloRad);
+            auraGrad.addColorStop(0, `hsla(${f.hue}, 100%, 80%, ${f.alpha * pulse * 0.75})`);
+            auraGrad.addColorStop(0.35, `hsla(${f.hue}, 95%, 65%, ${f.alpha * pulse * 0.38})`);
+            auraGrad.addColorStop(1, `hsla(${f.hue}, 95%, 55%, 0)`);
+
+            c.beginPath();
+            c.arc(f.x, flyY, haloRad, 0, Math.PI * 2);
+            c.fillStyle = auraGrad;
+            c.fill();
+
+            // Núcleo blanco-dorado incandescente
+            c.beginPath();
+            c.arc(f.x, flyY, f.size * 0.9 * (0.8 + pulse * 0.4), 0, Math.PI * 2);
+            c.fillStyle = `rgba(255, 255, 245, ${f.alpha * (0.7 + pulse * 0.3)})`;
             c.fill();
 
             c.restore();
