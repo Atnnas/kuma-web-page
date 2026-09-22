@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DidacticController } from "@/components/didactic/DidacticController";
+import { KoiPondCanvas } from "@/components/didactic/KoiPondCanvas";
 import { PrimalTitle } from "@/components/ui/PrimalTitle";
 import { CaretLeft, House, SquaresFour } from "@phosphor-icons/react/dist/ssr";
 
@@ -10,7 +11,10 @@ export const metadata = {
 
 export default function DidacticaPage() {
     return (
-        <main className="min-h-screen bg-[#0B132B] text-white relative overflow-hidden pt-28 md:pt-32 pb-24">
+        <main className="min-h-screen bg-[#071324] text-white relative overflow-hidden pt-28 md:pt-32 pb-24">
+            {/* ESTANQUE PROCEDURAL ZEN DE PECES KOI (CINEMÁTICA INVERSA & ONDAS DE AGUA) */}
+            <KoiPondCanvas opacity={0.85} fishCount={7} />
+
             <div className="relative z-10 px-4 md:px-6 max-w-7xl mx-auto">
                 {/* GLOBAL NAVIGATION / EXIT BAR (ALWAYS VISIBLE AT TOP) */}
                 <div className="flex items-center justify-between gap-4 mb-8 pb-4 border-b-2 border-[#1E293B]">
