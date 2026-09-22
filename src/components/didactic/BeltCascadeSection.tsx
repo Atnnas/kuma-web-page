@@ -37,6 +37,12 @@ interface BeltCascadeSectionProps {
  * knots, and authentic stripes (e.g., Purple with White for 4° Kyu,
  * 3/2/1 tip stripes for Brown belts, and Black belt with gold stripes for Dans).
  */
+/**
+ * Visual Karate Obi (Belt) - Opción 1: Nagare-Obi (流れ帯 - Obi Flotante de Seda sobre el Agua)
+ * Dibujado 100% vectorialmente con curvas Bézier orgánicas, nudo Koma-Musubi tradicional,
+ * sombra de profundidad desacoplada en el lecho del estanque, textura de costura paralela
+ * y tensión superficial de agua (mismo estilo procedural que los peces Koi).
+ */
 export function BeltObiVisual({
     belt,
     isCompleted,
@@ -51,96 +57,403 @@ export function BeltObiVisual({
     const isDan = belt.category === "dan";
     const isBrown = belt.id.startsWith("kyu-") && [1, 2, 3].includes(belt.levelNumber);
     const isPurpleWhite = belt.id === "kyu-4";
+    const isWhite = belt.id === "kyu-10";
+
+    const gradId = `obiGrad-${belt.id}-${compact ? "c" : "f"}`;
+    const shadowId = `obiShadow-${belt.id}`;
+    const goldGradId = `obiGold-${belt.id}`;
+
+    const baseColor = isLocked
+        ? "#3F3F46"
+        : isDan
+        ? "#121215"
+        : belt.color;
+
+    const strokeColor = isLocked
+        ? "#27272A"
+        : isDan
+        ? "#000000"
+        : belt.strokeColor;
+
+    const highlightColor = isLocked
+        ? "#52525B"
+        : isDan
+        ? "#27272A"
+        : isWhite
+        ? "#FFFFFF"
+        : "rgba(255, 255, 255, 0.4)";
+
+    const shadowTone = isLocked
+        ? "#18181B"
+        : isDan
+        ? "#09090B"
+        : strokeColor;
+
+    const stripesCount = belt.stripesCount || 0;
 
     return (
-        <div
-            className={`relative w-full ${compact ? "h-6" : "h-8 md:h-9"} rounded-lg overflow-hidden border transition-all ${
-                isLocked ? "opacity-40 grayscale" : "shadow-inner"
-            }`}
-            style={{
-                backgroundColor: belt.color,
-                borderColor: isLocked ? "#27272A" : belt.strokeColor,
-                boxShadow: isLocked
-                    ? "none"
-                    : isDan
-                    ? "0 2px 10px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.15)"
-                    : `0 2px 8px ${belt.color}40, inset 0 1px 1px rgba(255,255,255,0.25)`,
+        <motion.div
+            className={`relative w-full ${compact ? "h-12 md:h-14" : "h-16 md:h-20"} transition-all select-none`}
+            animate={
+                !isLocked
+                    ? {
+                          y: [-1.2, 1.2, -1.2],
+                          rotate: [-0.2, 0.2, -0.2],
+                      }
+                    : {}
+            }
+            transition={{
+                repeat: Infinity,
+                duration: 5.5,
+                ease: "easeInOut",
             }}
         >
-            {/* Fabric texture stitching effect */}
-            <div
-                className="absolute inset-0 opacity-25 pointer-events-none"
-                style={{
-                    backgroundImage:
-                        "repeating-linear-gradient(90deg, transparent 0px, transparent 3px, rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 5px)",
-                }}
-            />
+            <svg
+                viewBox="0 0 760 90"
+                className="w-full h-full overflow-visible drop-shadow-sm"
+                preserveAspectRatio="none"
+            >
+                <defs>
+                    {/* Gradiente cilíndrico de tela para el cuerpo del cinturón */}
+                    <linearGradient id={gradId} x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor={highlightColor} stopOpacity={isWhite ? 1 : 0.65} />
+                        <stop offset="28%" stopColor={baseColor} />
+                        <stop offset="75%" stopColor={baseColor} />
+                        <stop offset="100%" stopColor={shadowTone} />
+                    </linearGradient>
 
-            {/* Central knot shadow */}
-            <div
-                className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 md:w-12 rounded-sm pointer-events-none"
-                style={{
-                    backgroundColor: belt.strokeColor,
-                    opacity: 0.35,
-                }}
-            />
+                    {/* Gradiente para el nudo Koma-Musubi */}
+                    <linearGradient id={`${gradId}-knot`} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor={highlightColor} stopOpacity={0.7} />
+                        <stop offset="50%" stopColor={baseColor} />
+                        <stop offset="100%" stopColor={shadowTone} />
+                    </linearGradient>
 
-            {/* 4° Kyu: Morado con Blanco (White central lengthwise stripe) */}
-            {isPurpleWhite && (
-                <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-[5px] md:h-[6px] bg-white shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
-            )}
+                    {/* Gradiente de hilo de oro para bordados Dan */}
+                    <linearGradient id={goldGradId} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#FEF08A" />
+                        <stop offset="45%" stopColor="#F59E0B" />
+                        <stop offset="85%" stopColor="#B45309" />
+                        <stop offset="100%" stopColor="#78350F" />
+                    </linearGradient>
 
-            {/* Brown belt (3°, 2°, 1° Kyu): White stripes at both tips */}
-            {isBrown && belt.hasStripe && belt.stripesCount && (
-                <>
-                    {Array.from({ length: belt.stripesCount }).map((_, i) => (
-                        <React.Fragment key={i}>
-                            {/* Left tip stripes */}
-                            <div
-                                className="absolute bg-white shadow-[0_0_4px_rgba(255,255,255,0.8)]"
-                                style={{
-                                    left: `${6 + i * 6}px`,
-                                    top: "2px",
-                                    bottom: "2px",
-                                    width: "3px",
-                                    borderRadius: "1px",
-                                }}
-                            />
-                            {/* Right tip stripes */}
-                            <div
-                                className="absolute bg-white shadow-[0_0_4px_rgba(255,255,255,0.8)]"
-                                style={{
-                                    right: `${6 + i * 6}px`,
-                                    top: "2px",
-                                    bottom: "2px",
-                                    width: "3px",
-                                    borderRadius: "1px",
-                                }}
-                            />
-                        </React.Fragment>
-                    ))}
-                </>
-            )}
-
-            {/* Dan grades (1° to 10° Dan): Golden embroidery stripes at right tip */}
-            {isDan && belt.hasStripe && belt.stripesCount && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-[3px]">
-                    {Array.from({ length: belt.stripesCount }).map((_, i) => (
-                        <div
-                            key={i}
-                            className="w-[3px] h-5 md:h-6 rounded-full bg-gradient-to-b from-amber-300 via-kuma-gold to-amber-600 shadow-[0_0_5px_rgba(245,158,11,0.8)]"
+                    {/* Filtro de sombra subacuática difusa en el lecho del estanque */}
+                    <filter id={shadowId} x="-10%" y="-20%" width="120%" height="150%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="3.5" />
+                        <feColorMatrix
+                            type="matrix"
+                            values="0 0 0 0 0   0 0 0 0 0.02   0 0 0 0 0.06   0 0 0 0.38 0"
                         />
-                    ))}
-                </div>
-            )}
+                    </filter>
+                </defs>
 
-            {/* Completed golden check badge */}
+                {/* 1. ONDAS SUTILES DE CONTACTO EN EL AGUA (HAMON 波紋) */}
+                <ellipse
+                    cx="380"
+                    cy="48"
+                    rx="85"
+                    ry="9"
+                    fill="none"
+                    stroke="rgba(186, 230, 253, 0.16)"
+                    strokeWidth="1.2"
+                />
+                <ellipse
+                    cx="380"
+                    cy="48"
+                    rx="125"
+                    ry="13"
+                    fill="none"
+                    stroke="rgba(186, 230, 253, 0.08)"
+                    strokeWidth="0.8"
+                />
+
+                {/* 2. SOMBRA DESACOPLADA SUBACUÁTICA (PROYECTADA EN EL FONDO DEL ESTANQUE) */}
+                <g transform="translate(6, 11)" filter={`url(#${shadowId})`}>
+                    {/* Sombra de la cinta izquierda */}
+                    <path
+                        d="M 28 28 C 130 22, 250 36, 360 30 L 362 52 C 250 58, 130 44, 28 50 Z"
+                        fill="black"
+                    />
+                    {/* Sombra de la cinta derecha */}
+                    <path
+                        d="M 400 30 C 510 36, 630 22, 732 28 L 732 50 C 630 44, 510 58, 398 52 Z"
+                        fill="black"
+                    />
+                    {/* Sombra de las caídas (taré) */}
+                    <path
+                        d="M 358 38 C 350 52, 334 66, 312 80 L 332 86 C 348 72, 362 58, 368 42 Z"
+                        fill="black"
+                    />
+                    <path
+                        d="M 392 40 C 400 54, 414 68, 428 82 L 448 76 C 426 62, 410 50, 402 38 Z"
+                        fill="black"
+                    />
+                    {/* Sombra del nudo */}
+                    <rect x="362" y="24" width="36" height="32" rx="4" fill="black" />
+                </g>
+
+                {/* 3. CAPAS PRINCIPALES DEL OBI FLOTANTE */}
+
+                {/* --- A. ALA IZQUIERDA DEL CINTURÓN (ONDA BÉZIER CONTINUA) --- */}
+                <g>
+                    <path
+                        d="M 28 28 C 130 22, 250 36, 360 30 L 362 52 C 250 58, 130 44, 28 50 Z"
+                        fill={`url(#${gradId})`}
+                        stroke={strokeColor}
+                        strokeWidth="1.2"
+                    />
+
+                    {/* Menisco húmedo inferior refractivo (tensión superficial) */}
+                    <path
+                        d="M 28 50 C 130 44, 250 58, 362 52"
+                        fill="none"
+                        stroke="rgba(186, 230, 253, 0.4)"
+                        strokeWidth="1"
+                    />
+
+                    {/* Costuras paralelas auténticas de tela de karate (Sashiko-style stitching) */}
+                    <path
+                        d="M 32 33 C 130 27, 250 41, 360 35"
+                        fill="none"
+                        stroke={isWhite ? "rgba(148, 163, 184, 0.45)" : "rgba(255, 255, 255, 0.22)"}
+                        strokeWidth="0.8"
+                        strokeDasharray="4 2"
+                    />
+                    <path
+                        d="M 32 38 C 130 32, 250 46, 360 40"
+                        fill="none"
+                        stroke={isWhite ? "rgba(148, 163, 184, 0.45)" : "rgba(255, 255, 255, 0.22)"}
+                        strokeWidth="0.8"
+                        strokeDasharray="4 2"
+                    />
+                    <path
+                        d="M 32 44 C 130 38, 250 52, 360 46"
+                        fill="none"
+                        stroke={isWhite ? "rgba(148, 163, 184, 0.45)" : "rgba(0, 0, 0, 0.25)"}
+                        strokeWidth="0.8"
+                        strokeDasharray="4 2"
+                    />
+
+                    {/* Franja central blanca para 4° Kyu (Morado con blanco) */}
+                    {isPurpleWhite && (
+                        <path
+                            d="M 28 39 C 130 33, 250 47, 360 41"
+                            fill="none"
+                            stroke="#FFFFFF"
+                            strokeWidth="4.5"
+                            strokeLinecap="round"
+                        />
+                    )}
+                </g>
+
+                {/* --- B. ALA DERECHA DEL CINTURÓN (ONDA BÉZIER SIMÉTRICA-ORGÁNICA) --- */}
+                <g>
+                    <path
+                        d="M 400 30 C 510 36, 630 22, 732 28 L 732 50 C 630 44, 510 58, 398 52 Z"
+                        fill={`url(#${gradId})`}
+                        stroke={strokeColor}
+                        strokeWidth="1.2"
+                    />
+
+                    {/* Menisco húmedo inferior */}
+                    <path
+                        d="M 398 52 C 510 58, 630 44, 732 50"
+                        fill="none"
+                        stroke="rgba(186, 230, 253, 0.4)"
+                        strokeWidth="1"
+                    />
+
+                    {/* Costuras paralelas */}
+                    <path
+                        d="M 400 35 C 510 41, 630 27, 728 33"
+                        fill="none"
+                        stroke={isWhite ? "rgba(148, 163, 184, 0.45)" : "rgba(255, 255, 255, 0.22)"}
+                        strokeWidth="0.8"
+                        strokeDasharray="4 2"
+                    />
+                    <path
+                        d="M 400 40 C 510 46, 630 32, 728 38"
+                        fill="none"
+                        stroke={isWhite ? "rgba(148, 163, 184, 0.45)" : "rgba(255, 255, 255, 0.22)"}
+                        strokeWidth="0.8"
+                        strokeDasharray="4 2"
+                    />
+                    <path
+                        d="M 400 46 C 510 52, 630 38, 728 44"
+                        fill="none"
+                        stroke={isWhite ? "rgba(148, 163, 184, 0.45)" : "rgba(0, 0, 0, 0.25)"}
+                        strokeWidth="0.8"
+                        strokeDasharray="4 2"
+                    />
+
+                    {/* Franja central blanca para 4° Kyu en ala derecha */}
+                    {isPurpleWhite && (
+                        <path
+                            d="M 400 41 C 510 47, 630 33, 732 39"
+                            fill="none"
+                            stroke="#FFFFFF"
+                            strokeWidth="4.5"
+                            strokeLinecap="round"
+                        />
+                    )}
+                </g>
+
+                {/* --- C. CAÍDAS / EXTREMOS DEL NUDO (TARÉ 垂れ) --- */}
+                {/* Extremo izquierdo caído */}
+                <g>
+                    <path
+                        d="M 360 38 C 352 52, 334 66, 312 80 L 332 86 C 348 72, 362 58, 368 42 Z"
+                        fill={`url(#${gradId})`}
+                        stroke={strokeColor}
+                        strokeWidth="1.1"
+                    />
+                    <path
+                        d="M 312 80 L 332 86"
+                        stroke="rgba(186, 230, 253, 0.4)"
+                        strokeWidth="1.2"
+                    />
+                </g>
+
+                {/* Extremo derecho caído (LLEVA LOS BORDADOS DE GRADO) */}
+                <g>
+                    <path
+                        d="M 392 40 C 400 54, 414 68, 428 82 L 448 76 C 426 62, 410 50, 402 38 Z"
+                        fill={`url(#${gradId})`}
+                        stroke={strokeColor}
+                        strokeWidth="1.1"
+                    />
+                    <path
+                        d="M 428 82 L 448 76"
+                        stroke="rgba(186, 230, 253, 0.4)"
+                        strokeWidth="1.2"
+                    />
+
+                    {/* BORDADOS DE GRADO: Franjas blancas para cinturón marrón (3°, 2°, 1° Kyu) */}
+                    {isBrown && belt.hasStripe && stripesCount > 0 && (
+                        <>
+                            {Array.from({ length: stripesCount }).map((_, i) => (
+                                <line
+                                    key={i}
+                                    x1={422 + i * 5}
+                                    y1={74 - i * 3}
+                                    x2={438 + i * 5}
+                                    y2={69 - i * 3}
+                                    stroke="#FFFFFF"
+                                    strokeWidth="2.8"
+                                    strokeLinecap="round"
+                                />
+                            ))}
+                        </>
+                    )}
+
+                    {/* BORDADOS DE GRADO: Franjas en hilo de oro para grados DAN (1° a 10° Dan) */}
+                    {isDan && belt.hasStripe && stripesCount > 0 && (
+                        <>
+                            {Array.from({ length: Math.min(stripesCount, 5) }).map((_, i) => (
+                                <g key={i}>
+                                    <line
+                                        x1={422 + i * 5}
+                                        y1={74 - i * 3}
+                                        x2={438 + i * 5}
+                                        y2={69 - i * 3}
+                                        stroke={`url(#${goldGradId})`}
+                                        strokeWidth="3.2"
+                                        strokeLinecap="round"
+                                    />
+                                    {/* Brillo especular del hilo de oro */}
+                                    <line
+                                        x1={422 + i * 5}
+                                        y1={74 - i * 3}
+                                        x2={438 + i * 5}
+                                        y2={69 - i * 3}
+                                        stroke="rgba(255, 255, 255, 0.75)"
+                                        strokeWidth="0.8"
+                                        strokeLinecap="round"
+                                    />
+                                </g>
+                            ))}
+                        </>
+                    )}
+                </g>
+
+                {/* --- D. NUDO CENTRAL DE KARATE (KOMA-MUSUBI 駒結び) --- */}
+                <g>
+                    {/* Bucle posterior que abraza */}
+                    <path
+                        d="M 358 24 C 368 20, 392 20, 402 24 C 406 28, 406 34, 402 38 C 392 42, 368 42, 358 38 Z"
+                        fill={`url(#${gradId}-knot)`}
+                        stroke={strokeColor}
+                        strokeWidth="1.2"
+                    />
+
+                    {/* Envoltura frontal tensa del nudo cuadrado */}
+                    <path
+                        d="M 364 22 C 372 19, 388 19, 396 22 L 398 56 C 388 59, 372 59, 362 56 Z"
+                        fill={`url(#${gradId}-knot)`}
+                        stroke={strokeColor}
+                        strokeWidth="1.2"
+                    />
+
+                    {/* Arrugas de compresión y tensión muscular del nudo */}
+                    <path
+                        d="M 370 26 L 368 52"
+                        stroke={isWhite ? "rgba(148, 163, 184, 0.35)" : "rgba(0, 0, 0, 0.3)"}
+                        strokeWidth="1"
+                    />
+                    <path
+                        d="M 380 25 L 380 53"
+                        stroke={isWhite ? "rgba(255, 255, 255, 0.8)" : "rgba(255, 255, 255, 0.25)"}
+                        strokeWidth="1"
+                    />
+                    <path
+                        d="M 390 26 L 392 52"
+                        stroke={isWhite ? "rgba(148, 163, 184, 0.35)" : "rgba(0, 0, 0, 0.3)"}
+                        strokeWidth="1"
+                    />
+
+                    {/* Insignia dorada Kuma Kanji en el centro del nudo */}
+                    {isDan && (
+                        <circle
+                            cx="380"
+                            cy="39"
+                            r="5"
+                            fill="none"
+                            stroke={`url(#${goldGradId})`}
+                            strokeWidth="1.1"
+                        />
+                    )}
+                </g>
+
+                {/* --- E. PUNTAS LATERALES DE REMATE --- */}
+                {/* Franjas en la punta extrema derecha para cinturones Dan si hay más de 5 */}
+                {isDan && stripesCount > 5 && (
+                    <g transform="translate(695, 31)">
+                        {Array.from({ length: stripesCount - 5 }).map((_, i) => (
+                            <line
+                                key={i}
+                                x1={i * 6}
+                                y1="0"
+                                x2={i * 6}
+                                y2="18"
+                                stroke={`url(#${goldGradId})`}
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                            />
+                        ))}
+                    </g>
+                )}
+            </svg>
+
+            {/* Badge flotante elegante para cinturón superado */}
             {isCompleted && (
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/90 border border-emerald-500/60 shadow-lg">
-                    <span className="text-emerald-400 text-[10px] font-black">✓ Superado</span>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/85 border border-emerald-500/50 shadow-lg backdrop-blur-sm z-20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-emerald-300 text-[11px] font-bold font-serif tracking-wide">
+                        Superado
+                    </span>
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 }
 
