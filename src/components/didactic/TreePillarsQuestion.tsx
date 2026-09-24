@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -10,6 +10,8 @@ import {
     ArrowCounterClockwise,
     ShieldCheck,
     ArrowRight,
+    SpeakerHigh,
+    SpeakerSlash,
 } from "@phosphor-icons/react";
 
 interface TreePillarsQuestionProps {
@@ -33,6 +35,8 @@ interface GemItem {
     glowBorder: string;
     slotX: number; // Porcentaje X en el árbol
     slotY: number; // Porcentaje Y en el árbol
+    correctSpeech: string;
+    wrongSpeech: string;
 }
 
 const GEMS: GemItem[] = [
@@ -48,6 +52,8 @@ const GEMS: GemItem[] = [
         glowBorder: "border-yellow-400 shadow-[0_0_25px_rgba(250,204,21,0.6)]",
         slotX: 49,
         slotY: 82,
+        correctSpeech: "¡Kihon en las raíces! La técnica básica sostiene con firmeza todo el árbol.",
+        wrongSpeech: "¡Cuidado! Las raíces firmes del Kihon van abajo en la tierra.",
     },
     {
         id: "kata",
@@ -61,6 +67,8 @@ const GEMS: GemItem[] = [
         glowBorder: "border-amber-400 shadow-[0_0_25px_rgba(251,191,36,0.6)]",
         slotX: 49,
         slotY: 53,
+        correctSpeech: "¡Kata en el tronco! Las formas dan la estructura, la elegancia y la fuerza.",
+        wrongSpeech: "¡El tronco del Kata va en el medio! Sostiene y une las ramas con las raíces.",
     },
     {
         id: "kumite",
@@ -74,8 +82,69 @@ const GEMS: GemItem[] = [
         glowBorder: "border-pink-400 shadow-[0_0_25px_rgba(244,114,182,0.7)]",
         slotX: 49,
         slotY: 20,
+        correctSpeech: "¡Kumite en la copa! ¡El combate florece en lo más alto como los cerezos!",
+        wrongSpeech: "¡Las flores del Kumite florecen arriba en la copa del árbol!",
     },
 ];
+
+// Localizador inteligente de voz en Español Latino
+function findLatinAmericanVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
+    if (!voices || voices.length === 0) return null;
+
+    const priorityLangs = [
+        "es-cr",
+        "es-mx",
+        "es-419",
+        "es-us",
+        "es-co",
+        "es-ar",
+        "es-cl",
+        "es-pe",
+    ];
+
+    for (const lang of priorityLangs) {
+        const match = voices.find((v) => v.lang.toLowerCase() === lang);
+        if (match) return match;
+    }
+
+    const latinKeywords = [
+        "mexico",
+        "méxico",
+        "latino",
+        "latin",
+        "sabina",
+        "dalia",
+        "jorge",
+        "raul",
+        "raúl",
+        "paulina",
+        "gonzalo",
+        "mia",
+        "alvaro",
+        "estados unidos",
+    ];
+
+    const matchByName = voices.find((v) => {
+        if (!v.lang.toLowerCase().startsWith("es")) return false;
+        const nameLower = v.name.toLowerCase();
+        return latinKeywords.some((keyword) => nameLower.includes(keyword));
+    });
+    if (matchByName) return matchByName;
+
+    const nonSpainSpanish = voices.find((v) => {
+        const langLower = v.lang.toLowerCase();
+        const nameLower = v.name.toLowerCase();
+        return (
+            langLower.startsWith("es") &&
+            !langLower.includes("es-es") &&
+            !nameLower.includes("spain") &&
+            !nameLower.includes("españa")
+        );
+    });
+    if (nonSpainSpanish) return nonSpainSpanish;
+
+    return voices.find((v) => v.lang.toLowerCase().startsWith("es")) || null;
+}
 
 export function TreePillarsQuestion({
     question,
@@ -95,8 +164,71 @@ export function TreePillarsQuestion({
     });
 
     const [selectedGemId, setSelectedGemId] = useState<PillarId | null>(null);
+    const [isVoiceActive, setIsVoiceActive] = useState<boolean>(true);
+    const [latinVoice, setLatinVoice] = useState<SpeechSynthesisVoice | null>(null);
 
     const isAllPlaced = placedGems.kihon && placedGems.kata && placedGems.kumite;
+
+    // Cargar voces en español latino al inicializar
+    useEffect(() => {
+        if (typeof window === "undefined" || !window.speechSynthesis) return;
+
+        const updateVoices = () => {
+            const availableVoices = window.speechSynthesis.getVoices();
+            const chosen = findLatinAmericanVoice(availableVoices);
+            if (chosen) setLatinVoice(chosen);
+        };
+
+        updateVoices();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = updateVoices;
+        }
+    }, []);
+
+    // Síntesis de voz en Español Latino
+    const speakKuma = (text: string) => {
+        if (!isVoiceActive || typeof window === "undefined" || !window.speechSynthesis) return;
+
+        try {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+
+            let voiceToUse = latinVoice;
+            if (!voiceToUse) {
+                const currentVoices = window.speechSynthesis.getVoices();
+                voiceToUse = findLatinAmericanVoice(currentVoices);
+                if (voiceToUse) setLatinVoice(voiceToUse);
+            }
+
+            if (voiceToUse) {
+                utterance.voice = voiceToUse;
+                utterance.lang = voiceToUse.lang;
+            } else {
+                utterance.lang = "es-419";
+            }
+
+            utterance.rate = 0.94;
+            utterance.pitch = 1.05;
+            window.speechSynthesis.speak(utterance);
+        } catch {
+            // Silencioso
+        }
+    };
+
+    // Al inicio, Kuma invita por voz
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            speakKuma(
+                "¡Hola karateca! Vamos a alimentar el Árbol del Karate. Coloca las 3 gemas en su lugar: la raíz, el tronco y las flores."
+            );
+        }, 600);
+        return () => {
+            clearTimeout(timer);
+            if (typeof window !== "undefined" && window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        };
+    }, []);
 
     // Manejo de colocación de gema en un altar
     const handlePlaceOnSlot = (slotId: PillarId) => {
@@ -116,13 +248,22 @@ export function TreePillarsQuestion({
             setPlacedGems(nextPlaced);
             setSelectedGemId(null);
 
+            const gemData = GEMS.find((g) => g.id === slotId);
+            if (gemData) {
+                speakKuma(gemData.correctSpeech);
+            }
+
             // Si se completaron las 3 gemas
             if (nextPlaced.kihon && nextPlaced.kata && nextPlaced.kumite) {
                 triggerVictory();
             }
         } else {
-            // Error con efecto marcial
+            // Error con efecto marcial y voz guía
             didacticSound.playWrong();
+            const wrongGem = GEMS.find((g) => g.id === gemToPlace);
+            if (wrongGem) {
+                speakKuma(wrongGem.wrongSpeech);
+            }
         }
     };
 
@@ -131,6 +272,10 @@ export function TreePillarsQuestion({
         if (placedGems[gemId]) return;
         didacticSound.playClick();
         setSelectedGemId(gemId);
+        const gem = GEMS.find((g) => g.id === gemId);
+        if (gem) {
+            speakKuma(`Seleccionaste ${gem.title}. ¿Dónde va en el árbol?`);
+        }
     };
 
     // Celebración final
@@ -142,6 +287,9 @@ export function TreePillarsQuestion({
             origin: { y: 0.6 },
             colors: ["#F472B6", "#FFC800", "#58CC02", "#FFFFFF", "#FBBF24"],
         });
+        speakKuma(
+            "¡Extraordinario karateca! El Árbol del Karate ha florecido por completo con Kihon, Kata y Kumite."
+        );
         onCompleted();
     };
 
@@ -157,6 +305,7 @@ export function TreePillarsQuestion({
         didacticSound.playClick();
         setPlacedGems({ kihon: false, kata: false, kumite: false });
         setSelectedGemId(null);
+        speakKuma("¡Árbol reiniciado! Coloca de nuevo las tres gemas mágicas.");
     };
 
     return (
@@ -194,12 +343,50 @@ export function TreePillarsQuestion({
                 {/* Sutil viñeta para contraste */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
 
+                {/* Botón sutil flotante de Voz en Español Latino (pequeño y discreto) */}
+                <button
+                    type="button"
+                    onClick={() => {
+                        if (isVoiceActive) {
+                            if (typeof window !== "undefined" && window.speechSynthesis) {
+                                window.speechSynthesis.cancel();
+                            }
+                            setIsVoiceActive(false);
+                        } else {
+                            setIsVoiceActive(true);
+                            speakKuma(
+                                isAllPlaced
+                                    ? "¡El árbol ha florecido! Toca comprobar técnica."
+                                    : "Toca una gema abajo y luego toca su altar en el árbol."
+                            );
+                        }
+                    }}
+                    className={`absolute top-3 left-3 z-30 px-2.5 py-1 rounded-full text-[11px] font-black flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md border shadow-md ${
+                        isVoiceActive
+                            ? "bg-black/75 border-[#58CC02]/80 text-[#58CC02] shadow-[0_0_10px_rgba(88,204,2,0.3)]"
+                            : "bg-black/60 border-white/20 text-slate-300 hover:text-white"
+                    }`}
+                    title={isVoiceActive ? "Voz activa (toca para silenciar)" : "Activar voz"}
+                >
+                    {isVoiceActive ? (
+                        <>
+                            <SpeakerHigh className="w-3.5 h-3.5" weight="fill" />
+                            <span>Voz: ON</span>
+                        </>
+                    ) : (
+                        <>
+                            <SpeakerSlash className="w-3.5 h-3.5" />
+                            <span>Voz: OFF</span>
+                        </>
+                    )}
+                </button>
+
                 {/* Botón sutil flotante para Reiniciar (visible cuando hay gemas colocadas y antes de completar) */}
                 {(placedGems.kihon || placedGems.kata || placedGems.kumite) && !isAllPlaced && (
                     <button
                         type="button"
                         onClick={handleReset}
-                        className="absolute top-3 right-3 z-30 px-3 py-1.5 rounded-full bg-black/70 hover:bg-black/90 backdrop-blur-md border border-white/20 text-white/90 hover:text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-lg"
+                        className="absolute top-3 right-3 z-30 px-2.5 py-1 rounded-full bg-black/70 hover:bg-black/90 backdrop-blur-md border border-white/20 text-white/90 hover:text-white text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 shadow-md"
                         title="Reiniciar gemas"
                     >
                         <ArrowCounterClockwise className="w-3.5 h-3.5" />
