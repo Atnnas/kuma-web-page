@@ -662,7 +662,7 @@ function shuffleArray<T>(array: T[]): T[] {
                 Strictly disables artificial height and prevents unnecessary scrolling
             ========================================= */}
             <main className="flex-1 w-full overflow-y-auto overflow-x-hidden px-3 sm:px-6 md:px-8 pt-4 sm:pt-6 md:pt-8 pb-12 sm:pb-16 flex flex-col justify-start">
-                <div className={`${isWideQuestion ? "max-w-6xl" : "max-w-5xl"} mx-auto w-full flex flex-col justify-start`}>
+                <div className={`${isWideQuestion ? "max-w-7xl" : "max-w-5xl"} mx-auto w-full flex flex-col justify-start`}>
                     {!isCompleted && !isFailed ? (
                         <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-4 md:gap-8 lg:gap-10 w-full">
                             {/* LEFT: SENSEI MASCOT (Dynamic Responsive: Horizontal companion on mobile, 3D Sensei on desktop) */}
@@ -690,7 +690,7 @@ function shuffleArray<T>(array: T[]): T[] {
                             </div>
 
                             {/* RIGHT: QUESTION & INTERACTIVE ANSWERS */}
-                            <div className={`flex-1 w-full ${isWideQuestion ? "max-w-4xl" : "max-w-xl"} space-y-3.5 md:space-y-4`}>
+                            <div className={`flex-1 w-full ${isWideQuestion ? "max-w-5xl" : "max-w-xl"} space-y-3.5 md:space-y-4`}>
                                 {/* Question Header with Clear Padding, Cancel Option & Quick Testing Navigator */}
                                 <div className="space-y-2">
                                     {/* Testing Question Switcher (ESTRICTAMENTE SOLO PARA SUPER_ADMIN EN TABLETS Y ESCRITORIO - OCULTO EN MOBILE) */}
