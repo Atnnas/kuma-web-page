@@ -51,7 +51,7 @@ const GEMS: GemItem[] = [
         color: "from-amber-600 to-yellow-500",
         glowBorder: "border-yellow-400 shadow-[0_0_25px_rgba(250,204,21,0.6)]",
         slotX: 49,
-        slotY: 82,
+        slotY: 85,
         correctSpeech: "¡Kihon en las raíces! La técnica básica sostiene con firmeza todo el árbol.",
         wrongSpeech: "¡Cuidado! Las raíces firmes del Kihon van abajo en la tierra.",
     },
@@ -65,8 +65,8 @@ const GEMS: GemItem[] = [
         icon: "🪵🥋",
         color: "from-amber-800 to-amber-600",
         glowBorder: "border-amber-400 shadow-[0_0_25px_rgba(251,191,36,0.6)]",
-        slotX: 49,
-        slotY: 53,
+        slotX: 50,
+        slotY: 51,
         correctSpeech: "¡Kata en el tronco! Las formas dan la estructura, la elegancia y la fuerza.",
         wrongSpeech: "¡El tronco del Kata va en el medio! Sostiene y une las ramas con las raíces.",
     },
@@ -80,8 +80,8 @@ const GEMS: GemItem[] = [
         icon: "🌸⚡",
         color: "from-pink-600 to-rose-400",
         glowBorder: "border-pink-400 shadow-[0_0_25px_rgba(244,114,182,0.7)]",
-        slotX: 49,
-        slotY: 20,
+        slotX: 48,
+        slotY: 17,
         correctSpeech: "¡Kumite en la copa! ¡El combate florece en lo más alto como los cerezos!",
         wrongSpeech: "¡Las flores del Kumite florecen arriba en la copa del árbol!",
     },
@@ -330,14 +330,14 @@ export function TreePillarsQuestion({
             {/* ========================================================= */}
             {/* EL GRAN ÁRBOL PIXAR 3D CON ALTARES MÍSTICOS */}
             {/* ========================================================= */}
-            <div className="relative w-full aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden border-2 sm:border-4 border-amber-400/50 shadow-[0_8px_30px_rgba(0,0,0,0.8)] bg-slate-950">
+            <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] min-h-[350px] sm:min-h-[420px] md:min-h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden border-2 sm:border-4 border-amber-400/50 shadow-[0_8px_30px_rgba(0,0,0,0.8)] bg-slate-950">
                 {/* 1. Fondo: Ilustración 3D Pixar del Árbol de Cerezo */}
                 <Image
                     src="/images/didactic/kuma_pixar_tree_pillars_v2.jpg"
                     alt="Árbol Sagrado de Karate Pixar 3D con Kuma Sensei"
                     fill
                     priority
-                    className="object-cover"
+                    className="object-cover object-center"
                 />
 
                 {/* Sutil viñeta para contraste */}
@@ -412,41 +412,41 @@ export function TreePillarsQuestion({
                             {/* Flecha saltarina guiando al altar si la gema correspondiente está seleccionada */}
                             {isCurrentTarget && (
                                 <motion.div
-                                    animate={{ y: [-8, 0, -8] }}
+                                    animate={{ y: [-4, 0, -4] }}
                                     transition={{ repeat: Infinity, duration: 0.9, ease: "easeInOut" }}
-                                    className="absolute -top-11 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-30"
+                                    className="absolute -top-7 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-30"
                                 >
-                                    <span className="px-2 py-0.5 rounded-full bg-yellow-400 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-lg whitespace-nowrap border border-black/40">
+                                    <span className="px-2 py-0.5 rounded-full bg-yellow-400 text-slate-950 text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-md whitespace-nowrap border border-black/40">
                                         ¡Colocar {gem.title}!
                                     </span>
-                                    <div className="w-0 h-0 border-x-4 border-x-transparent border-t-6 border-t-yellow-400" />
+                                    <div className="w-0 h-0 border-x-3 border-x-transparent border-t-4 border-t-yellow-400" />
                                 </motion.div>
                             )}
 
                             {/* Altar táctil circular */}
                             <motion.button
                                 type="button"
-                                whileHover={{ scale: 1.1 }}
+                                whileHover={{ scale: 1.08 }}
                                 whileTap={{ scale: 0.92 }}
                                 onClick={() => handlePlaceOnSlot(gem.id)}
                                 className={`relative flex items-center justify-center rounded-full transition-all cursor-pointer shadow-xl ${
                                     isPlaced
-                                        ? `w-14 h-14 sm:w-18 sm:h-18 bg-gradient-to-tr ${gem.color} ${gem.glowBorder} ring-4 ring-white/60`
+                                        ? `w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-tr ${gem.color} ${gem.glowBorder} ring-3 sm:ring-4 ring-white/60`
                                         : isCurrentTarget
-                                        ? "w-14 h-14 sm:w-18 sm:h-18 bg-yellow-400/80 ring-4 ring-yellow-300 animate-pulse shadow-[0_0_30px_rgba(250,204,21,0.9)]"
-                                        : "w-12 h-12 sm:w-15 sm:h-15 bg-black/75 hover:bg-black/90 ring-2 ring-white/50 border-2 border-dashed border-yellow-300/60 backdrop-blur-sm"
+                                        ? "w-12 h-12 sm:w-16 sm:h-16 bg-yellow-400/80 ring-3 sm:ring-4 ring-yellow-300 animate-pulse shadow-[0_0_25px_rgba(250,204,21,0.9)]"
+                                        : "w-11 h-11 sm:w-14 sm:h-14 bg-black/75 hover:bg-black/90 ring-2 ring-white/50 border-2 border-dashed border-yellow-300/60 backdrop-blur-sm"
                                 }`}
                             >
                                 {isPlaced ? (
                                     <div className="flex flex-col items-center justify-center leading-none">
-                                        <span className="text-2xl sm:text-3xl drop-shadow">{gem.icon}</span>
+                                        <span className="text-xl sm:text-2xl drop-shadow">{gem.icon}</span>
                                         <span className="absolute -top-1 -right-1 bg-emerald-500 text-slate-950 rounded-full p-0.5 shadow">
-                                            <CheckCircle className="w-4 h-4" weight="fill" />
+                                            <CheckCircle className="w-3.5 h-3.5" weight="fill" />
                                         </span>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center justify-center text-center">
-                                        <span className="text-base sm:text-xl opacity-70">❓</span>
+                                        <span className="text-sm sm:text-lg opacity-70">❓</span>
                                     </div>
                                 )}
                             </motion.button>
@@ -454,7 +454,7 @@ export function TreePillarsQuestion({
                             {/* Etiqueta ultra-clara del altar */}
                             <div className="mt-1 text-center pointer-events-none whitespace-nowrap">
                                 <span
-                                    className={`inline-block px-2 py-0.5 rounded-full text-[9px] sm:text-[11px] font-black uppercase tracking-wider backdrop-blur-md shadow-md border ${
+                                    className={`inline-block px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider backdrop-blur-md shadow-md border ${
                                         isPlaced
                                             ? "bg-[#143818]/90 text-emerald-200 border-emerald-400/50"
                                             : isCurrentTarget
