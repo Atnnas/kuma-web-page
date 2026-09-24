@@ -666,7 +666,7 @@ function shuffleArray<T>(array: T[]): T[] {
                     {!isCompleted && !isFailed ? (
                         <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-4 md:gap-8 lg:gap-10 w-full">
                             {/* LEFT: SENSEI MASCOT (Dynamic Responsive: Horizontal companion on mobile, 3D Sensei on desktop) */}
-                            <div className="w-full md:w-60 shrink-0 flex flex-col items-center justify-center">
+                            <div className={`w-full md:w-60 shrink-0 flex flex-col items-center justify-center ${isWideQuestion ? "hidden md:flex" : "flex"}`}>
                                 <KumaMascot
                                     mood={mascotMood}
                                     customMessage={customSpeech}
@@ -693,9 +693,9 @@ function shuffleArray<T>(array: T[]): T[] {
                             <div className={`flex-1 w-full ${isWideQuestion ? "max-w-4xl" : "max-w-xl"} space-y-3.5 md:space-y-4`}>
                                 {/* Question Header with Clear Padding, Cancel Option & Quick Testing Navigator */}
                                 <div className="space-y-2">
-                                    {/* Testing Question Switcher (ESTRICTAMENTE SOLO PARA SUPER_ADMIN) */}
+                                    {/* Testing Question Switcher (ESTRICTAMENTE SOLO PARA SUPER_ADMIN EN TABLETS Y ESCRITORIO - OCULTO EN MOBILE) */}
                                     {isSuperAdmin && (
-                                        <div className="flex items-center justify-between gap-2 flex-wrap bg-[#1E293B] p-2 rounded-2xl border-2 border-[#FFC800]/40 shadow-sm">
+                                        <div className="hidden md:flex items-center justify-between gap-2 flex-wrap bg-[#1E293B] p-2 rounded-2xl border-2 border-[#FFC800]/40 shadow-sm">
                                             <div className="flex items-center gap-1.5 flex-wrap">
                                                 <button
                                                     type="button"
@@ -752,20 +752,12 @@ function shuffleArray<T>(array: T[]): T[] {
                                         </div>
                                     )}
 
-                                    <div className="flex items-center justify-between gap-3 pt-1">
+                                    {/* Conteo de preguntas (Visible en Tablets y Escritorio, omitido en Mobile para maximizar pantalla) */}
+                                    <div className="hidden md:flex items-center justify-between gap-3 pt-1">
                                         <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-[#1CB0F6] px-3 py-1 rounded-full bg-[#0E2A47] border-2 border-[#1CB0F6]/50 shadow-sm">
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#1CB0F6] animate-pulse" />
                                             Pregunta {currentIndex + 1} de {totalQuestions} • {level.tag}
                                         </span>
-                                        <button
-                                            type="button"
-                                            onClick={handleRequestCancel}
-                                            className="text-[11px] font-bold text-slate-400 hover:text-[#FF4B4B] uppercase tracking-wider transition-colors flex items-center gap-1 cursor-pointer sm:hidden"
-                                            title="Cancelar lección en curso"
-                                        >
-                                            <X className="w-3.5 h-3.5 text-[#FF4B4B]" weight="bold" />
-                                            <span>Cancelar</span>
-                                        </button>
                                     </div>
                                     <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-black text-white leading-snug drop-shadow-md mt-1">
                                         {currentQuestion.prompt}
