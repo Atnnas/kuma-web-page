@@ -40,6 +40,7 @@ interface DojoLingoMapProps {
     onOpenAbsenceModal?: () => void;
     updatedUnitIds?: string[];
     updatedLevelIds?: string[];
+    onExamPassed?: (targetBeltId: string, earnedXp: number) => void;
 }
 
 export function DojoLingoMap({
@@ -54,6 +55,7 @@ export function DojoLingoMap({
     onOpenAbsenceModal,
     updatedUnitIds = [],
     updatedLevelIds = [],
+    onExamPassed,
 }: DojoLingoMapProps) {
     const { data: session } = useSession();
     const isSuperAdmin = Boolean(session?.user && (session.user as any).role === "super_admin");
@@ -356,8 +358,11 @@ export function DojoLingoMap({
                                 const isFirstBelt = idx === 0;
                                 const prevUnit = idx > 0 ? tradUnits[idx - 1] : null;
                                 const prevBelt = prevUnit ? getBeltRank(prevUnit.beltId || "") : null;
+                                const isPrevWhiteBelt = prevUnit?.beltId === "kyu-10";
+                                const isWhiteBeltExamPassed = progress.completedLevelIds.includes("exam-kyu-10");
                                 const prevBeltWon = prevUnit
-                                    ? prevUnit.levels.every((l) => progress.completedLevelIds.includes(l.id))
+                                    ? prevUnit.levels.every((l) => progress.completedLevelIds.includes(l.id)) &&
+                                      (isPrevWhiteBelt ? isWhiteBeltExamPassed : true)
                                     : true;
                                 const currentBeltStarted = unit.levels.some((l) => progress.completedLevelIds.includes(l.id));
 
@@ -381,6 +386,7 @@ export function DojoLingoMap({
                                         onFocusBelt={(bId) => setActiveBeltId(bId)}
                                         hasNewQuestions={updatedUnitIds.includes(unit.id)}
                                         updatedLevelIds={updatedLevelIds}
+                                        onExamPassed={onExamPassed}
                                     />
                                 );
                             })}

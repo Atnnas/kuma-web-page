@@ -80,14 +80,13 @@ export function DidacticController() {
                     } catch {}
                 }
 
-                // If user had v1 (or was playing before this update):
-                // Historical baseline: level-karategi had 9 questions (now 15). All other levels had their exact current count.
+                // Baseline: level-karategi has 10 questions. All other levels had their exact current count.
                 const baselineLevelCounts: Record<string, number> = {};
                 Object.keys(currentStats.levelCounts).forEach((lvlId) => {
                     if (typeof prevLevelCounts[lvlId] === "number") {
                         baselineLevelCounts[lvlId] = prevLevelCounts[lvlId];
                     } else if (v1Raw) {
-                        baselineLevelCounts[lvlId] = lvlId === "level-karategi" ? 9 : currentStats.levelCounts[lvlId];
+                        baselineLevelCounts[lvlId] = lvlId === "level-karategi" ? 10 : currentStats.levelCounts[lvlId];
                     } else {
                         // First-time guest/user: baseline is current count
                         baselineLevelCounts[lvlId] = currentStats.levelCounts[lvlId];
@@ -437,6 +436,34 @@ export function DidacticController() {
         saveProgress(updated);
     };
 
+    // Exam graduation handler (promotion to Yellow Belt / target belt, XP bonus, full hearts)
+    const handleExamPassed = (targetBeltId: string, earnedXp: number) => {
+        const examId = "exam-kyu-10";
+        const newCompleted = progress.completedLevelIds.includes(examId)
+            ? progress.completedLevelIds
+            : [...progress.completedLevelIds, examId];
+
+        const now = Date.now();
+        const updated: UserDidacticProgress = {
+            ...progress,
+            activeBeltId: (targetBeltId as any) || "kyu-9",
+            completedLevelIds: newCompleted,
+            levelStars: {
+                ...progress.levelStars,
+                [examId]: 3,
+            },
+            levelLastPracticed: {
+                ...(progress.levelLastPracticed || {}),
+                [examId]: now,
+            },
+            lastVisitedTimestamp: now,
+            xp: progress.xp + earnedXp,
+            hearts: 5, // Full hearts on belt graduation!
+        };
+
+        saveProgress(updated);
+    };
+
     const handleHeartLost = () => {
         const newHearts = Math.max(0, progress.hearts - 1);
         const updated = {
@@ -625,6 +652,7 @@ export function DidacticController() {
                             onOpenAbsenceModal={() => setIsGreetingOpen(true)}
                             updatedUnitIds={catalogUpdate.updatedUnitIds}
                             updatedLevelIds={catalogUpdate.updatedLevelIds}
+                            onExamPassed={handleExamPassed}
                         />
                     </motion.div>
                 ) : (

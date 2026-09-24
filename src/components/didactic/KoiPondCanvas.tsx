@@ -493,141 +493,106 @@ export function KoiPondCanvas({
 
         // ====================================================================
         // NENÚFARES Y HOJAS DE LOTO FLOTANTES (JARDÍN JAPONÉS)
-        // Posiciones armónicas y bordes seguros para evitar cortes en mobile
+        // Generación procedural con posiciones aleatorias armónicas (Poisson-disc)
+        // y márgenes seguros garantizados tanto en mobile como en pantallas grandes
         // ====================================================================
-        const lilyPads: LilyPad[] = [
-            {
-                xRatio: 0.16,
-                yRatio: 0.14,
-                radius: 54,
-                angle: 0.4,
-                notchAngle: 0.65,
-                driftSpeed: 0.0006,
-                driftPhase: 0,
-                offsetX: 0,
-                offsetY: 0,
-                velX: 0,
-                velY: 0,
-                tiltX: 0,
-                tiltY: 0,
-                tiltVelX: 0,
-                tiltVelY: 0,
-                dewDroplets: [
-                    { relX: -14, relY: -10, r: 2.8 },
-                    { relX: 16, relY: 12, r: 3.4 },
-                    { relX: -8, relY: 18, r: 2.0 },
-                    { relX: 18, relY: -14, r: 2.2 },
-                ],
-            },
-            {
-                xRatio: 0.84,
-                yRatio: 0.20,
-                radius: 58,
-                angle: 1.8,
-                notchAngle: 0.72,
-                driftSpeed: 0.0005,
-                driftPhase: 2.1,
-                offsetX: 0,
-                offsetY: 0,
-                velX: 0,
-                velY: 0,
-                tiltX: 0,
-                tiltY: 0,
-                tiltVelX: 0,
-                tiltVelY: 0,
-                dewDroplets: [
-                    { relX: -18, relY: 8, r: 3.5 },
-                    { relX: 12, relY: -16, r: 2.4 },
-                    { relX: 15, relY: 15, r: 2.8 },
-                ],
-            },
-            {
-                xRatio: 0.20,
-                yRatio: 0.80,
-                radius: 62,
-                angle: 3.2,
-                notchAngle: 0.68,
-                driftSpeed: 0.0007,
-                driftPhase: 4.2,
-                offsetX: 0,
-                offsetY: 0,
-                velX: 0,
-                velY: 0,
-                tiltX: 0,
-                tiltY: 0,
-                tiltVelX: 0,
-                tiltVelY: 0,
-                dewDroplets: [
-                    { relX: -12, relY: -20, r: 4.0 },
-                    { relX: 20, relY: -8, r: 2.6 },
-                    { relX: -22, relY: 14, r: 3.1 },
-                    { relX: 10, relY: 22, r: 2.2 },
-                ],
-            },
-            {
-                xRatio: 0.80,
-                yRatio: 0.84,
-                radius: 52,
-                angle: 4.5,
-                notchAngle: 0.75,
-                driftSpeed: 0.0004,
-                driftPhase: 1.2,
-                offsetX: 0,
-                offsetY: 0,
-                velX: 0,
-                velY: 0,
-                tiltX: 0,
-                tiltY: 0,
-                tiltVelX: 0,
-                tiltVelY: 0,
-                dewDroplets: [
-                    { relX: -15, relY: -12, r: 3.2 },
-                    { relX: 14, relY: 14, r: 2.5 },
-                ],
-            },
-            {
-                xRatio: 0.18,
-                yRatio: 0.46,
-                radius: 44,
-                angle: 2.3,
-                notchAngle: 0.62,
-                driftSpeed: 0.0008,
-                driftPhase: 3.5,
-                offsetX: 0,
-                offsetY: 0,
-                velX: 0,
-                velY: 0,
-                tiltX: 0,
-                tiltY: 0,
-                tiltVelX: 0,
-                tiltVelY: 0,
-                dewDroplets: [
-                    { relX: -10, relY: 10, r: 2.5 },
-                    { relX: 12, relY: -8, r: 2.8 },
-                ],
-            },
-            {
-                xRatio: 0.82,
-                yRatio: 0.52,
-                radius: 48,
-                angle: 5.1,
-                notchAngle: 0.7,
-                driftSpeed: 0.0005,
-                driftPhase: 5.1,
-                offsetX: 0,
-                offsetY: 0,
-                velX: 0,
-                velY: 0,
-                tiltX: 0,
-                tiltY: 0,
-                tiltVelX: 0,
-                tiltVelY: 0,
-                dewDroplets: [
-                    { relX: -12, relY: -14, r: 3.0 },
-                    { relX: 15, relY: 10, r: 2.6 },
-                ],
-            },
-        ];
+        const generateRandomLilyPads = (w: number, h: number): LilyPad[] => {
+            const scale = getResponsiveScale(w);
+            const count = w <= 480 ? 5 : 6;
+            const pads: LilyPad[] = [];
+
+            // Margen seguro absoluto en ratios (deja un padding generoso en todos los bordes)
+            // Para que ninguna hoja ni su sombra se corte jamás en pantallas pequeñas ni grandes
+            const safeMarginX = (64 * scale + 36) / Math.max(w, 320);
+            const safeMarginY = (64 * scale + 40) / Math.max(h, 480);
+            const minXRatio = Math.max(0.12, safeMarginX);
+            const maxXRatio = Math.min(0.88, 1 - safeMarginX);
+            const minYRatio = Math.max(0.10, safeMarginY);
+            const maxYRatio = Math.min(0.88, 1 - safeMarginY);
+
+            // Distancia mínima entre centros de hojas para evitar que se amontonen
+            const minCenterDist = (w <= 480 ? 100 : 155) * scale;
+
+            for (let i = 0; i < count; i++) {
+                let bestX = (minXRatio + maxXRatio) * 0.5;
+                let bestY = (minYRatio + maxYRatio) * 0.5;
+                let maxMinDist = -1;
+
+                // Algoritmo de descarte de candidatos (Poisson-disc / dart throwing)
+                for (let attempt = 0; attempt < 50; attempt++) {
+                    const testXRatio = minXRatio + Math.random() * (maxXRatio - minXRatio);
+                    const testYRatio = minYRatio + Math.random() * (maxYRatio - minYRatio);
+
+                    if (pads.length === 0) {
+                        bestX = testXRatio;
+                        bestY = testYRatio;
+                        break;
+                    }
+
+                    let minDistToOthers = Infinity;
+                    for (const existing of pads) {
+                        const d = Math.hypot(
+                            (testXRatio - existing.xRatio) * w,
+                            (testYRatio - existing.yRatio) * h
+                        );
+                        if (d < minDistToOthers) {
+                            minDistToOthers = d;
+                        }
+                    }
+
+                    if (minDistToOthers >= minCenterDist) {
+                        bestX = testXRatio;
+                        bestY = testYRatio;
+                        break;
+                    }
+
+                    if (minDistToOthers > maxMinDist) {
+                        maxMinDist = minDistToOthers;
+                        bestX = testXRatio;
+                        bestY = testYRatio;
+                    }
+                }
+
+                const baseRadius = 46 + Math.random() * 16; // 46 a 62px
+                const dewCount = 2 + Math.floor(Math.random() * 3); // 2 a 4 gotas de rocío
+                const droplets: { relX: number; relY: number; r: number }[] = [];
+                for (let d = 0; d < dewCount; d++) {
+                    const dropAng = Math.random() * Math.PI * 2;
+                    const dropDist = (0.2 + Math.random() * 0.45) * baseRadius;
+                    droplets.push({
+                        relX: Math.cos(dropAng) * dropDist,
+                        relY: Math.sin(dropAng) * dropDist,
+                        r: 2.0 + Math.random() * 1.6,
+                    });
+                }
+
+                pads.push({
+                    xRatio: bestX,
+                    yRatio: bestY,
+                    radius: baseRadius,
+                    angle: Math.random() * Math.PI * 2,
+                    notchAngle: 0.58 + Math.random() * 0.22,
+                    driftSpeed: 0.0004 + Math.random() * 0.0004,
+                    driftPhase: Math.random() * Math.PI * 2,
+                    offsetX: 0,
+                    offsetY: 0,
+                    velX: 0,
+                    velY: 0,
+                    tiltX: 0,
+                    tiltY: 0,
+                    tiltVelX: 0,
+                    tiltVelY: 0,
+                    dewDroplets: droplets,
+                });
+            }
+
+            return pads;
+        };
+
+        const lilyPads: LilyPad[] = generateRandomLilyPads(
+            width || window.innerWidth,
+            height || window.innerHeight
+        );
 
         // ====================================================================
         // LUCIÉRNAGAS ZEN (HOTARU 蛍) - PUNTOS PEQUEÑITOS ETÉREOS Y DISIMULADOS
@@ -728,13 +693,11 @@ export function KoiPondCanvas({
             }
         };
 
-        // ====================================================================
-        // RANA JAPONESA DE ÁRBOL PROCEDURAL (NIHON AMAGAERU 蛙)
-        // ====================================================================
+        const frogPadIndex = Math.floor(Math.random() * Math.max(1, lilyPads.length));
         const frog: PondFrog = {
             state: "perched",
-            currentPadIndex: 1,
-            targetPadIndex: 1,
+            currentPadIndex: frogPadIndex,
+            targetPadIndex: frogPadIndex,
             x: 0,
             y: 0,
             startX: 0,
@@ -955,17 +918,18 @@ export function KoiPondCanvas({
                 // Radio proporcional adaptado al tamaño de pantalla (para que en Galaxy S26 Ultra y smartphones se vea refinado y no gigante)
                 const effectiveRadius = pad.radius * mobileScale;
 
-                // Margen estricto para evitar que la hoja se corte en los bordes de la pantalla
-                const marginX = effectiveRadius + 14;
-                const marginY = effectiveRadius + 18;
+                // Margen estricto y holgado para evitar que la hoja o su sombra se corte en los bordes de pantalla
+                // Sombra proyectada: hasta +22px en X y +26px en Y. Inclinación 3D: hasta +8px.
+                const marginX = effectiveRadius + 28 * mobileScale;
+                const marginY = effectiveRadius + 32 * mobileScale;
 
                 // Oleaje orgánico multi-frecuencia en coordenadas x, y (amplitud escalada a la pantalla)
                 const currentX =
-                    (Math.sin(tick * pad.driftSpeed + pad.driftPhase) * 12 +
-                    Math.sin(tick * pad.driftSpeed * 2.7 + pad.driftPhase) * 4) * mobileScale;
+                    (Math.sin(tick * pad.driftSpeed + pad.driftPhase) * 10 +
+                    Math.sin(tick * pad.driftSpeed * 2.7 + pad.driftPhase) * 3) * mobileScale;
                 const currentY =
-                    (Math.cos(tick * pad.driftSpeed + pad.driftPhase) * 10 +
-                    Math.cos(tick * pad.driftSpeed * 2.1 + pad.driftPhase) * 3) * mobileScale;
+                    (Math.cos(tick * pad.driftSpeed + pad.driftPhase) * 8 +
+                    Math.cos(tick * pad.driftSpeed * 2.1 + pad.driftPhase) * 2.5) * mobileScale;
 
                 // Posición base acotada dentro de los márgenes seguros
                 const safeBaseX = Math.max(marginX, Math.min(width - marginX, pad.xRatio * width));
@@ -1008,15 +972,15 @@ export function KoiPondCanvas({
                 pad.tiltX = waveTiltX + (pad.tiltX - waveTiltX + pad.tiltVelX) * 0.88;
                 pad.tiltY = waveTiltY + (pad.tiltY - waveTiltY + pad.tiltVelY) * 0.88;
 
-                // Posición final: NUNCA se cortará con ningún borde de pantalla (mínimo 6px de separación total)
-                const finalX = Math.max(
-                    effectiveRadius + 6,
-                    Math.min(width - effectiveRadius - 6, safeBaseX + currentX + pad.offsetX)
-                );
-                const finalY = Math.max(
-                    effectiveRadius + 6,
-                    Math.min(height - effectiveRadius - 6, safeBaseY + currentY + pad.offsetY)
-                );
+                // Posición final: NUNCA se cortará con ningún borde de pantalla en mobile ni en pantallas grandes.
+                // Se compensa holgadamente el radio, la inclinación 3D y la sombra proyectada (8-22px en X, 12-26px en Y)
+                const minSafeX = effectiveRadius + 18;
+                const maxSafeX = width - effectiveRadius - 28;
+                const minSafeY = effectiveRadius + 18;
+                const maxSafeY = height - effectiveRadius - 32;
+
+                const finalX = Math.max(minSafeX, Math.min(maxSafeX, safeBaseX + currentX + pad.offsetX));
+                const finalY = Math.max(minSafeY, Math.min(maxSafeY, safeBaseY + currentY + pad.offsetY));
                 const rot = pad.angle + Math.sin(tick * 0.0008 + pad.driftPhase) * 0.1;
 
                 drawLilyPad(

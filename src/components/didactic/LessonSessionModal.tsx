@@ -8,6 +8,8 @@ import { Level, Question, MascotMood, PathType, BeltRank, BookReference } from "
 import { KumaMascot } from "./KumaMascot";
 import { TheorySheetModal } from "./TheorySheetModal";
 import { KanjiDrawCanvas } from "./KanjiDrawCanvas";
+import { MapOriginDragQuestion } from "./MapOriginDragQuestion";
+import { TreePillarsQuestion } from "./TreePillarsQuestion";
 import { didacticSound } from "@/lib/didacticSound";
 import { DIDACTIC_UNITS } from "@/data/didacticaData";
 import { getBeltRank } from "@/data/beltRanks";
@@ -180,6 +182,8 @@ export function LessonSessionModal({
 
     // Kanji drawing state
     const [isKanjiDrawn, setIsKanjiDrawn] = useState(false);
+    const [isMapDragDone, setIsMapDragDone] = useState(false);
+    const [isTreePillarsDone, setIsTreePillarsDone] = useState(false);
 
 // Fisher-Yates shuffle helper para orden aleatorio
 function shuffleArray<T>(array: T[]): T[] {
@@ -201,7 +205,12 @@ function shuffleArray<T>(array: T[]): T[] {
     // PREGUNTAS EN ORDEN ALEATORIO: cada vez que se abre el nivel se barajan las preguntas y sus opciones
     const sessionQuestions = useMemo(() => {
         if (!isOpen || !level.questions) return [];
-        return shuffleArray(level.questions).map((q) => {
+        // Si hay una pregunta introductoria de mapa ('q-karate-origen-mapas'), se mantiene al inicio
+        const originQuestion = level.questions.find((q) => q.id === "q-karate-origen-mapas");
+        const rest = level.questions.filter((q) => q.id !== "q-karate-origen-mapas");
+        const list = originQuestion ? [originQuestion, ...shuffleArray(rest)] : shuffleArray(level.questions);
+
+        return list.map((q) => {
             if (q.options && q.options.length > 1 && (q.type === "multiple_choice" || q.type === "image_choice")) {
                 return {
                     ...q,
@@ -274,6 +283,8 @@ function shuffleArray<T>(array: T[]): T[] {
         setSelectedRightId(null);
         setMatchedPairIds([]);
         setIsKanjiDrawn(false);
+        setIsMapDragDone(false);
+        setIsTreePillarsDone(false);
         setAnswerStatus("idle");
         setMascotMood(streak >= 3 ? "streak" : "idle");
         setCustomSpeech(undefined);
@@ -303,6 +314,8 @@ function shuffleArray<T>(array: T[]): T[] {
         setSelectedRightId(null);
         setMatchedPairIds([]);
         setIsKanjiDrawn(false);
+        setIsMapDragDone(false);
+        setIsTreePillarsDone(false);
         setAnswerStatus("idle");
     };
 
@@ -362,13 +375,59 @@ function shuffleArray<T>(array: T[]): T[] {
             ? matchedPairIds.length === (currentQuestion.pairs?.length || 0)
             : currentQuestion.type === "kanji_draw"
             ? isKanjiDrawn
+            : currentQuestion.type === "map_drag"
+            ? isMapDragDone
+            : currentQuestion.type === "tree_pillars"
+            ? isTreePillarsDone
             : false;
+
+    const handleDirectMapCheckAndNext = () => {
+        didacticSound.playCorrect();
+        setCorrectCount((prev) => prev + 1);
+        setStreak((prev) => prev + 1);
+        setMascotMood("streak");
+        setCustomSpeech("¡KIAI! ¡Completaste la ruta del barquito! Avanzando al siguiente desafío... 🥋🔥");
+        setIsMapDragDone(false);
+        setAnswerStatus("idle");
+
+        if (currentIndex + 1 < totalQuestions) {
+            setCurrentIndex((prev) => prev + 1);
+        } else {
+            handleNextQuestion();
+        }
+    };
+
+    const handleDirectTreeCheckAndNext = () => {
+        didacticSound.playCorrect();
+        setCorrectCount((prev) => prev + 1);
+        setStreak((prev) => prev + 1);
+        setMascotMood("streak");
+        setCustomSpeech("¡KIAI! ¡El Árbol Sagrado floreció con Kihon, Kata y Kumite! Avanzando... 🌸🥋🔥");
+        setIsTreePillarsDone(false);
+        setAnswerStatus("idle");
+
+        if (currentIndex + 1 < totalQuestions) {
+            setCurrentIndex((prev) => prev + 1);
+        } else {
+            handleNextQuestion();
+        }
+    };
 
     const handleValidation = (isMatchingAutoCorrect: boolean = false) => {
         let isCorrect = false;
 
         if (isMatchingAutoCorrect) {
             isCorrect = true;
+        } else if (currentQuestion.type === "map_drag") {
+            if (isMapDragDone) {
+                handleDirectMapCheckAndNext();
+                return;
+            }
+        } else if (currentQuestion.type === "tree_pillars") {
+            if (isTreePillarsDone) {
+                handleDirectTreeCheckAndNext();
+                return;
+            }
         } else if (currentQuestion.type === "multiple_choice" || currentQuestion.type === "image_choice") {
             const chosen = currentQuestion.options?.find((o) => o.id === selectedOptionId);
             isCorrect = chosen?.isCorrect || false;
@@ -471,6 +530,11 @@ function shuffleArray<T>(array: T[]): T[] {
             }
         }
     };
+
+    const isWideQuestion =
+        currentQuestion.type === "map_drag" ||
+        currentQuestion.type === "tree_pillars" ||
+        currentQuestion.type === "kanji_draw";
 
     return (
         <div className="fixed inset-0 z-[70] flex flex-col bg-[#0B132B] text-white select-none overflow-hidden">
@@ -597,10 +661,10 @@ function shuffleArray<T>(array: T[]): T[] {
                 ZONE 2: MAIN LESSON BODY (OPTIMIZED COMPACT VIEWPORT)
                 Strictly disables artificial height and prevents unnecessary scrolling
             ========================================= */}
-            <main className="flex-1 w-full overflow-y-auto overflow-x-hidden px-4 md:px-8 py-2 md:py-4 flex flex-col justify-center">
-                <div className="max-w-5xl mx-auto w-full my-auto flex flex-col justify-center py-1">
+            <main className="flex-1 w-full overflow-y-auto overflow-x-hidden px-3 sm:px-6 md:px-8 pt-4 sm:pt-6 md:pt-8 pb-12 sm:pb-16 flex flex-col justify-start">
+                <div className={`${isWideQuestion ? "max-w-6xl" : "max-w-5xl"} mx-auto w-full flex flex-col justify-start`}>
                     {!isCompleted && !isFailed ? (
-                        <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-10 w-full">
+                        <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-4 md:gap-8 lg:gap-10 w-full">
                             {/* LEFT: SENSEI MASCOT (Dynamic Responsive: Horizontal companion on mobile, 3D Sensei on desktop) */}
                             <div className="w-full md:w-60 shrink-0 flex flex-col items-center justify-center">
                                 <KumaMascot
@@ -626,7 +690,7 @@ function shuffleArray<T>(array: T[]): T[] {
                             </div>
 
                             {/* RIGHT: QUESTION & INTERACTIVE ANSWERS */}
-                            <div className="flex-1 w-full max-w-xl space-y-3.5 md:space-y-4">
+                            <div className={`flex-1 w-full ${isWideQuestion ? "max-w-4xl" : "max-w-xl"} space-y-3.5 md:space-y-4`}>
                                 {/* Question Header with Clear Padding, Cancel Option & Quick Testing Navigator */}
                                 <div className="space-y-2">
                                     {/* Testing Question Switcher (ESTRICTAMENTE SOLO PARA SUPER_ADMIN) */}
@@ -688,7 +752,7 @@ function shuffleArray<T>(array: T[]): T[] {
                                         </div>
                                     )}
 
-                                    <div className="flex items-center justify-between gap-3">
+                                    <div className="flex items-center justify-between gap-3 pt-1">
                                         <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-[#1CB0F6] px-3 py-1 rounded-full bg-[#0E2A47] border-2 border-[#1CB0F6]/50 shadow-sm">
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#1CB0F6] animate-pulse" />
                                             Pregunta {currentIndex + 1} de {totalQuestions} • {level.tag}
@@ -703,13 +767,15 @@ function shuffleArray<T>(array: T[]): T[] {
                                             <span>Cancelar</span>
                                         </button>
                                     </div>
-                                    <h2 className="text-xl md:text-2xl lg:text-3xl font-serif font-black text-white leading-snug drop-shadow-md">
+                                    <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-black text-white leading-snug drop-shadow-md mt-1">
                                         {currentQuestion.prompt}
                                     </h2>
                                 </div>
 
-                                {/* QUESTION IMAGE (IF ANY) */}
-                                {currentQuestion.image && (
+                                {/* QUESTION IMAGE (IF ANY - EXCLUDING CUSTOM INTERACTIVE QUESTIONS LIKE TREE AND MAP) */}
+                                {currentQuestion.image &&
+                                    currentQuestion.type !== "tree_pillars" &&
+                                    currentQuestion.type !== "map_drag" && (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.96 }}
                                         animate={{ opacity: 1, scale: 1 }}
@@ -968,6 +1034,36 @@ function shuffleArray<T>(array: T[]): T[] {
                                                 setMascotMood("streak");
                                                 setCustomSpeech("¡KIAI! ¡Has forjado los 3 Kanjis sagrados de KARATE-DO (空・手・道)! ¡Comprueba tu técnica ahora! 👊🥋🔥");
                                             }}
+                                        />
+                                    </div>
+                                )}
+                                {/* MAP ORIGIN DRAG AND DROP */}
+                                {currentQuestion.type === "map_drag" && (
+                                    <div className="w-full">
+                                        <MapOriginDragQuestion
+                                            question={currentQuestion}
+                                            isSuperAdmin={isSuperAdmin}
+                                            onCompleted={() => {
+                                                setIsMapDragDone(true);
+                                                setMascotMood("streak");
+                                                setCustomSpeech("¡KIAI! ¡Completaste la ruta del barquito! El Karate nació en la Isla de Okinawa y llegó a todo el mundo. 🇨🇳🏝️🇯🇵");
+                                            }}
+                                            onCheckAndNext={handleDirectMapCheckAndNext}
+                                        />
+                                    </div>
+                                )}
+                                {/* TREE PILLARS QUESTION (EL ÁRBOL SAGRADO: KIHON, KATA Y KUMITE) */}
+                                {currentQuestion.type === "tree_pillars" && (
+                                    <div className="w-full">
+                                        <TreePillarsQuestion
+                                            question={currentQuestion}
+                                            isSuperAdmin={isSuperAdmin}
+                                            onCompleted={() => {
+                                                setIsTreePillarsDone(true);
+                                                setMascotMood("streak");
+                                                setCustomSpeech("¡KIAI! ¡Colocaste las 3 gemas sagradas: Kihon, Kata y Kumite! 🌸🥋");
+                                            }}
+                                            onCheckAndNext={handleDirectTreeCheckAndNext}
                                         />
                                     </div>
                                 )}

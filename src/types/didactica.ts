@@ -5,7 +5,19 @@ export type QuestionType =
     | 'image_choice' 
     | 'matching' 
     | 'true_false'
-    | 'kanji_draw';
+    | 'kanji_draw'
+    | 'map_drag'
+    | 'tree_pillars';
+
+export interface DragMapItem {
+    id: string;
+    title: string;
+    subtitle: string;
+    image: string;
+    targetSlot: 'china' | 'okinawa';
+    badge: string;
+    description?: string;
+}
 
 export interface MatchingPair {
     id: string;
@@ -54,6 +66,7 @@ export interface Question {
     pairs?: MatchingPair[]; // for matching questions
     correctBool?: boolean; // for true_false
     kanjiList?: KanjiCharDef[]; // for kanji_draw questions
+    dragMaps?: DragMapItem[]; // for map_drag questions
     explanation: string; // Pedagogical explanation shown upon answering
     hint?: string;
     references?: (string | BookReference)[]; // Book references & documentary origins

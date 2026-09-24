@@ -16,6 +16,9 @@ import {
     BellRinging,
 } from "@phosphor-icons/react";
 import { FloatingSteppingStone } from "./FloatingSteppingStone";
+import { ExaminersTableCartoon } from "./ExaminersTableCartoon";
+import { BeltExamModal } from "./BeltExamModal";
+import { WHITE_BELT_EXAM } from "@/data/beltExamData";
 
 interface BeltCascadeSectionProps {
     unit: Unit;
@@ -30,6 +33,7 @@ interface BeltCascadeSectionProps {
     onFocusBelt?: (beltId: BeltRankId) => void;
     hasNewQuestions?: boolean;
     updatedLevelIds?: string[];
+    onExamPassed?: (targetBeltId: string, earnedXp: number) => void;
 }
 
 /**
@@ -949,9 +953,13 @@ export function BeltCascadeSection({
     onFocusBelt,
     hasNewQuestions = false,
     updatedLevelIds = [],
+    onExamPassed,
 }: BeltCascadeSectionProps) {
     const { data: session } = useSession();
     const isSuperAdmin = Boolean(session?.user && (session.user as any).role === "super_admin");
+
+    const [isExamModalOpen, setIsExamModalOpen] = useState(false);
+    const hasPassedExam = progress.completedLevelIds.includes("exam-kyu-10");
 
     const isDan = belt.category === "dan";
     const isWhiteBelt = belt.category === "kyu" && belt.levelNumber === 10;
@@ -964,7 +972,10 @@ export function BeltCascadeSection({
     const completedLevelsCount = beltLevels.filter((l) =>
         progress.completedLevelIds.includes(l.id)
     ).length;
-    const isBeltCompleted = completedLevelsCount === beltLevels.length && beltLevels.length > 0;
+    const isAllLevelsCompleted = completedLevelsCount === beltLevels.length && beltLevels.length > 0;
+    const isBeltCompleted = isWhiteBelt
+        ? isAllLevelsCompleted && hasPassedExam
+        : isAllLevelsCompleted;
 
     // Check unlock state for levels within this belt (only relevant if the belt itself is unlocked)
     const isLevelUnlocked = (level: Level) => {
@@ -1251,28 +1262,6 @@ export function BeltCascadeSection({
                                             }}
                                             hasNewQuestions={updatedLevelIds.includes(level.id)}
                                         />
-
-                                        {/* TÍTULO Y ETIQUETA FLOTANTES DIRECTAMENTE SOBRE EL AGUA (SIN CAJA) */}
-                                        <div className="mt-2 text-center max-w-[200px]">
-                                            <span
-                                                className={`block text-xs md:text-sm font-serif font-black leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] transition-colors ${
-                                                    unlocked ? "text-white" : "text-zinc-400"
-                                                }`}
-                                            >
-                                                {level.title}
-                                            </span>
-                                            <span
-                                                className={`text-[10px] font-bold uppercase tracking-widest block mt-0.5 transition-colors drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] ${
-                                                    completed
-                                                        ? "text-emerald-400"
-                                                        : unlocked
-                                                        ? "text-amber-300"
-                                                        : "text-zinc-500"
-                                                }`}
-                                            >
-                                                {level.tag}
-                                            </span>
-                                        </div>
                                     </div>
 
                                     {/* CORRIENTE ACUÁTICA DE AGUA ENTRE PIEDRAS (NAGARE 流) */}
@@ -1291,15 +1280,35 @@ export function BeltCascadeSection({
                 </motion.div>
             )}
 
-            {/* INTER-BELT CASCADE CONNECTOR: CEREMONIAL KUMIHIMO CORD & OCTAGONAL KAMON SEAL */}
-            {!isLast && (
-                <MartialInterBeltConnector
-                    isBeltCompleted={isBeltCompleted}
-                    isBeltUnlocked={isBeltUnlocked}
-                    belt={belt}
-                    nextBelt={nextBelt}
-                />
+            {/* TRIBUNAL DE EXAMEN CON 3 EXAMINADORES Y MESA ANIMADA ("TOMAR EXAMEN") */}
+            {!isLast && isWhiteBelt && (
+                <div className="relative z-10 w-full flex flex-col items-center">
+                    <ExaminersTableCartoon
+                        belt={belt}
+                        nextBelt={nextBelt}
+                        isBeltCompleted={isAllLevelsCompleted}
+                        isBeltUnlocked={isBeltUnlocked}
+                        onTakeExam={() => setIsExamModalOpen(true)}
+                        hasPassedExam={hasPassedExam}
+                    />
+
+                    {/* MODAL OFICIAL DE 10 PREGUNTAS DEL EXAMEN DE ASCENSO */}
+                    <BeltExamModal
+                        isOpen={isExamModalOpen}
+                        onClose={() => setIsExamModalOpen(false)}
+                        examConfig={WHITE_BELT_EXAM}
+                        currentBelt={belt}
+                        targetBelt={nextBelt}
+                        onExamPassed={(targetBeltId, earnedXp) => {
+                            onExamPassed?.(targetBeltId, earnedXp);
+                            if (nextBelt) {
+                                onFocusBelt?.(nextBelt.id);
+                            }
+                        }}
+                    />
+                </div>
             )}
+
 
             {/* LAST BELT SPECIAL CLOSING: 10° DAN JUDAN */}
             {isLast && isBeltUnlocked && (

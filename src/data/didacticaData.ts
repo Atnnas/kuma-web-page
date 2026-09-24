@@ -16,7 +16,7 @@ export const DIDACTIC_UNITS: Unit[] = [
             {
                 id: "level-karategi",
                 number: 1,
-                title: "Historia del Karate-Do",
+                title: "Historia",
                 subtitle: "Origen ancestral, el secreto del Bubishi y la forja del Budo",
                 tag: "Historia & Filosofía",
                 icon: "🥋",
@@ -151,6 +151,60 @@ export const DIDACTIC_UNITS: Unit[] = [
                 },
                 questions: [
                     {
+                        id: "q-karate-origen-mapas",
+                        type: "map_drag",
+                        prompt: "¿Cómo nació el Karate? ¡Navega con Kuma Sensei!",
+                        description: "Guía el barquito de Kuma: Toca China 🇨🇳 (1), luego la Isla de Okinawa 🏝️ (2) y viaja a Japón 🇯🇵 (3).",
+                        explanation: "¡Extraordinario! El Karate nació en la pequeña isla de Okinawa. Los maestros viajaron en barco a China para aprender Kung-Fu y lo fusionaron con su combate nativo para crear la Mano Vacía. ¡Luego viajó a Japón y a todo el mundo!",
+                        hint: "Toca los puertos en orden: 1. China 🇨🇳 ➔ 2. Okinawa 🏝️ ➔ 3. Japón 🇯🇵.",
+                        dragMaps: [
+                            {
+                                id: "china",
+                                title: "1. Costa de China",
+                                subtitle: "Cuna del Kung-Fu",
+                                image: "/images/didactic/kuma_pixar_origins_map_v2.jpg",
+                                targetSlot: "china",
+                                badge: "🇨🇳 KUNG-FU",
+                                description: "Quan-Fa del sur y boxeo de la grulla."
+                            },
+                            {
+                                id: "okinawa",
+                                title: "2. Isla de Okinawa",
+                                subtitle: "¡Cuna del Karate!",
+                                image: "/images/didactic/kuma_pixar_origins_map_v2.jpg",
+                                targetSlot: "okinawa",
+                                badge: "🏝️ MANO VACÍA",
+                                description: "Aquí nació el Karate-Do."
+                            }
+                        ],
+                        references: [
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Introducción histórica: La ruta de Fuzhou a Naha y el linaje de Fujian",
+                                note: "Investigación sobre la migración de las 36 familias chinas a Kumemura (Okinawa) y los viajes comerciales que llevaron el Quan-Fa a Ryukyu."
+                            },
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Mark Bishop",
+                                year: 1999,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 1: El Reino de Ryukyu y el intercambio marcial sino-okinawense",
+                                note: "Detalla la síntesis geográfica e histórica entre la provincia de Fujian y los puertos de Okinawa."
+                            },
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 1: Los dos orígenes del arte de Okinawa",
+                                note: "El padre del Karate moderno explica cómo el arte surgió de la conjunción de las raíces chinas con la tradición autóctona de Okinawa."
+                            }
+                        ]
+                    },
+                    {
                         id: "q-karate-kanji-draw-1",
                         type: "kanji_draw",
                         prompt: "Traza con tu dedo o mouse los Kanjis sagrados de KARATE-DO (空手道)",
@@ -184,64 +238,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                             }
                         ]
                     },
-                    {
-                        id: "q-bubishi-origen-okinawa",
-                        type: "multiple_choice",
-                        prompt: "¿Cuál fue la raíz histórica que dio origen al Karate en Okinawa?",
-                        description: "Tratado secreto Bubishi (武備志) del antiguo Reino de Ryukyu.",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🇯🇵 Te de Okinawa + Jujutsu Samurái",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o2",
-                                text: "🇨🇳 Te de Okinawa + Quan-fa del sur de China",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o3",
-                                text: "🥋 Boxeo Shaolin del Norte",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "⛵ Lucha de marineros de Taiwán",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o2",
-                        explanation: "¡Exacto! El Bubishi documenta la síntesis del 'Te' (手) nativo de Okinawa con el 'Quan-fa' del sur de China (Fujian), preservado por los primeros maestros de Ryukyu.",
-                        hint: "El Bubishi es de herencia chino-okinawense: busca la influencia del sur de China.",
-                        references: [
-                            {
-                                title: "Bubishi: La Biblia del Karate",
-                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
-                                year: 2001,
-                                editorial: "Editorial Tutor",
-                                chapter: "Traducción y comentarios de los 32 artículos del manuscrito secreto",
-                                note: "Obra de referencia obligada traducida al español por Sensei Patrick McCarthy sobre el manuscrito secreto que preservaron los maestros fundadores de Okinawa (como Higashionna, Miyagi e Itosu)."
-                            },
-                            {
-                                title: "La Historia del Karate: Goju-Ryu de Okinawa",
-                                author: "Maestro Morio Higaonna (10° Dan)",
-                                year: 1996,
-                                editorial: "Editorial Miraguano",
-                                chapter: "Capítulo 2: Los orígenes del Naha-Te y la herencia del Bubishi en Ryukyu",
-                                note: "Crónica histórica de cómo el Bubishi fue transmitido desde Fuzhou (China) a Naha y atesorado por los pioneros del Karate."
-                            },
-                            {
-                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
-                                author: "Mark Bishop",
-                                year: 1999,
-                                editorial: "Editorial Paidotribo",
-                                chapter: "Linajes tradicionales de Shuri, Tomari y Naha y su conexión con China",
-                                note: "Estudio exhaustivo en español sobre las raíces autóctonas de Okinawa y el impacto de los inmigrantes chinos de Fujian."
-                            }
-                        ]
-                    },
-                    {
+                        {
                         id: "q-prohibicion-armas-okinawa",
                         type: "multiple_choice",
                         prompt: "¿Por qué se entrenaba en secreto y de noche en la antigua Okinawa?",
@@ -528,9 +525,9 @@ export const DIDACTIC_UNITS: Unit[] = [
                     },
                     {
                         id: "q-pilares-kihon-kata-kumite",
-                        type: "multiple_choice",
-                        prompt: "¿Cuáles son los 3 pilares esenciales del Karate tradicional?",
-                        description: "La tríada formativa del dojo.",
+                        type: "tree_pillars",
+                        prompt: "Los 3 Pilares del Karate: ¡Haz florecer el Árbol Sagrado!",
+                        description: "Coloca cada gema en su altar: la Raíz (Kihon), el Tronco (Kata) y las Flores (Kumite).",
                         options: [
                             {
                                 id: "o1",
@@ -694,351 +691,6 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 editorial: "Editorial Tutor",
                                 chapter: "Principio 12: No pienses que tienes que ganar; piensa más bien en no perder",
                                 note: "Tratado filosófico sobre la templanza y el cuidado reverencial de la vida humana en el tatami."
-                            }
-                        ]
-                    },
-                    {
-                        id: "q-shuri-mapa-origen",
-                        type: "multiple_choice",
-                        prompt: "En el mapa histórico de Okinawa: ¿Dónde se originó el SHURI-TE (首里手) y quiénes lo practicaban?",
-                        description: "La cuna del Karate en la colina de la corte real de Ryukyu.",
-                        image: "/images/didactic/okinawa_three_cities_map.jpg",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🏯 En la colina del Castillo de Shuri (nobles Peichin y guardias del Rey)",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o2",
-                                text: "⚓ En el muelle de carga comercial del puerto sur",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o3",
-                                text: "🌾 En las aldeas de arrozales lejanas del norte",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "⛵ En los barcos de mercaderes hacia Japón continental",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "¡Exacto! El Shuri-Te floreció en la capital amurallada del Castillo de Shuri (首里城). Era cultivado por la nobleza y los oficiales de seguridad real ('Peichin'), caracterizándose por desplazamientos lineales, velocidad relámpago y posturas ágiles.",
-                        hint: "Observa la parte alta del mapa donde se ubica el palacio real.",
-                        references: [
-                            {
-                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
-                                author: "Mark Bishop",
-                                year: 1999,
-                                editorial: "Editorial Paidotribo",
-                                chapter: "Capítulo 2: El linaje de Shuri y la corte del Castillo de Ryukyu",
-                                note: "Análisis histórico de la casta militar Peichin y la transmisión del arte en el palacio real."
-                            },
-                            {
-                                title: "Karate-Do: Mi Camino de Vida",
-                                author: "Maestro Gichin Funakoshi",
-                                year: 1975,
-                                editorial: "Editorial Eyras",
-                                chapter: "Capítulo 1: Nacer en Shuri y el linaje de los guardaespaldas reales de Ryukyu",
-                                note: "Crónica del entorno aristocrático de Shuri donde se forjaron los desplazamientos rápidos y las posturas lineales."
-                            },
-                            {
-                                title: "Bubishi: La Biblia del Karate",
-                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
-                                year: 2001,
-                                editorial: "Editorial Tutor",
-                                chapter: "Apéndice Histórico: Bushi Matsumura y la guardia de palacio en Shuri",
-                                note: "Registro biográfico de Sokon Matsumura y su servicio como comandante militar de tres reyes sucesivos de Ryukyu."
-                            }
-                        ]
-                    },
-                    {
-                        id: "q-shuri-estilos-derivados",
-                        type: "multiple_choice",
-                        prompt: "¿Qué maestros legendarios y estilos mundiales nacieron de la matriz de SHURI?",
-                        description: "Evolución de la corte real hacia los estilos tradicionales universales.",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🥋 Sokon Matsumura y Anko Itosu ➔ Forjaron SHOTOKAN y SHITO-RYU",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o2",
-                                text: "🥊 Kanryo Higaonna ➔ Forjó el GOJU-RYU y Uechi-Ryu",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o3",
-                                text: "🗡️ Minamoto no Yoshitsune ➔ Forjó el Kenjutsu Samurái",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "🥋 Jigoro Kano ➔ Forjó el Judo moderno",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "¡Brillante! Maestros legendarios de Shuri como 'Bushi' Matsumura (guardaespaldas del rey) y Anko Itosu instruyeron a Gichin Funakoshi (creador de Shotokan) y Kenwa Mabuni (fundador de Shito-Ryu, fusionando Shuri y Naha).",
-                        hint: "Funakoshi entrenó con los dos grandes maestros de Shuri: Asato e Itosu.",
-                        references: [
-                            {
-                                title: "Karate-Do: Mi Camino de Vida",
-                                author: "Maestro Gichin Funakoshi",
-                                year: 1975,
-                                editorial: "Editorial Eyras",
-                                chapter: "Capítulo 1: Mis maestros de Shuri: Anko Asato y Anko Itosu",
-                                note: "Crónica autobiográfica del entrenamiento nocturno en Shuri que dio origen al Karate moderno."
-                            },
-                            {
-                                title: "Karate Shotokan: Una Historia Precisa",
-                                author: "Harry Cook",
-                                year: 2001,
-                                editorial: "Edición Histórica Marcial / Page Bros",
-                                chapter: "Capítulo 3: Sokon Matsumura y Anko Itosu: Los arquitectos del Shuri-Te",
-                                note: "Investigación genealógica que rastrea la evolución técnica de Shuri hasta Funakoshi y Mabuni."
-                            },
-                            {
-                                title: "La Esencia del Karate-Do Okinawense",
-                                author: "Maestro Shoshin Nagamine (10° Dan)",
-                                year: 1998,
-                                editorial: "Editorial Miraguano",
-                                chapter: "Capítulo 2: Grandes maestros del linaje Shuri-Te / Shorin-Ryu",
-                                note: "Homenaje biográfico a Anko Itosu como el gran reformador pedagógico que creó las katas Pinan/Heian."
-                            }
-                        ]
-                    },
-                    {
-                        id: "q-naha-mapa-origen",
-                        type: "multiple_choice",
-                        prompt: "En el mapa histórico de Okinawa: ¿Qué era NAHA (那覇) y qué define la biomecánica del NAHA-TE?",
-                        description: "El bullicioso puerto marítimo y la herencia directa del sur de China.",
-                        image: "/images/didactic/okinawa_three_cities_map.jpg",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🚢 Puerto comercial marítimo con influencia de Fujian: posturas enraizadas (Sanchin) y respiración sonora",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o2",
-                                text: "👑 La residencia de retiro de la reina madre de Okinawa",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o3",
-                                text: "🏔️ Un pico montañoso donde se entrenaba con lanzas largas",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "🏕️ Una guarnición de samuráis del clan Satsuma",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "¡Correcto! Naha era el gran puerto mercantil del sur y el hogar de Kumemura ('Las 36 Familias Chinas'). El Naha-Te se nutrió del boxeo de la Grulla Blanca de Fujian, distinguiéndose por posturas pesadas, respiración profunda 'Ibuki', fuerza isométrica y combate a corta distancia.",
-                        hint: "Observa la bahía portuaria en la parte inferior del mapa conectada con el mar de China.",
-                        references: [
-                            {
-                                title: "La Historia del Karate: Goju-Ryu de Okinawa",
-                                author: "Maestro Morio Higaonna (10° Dan)",
-                                year: 1996,
-                                editorial: "Editorial Miraguano",
-                                chapter: "Capítulo 2: El puerto de Naha, Kumemura y los viajes a Fujian",
-                                note: "Estudio exhaustivo sobre el intercambio marítimo y comercial que forjó el linaje de Naha."
-                            },
-                            {
-                                title: "Bubishi: La Biblia del Karate",
-                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
-                                year: 2001,
-                                editorial: "Editorial Tutor",
-                                chapter: "Capítulo 3: Las raíces del Quan-fa de Fuzhou en Kumemura (Okinawa)",
-                                note: "Documentación histórica sobre la llegada de las 36 familias chinas en 1392 y la introducción del estilo Grulla Blanca."
-                            },
-                            {
-                                title: "Traditional Karate-Do: Okinawa Goju Ryu Vol. 1",
-                                author: "Maestro Morio Higaonna (10° Dan)",
-                                year: 1985,
-                                editorial: "Minato Research / Miraguano",
-                                chapter: "Capítulo 2: La kata Sanchin y los fundamentos fisiológicos del Naha-Te",
-                                note: "Análisis postural del enraizamiento, torsión pélvica y respiración diafragmática propios del puerto de Naha."
-                            }
-                        ]
-                    },
-                    {
-                        id: "q-naha-estilos-derivados",
-                        type: "multiple_choice",
-                        prompt: "¿Qué estilos de renombre internacional descienden directamente del NAHA-TE?",
-                        description: "La armonía entre la dureza inquebrantable y la suavidad circular.",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🥋 GOJU-RYU (Chojun Miyagi) y UECHI-RYU (Kanbun Uechi)",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o2",
-                                text: "⚡ SHOTOKAN y Wado-Ryu de Tokio",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o3",
-                                text: "🥊 Muay Thai y Kickboxing holandés",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "🥋 Tae Kwon Do de Corea",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "¡Exacto! Kanryo Higaonna viajó a Fuzhou y regresó a Naha para enseñar este sistema. Su discípulo Chojun Miyagi creó el GOJU-RYU ('Escuela de lo Duro y lo Flexible'), mientras que Kanbun Uechi preservó el Pangai-noon que dio vida al UECHI-RYU.",
-                        hint: "Piensa en el estilo fundado por Chojun Miyagi que honra lo duro (Go) y lo blando (Ju).",
-                        references: [
-                            {
-                                title: "Bubishi: La Biblia del Karate",
-                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
-                                year: 2001,
-                                editorial: "Editorial Tutor",
-                                chapter: "Capítulo 4: El poema Hakku Kenpo y la creación del nombre Goju-Ryu",
-                                note: "Documenta cómo Miyagi extrajo el nombre Goju-Ryu de los versos marciales del Bubishi."
-                            },
-                            {
-                                title: "La Historia del Karate: Goju-Ryu de Okinawa",
-                                author: "Maestro Morio Higaonna (10° Dan)",
-                                year: 1996,
-                                editorial: "Editorial Miraguano",
-                                chapter: "Capítulo 4: Kanryo Higaonna y Chojun Miyagi: La forja del Goju-Ryu",
-                                note: "Crónica del viaje de Higaonna a Fuzhou para entrenar con Ryu Ryu Ko y la posterior consolidación del estilo por Miyagi."
-                            },
-                            {
-                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
-                                author: "Mark Bishop",
-                                year: 1999,
-                                editorial: "Editorial Paidotribo",
-                                chapter: "Capítulo 5: El linaje Uechi-Ryu: Kanbun Uechi y el boxeo chino Pangai-noon",
-                                note: "Historia detallada de cómo Kanbun Uechi trajo a Okinawa el sistema tradicional de tigre, grulla y dragón de Fujian."
-                            }
-                        ]
-                    },
-                    {
-                        id: "q-tomari-mapa-origen",
-                        type: "multiple_choice",
-                        prompt: "En el mapa histórico de Okinawa: ¿Qué era TOMARI (泊) y qué caracterizaba a sus guerreros?",
-                        description: "Pueblo portuario costero situado entre Shuri y Naha.",
-                        image: "/images/didactic/okinawa_three_cities_map.jpg",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🌊 Pueblo pesquero intermedio: marineros y campesinos con técnicas evasivas, saltos y derribos",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o2",
-                                text: "🏰 La fortaleza principal del ejército imperial japonés",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o3",
-                                text: "⛩️ Un monasterio donde solo se practicaba tiro con arco",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "🏔️ Una cordillera nevada donde vivían ermitaños",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "¡Exacto! Tomari era un activo pueblo de pescadores y puerto secundario ubicado geográficamente entre Shuri y Naha. Los practicantes de Tomari-Te fusionaron la agilidad de Shuri con técnicas clandestinas de marineros y expertos chinos náufragos (como Chinto y Annan), destacando por esquivas rápidas, saltos y proyecciones.",
-                        hint: "Busca en el mapa el pueblo marítimo 'TOMARI' ubicado entre Shuri y Naha.",
-                        references: [
-                            {
-                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
-                                author: "Mark Bishop",
-                                year: 1999,
-                                editorial: "Editorial Paidotribo",
-                                chapter: "Capítulo 3: El misterioso Tomari-Te y las enseñanzas del náufrago chino Annan",
-                                note: "Detalla la singularidad de Tomari como crisol de pescadores, campesinos y maestros itinerantes."
-                            },
-                            {
-                                title: "La Esencia del Karate-Do Okinawense",
-                                author: "Maestro Shoshin Nagamine (10° Dan)",
-                                year: 1998,
-                                editorial: "Editorial Miraguano",
-                                chapter: "Capítulo 3: Las leyendas de Tomari: Kosaku Matsumora y Kokan Oyadomari",
-                                note: "Relato de los entrenamientos secretos en el cementerio y las cuevas costeras de Tomari con náufragos chinos."
-                            },
-                            {
-                                title: "Bubishi: La Biblia del Karate",
-                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
-                                year: 2001,
-                                editorial: "Editorial Tutor",
-                                chapter: "Sección Histórica: El pirata o marinero chino Chinto y su legado en Tomari",
-                                note: "Investigación sobre la figura histórica de Chinto y cómo transmitió su método de esquivas y saltos a los guerreros de Tomari."
-                            }
-                        ]
-                    },
-                    {
-                        id: "q-tomari-estilos-katas",
-                        type: "multiple_choice",
-                        prompt: "¿Qué maestros y Katas clásicos representan el alma legendaria del TOMARI-TE?",
-                        description: "Katas de garzas blancas, saltos elásticos y defensas angulares.",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🥋 Kosaku Matsumora y Choki Motobu ➔ Katas Rohai, Wankan y Chinto",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o2",
-                                text: "🥊 Chojun Miyagi ➔ Katas Sanchin y Tensho",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o3",
-                                text: "⚡ Gichin Funakoshi ➔ Katas Taikyoku Shodan y Heian Shodan",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "🗡️ Oda Nobunaga ➔ Formas de alabarda Naginata",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "¡Extraordinario! Maestros como Kosaku Matsumora, Kokan Oyadomari y el temible combatiente Choki Motobu inmortalizaron el Tomari-Te. De allí surgieron katas emblemáticas como Rohai (La visión de la garza), Wankan, Chinto y Bassai Tomari, presentes hoy en escuelas como Shito-Ryu, Shorin-Ryu y Matsubayashi-Ryu.",
-                        hint: "Katas famosas de la garza (Rohai) y maestros como Matsumora y Motobu.",
-                        references: [
-                            {
-                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
-                                author: "Mark Bishop",
-                                year: 1999,
-                                editorial: "Editorial Paidotribo",
-                                chapter: "Capítulo 3: Kosaku Matsumora, Choki Motobu y los katas exclusivos de Tomari",
-                                note: "Historia de cómo los katas de Tomari fueron transmitidos a las generaciones contemporáneas."
-                            },
-                            {
-                                title: "Watashi no Karate-Jutsu: Mi Arte del Karate",
-                                author: "Maestro Choki Motobu",
-                                year: 1932,
-                                editorial: "Kitsutsuki / Ryukyu Martial Archives",
-                                chapter: "Capítulo I: Mi aprendizaje con Maestro Kosaku Matsumora en Tomari",
-                                note: "Memorias del más legendario luchador de Okinawa sobre las técnicas de esquiva angular Tenshin y contragolpes de Tomari."
-                            },
-                            {
-                                title: "La Esencia del Karate-Do Okinawense",
-                                author: "Maestro Shoshin Nagamine (10° Dan)",
-                                year: 1998,
-                                editorial: "Editorial Miraguano",
-                                chapter: "Capítulo 5: Los katas clásicos de Tomari: Rohai y Wankan",
-                                note: "Descripción técnica e iconografía del movimiento de la garza (Rohai) y la corona real (Wankan) heredados de Tomari."
                             }
                         ]
                     }
@@ -1521,7 +1173,7 @@ export const DIDACTIC_UNITS: Unit[] = [
             {
                 id: "level-kumite-tradicional",
                 number: 3,
-                title: "Evolución del Kumite",
+                title: "Kihon",
                 subtitle: "Entrelazar manos: Del combate vital al Budo moderno",
                 tag: "Combate & Tradición",
                 icon: "🤝",
@@ -1666,6 +1318,189 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 note: "Explica cómo la letalidad de las técnicas tradicionales impedía los combates libres deportivos en Ryukyu."
                             }
                         ]
+                    }
+                ]
+            },
+            {
+                id: "level-kata-blanco",
+                number: 4,
+                title: "Kata",
+                subtitle: "La enciclopedia viva del Karate-Do: Taikyoku Shodan, Embusen y Bunkai",
+                tag: "Kata & Formas",
+                icon: "📜",
+                color: "gold",
+                xpReward: 80,
+                theory: {
+                    title: "Kata (型 / 形) — El Alma y la Biblioteca Viva del Karate",
+                    subtitle: "Secuencias sagradas, memoria corporal y la aplicación real (Bunkai)",
+                    quote: "El Kata no es una simple danza; es un combate real grabado en la memoria del cuerpo donde cada respiración y cada pausa deciden la vida. — Maestro Gichin Funakoshi",
+                    content: [
+                        "1. ¿Qué es un Kata?: Literalmente significa 'forma' o 'molde'. En la tradición marcial de Okinawa y Japón, el Kata es la enciclopedia viva y el archivo histórico del Karate. Es una coreografía geométrica predeterminada que simula un combate a muerte contra múltiples adversarios invisibles.",
+                        "2. Taikyoku Shodan (太極初段): Creado por Gichin Funakoshi junto a su hijo Yoshitaka, 'Taikyoku' significa 'Gran Causa Primera' o 'El Gran Origen'. Es la primera forma que aprende todo cinturón blanco. Consta de 20 movimientos ejecutados en un diagrama geométrico en forma de 'H' o 'I', combinando únicamente la postura Zenkutsu-dachi con bloqueos bajos (Gedan-Barai) y golpes de puño directos (Oi-Zuki).",
+                        "3. El Embusen (演武線): Es la línea de desplazamiento o mapa geométrico dibujado en el tatami sobre el cual se desarrolla el kata. Todo kata tradicional debe iniciar y concluir exactamente en el mismo punto de origen, simbolizando el ciclo completo de la energía y el equilibrio absoluto.",
+                        "4. El Secreto del Bunkai (分解): Detrás de cada bloqueo y golpe del kata reside el Bunkai ('desarmar' o 'analizar'). Lo que aparenta ser un bloqueo ante la mirada no iniciada, es en realidad una luxación articular (Kansetsu-waza), un derribo (Nage-waza) o un ataque a puntos vitales (Kyusho) preservado por los maestros antiguos.",
+                        "5. Kiai, Zanshin y Ritmo: Un kata vivo requiere alternar lentitud y explosividad, relajación y Kime, sellando los giros cruciales con el grito de Ki (Kiai en los movimientos 8 y 16) y manteniendo la alerta mental imperturbable (Zanshin) hasta el saludo final Rei."
+                    ],
+                    bulletPoints: [
+                        {
+                            title: "Taikyoku Shodan (太極初段)",
+                            desc: "La matriz básica de 20 pasos en forma de 'H': Zenkutsu-dachi, Gedan-Barai y Oi-Zuki.",
+                            badge: "Primera Forma"
+                        },
+                        {
+                            title: "Embusen (演武線)",
+                            desc: "Línea geométrica del kata: comenzar y finalizar exactamente en las mismas coordenadas.",
+                            badge: "Geometría Zen"
+                        },
+                        {
+                            title: "Bunkai (分解)",
+                            desc: "La aplicación combativa real: luxaciones, derribos y defensa personal oculta en las formas.",
+                            badge: "Clave Aplicada"
+                        }
+                    ],
+                    references: [
+                        {
+                            title: "Karate-Do Kyohan: El Texto Maestro",
+                            author: "Maestro Gichin Funakoshi",
+                            year: 1973,
+                            editorial: "Kodansha International",
+                            chapter: "Capítulo IV: La pedagogía de las formas Taikyoku y Heian",
+                            note: "Fundamento de por qué los katas Taikyoku fueron creados para educar la lateralidad y los giros en los principiantes."
+                        },
+                        {
+                            title: "Bunkai-Jutsu: The Practical Application of Karate Kata",
+                            author: "Iain Abernethy (7° Dan)",
+                            year: 2002,
+                            editorial: "Summersdale Publishers",
+                            chapter: "Capítulo 1: Deconstruyendo el Kata: Principios de combate cuerpo a cuerpo",
+                            note: "Investigación sobre las aplicaciones pragmáticas de palancas y puntos de presión ocultas en las formas básicas."
+                        }
+                    ]
+                },
+                questions: [
+                    {
+                        id: "q-kata-definicion-esencia",
+                        type: "multiple_choice",
+                        prompt: "¿Qué es en su esencia más profunda un KATA (型 / 形) en el Karate-Do?",
+                        description: "La biblioteca motriz heredada de los maestros de Okinawa.",
+                        options: [
+                            {
+                                id: "o1",
+                                text: "📜 Una secuencia predeterminada de técnicas que simula un combate y preserva la sabiduría del arte",
+                                isCorrect: true
+                            },
+                            {
+                                id: "o2",
+                                text: "🥊 Un calentamiento gimnástico sin ninguna aplicación de defensa real",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o3",
+                                text: "🏃 Una carrera de velocidad entre compañeros de dojo",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o4",
+                                text: "🧘 Un ejercicio donde está prohibido moverse del lugar",
+                                isCorrect: false
+                            }
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "¡Exacto! El Kata es la enciclopedia viva del Karate: una coreografía marcial precisa que codifica ataques, defensas, distancias y estrategias contra adversarios imaginarios.",
+                        hint: "Piensa en el Kata como una biblioteca grabada en movimiento corporal."
+                    },
+                    {
+                        id: "q-kata-taikyoku-shodan-movimientos",
+                        type: "multiple_choice",
+                        prompt: "¿Qué técnicas y posturas componen la primera forma básica TAIKYOKU SHODAN?",
+                        description: "El primer kata que aprende todo cinturón blanco en el dojo.",
+                        options: [
+                            {
+                                id: "o1",
+                                text: "🥋 Zenkutsu-dachi + Gedan-Barai (bloqueo bajo) + Oi-Zuki (puño directo)",
+                                isCorrect: true
+                            },
+                            {
+                                id: "o2",
+                                text: "🦶 Kiba-dachi + Mawashi-Geri + Shuto-Uke",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o3",
+                                text: "🗡️ Salto giratorio con patada voladora en el aire",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o4",
+                                text: "🛡️ Solo posturas estáticas de meditación sentada (Seiza)",
+                                isCorrect: false
+                            }
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "¡Correcto! Taikyoku Shodan consta de 20 movimientos ejecutados en postura Zenkutsu-dachi, utilizando únicamente la defensa baja Gedan-Barai y el puño frontal Oi-Zuki.",
+                        hint: "Es la combinación básica de paso largo frontal con bloqueo bajo y golpe de puño directo."
+                    },
+                    {
+                        id: "q-kata-embusen-concepto",
+                        type: "multiple_choice",
+                        prompt: "¿Qué es el EMBUSEN (演武線) de un Kata?",
+                        description: "La regla de oro de la precisión espacial en el tatami.",
+                        options: [
+                            {
+                                id: "o1",
+                                text: "📐 La línea o diagrama geométrico en el suelo que el practicante debe iniciar y finalizar en el mismo punto",
+                                isCorrect: true
+                            },
+                            {
+                                id: "o2",
+                                text: "🥋 El cinturón especial que se usa únicamente en competiciones de kata",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o3",
+                                text: "⏱️ El cronómetro digital que mide la velocidad del practicante",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o4",
+                                text: "📣 El silbato que hace sonar el sensei para cambiar de técnica",
+                                isCorrect: false
+                            }
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "¡Excelente! El Embusen es la trayectoria espacial geométrica del kata. Una prueba clave de dominio técnico es comenzar y regresar exactamente al mismo punto de partida.",
+                        hint: "Se refiere al trazo o dibujo geométrico que marcas sobre el piso al desplazarte."
+                    },
+                    {
+                        id: "q-kata-bunkai-concepto",
+                        type: "multiple_choice",
+                        prompt: "¿Qué significa el término BUNKAI (分解) en el entrenamiento de Kata?",
+                        description: "El puente entre la forma solitaria y la efectividad combativa real.",
+                        options: [
+                            {
+                                id: "o1",
+                                text: "⚔️ La aplicación práctica y descifrado de cada técnica del kata en combate real con compañero",
+                                isCorrect: true
+                            },
+                            {
+                                id: "o2",
+                                text: "🧹 El ritual de limpiar el suelo del dojo con agua al terminar",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o3",
+                                text: "🍱 La comida ceremonial compartida con el maestro tras el examen",
+                                isCorrect: false
+                            },
+                            {
+                                id: "o4",
+                                text: "💤 El descanso de diez minutos entre ejercicios pesados",
+                                isCorrect: false
+                            }
+                        ],
+                        correctAnswerId: "o1",
+                        explanation: "¡Brillante! Bunkai significa 'analizar o desarmar'. Es la explicación combativa real con compañero (luxaciones, golpes, derribos) que da vida y propósito a cada movimiento del kata.",
+                        hint: "Palabra clave: aplicación práctica combate a combate."
                     }
                 ]
             }

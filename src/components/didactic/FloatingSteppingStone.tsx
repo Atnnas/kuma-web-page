@@ -365,7 +365,15 @@ export function FloatingSteppingStone({
                                 : "bg-zinc-950/90 text-cyan-200 border-cyan-500/40 shadow-[0_0_8px_rgba(6,182,212,0.3)]"
                         }`}
                     >
-                        {isOkinawa ? "Okinawa • N.1" : isCompleted ? "Superado" : `Nivel ${level.number}`}
+                        {level.id === "level-karategi" || isOkinawa
+                            ? "Historia"
+                            : level.id === "level-anatomia" || level.number === 2
+                            ? "Cuerpo Humano"
+                            : level.id === "level-kumite-tradicional" || level.number === 3
+                            ? "Kihon"
+                            : level.id === "level-kata-blanco" || level.title?.toLowerCase() === "kata"
+                            ? "Kata"
+                            : level.title || (isCompleted ? "Superado" : `Nivel ${level.number}`)}
                     </span>
                 </motion.button>
 

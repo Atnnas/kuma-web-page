@@ -211,7 +211,7 @@ export function KumaMascot({
         md: "w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56",
         lg: "w-44 h-44 sm:w-52 sm:h-52 md:w-64 md:h-64",
         xl: "w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80",
-        responsive: "w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52",
+        responsive: "w-24 h-24 sm:w-36 sm:h-36 md:w-52 md:h-52",
     };
 
     const isExcited = mood === "correct" || mood === "streak" || isPokePumping || isYoiDeepBreathing;
