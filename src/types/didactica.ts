@@ -7,7 +7,8 @@ export type QuestionType =
     | 'true_false'
     | 'kanji_draw'
     | 'map_drag'
-    | 'tree_pillars';
+    | 'tree_pillars'
+    | 'okinawa_branches';
 
 export interface DragMapItem {
     id: string;

@@ -10,6 +10,7 @@ import { TheorySheetModal } from "./TheorySheetModal";
 import { KanjiDrawCanvas } from "./KanjiDrawCanvas";
 import { MapOriginDragQuestion } from "./MapOriginDragQuestion";
 import { TreePillarsQuestion } from "./TreePillarsQuestion";
+import { OkinawaBranchesQuestion } from "./OkinawaBranchesQuestion";
 import { didacticSound } from "@/lib/didacticSound";
 import { DIDACTIC_UNITS } from "@/data/didacticaData";
 import { getBeltRank } from "@/data/beltRanks";
@@ -184,6 +185,7 @@ export function LessonSessionModal({
     const [isKanjiDrawn, setIsKanjiDrawn] = useState(false);
     const [isMapDragDone, setIsMapDragDone] = useState(false);
     const [isTreePillarsDone, setIsTreePillarsDone] = useState(false);
+    const [isOkinawaBranchesDone, setIsOkinawaBranchesDone] = useState(false);
 
 // Fisher-Yates shuffle helper para orden aleatorio
 function shuffleArray<T>(array: T[]): T[] {
@@ -379,6 +381,8 @@ function shuffleArray<T>(array: T[]): T[] {
             ? isMapDragDone
             : currentQuestion.type === "tree_pillars"
             ? isTreePillarsDone
+            : currentQuestion.type === "okinawa_branches"
+            ? isOkinawaBranchesDone
             : false;
 
     const handleDirectMapCheckAndNext = () => {
@@ -413,6 +417,22 @@ function shuffleArray<T>(array: T[]): T[] {
         }
     };
 
+    const handleDirectOkinawaBranchesCheckAndNext = () => {
+        didacticSound.playCorrect();
+        setCorrectCount((prev) => prev + 1);
+        setStreak((prev) => prev + 1);
+        setMascotMood("streak");
+        setCustomSpeech("¡KIAI! ¡Descubriste las 3 ramas sagradas de Okinawa: Shuri, Tomari y Naha! 🏯⚓🚢🔥");
+        setIsOkinawaBranchesDone(false);
+        setAnswerStatus("idle");
+
+        if (currentIndex + 1 < totalQuestions) {
+            setCurrentIndex((prev) => prev + 1);
+        } else {
+            handleNextQuestion();
+        }
+    };
+
     const handleValidation = (isMatchingAutoCorrect: boolean = false) => {
         let isCorrect = false;
 
@@ -426,6 +446,11 @@ function shuffleArray<T>(array: T[]): T[] {
         } else if (currentQuestion.type === "tree_pillars") {
             if (isTreePillarsDone) {
                 handleDirectTreeCheckAndNext();
+                return;
+            }
+        } else if (currentQuestion.type === "okinawa_branches") {
+            if (isOkinawaBranchesDone) {
+                handleDirectOkinawaBranchesCheckAndNext();
                 return;
             }
         } else if (currentQuestion.type === "multiple_choice" || currentQuestion.type === "image_choice") {
@@ -534,6 +559,7 @@ function shuffleArray<T>(array: T[]): T[] {
     const isWideQuestion =
         currentQuestion.type === "map_drag" ||
         currentQuestion.type === "tree_pillars" ||
+        currentQuestion.type === "okinawa_branches" ||
         currentQuestion.type === "kanji_draw";
 
     return (
@@ -767,7 +793,8 @@ function shuffleArray<T>(array: T[]): T[] {
                                 {/* QUESTION IMAGE (IF ANY - EXCLUDING CUSTOM INTERACTIVE QUESTIONS LIKE TREE AND MAP) */}
                                 {currentQuestion.image &&
                                     currentQuestion.type !== "tree_pillars" &&
-                                    currentQuestion.type !== "map_drag" && (
+                                    currentQuestion.type !== "map_drag" &&
+                                    currentQuestion.type !== "okinawa_branches" && (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.96 }}
                                         animate={{ opacity: 1, scale: 1 }}
@@ -1056,6 +1083,21 @@ function shuffleArray<T>(array: T[]): T[] {
                                                 setCustomSpeech("¡KIAI! ¡Colocaste las 3 gemas sagradas: Kihon, Kata y Kumite! 🌸🥋");
                                             }}
                                             onCheckAndNext={handleDirectTreeCheckAndNext}
+                                        />
+                                    </div>
+                                )}
+                                {/* OKINAWA BRANCHES QUESTION (LAS 3 RAMAS MATRICES: SHURI, NAHA Y TOMARI) */}
+                                {currentQuestion.type === "okinawa_branches" && (
+                                    <div className="w-full">
+                                        <OkinawaBranchesQuestion
+                                            question={currentQuestion}
+                                            isSuperAdmin={isSuperAdmin}
+                                            onCompleted={() => {
+                                                setIsOkinawaBranchesDone(true);
+                                                setMascotMood("streak");
+                                                setCustomSpeech("¡KIAI! ¡Descubriste las 3 ramas matrices de Okinawa: Shuri-Te, Tomari-Te y Naha-Te! 🏯⚓🚢");
+                                            }}
+                                            onCheckAndNext={handleDirectOkinawaBranchesCheckAndNext}
                                         />
                                     </div>
                                 )}

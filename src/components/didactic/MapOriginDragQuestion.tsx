@@ -160,9 +160,19 @@ export function MapOriginDragQuestion({
     const [isVoiceActive, setIsVoiceActive] = useState<boolean>(true);
     const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
     const [latinVoice, setLatinVoice] = useState<SpeechSynthesisVoice | null>(null);
+    const [isExplainingJapan, setIsExplainingJapan] = useState<boolean>(false);
+    const [showVictoryModal, setShowVictoryModal] = useState<boolean>(false);
     const [lastActionMessage, setLastActionMessage] = useState<string>(
         "¡Toca el puerto 1 en China 🇨🇳 para iniciar la navegación!"
     );
+    const japanTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+    // Limpiar temporizador si se desmonta
+    useEffect(() => {
+        return () => {
+            if (japanTimerRef.current) clearTimeout(japanTimerRef.current);
+        };
+    }, []);
 
     // Cargar voces en español latino al inicializar
     useEffect(() => {
@@ -278,13 +288,26 @@ export function MapOriginDragQuestion({
                 speakKuma("¡El Karate primero nació en la isla de Okinawa! Toca la isla del medio antes de ir a Japón.");
                 setLastActionMessage("💡 El barco debe pasar primero por Okinawa (2) 🏝️ donde nació el Karate.");
             } else if (step === 2) {
+                didacticSound.playWoodBreak();
                 setStep(3);
-                triggerVictory();
+                setIsExplainingJapan(true);
+                setShowVictoryModal(false);
+                setLastActionMessage("🎌 ¡Llegada a Japón! El Maestro Gichin Funakoshi llevó el Karate desde Okinawa al mundo entero.");
+                speakKuma(
+                    "¡Llegamos a Japón! El Maestro Gichin Funakoshi llevó el Karate desde la isla de Okinawa hasta Japón, expandiéndolo en las universidades y a todos los dojos del mundo."
+                );
+
+                if (japanTimerRef.current) clearTimeout(japanTimerRef.current);
+                japanTimerRef.current = setTimeout(() => {
+                    setIsExplainingJapan(false);
+                    setShowVictoryModal(true);
+                    triggerVictory();
+                }, 6000);
             }
         }
     };
 
-    // Victoria y celebración
+    // Victoria y celebración final
     const triggerVictory = () => {
         didacticSound.playStreak();
         confetti({
@@ -294,13 +317,15 @@ export function MapOriginDragQuestion({
             colors: ["#FFC800", "#58CC02", "#1CB0F6", "#FF4B4B", "#FFFFFF"],
         });
         setLastActionMessage("🏆 ¡Viaje Completado! El Karate nació en Okinawa y hoy se entrena en todo el mundo.");
-        speakKuma("¡Maravilloso karateca! Has completado la ruta histórica. ¡El Karate nació en Okinawa y llegó a todo el planeta!");
         onCompleted();
     };
 
     // Auto-solucionador Super Admin
     const handleAdminAutoFill = () => {
         didacticSound.playClick();
+        if (japanTimerRef.current) clearTimeout(japanTimerRef.current);
+        setIsExplainingJapan(false);
+        setShowVictoryModal(true);
         setStep(3);
         triggerVictory();
     };
@@ -308,6 +333,9 @@ export function MapOriginDragQuestion({
     // Reiniciar aventura
     const handleReset = () => {
         didacticSound.playClick();
+        if (japanTimerRef.current) clearTimeout(japanTimerRef.current);
+        setIsExplainingJapan(false);
+        setShowVictoryModal(false);
         setStep(0);
         setLastActionMessage("¡Toca el puerto 1 en China 🇨🇳 para iniciar la navegación!");
         speakKuma("¡Ruta reiniciada! Vamos de nuevo en el barquito. Toca el número 1 en China.");
@@ -552,9 +580,47 @@ export function MapOriginDragQuestion({
                     )}
                 </AnimatePresence>
 
-                {/* 5. BANNER FINAL DE VICTORIA (PASO 3) */}
+                {/* 4.5 BANNER EXPLICATIVO AL LLEGAR A JAPÓN (PASO 3 - ANTES DEL MODAL FINAL) */}
                 <AnimatePresence>
-                    {step === 3 && (
+                    {step === 3 && isExplainingJapan && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 bg-gradient-to-r from-red-950/95 via-black/90 to-amber-950/95 border-2 border-amber-400 px-4 py-2.5 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.6)] text-center max-w-[92%] backdrop-blur-md"
+                        >
+                            <div className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-black text-amber-300">
+                                <Sparkle weight="fill" className="text-yellow-400" />
+                                <span>🎌 ¡LLEGADA A JAPÓN: KARATE AL MUNDO!</span>
+                                <Sparkle weight="fill" className="text-yellow-400" />
+                            </div>
+                            <p className="text-[11px] sm:text-xs text-white mt-0.5 leading-snug">
+                                El Maestro <strong>Gichin Funakoshi</strong> llevó el Karate desde Okinawa hasta las universidades de Japón, difundiéndolo por todo el planeta.
+                            </p>
+                            <div className="mt-1.5 flex items-center justify-center gap-2">
+                                <span className="text-[10px] font-bold text-amber-200 bg-black/60 px-2 py-0.5 rounded-full border border-white/20 animate-pulse">
+                                    🎧 Escuchando explicación histórica...
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (japanTimerRef.current) clearTimeout(japanTimerRef.current);
+                                        setIsExplainingJapan(false);
+                                        setShowVictoryModal(true);
+                                        triggerVictory();
+                                    }}
+                                    className="px-2.5 py-0.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] uppercase cursor-pointer transition-all shadow"
+                                >
+                                    Continuar ▶
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* 5. BANNER FINAL DE VICTORIA (PASO 3 TRAS LA EXPLICACIÓN) */}
+                <AnimatePresence>
+                    {step === 3 && showVictoryModal && (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -571,7 +637,7 @@ export function MapOriginDragQuestion({
                                     🇨🇳 Kung-Fu + 🏝️ Okinawa = 🥋 Karate-Do
                                 </h3>
                                 <p className="text-xs sm:text-sm text-emerald-300 font-medium mt-1">
-                                    ¡Excelente trabajo, karateca! El Karate nació en la pequeña isla de Okinawa y hoy une a dojos de todo el mundo.
+                                    ¡Excelente travesía, karateca! El Karate nació en Okinawa, el Maestro Funakoshi lo llevó a Japón y hoy une a dojos de todo el mundo.
                                 </p>
 
                                 <div className="mt-4 flex flex-col items-center gap-2.5 w-full">

@@ -354,9 +354,10 @@ export const DIDACTIC_UNITS: Unit[] = [
                     },
                     {
                         id: "q-ciudades-okinawa-te",
-                        type: "multiple_choice",
-                        prompt: "¿Cómo se llamaban las ramas originales del Karate en Okinawa?",
-                        description: "Las 3 vertientes urbanas antes de los estilos modernos.",
+                        type: "okinawa_branches",
+                        image: "/images/didactic/kuma_pixar_okinawa_branches.jpg",
+                        prompt: "¿Cuáles fueron las 3 ramas matrices del Karate en Okinawa?",
+                        description: "Ubica las 3 ciudades históricas en el mapa ilustrado: Shuri, Tomari y Naha.",
                         options: [
                             {
                                 id: "o1",

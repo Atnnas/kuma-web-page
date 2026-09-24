@@ -12,6 +12,7 @@ import {
     ArrowRight,
     SpeakerHigh,
     SpeakerSlash,
+    Sparkle,
 } from "@phosphor-icons/react";
 
 interface TreePillarsQuestionProps {
@@ -166,8 +167,18 @@ export function TreePillarsQuestion({
     const [selectedGemId, setSelectedGemId] = useState<PillarId | null>(null);
     const [isVoiceActive, setIsVoiceActive] = useState<boolean>(true);
     const [latinVoice, setLatinVoice] = useState<SpeechSynthesisVoice | null>(null);
+    const [isExplainingKumite, setIsExplainingKumite] = useState<boolean>(false);
+    const [showVictoryModal, setShowVictoryModal] = useState<boolean>(false);
+    const kumiteTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
     const isAllPlaced = placedGems.kihon && placedGems.kata && placedGems.kumite;
+
+    // Limpiar temporizador si se desmonta
+    useEffect(() => {
+        return () => {
+            if (kumiteTimerRef.current) clearTimeout(kumiteTimerRef.current);
+        };
+    }, []);
 
     // Cargar voces en español latino al inicializar
     useEffect(() => {
@@ -249,13 +260,38 @@ export function TreePillarsQuestion({
             setSelectedGemId(null);
 
             const gemData = GEMS.find((g) => g.id === slotId);
-            if (gemData) {
-                speakKuma(gemData.correctSpeech);
-            }
 
             // Si se completaron las 3 gemas
             if (nextPlaced.kihon && nextPlaced.kata && nextPlaced.kumite) {
-                triggerVictory();
+                // Dar tiempo pedagógico para escuchar la explicación de Kumite y contemplar el árbol florecido
+                setIsExplainingKumite(true);
+                setShowVictoryModal(false);
+                didacticSound.playStreak();
+                confetti({
+                    particleCount: 50,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ["#F472B6", "#FFC800", "#58CC02", "#FFFFFF"],
+                });
+
+                if (slotId === "kumite") {
+                    speakKuma(
+                        "¡Kumite en la copa del árbol! Las flores representan el combate libre. Es donde aplicas tu técnica con respeto, distancia y control, haciendo florecer todo el árbol de Karate."
+                    );
+                } else {
+                    speakKuma(
+                        "¡El Árbol Sagrado ha florecido! Con la raíz de Kihon y el tronco de Kata, el combate de Kumite florece en lo más alto con respeto y control."
+                    );
+                }
+
+                if (kumiteTimerRef.current) clearTimeout(kumiteTimerRef.current);
+                kumiteTimerRef.current = setTimeout(() => {
+                    setIsExplainingKumite(false);
+                    setShowVictoryModal(true);
+                    triggerVictory();
+                }, 6000);
+            } else if (gemData) {
+                speakKuma(gemData.correctSpeech);
             }
         } else {
             // Error con efecto marcial y voz guía
@@ -287,15 +323,16 @@ export function TreePillarsQuestion({
             origin: { y: 0.6 },
             colors: ["#F472B6", "#FFC800", "#58CC02", "#FFFFFF", "#FBBF24"],
         });
-        speakKuma(
-            "¡Extraordinario karateca! El Árbol del Karate ha florecido por completo con Kihon, Kata y Kumite."
-        );
+        setShowVictoryModal(true);
         onCompleted();
     };
 
     // Auto-completar Super Admin
     const handleAdminAutoFill = () => {
         didacticSound.playClick();
+        if (kumiteTimerRef.current) clearTimeout(kumiteTimerRef.current);
+        setIsExplainingKumite(false);
+        setShowVictoryModal(true);
         setPlacedGems({ kihon: true, kata: true, kumite: true });
         triggerVictory();
     };
@@ -303,6 +340,9 @@ export function TreePillarsQuestion({
     // Reiniciar gemas
     const handleReset = () => {
         didacticSound.playClick();
+        if (kumiteTimerRef.current) clearTimeout(kumiteTimerRef.current);
+        setIsExplainingKumite(false);
+        setShowVictoryModal(false);
         setPlacedGems({ kihon: false, kata: false, kumite: false });
         setSelectedGemId(null);
         speakKuma("¡Árbol reiniciado! Coloca de nuevo las tres gemas mágicas.");
@@ -381,8 +421,8 @@ export function TreePillarsQuestion({
                     )}
                 </button>
 
-                {/* Botón sutil flotante para Reiniciar (visible cuando hay gemas colocadas y antes de completar) */}
-                {(placedGems.kihon || placedGems.kata || placedGems.kumite) && !isAllPlaced && (
+                {/* Botón sutil flotante para Reiniciar (visible cuando hay gemas colocadas y antes del modal final) */}
+                {(placedGems.kihon || placedGems.kata || placedGems.kumite) && !showVictoryModal && (
                     <button
                         type="button"
                         onClick={handleReset}
@@ -469,9 +509,47 @@ export function TreePillarsQuestion({
                     );
                 })}
 
-                {/* 3. MODAL DE VICTORIA CON EL BOTÓN DIRECTO DE COMPROBAR TÉCNICA */}
+                {/* 3. BANNER PEDAGÓGICO DE KUMITE (MIENTRAS FLORECE EL ÁRBOL Y ANTES DEL MODAL FINAL) */}
                 <AnimatePresence>
-                    {isAllPlaced && (
+                    {isAllPlaced && isExplainingKumite && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 bg-gradient-to-r from-pink-950/95 via-black/90 to-rose-950/95 border-2 border-pink-400 px-4 py-2.5 rounded-2xl shadow-[0_0_30px_rgba(244,114,182,0.6)] text-center max-w-[92%] backdrop-blur-md"
+                        >
+                            <div className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-black text-pink-300">
+                                <Sparkle weight="fill" className="text-pink-400" />
+                                <span>🌸 ¡KUMITE: EL COMBATE QUE FLORECE!</span>
+                                <Sparkle weight="fill" className="text-pink-400" />
+                            </div>
+                            <p className="text-[11px] sm:text-xs text-white mt-0.5 leading-snug">
+                                Las flores del árbol son el <strong>Kumite</strong>: el combate libre donde aplicas tu técnica con respeto, distancia y control, sostenido por la raíz (Kihon) y el tronco (Kata).
+                            </p>
+                            <div className="mt-1.5 flex items-center justify-center gap-2">
+                                <span className="text-[10px] font-bold text-pink-200 bg-black/60 px-2 py-0.5 rounded-full border border-white/20 animate-pulse">
+                                    🎧 Escuchando explicación de Kumite...
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (kumiteTimerRef.current) clearTimeout(kumiteTimerRef.current);
+                                        setIsExplainingKumite(false);
+                                        setShowVictoryModal(true);
+                                        triggerVictory();
+                                    }}
+                                    className="px-2.5 py-0.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] uppercase cursor-pointer transition-all shadow"
+                                >
+                                    Continuar ▶
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* 4. MODAL DE VICTORIA CON EL BOTÓN DIRECTO DE COMPROBAR TÉCNICA */}
+                <AnimatePresence>
+                    {isAllPlaced && showVictoryModal && (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.85 }}
                             animate={{ opacity: 1, scale: 1 }}
