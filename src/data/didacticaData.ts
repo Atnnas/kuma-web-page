@@ -1,4 +1,6 @@
 import { Unit, BeltRankId } from "@/types/didactica";
+import { KYU_UNITS } from "./units/kyuUnits";
+import { DAN_UNITS } from "./units/danUnits";
 
 export const DIDACTIC_UNITS: Unit[] = [
     // ==========================================
@@ -24,51 +26,75 @@ export const DIDACTIC_UNITS: Unit[] = [
                 xpReward: 50,
                 theory: {
                     title: "Historia y Filosofía del Karate-Do",
-                    subtitle: "El Camino de la Mano Vacía, el Secreto del Bubishi y el Legado Ancestral de Okinawa",
+                    subtitle: "La Travesía de la Mano Vacía, el Árbol Sagrado y las Tres Ramas Matrices de Okinawa",
                     quote: "El Karate no consiste en herir o vencer a otros; consiste en vencer las propias debilidades, dominar el ego y forjar un espíritu noble de rectitud, serenidad y paz. — Maestro Gichin Funakoshi (Padre del Karate Moderno)",
                     images: [
                         {
-                            src: "/images/didactic/okinawa_three_cities_map.jpg",
-                            alt: "Mapa Histórico de Okinawa: Shuri, Tomari y Naha",
-                            caption: "Fig 1. Cartografía ancestral del Reino de Ryukyu con las tres cunas matrices del Karate: Shuri (capital y corte real), Tomari (puerto pesquero) y Naha (puerto comercial marítimo)."
+                            src: "/images/didactic/kuma_pixar_origins_map.jpg",
+                            alt: "La Ruta del Barco de Kuma: De China a Okinawa y su expansión a Japón",
+                            caption: "Fig 1. La Travesía de la Mano Vacía: El Kung-Fu de China viajó a la Isla de Okinawa donde nació el Karate, y el Maestro Funakoshi lo expandió a las universidades de Japón y al mundo entero."
+                        },
+                        {
+                            src: "/images/didactic/kuma_pixar_okinawa_branches.jpg",
+                            alt: "El Triángulo Sagrado de Okinawa: Shuri-Te, Tomari-Te y Naha-Te",
+                            caption: "Fig 2. El Triángulo de Ryukyu: Las tres ramas matrices de donde nació el Karate: Shuri-Te (Castillo Real y nobleza), Tomari-Te (bahía pesquera y campesinos) y Naha-Te (puerto comercial y marineros)."
+                        },
+                        {
+                            src: "/images/didactic/kuma_pixar_tree_pillars.jpg",
+                            alt: "El Árbol Sagrado del Karate: Kihon, Kata y Kumite",
+                            caption: "Fig 3. El Árbol Sagrado y las 3 'K': Las raíces profundas de Kihon alimentan el tronco firme de Kata para hacer florecer el combate Kumite con respeto, distancia y control."
                         },
                         {
                             src: "/images/didactic/bubishi_ancient_scroll.jpg",
                             alt: "El Manuscrito Sagrado Bubishi (武備志)",
-                            caption: "Fig 2. Tratado canónico secreto Bubishi (武備志): compendio histórico de las 48 técnicas de Grulla Blanca y puntos vitales traídos de Fujian a Okinawa."
-                        },
-                        {
-                            src: "/images/didactic/okinawa_masters_history.jpg",
-                            alt: "Maestros de Okinawa entrenando en la clandestinidad",
-                            caption: "Fig 3. Práctica nocturna clandestina en las murallas de Shuri tras los edictos de desarme forzoso de 1609 bajo la invasión del clan Satsuma."
+                            caption: "Fig 4. El Manuscrito Secreto Bubishi (武備志): compendio canónico de 48 técnicas combativas de Grulla Blanca de Fujian preservado en secreto en Okinawa."
                         }
                     ],
                     content: [
-                        "1. El Nacimiento en el Reino Insular de Ryukyu (Okinawa): El Karate-Do (空手道) no nació en el Japón continental, sino en el antiguo archipiélago de Ryukyu —hoy prefectura de Okinawa—. Por su privilegiada posición en el Mar de China Oriental, Ryukyu floreció como un enclave de intercambio comercial y diplomático pacífico entre China, Japón, Siam y el sudeste asiático. En este crisol confluieron el 'Te' (手, combate autóctono caracterizado por la dureza de acondicionamiento) y las artes marciales de China meridional (Quan-fa de Fujian). Este puente intercultural se consolidó para siempre en 1392 con la llegada a la aldea de Kumemura de las 'Treinta y Seis Familias Chinas': eruditos, artesanos y navegantes enviados por el emperador Ming que sembraron las semillas de las artes de combate chinas en suelo okinawense.",
-                        "2. La Invasión Satsuma de 1609 y la Forja Clandestina del Kobudo: En 1609, los samuráis del poderoso clan japonés Satsuma invadieron Ryukyu y sometieron a la monarquía. Los invasores impusieron un implacable edicto de desarme civil absoluto: la posesión de espadas, lanzas o cualquier metal cortante era castigada con la muerte inmediata. Ante esta opresión desmedida, los maestros llevaron el entrenamiento marcial a la más estricta clandestinidad nocturna. A puerta cerrada y bajo la penumbra, endurecieron sus nudillos y extremidades contra el makiwara (poste de impacto forrado en paja) hasta convertir sus cuerpos en escudos vivientes. Al mismo tiempo, los pobladores crearon el Kobudo: el ingenioso arte de transformar herramientas agrícolas y aperos de pesca cotidianos en armas letales de defensa (el Bo o vara larga, el Tonfa o manivela de molino de arroz, el Sai o tridente metálico, las hoces Kama, el mayal Nunchaku y el remo Eku).",
-                        "3. Cartografía Ancestral de Okinawa: Las Tres Cunas Matrices: Antes de que existieran las federaciones y escuelas modernas con nombres comerciales, el arte marcial se conocía como 'Okinawa-Te' (Mano de Okinawa) y se dividía en tres vertientes geográficas y metodológicas bien definidas (representadas en la cartografía histórica de la Fig 1):\n\n• Shuri-Te (首里手 - La Corte Real y la Aristocracia Peichin): Desarrollado en la colina del Castillo de Shuri, la sede de la monarquía de Ryukyu. Era practicado por nobles guerreros (Peichin) y escoltas reales. Se distingue por desplazamientos lineales fulminantes, velocidad explosiva, posturas dinámicas (Zenkutsu-dachi y Kokutsu-dachi) y contraataques decisivos de largo alcance. Maestros cumbres: Kanga 'Tode' Sakugawa, Sokon 'Bushi' Matsumura (escolta de tres reyes de Ryukyu) y Anko Itosu (creador de las katas Pinan/Heian y pionero que introdujo el karate al sistema escolar público en 1901). Es la matriz directa del estilo Shotokan (fundado por Gichin Funakoshi) y co-fundamento del Shito-Ryu (Kenwa Mabuni).\n\n• Naha-Te (那覇手 - El Puerto Mercantil y el Enraizamiento Ibuki): Desarrollado en el activo puerto comercial de Naha y la aldea china de Kumemura. Con fuerte arraigo en el boxeo del sur de China (estilos de la Grulla Blanca - Baihequan y Boxeo del Monje de Fujian). Se enfoca en el combate a muy corta distancia, posturas compactas e inamovibles (Sanchin-dachi), respiración diafragmática profunda e isométrica (Ibuki) y desvíos circulares suaves que absorben la inercia del agresor antes de detonar impactos destructivos (armonía 'Go-Ju': duro y suave). Maestros cumbres: Seisho Arakaki, Kanryo Higaonna (quien viajó y entrenó más de una década en Fuzhou con el maestro Ryu Ryu Ko) y Chojun Miyagi. Dio origen a los estilos Goju-Ryu y Uechi-Ryu (creado por Kanbun Uechi).\n\n• Tomari-Te (泊手 - Los Pescadores, Náufragos y la Esquiva Tenshin): Forjado en el humilde pueblo pesquero y puerto fluvial de Tomari. A este puerto arribaban barcos comerciales de cabotaje, campesinos y marineros chinos. Su método se nutrió del saber transmitido en secreto por náufragos chinos refugiados en las cuevas costeras de Tomari (maestros legendarios como Annan y Chinto). Se caracteriza por su asombrosa ligereza acrobática, esquivas angulares en rotación (Tenshin), cambios repentinos de altura y contragolpes a media y corta distancia. Maestros cumbres: Kosaku Matsumora (célebre por desarmar a un samurái de Satsuma arrebatándole la katana usando solo una toalla húmeda), Kishin Teruya y el invicto peleador callejero Choki Motobu. Preservó las katas matrices Rohai (la visión de la grulla), Wankan (la corona del rey), Chinto (Gankaku) y Bassai Tomari.",
-                        "4. El Bubishi (武備志): La Biblia Secreta del Karate: El tesoro documental más venerado que sobrevivió a generaciones de maestros es el Bubishi (武備志 - 'Tratado de Preparación Marcial'). Este texto fundacional, copiado a mano con tinta china y transmitido de maestro a discípulo predilecto en secreto absoluto, recopila 48 posturas combativas ilustradas de la Grulla Blanca de Fujian, diagramas anatómicos de meridianos energéticos y horas del reloj circadiano donde el flujo de Ki se concentra en puntos vulnerables (doctrina Kyusho-Jitsu / Dim Mak), y recetas de medicina herbolaria y digitopuntura para tratar fracturas y contusiones. Gigantes como Kanryo Higaonna, Chojun Miyagi, Anko Itosu, Kenwa Mabuni y Gichin Funakoshi preservaron copias de este manuscrito sagrado.",
-                        "5. La Cumbre Histórica de Naha de 1936 y la Esencia de 'Mano Vacía': A inicios del siglo XX, Gichin Funakoshi y otros pioneros llevaron el arte a Tokio y a las universidades japonesas. El 25 de octubre de 1936, los máximos maestros de Okinawa (Chojun Miyagi, Chomo Hanashiro, Kentsu Yabu, Choki Motobu, Choshin Chibana, Shinpan Shiroma y Genwa Nakasone) celebraron una reunión cumbre en el palacio Showa Kaikan de Naha. En un acuerdo histórico, oficializaron el reemplazo del kanji original 唐手 ('To-de' / Mano de la dinastía Tang de China) por el ideograma homófono 空手 ('Kara-Te' / Mano Vacía), incorporando el sufijo 'Dō' (道 - Vía espiritual de superación personal). Esta evolución filosófica se basa en el principio Zen del vacío: 'Vaciar la mente de ego, vanidad, rencor y soberbia para reflejar el universo con la nitidez y calma de un espejo de agua'. Cada 25 de octubre se celebra el Día Mundial del Karate en conmemoración de aquella asamblea.",
-                        "6. Pilares Éticos y Biomecánicos: Del Tatami al Espíritu de Vida: La práctica tradicional del Karate descansa sobre la tríada indivisible de Kihon (fundamentos biomecánicos y postura), Kata (la biblioteca viva del estilo y sus aplicaciones secretas Bunkai) y Kumite (el combate donde se prueba la distancia Maai y el temple). Toda esta capacidad técnica está consagrada a los mandamientos supremos del Budo: 'Karate ni sente nashi' (空手に先手なし - En el Karate no existe el primer ataque; el practicante jamás busca la violencia y solo actúa para preservar la vida), 'Rei' (礼 - Respeto reverencial incondicional que rige el inicio y final de toda sesión marcial) e 'Ikken Hissatsu' (el compromiso total de concentrar toda la energía física y mental en un solo golpe definitivo mediante el Kime y Kiai, siempre controlado con la maestría milimétrica del Sundome para proteger la salud de quien entrena junto a nosotros)."
+                        "1. La Travesía de la Mano Vacía y la Ruta del Barco (China ➔ Okinawa ➔ Japón): El Karate-Do (空手道) no nació en el Japón continental, sino en el antiguo archipiélago de Ryukyu —hoy prefectura de Okinawa—. Por su posición privilegiada en el Mar de China Oriental, los maestros pioneros viajaron en barco a la provincia de Fujian (China meridional) para estudiar el Quan-Fa (Kung-Fu) y el boxeo de la Grulla Blanca. Este saber navegó hacia Okinawa y se fusionó con el combate autóctono insular ('Te') para dar origen a la 'Mano Vacía'. Décadas después, el Maestro Gichin Funakoshi zarpó desde Okinawa hacia el puerto de Tokio en 1922, presentando el arte marcial en el Ministerio de Educación y fundando los primeros clubes en universidades japonesas (Keio, Waseda, Takushoku), abriendo las puertas para que el Karate se expandiera a todos los dojos del planeta.",
+                        "2. Cartografía Ancestral de Okinawa: Las Tres Ramas Matrices (Shuri, Tomari y Naha): Antes de las escuelas modernas, el arte se conocía como 'Okinawa-Te' y se forjó en un triángulo geográfico sagrado de tres ciudades con identidades marciales únicas (Fig 2):\n\n• Shuri-Te (首里手 - La Corte Real y la Nobleza Peichin): Desarrollado en la colina del Castillo de Shuri por la aristocracia y la escolta de los reyes de Ryukyu. Se distingue por desplazamientos lineales fulminantes, velocidad explosiva, posturas dinámicas y contraataques decisivos de largo alcance. Maestros cumbres: Kanga Sakugawa, Sokon Matsumura y Anko Itosu. Es la matriz directa del estilo Shotokan (fundado por Gichin Funakoshi) y co-fundamento del Shito-Ryu (Kenwa Mabuni).\n\n• Tomari-Te (泊手 - Los Pescadores, Náufragos y la Esquiva Tenshin): Forjado en la bahía y puerto pesquero de Tomari, nutrido por náufragos chinos y marineros que enseñaron en secreto a orillas del mar. Se caracteriza por su asombrosa ligereza, giros en rotación evasiva (Tenshin), cambios repentinos de altura y fintas con saltos sorpresivos. Maestros cumbres: Kosaku Matsumora, Kishin Teruya y Choki Motobu. Preservó katas clásicas como Rohai, Wankan y Chinto (Gankaku).\n\n• Naha-Te (那覇手 - El Puerto Mercantil, Enraizamiento e Ibuki): Nacido en el bullicioso puerto comercial de Naha y la comunidad china de Kumemura. Con fuerte raíz en el boxeo del sur de China, se enfoca en el combate a muy corta distancia, posiciones bajas y sólidas (Sanchin-dachi), agarres pesados y respiración diafragmática profunda e isométrica (Ibuki) que fortalece el cuerpo como hierro. Maestros cumbres: Kanryo Higaonna y Chojun Miyagi. Dio origen directo al estilo Goju-Ryu ('Duro y Suave') y al Uechi-Ryu.",
+                        "3. El Árbol Sagrado del Karate: La Tríada Indivisible de las 3 'K' (Kihon, Kata y Kumite): La pedagogía tradicional concibe al Karate como un árbol vivo sagrado (Fig 3) que debe nutrirse en equilibrio perfecto:\n\n• Kihon (基本 - La Raíz Profunda): Son los cimientos biomecánicos: posturas (Dachi), golpes de puño (Tsuki), bloqueos (Uke) y patadas (Geri). Una raíz débil hace caer al árbol; por ello, la repetición constante del Kihon forja la alineación articular, el equilibrio y la fuerza del enraizamiento en la tierra.\n\n• Kata (型 - El Tronco Sólido): Es el tronco que une y da estructura a todo el árbol. Cada Kata es una enciclopedia viva y biblioteca en movimiento creada por los maestros antiguos para preservar las técnicas de supervivencia, derribos y luxaciones (Bunkai) sin necesidad de registros escritos.\n\n• Kumite (組手 - Las Flores del Combate): Es la copa florecida del árbol; el combate frente a un compañero donde la técnica cobra vida real. No busca lastimar ni vencer al otro por la fuerza bruta, sino poner a prueba la distancia adecuada (Maai), el tiempo de reacción, el temple espiritual y el respeto reverencial inquebrantable, aplicando el control milimétrico (Sundome) para cuidar la salud del compañero.",
+                        "4. La Invasión Satsuma de 1609 y la Forja Clandestina del Kobudo: En 1609, los samuráis del clan Satsuma invadieron Ryukyu e impusieron un edicto de desarme absoluto castigado con la pena de muerte. Los maestros llevaron el entrenamiento marcial a la clandestinidad nocturna, endureciendo sus nudillos contra el makiwara forrado de paja, y transformaron aperos de labranza y pesca en armas defensivas (el Bo o vara larga, el Tonfa o manivela de molino de arroz, el Sai o tridente, el Nunchaku y el remo Eku).",
+                        "5. El Manuscrito Sagrado Bubishi (武備志): La Biblia Secreta del Karate: El texto documental más venerado que sobrevivió a generaciones de maestros es el Bubishi (武備志 - 'Tratado de Preparación Marcial'). Este texto fundacional, copiado a mano con tinta china y transmitido de maestro a discípulo predilecto en secreto absoluto, recopila 48 posturas combativas ilustradas de la Grulla Blanca de Fujian, diagramas anatómicos de meridianos energéticos y horas del reloj circadiano donde el flujo de Ki se concentra en puntos vulnerables (doctrina Kyusho-Jitsu / Dim Mak), y recetas de medicina herbolaria y digitopuntura para tratar fracturas y contusiones. Gigantes como Kanryo Higaonna, Chojun Miyagi, Anko Itosu, Kenwa Mabuni y Gichin Funakoshi preservaron copias de este manuscrito sagrado.",
+                        "6. La Cumbre Histórica de Naha de 1936 y la Esencia de 'Mano Vacía': A inicios del siglo XX, Gichin Funakoshi y otros pioneros llevaron el arte a Tokio y a las universidades japonesas. El 25 de octubre de 1936, los máximos maestros de Okinawa (Chojun Miyagi, Chomo Hanashiro, Kentsu Yabu, Choki Motobu, Choshin Chibana, Shinpan Shiroma y Genwa Nakasone) celebraron una reunión cumbre en el palacio Showa Kaikan de Naha. En un acuerdo histórico, oficializaron el reemplazo del kanji original 唐手 ('To-de' / Mano de la dinastía Tang de China) por el ideograma homófono 空手 ('Kara-Te' / Mano Vacía), incorporando el sufijo 'Dō' (道 - Vía espiritual de superación personal). Esta evolución filosófica se basa en el principio Zen del vacío: 'Vaciar la mente de ego, vanidad, rencor y soberbia para reflejar el universo con la nitidez y calma de un espejo de agua'. Cada 25 de octubre se celebra el Día Mundial del Karate en conmemoración de aquella asamblea.",
+                        "7. Pilares Éticos y Biomecánicos: Del Tatami al Espíritu de Vida: La práctica tradicional del Karate descansa sobre la tríada indivisible de Kihon (fundamentos biomecánicos y postura), Kata (la biblioteca viva del estilo y sus aplicaciones secretas Bunkai) y Kumite (el combate donde se prueba la distancia Maai y el temple). Toda esta capacidad técnica está consagrada a los mandamientos supremos del Budo: 'Karate ni sente nashi' (空手に先手なし - En el Karate no existe el primer ataque; el practicante jamás busca la violencia y solo actúa para preservar la vida), 'Rei' (礼 - Respeto reverencial incondicional que rige el inicio y final de toda sesión marcial) e 'Ikken Hissatsu' (el compromiso total de concentrar toda la energía física y mental en un solo golpe definitivo mediante el Kime y Kiai, siempre controlado con la maestría milimétrica del Sundome para proteger la salud de quien entrena junto a nosotros)."
                     ],
                     bulletPoints: [
                         {
-                            title: "Shuri-Te (首里手): Nobleza y Velocidad",
-                            desc: "Nacido en el Castillo de Shuri entre la corte real y nobles Peichin. Desplazamientos lineales ágiles, posturas profundas y velocidad explosiva. Matriz directa de Shotokan y Shito-Ryu.",
-                            badge: "Cuna Capitalina",
-                            image: "/images/didactic/okinawa_three_cities_map.jpg"
+                            title: "La Travesía del Barco: China ➔ Okinawa ➔ Japón",
+                            desc: "El Kung-Fu navegó en barco de China a Okinawa para crear la Mano Vacía, y el Maestro Funakoshi lo llevó a Tokio y a las universidades para darlo a conocer al mundo entero.",
+                            badge: "Ruta Histórica",
+                            image: "/images/didactic/kuma_pixar_origins_map.jpg"
                         },
                         {
-                            title: "Naha-Te (那覇手): Puerto, Enraizamiento e Ibuki",
-                            desc: "Cultivado en el bullicioso puerto de Naha y Kumemura. Fuerte influencia china de Fujian, combate a corta distancia, postura Sanchin y respiración diafragmática Ibuki. Matriz de Goju-Ryu y Uechi-Ryu.",
+                            title: "El Triángulo Sagrado de Okinawa (Shuri, Tomari y Naha)",
+                            desc: "Las tres ciudades matrices donde nació el Karate-Do: la nobleza de Shuri, los pescadores de Tomari y los marineros comerciantes de Naha.",
+                            badge: "3 Ramas Matrices",
+                            image: "/images/didactic/kuma_pixar_okinawa_branches.jpg"
+                        },
+                        {
+                            title: "El Árbol Sagrado: Las 3 'K' (Kihon, Kata y Kumite)",
+                            desc: "La raíz profunda de Kihon sostiene el tronco estructurado de Kata para hacer florecer el combate Kumite con respeto, distancia y control.",
+                            badge: "Pilares del Árbol",
+                            image: "/images/didactic/kuma_pixar_tree_pillars.jpg"
+                        },
+                        {
+                            title: "Shuri-Te (首里手): Nobleza, Agilidad y Velocidad",
+                            desc: "Nacido en el Castillo de Shuri entre la corte real y nobles Peichin. Desplazamientos lineales fulminantes y velocidad explosiva. Matriz directa de Shotokan y Shito-Ryu.",
+                            badge: "Palacio Real",
+                            image: "/images/didactic/kuma_pixar_okinawa_branches.jpg"
+                        },
+                        {
+                            title: "Naha-Te (那覇手): Puerto Comercial, Fuerza e Ibuki",
+                            desc: "Cultivado en el puerto marítimo de Naha y Kumemura. Combate a corta distancia, postura sólida Sanchin y respiración diafragmática profunda Ibuki. Matriz de Goju-Ryu y Uechi-Ryu.",
                             badge: "Fuerza y Respiración",
-                            image: "/images/didactic/okinawa_three_cities_map.jpg"
+                            image: "/images/didactic/kuma_pixar_okinawa_branches.jpg"
                         },
                         {
-                            title: "Tomari-Te (泊手): Pescadores, Náufragos y Esquiva",
-                            desc: "Originado en el pueblo pesquero de Tomari, enriquecido por náufragos chinos y maestros como Kosaku Matsumora. Ágil, acrobático y rico en esquivas Tenshin. Creador de katas Rohai, Wankan y Chinto.",
-                            badge: "Agilidad Evasiva",
-                            image: "/images/didactic/okinawa_three_cities_map.jpg"
+                            title: "Tomari-Te (泊手): Pescadores, Fluidez y Evasión",
+                            desc: "Originado en la bahía de Tomari, enriquecido por náufragos chinos. Ágil, acrobático y rico en giros evasivos Tenshin y saltos sorpresivos. Creador de katas Rohai y Chinto.",
+                            badge: "Fluidez Evasiva",
+                            image: "/images/didactic/kuma_pixar_okinawa_branches.jpg"
                         },
                         {
                             title: "El Manuscrito Sagrado Bubishi (武備志)",
@@ -88,14 +114,9 @@ export const DIDACTIC_UNITS: Unit[] = [
                             badge: "Hito Histórico"
                         },
                         {
-                            title: "Karate Ni Sente Nashi (空手に先手なし)",
+                            title: "Karate Ni Sente Nashi y el Autocontrol Sundome",
                             desc: "'En el Karate no existe el primer ataque'. Máxima ética universal del Maestro Funakoshi que consagra al Karate como un camino de preservación de la vida, humildad y dominio absoluto del ego.",
                             badge: "Pilar Moral"
-                        },
-                        {
-                            title: "Biomecánica de Kime, Kiai y Sundome",
-                            desc: "La concentración explosiva de energía en el instante del impacto (Kime), canalizada con el grito diafragmático (Kiai) y contenida con el freno milimétrico de respeto absoluto (Sundome).",
-                            badge: "Control Supremo"
                         }
                     ],
                     references: [
@@ -112,16 +133,16 @@ export const DIDACTIC_UNITS: Unit[] = [
                             author: "Maestro Gichin Funakoshi",
                             year: 1975,
                             editorial: "Editorial Eyras (Madrid)",
-                            chapter: "Capítulo II: La forja del Karate en Okinawa y la trascendental asamblea de maestros de Naha en 1936",
-                            note: "Autobiografía indispensable del padre del Karate moderno que relata las sesiones secretas nocturnas y la adopción filosófica del kanji 'Vacío' (空)."
+                            chapter: "Capítulo II y III: La travesía de Okinawa a Tokio y la trascendental asamblea de maestros de Naha en 1936",
+                            note: "Autobiografía indispensable del padre del Karate moderno que relata las sesiones secretas nocturnas, el viaje a Japón y la adopción filosófica del kanji 'Vacío' (空)."
                         },
                         {
                             title: "La Historia del Karate: Goju-Ryu de Okinawa",
                             author: "Maestro Morio Higaonna (10° Dan)",
                             year: 1996,
                             editorial: "Editorial Miraguano (Madrid)",
-                            chapter: "Capítulo 1: Naha-Te, el maestro Kanryo Higaonna y las raíces en el templo de Fujian",
-                            note: "Crónica antropológica de primera mano sobre la preservación de los métodos de combate en Naha y la transmisión del Bubishi a Chojun Miyagi."
+                            chapter: "Capítulo 1 y 3: Las tres ramas de Ryukyu (Shuri, Tomari y Naha) y las raíces en Fujian",
+                            note: "Crónica antropológica de primera mano sobre la preservación de los métodos de combate en Naha, la respiración Ibuki y la transmisión del Bubishi a Chojun Miyagi."
                         },
                         {
                             title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
@@ -130,6 +151,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                             editorial: "Editorial Paidotribo (Barcelona)",
                             chapter: "Capítulos 1 y 2: El contexto histórico de la invasión Satsuma de 1609 y la evolución de Shuri, Naha y Tomari",
                             note: "Tratado enciclopédico sobre las vicisitudes del desarme civil en Ryukyu y la forja del Kobudo y el Te en la clandestinidad."
+                        },
+                        {
+                            title: "El Mejor Karate: Fundamentos (Vol. 1)",
+                            author: "Maestro Masatoshi Nakayama (Director Técnico JKA)",
+                            year: 1989,
+                            editorial: "Editorial Tutor (Madrid)",
+                            chapter: "Capítulo 1: La tríada pedagógica del Karate-Do: Kihon, Kata y Kumite en equilibrio formativo",
+                            note: "Manual técnico de referencia mundial sobre la relación indisociable entre la raíz básica, la forma clásica y la floración del combate libre."
+                        },
+                        {
+                            title: "Karate-Do Kyohan: El Texto Maestro",
+                            author: "Maestro Gichin Funakoshi",
+                            year: 1935,
+                            editorial: "Editorial Eyras (Madrid)",
+                            chapter: "Capítulo 2: Relación recíproca entre Kata, Kihon y el combate libre Kumite",
+                            note: "Explica cómo la técnica básica forja el cuerpo, la kata estructura la memoria marcial y el combate libre prueba el temple bajo autocontrol."
                         },
                         {
                             title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
@@ -141,7 +178,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                         },
                         {
                             title: "Karate Dinámico: Instrucción Oficial y Principios Biomecánicos",
-                            author: "Maestro Masatoshi Nakayama (Director Técnico JKA)",
+                            author: "Maestro Masatoshi Nakayama",
                             year: 1986,
                             editorial: "Editorial Paidotribo (Barcelona)",
                             chapter: "Capítulo 3: La física del Kime, la respiración abdominal diafragmática y el control milimétrico Sundome",
@@ -1508,1201 +1545,8 @@ export const DIDACTIC_UNITS: Unit[] = [
         ]
     },
 
-    // ── 9° KYU — CINTURÓN AMARILLO 🌅 ──────────────────────────────
-    {
-        id: "unit-kyu-9",
-        title: "Los Primeros Rayos del Sol",
-        description: "Domina las posiciones fundamentales (Dachi) que forman los cimientos del karate.",
-        path: "tradicional",
-        beltId: "kyu-9",
-        levels: [
-            {
-                id: "level-dachi-basico",
-                number: 1,
-                title: "Posiciones Fundamentales (Dachi)",
-                subtitle: "Los cimientos sobre los que se construye todo el arte marcial",
-                tag: "Posiciones Básicas",
-                icon: "🦶",
-                color: "gold",
-                xpReward: 55,
-                theory: {
-                    title: "Las Posiciones Básicas del Karate (Dachi)",
-                    subtitle: "Zenkutsu-dachi, Kokutsu-dachi y Kiba-dachi",
-                    quote: "Sin raíces fuertes, incluso el árbol más grande cae ante el viento.",
-                    content: [
-                        "Las posiciones (Dachi/Tachi) son la base de toda técnica de karate. Sin una posición sólida, ningún golpe, bloqueo o patada puede ejecutarse con eficacia.",
-                        "ZENKUTSU-DACHI (Posición adelantada larga): Pierna delantera flexionada, pierna trasera extendida. Distribuye el peso 60% adelante, 40% atrás. Ideal para ataques frontales.",
-                        "KOKUTSU-DACHI (Posición atrasada): El peso se concentra 70% en la pierna trasera y 30% en la delantera. Permite retroceder y defender rápidamente.",
-                        "KIBA-DACHI (Posición del jinete): Piernas abiertas al doble del ancho de hombros, rodillas flexionadas hacia afuera, centro de gravedad bajo. Fortalece piernas y Hara."
-                    ],
-                    references: [
-                        "Nakayama, M. (1966). Dynamic Karate. Tokyo: Kodansha.",
-                        "Funakoshi, G. (1973). Karate-Do Kyohan: The Master Text."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-dachi-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué posición distribuye el peso 60% en la pierna delantera y 40% en la trasera?",
-                        options: [
-                            { id: "o1", text: "Zenkutsu-dachi (前屈立ち)", isCorrect: true },
-                            { id: "o2", text: "Kokutsu-dachi (後屈立ち)", isCorrect: false },
-                            { id: "o3", text: "Kiba-dachi (騎馬立ち)", isCorrect: false },
-                            { id: "o4", text: "Neko-ashi-dachi (猫足立ち)", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Zenkutsu-dachi proyecta el peso hacia adelante para potenciar los ataques directos.",
-                        hint: "El nombre indica 'inclinarse hacia adelante'."
-                    },
-                    {
-                        id: "q-dachi-2",
-                        type: "matching",
-                        prompt: "Empareja cada posición con su característica principal:",
-                        explanation: "Zenkutsu = Avance, Kokutsu = Retroceso, Kiba = Estabilidad lateral.",
-                        pairs: [
-                            { id: "p1", left: "Zenkutsu-dachi", right: "Pierna delantera flexionada, ideal para ataques" },
-                            { id: "p2", left: "Kokutsu-dachi", right: "70% del peso atrás, ideal para defensa" },
-                            { id: "p3", left: "Kiba-dachi", right: "Piernas abiertas, posición del jinete" },
-                        ]
-                    }
-                ]
-            },
-            {
-                id: "level-rei-etiqueta",
-                number: 2,
-                title: "Rei y Etiqueta del Dojo",
-                subtitle: "El saludo que honra al arte, al maestro y a uno mismo",
-                tag: "Etiqueta & Cortesía",
-                icon: "🙇",
-                color: "amber",
-                xpReward: 50,
-                theory: {
-                    title: "Rei: El Saludo y la Etiqueta Marcial",
-                    subtitle: "La cortesía como pilar del Budo",
-                    quote: "Karate wa Rei ni hajimari, Rei ni owaru — El Karate comienza y termina con respeto.",
-                    content: [
-                        "En el Karate, el saludo (Rei) no es un simple gesto social, sino un acto de humildad y compromiso espiritual.",
-                        "RITSU-REI: Saludo de pie con inclinación de 30° desde la cintura, brazos pegados al cuerpo. Se realiza al entrar y salir del Dojo.",
-                        "ZA-REI: Saludo arrodillado desde la posición Seiza. Se utiliza al inicio y fin de la clase formal (Mokuso).",
-                        "La frase ritual 'OSU' (押忍) expresa respeto, perseverancia y compromiso. Es el saludo universal del karateka."
-                    ],
-                    references: [
-                        "Lowry, D. (2006). In the Dojo: A Guide to the Rituals and Etiquette."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-rei-1",
-                        type: "multiple_choice",
-                        prompt: "¿Cuál es la máxima fundamental sobre el Rei en el Karate?",
-                        options: [
-                            { id: "o1", text: "El Karate comienza y termina con respeto (Rei)", isCorrect: true },
-                            { id: "o2", text: "El Karate comienza con un golpe y termina con una patada", isCorrect: false },
-                            { id: "o3", text: "El Karate comienza con fuerza y termina con velocidad", isCorrect: false },
-                            { id: "o4", text: "El Karate solo se practica en silencio", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Karate wa Rei ni hajimari, Rei ni owaru: esta frase resume que la cortesía es el principio y el fin del arte.",
-                        hint: "Es una de las 20 reglas de Funakoshi (Niju Kun)."
-                    },
-                    {
-                        id: "q-rei-2",
-                        type: "true_false",
-                        prompt: "¿El saludo Za-Rei se realiza de pie con una inclinación de 30 grados?",
-                        correctBool: false,
-                        explanation: "Falso. Za-Rei se realiza desde la posición arrodillada (Seiza). El saludo de pie es Ritsu-Rei.",
-                        hint: "Za significa sentado/arrodillado."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 8° KYU — CINTURÓN NARANJA 🔥 ──────────────────────────────
-    {
-        id: "unit-kyu-8",
-        title: "El Fuego Interior",
-        description: "Forja tus técnicas de puño: Oi-Zuki, Gyaku-Zuki y la potencia del Seiken.",
-        path: "tradicional",
-        beltId: "kyu-8",
-        levels: [
-            {
-                id: "level-tsuki-basico",
-                number: 1,
-                title: "Técnicas de Puño (Tsuki)",
-                subtitle: "El puño como extensión del espíritu guerrero",
-                tag: "Técnicas de Puño",
-                icon: "👊",
-                color: "gold",
-                xpReward: 60,
-                theory: {
-                    title: "El Arte del Tsuki (突き) — Técnicas de Puño",
-                    subtitle: "Oi-Zuki, Gyaku-Zuki y Kizami-Zuki",
-                    quote: "El puño no golpea con el brazo; golpea con todo el cuerpo, desde el Hara.",
-                    content: [
-                        "OI-ZUKI (Puño directo perseguidor): Puño lanzado con el mismo brazo que la pierna adelantada. Todo el cuerpo avanza como una lanza. Es el primer ataque que aprende todo karateka.",
-                        "GYAKU-ZUKI (Puño inverso): Puño contrario a la pierna adelantada. La rotación de caderas (Koshi) genera una potencia explosiva. Es la técnica más puntuada en el kumite.",
-                        "KIZAMI-ZUKI (Puño de estocada): Golpe rápido con el puño delantero, sin rotación completa de cadera. Usado como jab para romper distancia.",
-                        "Todas las técnicas de puño se ejecutan con Seiken (superficie frontal de los dos nudillos principales: índice y medio)."
-                    ],
-                    references: [
-                        "Nakayama, M. (1966). Dynamic Karate.",
-                        "Kanazawa, H. (2006). Karate: The Complete Kata."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-tsuki-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué técnica de puño utiliza el brazo contrario a la pierna adelantada y genera potencia con la rotación de caderas?",
-                        options: [
-                            { id: "o1", text: "Gyaku-Zuki (逆突き)", isCorrect: true },
-                            { id: "o2", text: "Oi-Zuki (追い突き)", isCorrect: false },
-                            { id: "o3", text: "Kizami-Zuki (刻み突き)", isCorrect: false },
-                            { id: "o4", text: "Tetsui-Uchi (鉄槌打ち)", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Gyaku-Zuki usa el brazo opuesto a la pierna delantera, potenciado por la rotación de Koshi (caderas).",
-                        hint: "Gyaku significa 'inverso' o 'contrario'."
-                    },
-                    {
-                        id: "q-tsuki-2",
-                        type: "multiple_choice",
-                        prompt: "¿Qué superficie del puño se utiliza para impactar en las técnicas de Tsuki correctamente?",
-                        options: [
-                            { id: "o1", text: "Seiken: nudillos del índice y medio", isCorrect: true },
-                            { id: "o2", text: "La palma de la mano", isCorrect: false },
-                            { id: "o3", text: "Los dedos extendidos", isCorrect: false },
-                            { id: "o4", text: "El dorso de la mano", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Seiken (los dos nudillos principales) concentra toda la fuerza en un área pequeña para máximo impacto.",
-                        hint: "Son los dos primeros nudillos del puño cerrado."
-                    }
-                ]
-            },
-            {
-                id: "level-hikite",
-                number: 2,
-                title: "El Secreto del Hikite",
-                subtitle: "La mano que retrocede es tan poderosa como la que golpea",
-                tag: "Principio de Acción-Reacción",
-                icon: "🔄",
-                color: "red",
-                xpReward: 55,
-                theory: {
-                    title: "Hikite (引き手) — La Mano que Retrae",
-                    subtitle: "Tercera ley de Newton aplicada al Budo",
-                    quote: "El puño que retrocede con velocidad multiplica la fuerza del que avanza.",
-                    content: [
-                        "Hikite es el principio de retraer la mano contraria hacia la cadera (Koshi) mientras el otro puño golpea. Esta acción-reacción genera una fuerza rotatoria que amplifica el impacto.",
-                        "En la aplicación real (Bunkai), Hikite también representa un agarre: la mano que retrae sujeta y jala al oponente mientras el puño libre golpea con devastadora eficacia.",
-                        "El dominio de Hikite diferencia a un principiante de un karateka avanzado. Sin retracción, el golpe pierde hasta un 40% de su potencia."
-                    ],
-                    references: [
-                        "Abernethy, I. (2002). Bunkai-Jutsu: The Practical Application of Karate Kata."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-hikite-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué es el Hikite en el Karate?",
-                        options: [
-                            { id: "o1", text: "La acción de retraer la mano contraria hacia la cadera al golpear", isCorrect: true },
-                            { id: "o2", text: "Una patada giratoria", isCorrect: false },
-                            { id: "o3", text: "Un tipo de kata avanzado", isCorrect: false },
-                            { id: "o4", text: "El nombre del cinturón negro", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Hikite (引き手) es la retracción de la mano contraria, que genera fuerza de acción-reacción.",
-                        hint: "Hiki = tirar/retraer, Te = mano."
-                    },
-                    {
-                        id: "q-hikite-2",
-                        type: "true_false",
-                        prompt: "¿El Hikite solo sirve para verse más estético durante el kata?",
-                        correctBool: false,
-                        explanation: "Falso. Hikite tiene una función biomecánica (acción-reacción) y una aplicación real (agarre y control del oponente).",
-                        hint: "Piensa en la tercera ley de Newton y el Bunkai."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 7° KYU — CINTURÓN VERDE 🎋 ──────────────────────────────
-    {
-        id: "unit-kyu-7",
-        title: "El Bambú que Crece",
-        description: "Aprende los bloqueos fundamentales (Uke) que protegen al guerrero en combate.",
-        path: "tradicional",
-        beltId: "kyu-7",
-        levels: [
-            {
-                id: "level-uke-basico",
-                number: 1,
-                title: "Técnicas de Bloqueo (Uke)",
-                subtitle: "La defensa es el primer ataque del guerrero sabio",
-                tag: "Bloqueos Fundamentales",
-                icon: "🛡️",
-                color: "emerald",
-                xpReward: 60,
-                theory: {
-                    title: "Los Bloqueos Fundamentales (受け — Uke)",
-                    subtitle: "Age-Uke, Soto-Uke, Uchi-Uke y Gedan-Barai",
-                    quote: "El bloqueo no es un muro pasivo; es un rayo que intercepta.",
-                    content: [
-                        "AGE-UKE (Bloqueo ascendente): Desvía ataques a la zona alta (Jodan) elevando el antebrazo sobre la frente con giro de muñeca.",
-                        "SOTO-UKE (Bloqueo exterior-interior): El antebrazo barre de afuera hacia adentro, desviando ataques a la zona media (Chudan).",
-                        "UCHI-UKE (Bloqueo interior-exterior): Opuesto al Soto-Uke, el antebrazo barre desde dentro hacia fuera.",
-                        "GEDAN-BARAI (Barrido bajo): Desvía ataques a la zona baja con un movimiento descendente y diagonal del antebrazo."
-                    ],
-                    references: [
-                        "Nakayama, M. (1981). Best Karate Vol.2: Fundamentals. Tokyo: Kodansha."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-uke-1",
-                        type: "matching",
-                        prompt: "Empareja cada bloqueo con la zona que protege:",
-                        explanation: "Age-Uke protege Jodan, Soto-Uke protege Chudan, Gedan-Barai protege Gedan.",
-                        pairs: [
-                            { id: "p1", left: "Age-Uke", right: "Zona alta (Jodan) — Cabeza" },
-                            { id: "p2", left: "Soto-Uke", right: "Zona media (Chudan) — Torso" },
-                            { id: "p3", left: "Gedan-Barai", right: "Zona baja (Gedan) — Abdomen bajo" },
-                        ]
-                    },
-                    {
-                        id: "q-uke-2",
-                        type: "multiple_choice",
-                        prompt: "¿Qué bloqueo utiliza un movimiento ascendente del antebrazo sobre la frente?",
-                        options: [
-                            { id: "o1", text: "Age-Uke (上げ受け)", isCorrect: true },
-                            { id: "o2", text: "Gedan-Barai (下段払い)", isCorrect: false },
-                            { id: "o3", text: "Soto-Uke (外受け)", isCorrect: false },
-                            { id: "o4", text: "Shuto-Uke (手刀受け)", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Age-Uke sube el antebrazo en diagonal para desviar ataques dirigidos a la cabeza.",
-                        hint: "Age significa 'subir' o 'elevar'."
-                    }
-                ]
-            },
-            {
-                id: "level-tai-sabaki",
-                number: 2,
-                title: "Tai Sabaki — Esquivas Corporales",
-                subtitle: "Mueve tu cuerpo como el agua que rodea la roca",
-                tag: "Movimiento Corporal",
-                icon: "💨",
-                color: "green",
-                xpReward: 55,
-                theory: {
-                    title: "Tai Sabaki (体捌き) — El Arte de Esquivar",
-                    subtitle: "El cuerpo se mueve, la mente permanece",
-                    quote: "No recibas la fuerza del enemigo; desvíala y hazla tuya.",
-                    content: [
-                        "Tai Sabaki es el arte de mover el cuerpo para esquivar un ataque mientras se mantiene la posición para contraatacar.",
-                        "A diferencia de los bloqueos directos, el Tai Sabaki no confronta la fuerza del oponente; la redirige y la utiliza en su contra.",
-                        "Los principales movimientos incluyen: desplazamientos laterales (Yori-ashi), pivotes (Tenkan) y retrocesos angulados.",
-                        "El dominio del Tai Sabaki convierte al karateka en un blanco móvil imposible de alcanzar."
-                    ],
-                    references: [
-                        "Toguchi, S. (1976). Okinawan Goju-Ryu II: Advanced Techniques."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-tai-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué significa Tai Sabaki en el contexto del Karate?",
-                        options: [
-                            { id: "o1", text: "El arte de esquivar moviendo el cuerpo sin confrontar la fuerza directamente", isCorrect: true },
-                            { id: "o2", text: "Un tipo de patada giratoria alta", isCorrect: false },
-                            { id: "o3", text: "El nombre de un kata avanzado", isCorrect: false },
-                            { id: "o4", text: "La meditación antes de la clase", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Tai (cuerpo) + Sabaki (manejo/control): es el control del cuerpo para esquivar y redirigir la fuerza.",
-                        hint: "Tai = cuerpo, Sabaki = manejo."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 6° KYU — CINTURÓN AZUL 🌊 ──────────────────────────────
-    {
-        id: "unit-kyu-6",
-        title: "El Cielo Infinito",
-        description: "Eleva tus técnicas con las patadas fundamentales (Geri) del karate.",
-        path: "tradicional",
-        beltId: "kyu-6",
-        levels: [
-            {
-                id: "level-geri-basico",
-                number: 1,
-                title: "Patadas Fundamentales (Geri)",
-                subtitle: "Las piernas son las armas más poderosas del guerrero",
-                tag: "Técnicas de Patada",
-                icon: "🦵",
-                color: "blue",
-                xpReward: 65,
-                theory: {
-                    title: "El Arte del Geri (蹴り) — Técnicas de Patada",
-                    subtitle: "Mae-Geri, Yoko-Geri y Mawashi-Geri",
-                    quote: "La patada del karateka no es un pie que se eleva; es una tormenta que asciende.",
-                    content: [
-                        "MAE-GERI (Patada frontal): Golpe directo hacia adelante con la parte alta de la planta del pie (Koshi/Josokutei). La rodilla se eleva primero como una grúa, luego el pie se extiende como un látigo.",
-                        "YOKO-GERI (Patada lateral): Golpe lateral con el canto del pie (Sokuto). Existe en dos variantes: Kekomi (empujón penetrante) y Keage (ascendente cortante).",
-                        "MAWASHI-GERI (Patada circular): Patada circular devastadora que impacta con el empeine (Haisoku). La cadera rota completamente para generar fuerza centrífuga.",
-                        "La clave de toda patada es el Hiki-ashi: la retracción rápida de la pierna tras el impacto, igual que el Hikite del puño."
-                    ],
-                    references: [
-                        "Nakayama, M. (1981). Best Karate Vol.4: Kumite 2. Tokyo: Kodansha."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-geri-1",
-                        type: "matching",
-                        prompt: "Empareja cada patada con su dirección:",
-                        explanation: "Mae = Frontal, Yoko = Lateral, Mawashi = Circular.",
-                        pairs: [
-                            { id: "p1", left: "Mae-Geri", right: "Patada frontal directa" },
-                            { id: "p2", left: "Yoko-Geri", right: "Patada lateral al costado" },
-                            { id: "p3", left: "Mawashi-Geri", right: "Patada circular con empeine" },
-                        ]
-                    },
-                    {
-                        id: "q-geri-2",
-                        type: "multiple_choice",
-                        prompt: "¿Con qué parte del pie se ejecuta correctamente el Mawashi-Geri?",
-                        options: [
-                            { id: "o1", text: "Haisoku (Empeine)", isCorrect: true },
-                            { id: "o2", text: "Kakato (Talón)", isCorrect: false },
-                            { id: "o3", text: "Tsumasaki (Puntas de los dedos)", isCorrect: false },
-                            { id: "o4", text: "Sokuto (Canto del pie)", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "El Mawashi-Geri impacta con el empeine (Haisoku), permitiendo un arco circular de máximo alcance.",
-                        hint: "La superficie plana superior del pie."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 5° KYU — CINTURÓN MORADO 🌸 ──────────────────────────────
-    {
-        id: "unit-kyu-5",
-        title: "La Tormenta Púrpura",
-        description: "Descubre los Kata: formas sagradas que codifican siglos de sabiduría marcial.",
-        path: "tradicional",
-        beltId: "kyu-5",
-        levels: [
-            {
-                id: "level-kata-intro",
-                number: 1,
-                title: "Introducción al Kata",
-                subtitle: "El kata es la enciclopedia viva del karate",
-                tag: "Kata & Formas",
-                icon: "📜",
-                color: "purple",
-                xpReward: 70,
-                theory: {
-                    title: "Kata (型) — Las Formas Sagradas",
-                    subtitle: "La biblioteca marcial codificada en movimiento",
-                    quote: "El kata es el maestro silencioso: enseña a quien sabe escuchar sus movimientos.",
-                    content: [
-                        "Kata significa literalmente 'forma' o 'molde'. Es una secuencia predeterminada de técnicas que simula un combate contra múltiples adversarios imaginarios.",
-                        "Cada kata contiene Bunkai (aplicaciones prácticas) ocultos en sus movimientos. Los maestros codificaron técnicas letales en patrones que parecían inofensivos.",
-                        "Los Heian (Pinan en algunos estilos) son los 5 kata básicos creados por Anko Itosu para la educación escolar en Okinawa. Su nombre significa 'paz y tranquilidad'.",
-                        "TAIKYOKU SHODAN: El kata más básico, creado por Funakoshi como herramienta didáctica. Utiliza solo Gedan-Barai y Oi-Zuki en Zenkutsu-dachi."
-                    ],
-                    references: [
-                        "Funakoshi, G. (1973). Karate-Do Kyohan.",
-                        "Kanazawa, H. (2006). Karate: The Complete Kata."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-kata-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué significa la palabra Kata (型) en el contexto del Karate?",
-                        options: [
-                            { id: "o1", text: "Forma o molde: secuencia de técnicas contra adversarios imaginarios", isCorrect: true },
-                            { id: "o2", text: "Un tipo de combate libre sin reglas", isCorrect: false },
-                            { id: "o3", text: "El nombre del cinturón de competición", isCorrect: false },
-                            { id: "o4", text: "Una técnica de meditación estática", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Kata (型) es una forma predeterminada que codifica técnicas de combate en secuencias precisas.",
-                        hint: "Es una pelea coreografiada contra oponentes imaginarios."
-                    },
-                    {
-                        id: "q-kata-2",
-                        type: "multiple_choice",
-                        prompt: "¿Qué término designa la aplicación práctica oculta dentro de los movimientos del kata?",
-                        options: [
-                            { id: "o1", text: "Bunkai (分解 — Descomposición)", isCorrect: true },
-                            { id: "o2", text: "Kihon (基本 — Básico)", isCorrect: false },
-                            { id: "o3", text: "Randori (乱取 — Práctica libre)", isCorrect: false },
-                            { id: "o4", text: "Mokuso (黙想 — Meditación)", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Bunkai significa literalmente 'descomponer' y se refiere a descifrar las aplicaciones reales de cada movimiento del kata.",
-                        hint: "Bun = dividir/descomponer, Kai = entender/resolver."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 4° KYU — CINTURÓN MORADO CON BLANCO ☯️ ──────────────────
-    {
-        id: "unit-kyu-4",
-        title: "La Dualidad del Camino",
-        description: "Domina las combinaciones (Renraku-waza) y la fluidez entre ataque y defensa.",
-        path: "tradicional",
-        beltId: "kyu-4",
-        levels: [
-            {
-                id: "level-renraku",
-                number: 1,
-                title: "Combinaciones (Renraku-Waza)",
-                subtitle: "La fluidez entre ataque y defensa es la marca del guerrero intermedio",
-                tag: "Combinaciones Tácticas",
-                icon: "⚡",
-                color: "purple",
-                xpReward: 75,
-                theory: {
-                    title: "Renraku-Waza (連絡技) — Combinaciones Encadenadas",
-                    subtitle: "Cuando las técnicas aisladas se convierten en torrentes",
-                    quote: "Una sola gota no mueve la piedra; pero un torrente constante la destruye.",
-                    content: [
-                        "Renraku-waza es el arte de encadenar múltiples técnicas en secuencias fluidas y devastadoras.",
-                        "Ejemplo básico: Kizami-Zuki → Gyaku-Zuki (jab seguido de golpe inverso). La primera técnica abre la guardia, la segunda penetra.",
-                        "Ejemplo intermedio: Mawashi-Geri Jodan → Gyaku-Zuki Chudan. La patada alta distrae, el puño al cuerpo finaliza.",
-                        "La clave es el ritmo (Hyoshi): alternar velocidades rápidas y lentas para romper la predictibilidad del adversario."
-                    ],
-                    references: [
-                        "Kanazawa, H. (2009). Karate Fighting Techniques: The Complete Kumite."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-renraku-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué significa Renraku-Waza en el Karate?",
-                        options: [
-                            { id: "o1", text: "Combinaciones encadenadas de técnicas múltiples", isCorrect: true },
-                            { id: "o2", text: "Un tipo de meditación sentada", isCorrect: false },
-                            { id: "o3", text: "El nombre de un kata avanzado", isCorrect: false },
-                            { id: "o4", text: "Un bloqueo con ambas manos", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Renraku (連絡) = conexión/encadenamiento, Waza (技) = técnica. Son técnicas encadenadas fluidamente.",
-                        hint: "Piensa en 'conectar' varias técnicas en un flujo continuo."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 3° KYU — CINTURÓN CAFÉ (3 LÍNEAS BLANCAS) ⚔️ ──────────
-    {
-        id: "unit-kyu-3",
-        title: "La Forja del Acero",
-        description: "Perfecciona los Kata intermedios y comprende la estructura profunda del Bunkai.",
-        path: "tradicional",
-        beltId: "kyu-3",
-        levels: [
-            {
-                id: "level-kata-intermedio",
-                number: 1,
-                title: "Kata Intermedio y Bunkai",
-                subtitle: "Cada movimiento del kata oculta un secreto mortal",
-                tag: "Kata Avanzado",
-                icon: "📖",
-                color: "amber",
-                xpReward: 80,
-                theory: {
-                    title: "Kata Intermedios y su Bunkai",
-                    subtitle: "Bassai-Dai, Kanku-Dai y Empi",
-                    quote: "El kata habla en silencio; solo el estudioso paciente comprende su idioma.",
-                    content: [
-                        "BASSAI-DAI (Penetrar la fortaleza): Kata de potencia y determinación. Sus movimientos enseñan a romper la guardia del oponente con técnicas explosivas.",
-                        "KANKU-DAI (Contemplar el cielo): Inspirado en el gesto de mirar al cielo con las manos formando un triángulo. Combina técnicas de todas las alturas.",
-                        "EMPI (El vuelo del golondrina): Kata rápido y ágil con saltos y cambios de nivel. Enseña la ligereza y la velocidad.",
-                        "El Bunkai de estos kata revela agarres (Tuidi), luxaciones (Kansetsu-waza) y proyecciones (Nage-waza) ocultas en movimientos aparentemente simples."
-                    ],
-                    references: [
-                        "Abernethy, I. (2002). Bunkai-Jutsu: The Practical Application of Karate Kata."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-kata-i-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué significa literalmente Bassai-Dai (抜塞大)?",
-                        options: [
-                            { id: "o1", text: "Penetrar la fortaleza (Grande)", isCorrect: true },
-                            { id: "o2", text: "El vuelo del golondrina", isCorrect: false },
-                            { id: "o3", text: "Contemplar el cielo", isCorrect: false },
-                            { id: "o4", text: "Las diez manos", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Bassai = penetrar/extraer, Dai = grande. Simboliza la determinación de romper las defensas del enemigo.",
-                        hint: "El nombre evoca una fortaleza que debe ser conquistada."
-                    },
-                    {
-                        id: "q-kata-i-2",
-                        type: "matching",
-                        prompt: "Empareja cada Kata con su significado:",
-                        explanation: "Bassai = Fortaleza, Kanku = Cielo, Empi = Golondrina.",
-                        pairs: [
-                            { id: "p1", left: "Bassai-Dai", right: "Penetrar la fortaleza" },
-                            { id: "p2", left: "Kanku-Dai", right: "Contemplar el cielo" },
-                            { id: "p3", left: "Empi", right: "El vuelo del golondrina" },
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 2° KYU — CINTURÓN CAFÉ (2 LÍNEAS BLANCAS) 🌉 ──────────
-    {
-        id: "unit-kyu-2",
-        title: "El Puente entre Mundos",
-        description: "Domina la distancia (Maai) y la estrategia del Kumite táctico.",
-        path: "tradicional",
-        beltId: "kyu-2",
-        levels: [
-            {
-                id: "level-maai",
-                number: 1,
-                title: "Maai — La Distancia Sagrada",
-                subtitle: "Quien controla la distancia, controla el combate",
-                tag: "Estrategia & Distancia",
-                icon: "📐",
-                color: "amber",
-                xpReward: 85,
-                theory: {
-                    title: "Maai (間合い) — El Arte de la Distancia",
-                    subtitle: "Chika-Ma, To-Ma e Issoku-ittou-no-Maai",
-                    quote: "La verdadera victoria se decide antes del primer golpe, en la gestión del espacio.",
-                    content: [
-                        "MAAI es la distancia relativa entre dos combatientes. No es una medida fija, sino dinámica, que cambia con cada movimiento.",
-                        "CHIKA-MA (Distancia corta): Ambos pueden atacar sin avanzar. Zona de máximo peligro y explosividad.",
-                        "TO-MA (Distancia larga): Ninguno puede atacar sin dar al menos un paso. Zona de observación y preparación.",
-                        "ISSOKU-ITTOU-NO-MAAI (Un paso, un golpe): La distancia ideal donde un solo paso permite conectar una técnica decisiva."
-                    ],
-                    references: [
-                        "Kanazawa, H. (2009). Karate Fighting Techniques."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-maai-1",
-                        type: "matching",
-                        prompt: "Empareja cada tipo de Maai con su descripción:",
-                        explanation: "Chika-Ma = cerca, To-Ma = lejos, Issoku-ittou = distancia de un paso.",
-                        pairs: [
-                            { id: "p1", left: "Chika-Ma", right: "Distancia corta — Ataque inmediato sin avanzar" },
-                            { id: "p2", left: "To-Ma", right: "Distancia larga — Requiere avanzar para atacar" },
-                            { id: "p3", left: "Issoku-ittou-no-Maai", right: "Un paso = un golpe decisivo" },
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 1° KYU — CINTURÓN CAFÉ (1 LÍNEA BLANCA) 🏯 ──────────
-    {
-        id: "unit-kyu-1",
-        title: "La Antesala del Dan",
-        description: "Preparación integral para el examen de cinturón negro: Kihon, Kata y Kumite.",
-        path: "tradicional",
-        beltId: "kyu-1",
-        levels: [
-            {
-                id: "level-preparacion-dan",
-                number: 1,
-                title: "Examen de Cinturón Negro",
-                subtitle: "El último paso antes del primer paso verdadero",
-                tag: "Preparación Integral",
-                icon: "🏯",
-                color: "amber",
-                xpReward: 100,
-                theory: {
-                    title: "Preparación para el Examen de Dan",
-                    subtitle: "Kihon, Kata, Kumite: los tres pilares del examen",
-                    quote: "El cinturón negro no es el final; es el inicio del verdadero aprendizaje.",
-                    content: [
-                        "El examen de Shodan (1° Dan) evalúa tres pilares fundamentales: Kihon (técnicas básicas ejecutadas con maestría), Kata (formas con precisión y espíritu) y Kumite (combate con control y Zanshin).",
-                        "KIHON: Se exigen todas las técnicas fundamentales ejecutadas con postura impecable, potencia y kiai.",
-                        "KATA: Normalmente se evalúan Heian 1 al 5, Tekki Shodan y al menos un kata superior elegido por el aspirante.",
-                        "KUMITE: Se evalúa Ippon Kumite (un paso), Jiyu Ippon Kumite (semiformal) y Jiyu Kumite (libre).",
-                        "El espíritu de Fudoshin (mente inamovible) y Zanshin (alerta perpetua) son tan evaluados como la técnica misma."
-                    ],
-                    references: [
-                        "Funakoshi, G. (1973). Karate-Do Kyohan.",
-                        "Nakayama, M. (1966). Dynamic Karate."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-dan-prep-1",
-                        type: "multiple_choice",
-                        prompt: "¿Cuáles son los tres pilares evaluados en el examen de Shodan?",
-                        options: [
-                            { id: "o1", text: "Kihon (Técnica básica), Kata (Formas) y Kumite (Combate)", isCorrect: true },
-                            { id: "o2", text: "Velocidad, Fuerza y Resistencia", isCorrect: false },
-                            { id: "o3", text: "Meditación, Flexibilidad y Kata", isCorrect: false },
-                            { id: "o4", text: "Armas, Kata y Golpes", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "El examen de Dan evalúa la trinidad del karate: Kihon, Kata y Kumite, junto con el espíritu marcial.",
-                        hint: "Son los tres pilares clásicos de la formación del karate."
-                    },
-                    {
-                        id: "q-dan-prep-2",
-                        type: "multiple_choice",
-                        prompt: "¿Qué estado mental se espera del aspirante durante todo el examen de Dan?",
-                        options: [
-                            { id: "o1", text: "Fudoshin (Mente inamovible) y Zanshin (Alerta perpetua)", isCorrect: true },
-                            { id: "o2", text: "Relajación total sin concentración", isCorrect: false },
-                            { id: "o3", text: "Agresividad máxima sin control", isCorrect: false },
-                            { id: "o4", text: "Indiferencia ante el resultado", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Fudoshin (mente firme e inamovible) y Zanshin (alerta constante) reflejan la madurez mental del aspirante.",
-                        hint: "Son dos conceptos japoneses sobre la fortaleza mental."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 1° DAN — SHODAN ⚫ ──────────────────────────────
-    {
-        id: "unit-dan-1",
-        title: "El Primer Paso Verdadero",
-        description: "Shodan: el cinturón negro marca el inicio real de la maestría marcial.",
-        path: "tradicional",
-        beltId: "dan-1",
-        levels: [
-            {
-                id: "level-shodan-filosofia",
-                number: 1,
-                title: "Filosofía del Cinturón Negro",
-                subtitle: "Shodan no es la meta; es el verdadero comienzo",
-                tag: "Filosofía Dan",
-                icon: "🌑",
-                color: "gold",
-                xpReward: 100,
-                theory: {
-                    title: "Shodan (初段) — El Primer Grado",
-                    subtitle: "El significado profundo del cinturón negro",
-                    quote: "Sho significa 'principio'. Shodan significa: el principio del verdadero camino.",
-                    content: [
-                        "En occidente, el cinturón negro se percibe como el nivel máximo. En Japón, Shodan significa literalmente 'primer grado': el comienzo del aprendizaje real.",
-                        "Jigoro Kano (fundador del Judo) creó el sistema de Dan en 1883. Gichin Funakoshi lo adoptó para el Karate. Los primeros cinturones negros de karate se otorgaron en 1924.",
-                        "El cinturón negro no indica perfección; indica que el karateka ha dominado los fundamentos y está listo para estudiar en profundidad.",
-                        "En la tradición, el obi negro se desgasta con los años hasta volver a ser blanco: símbolo del ciclo eterno de aprendizaje."
-                    ],
-                    references: [
-                        "Funakoshi, G. (1975). Karate-Do: My Way of Life."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-shodan-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué significa literalmente 'Shodan' (初段)?",
-                        options: [
-                            { id: "o1", text: "Primer grado / Primer peldaño", isCorrect: true },
-                            { id: "o2", text: "Maestro supremo", isCorrect: false },
-                            { id: "o3", text: "Nivel perfecto", isCorrect: false },
-                            { id: "o4", text: "Guerrero invencible", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Sho (初) = primero/inicio, Dan (段) = grado/peldaño. Shodan es el primer peldaño de la escalera de la maestría.",
-                        hint: "El nombre indica un comienzo, no un final."
-                    },
-                    {
-                        id: "q-shodan-2",
-                        type: "true_false",
-                        prompt: "¿El sistema de grados Dan fue creado originalmente para el Karate?",
-                        correctBool: false,
-                        explanation: "Falso. Jigoro Kano lo creó para el Judo en 1883 y Funakoshi lo adaptó al Karate décadas después.",
-                        hint: "El creador del Judo ideó este sistema."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 2° DAN — NIDAN ⚫⚫ ──────────────────────────────
-    {
-        id: "unit-dan-2",
-        title: "La Profundidad del Río",
-        description: "Nidan: biomecánica avanzada, Kime y la ciencia del impacto.",
-        path: "tradicional",
-        beltId: "dan-2",
-        levels: [
-            {
-                id: "level-kime",
-                number: 1,
-                title: "Kime — El Foco del Poder",
-                subtitle: "Toda la energía del universo concentrada en un instante",
-                tag: "Biomecánica Avanzada",
-                icon: "💥",
-                color: "gold",
-                xpReward: 110,
-                theory: {
-                    title: "Kime (決め) — La Concentración del Poder",
-                    subtitle: "El instante de máxima contracción y foco",
-                    quote: "Kime es cuando todo tu ser se condensa en un solo punto, en una fracción de segundo.",
-                    content: [
-                        "Kime es el momento de máxima contracción muscular y foco mental en el punto exacto de impacto de una técnica.",
-                        "No es tensión constante; es la transición explosiva de relajación total a contracción total en milisegundos.",
-                        "Involucra la cadena cinética completa: desde los pies (enraizamiento), pasando por caderas (Koshi), tronco (Tanden) y extremidad que ejecuta.",
-                        "Sin Kime, un golpe es un simple movimiento. Con Kime, se convierte en una técnica marcial devastadora."
-                    ],
-                    references: [
-                        "Nakayama, M. (1966). Dynamic Karate."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-kime-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué es el Kime (決め) en el Karate?",
-                        options: [
-                            { id: "o1", text: "El momento de máxima concentración de fuerza y foco en el punto de impacto", isCorrect: true },
-                            { id: "o2", text: "Un tipo de patada voladora", isCorrect: false },
-                            { id: "o3", text: "El grito que se emite al final del kata", isCorrect: false },
-                            { id: "o4", text: "La meditación antes de combatir", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Kime (決め) es la decisión/determinación: la concentración explosiva de toda la energía en el instante del impacto.",
-                        hint: "Viene de 'kimeru' (decidir/determinar)."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 3° DAN — SANDAN ⚫⚫⚫ ──────────────────────────────
-    {
-        id: "unit-dan-3",
-        title: "La Montaña Interior",
-        description: "Sandan: la filosofía del Budo, el Dojo Kun y las 20 reglas de Funakoshi.",
-        path: "tradicional",
-        beltId: "dan-3",
-        levels: [
-            {
-                id: "level-dojo-kun",
-                number: 1,
-                title: "Dojo Kun y Niju Kun",
-                subtitle: "Las leyes morales del guerrero que trascienden el tatami",
-                tag: "Filosofía del Budo",
-                icon: "📿",
-                color: "gold",
-                xpReward: 120,
-                theory: {
-                    title: "Dojo Kun (道場訓) y Niju Kun (二十訓)",
-                    subtitle: "Las reglas éticas del Karate de Funakoshi",
-                    quote: "El objetivo último del Karate no es la victoria en el combate, sino la perfección del carácter.",
-                    content: [
-                        "El DOJO KUN son los 5 preceptos recitados al final de cada clase: 1) Esforzarse por la perfección del carácter, 2) Defender los caminos de la verdad, 3) Fomentar el espíritu de esfuerzo, 4) Honrar los principios de etiqueta, 5) Guardarse contra el comportamiento impulsivo.",
-                        "Las NIJU KUN son las 20 reglas de Gichin Funakoshi, incluyendo: 'El karate comienza y termina con Rei', 'No existe primer ataque en karate' y 'El karate es un auxiliar de la justicia'.",
-                        "Estas reglas demuestran que el Karate no es solo un arte de combate, sino un camino de desarrollo moral y espiritual (Do = Camino)."
-                    ],
-                    references: [
-                        "Funakoshi, G. (1938). The Twenty Guiding Principles of Karate."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-dojokun-1",
-                        type: "multiple_choice",
-                        prompt: "¿Cuál es el primer precepto del Dojo Kun?",
-                        options: [
-                            { id: "o1", text: "Esforzarse por la perfección del carácter", isCorrect: true },
-                            { id: "o2", text: "Ganar todos los combates", isCorrect: false },
-                            { id: "o3", text: "Entrenar 8 horas diarias", isCorrect: false },
-                            { id: "o4", text: "Nunca retroceder ante el enemigo", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Hitotsu! Jinkaku kansei ni tsutomuru koto — El objetivo supremo es perfeccionar el carácter humano.",
-                        hint: "No tiene que ver con combatir, sino con crecer como persona."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 4° DAN — YONDAN ⚫⚫⚫⚫ ──────────────────────────
-    {
-        id: "unit-dan-4",
-        title: "El Espejo del Maestro",
-        description: "Yondan: pedagogía marcial, el arte de enseñar y formar al siguiente Sensei.",
-        path: "tradicional",
-        beltId: "dan-4",
-        levels: [
-            {
-                id: "level-pedagogia",
-                number: 1,
-                title: "El Arte de Enseñar (Shidoin)",
-                subtitle: "Enseñar es la forma más profunda de aprender",
-                tag: "Pedagogía Marcial",
-                icon: "🎓",
-                color: "gold",
-                xpReward: 130,
-                theory: {
-                    title: "Shidoin (指導員) — El Instructor Marcial",
-                    subtitle: "Transmitir el arte con exactitud y humanidad",
-                    quote: "El mejor maestro no impone; inspira. No ordena; guía.",
-                    content: [
-                        "A partir de Yondan, el karateka asume formalmente el rol de Shidoin (instructor calificado).",
-                        "La pedagogía marcial exige: 1) Demostración impecable, 2) Explicación clara en terminología japonesa y local, 3) Corrección individualizada, 4) Fomento del espíritu Osu.",
-                        "El Sensei (先生 = nacido antes) no es un título de habilidad, sino de responsabilidad: quien enseña carga con la integridad del arte para las futuras generaciones."
-                    ],
-                    references: [
-                        "Lowry, D. (2006). In the Dojo: A Guide to the Rituals and Etiquette."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-shidoin-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué significa literalmente Sensei (先生)?",
-                        options: [
-                            { id: "o1", text: "Nacido antes / Quien precede en el camino", isCorrect: true },
-                            { id: "o2", text: "Luchador invicto", isCorrect: false },
-                            { id: "o3", text: "Cinturón negro de 5° Dan", isCorrect: false },
-                            { id: "o4", text: "Director del dojo", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Sen (先) = antes/previo, Sei (生) = nacido/vida. Indica experiencia previa, no superioridad.",
-                        hint: "El significado está en los kanjis: 先 (antes) + 生 (nacido)."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 5° DAN — GODAN ⚫⚫⚫⚫⚫ ──────────────────────────
-    {
-        id: "unit-dan-5",
-        title: "El Dragón Oculto",
-        description: "Godan: maestría de los kata superiores y la esencia oculta del Bunkai.",
-        path: "tradicional",
-        beltId: "dan-5",
-        levels: [
-            {
-                id: "level-kata-superior",
-                number: 1,
-                title: "Kata Superiores",
-                subtitle: "Las formas maestras que codifican la sabiduría suprema",
-                tag: "Kata Maestro",
-                icon: "🐉",
-                color: "gold",
-                xpReward: 140,
-                theory: {
-                    title: "Kata Superiores — Unsu, Gojushiho y Sochin",
-                    subtitle: "Los kata reservados para la maestría",
-                    quote: "En el kata superior, cada respiración es una técnica y cada pausa es una trampa.",
-                    content: [
-                        "UNSU (Manos de nube): Considerado el kata más complejo del Shotokan. Incluye saltos, giros en 360° y cambios dramáticos de nivel.",
-                        "GOJUSHIHO DAI/SHO (54 pasos): Kata extenso y detallado con técnicas de dedos (Nukite) y movimientos de grulla.",
-                        "SOCHIN (Gran calma/Fuerza tranquila): Kata en posición Fudo-dachi (enraizada) que enseña la estabilidad bajo presión extrema."
-                    ],
-                    references: [
-                        "Kanazawa, H. (2006). Karate: The Complete Kata."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-kata-s-1",
-                        type: "matching",
-                        prompt: "Empareja cada Kata superior con su significado:",
-                        explanation: "Unsu = Manos de nube, Gojushiho = 54 pasos, Sochin = Gran calma.",
-                        pairs: [
-                            { id: "p1", left: "Unsu", right: "Manos de nube — El más complejo" },
-                            { id: "p2", left: "Gojushiho", right: "54 pasos — Extenso y detallado" },
-                            { id: "p3", left: "Sochin", right: "Gran calma — Estabilidad bajo presión" },
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 6° DAN — ROKUDAN ⚫×6 ──────────────────────────────
-    {
-        id: "unit-dan-6",
-        title: "La Noche Estrellada",
-        description: "Rokudan: historia de los cuatro grandes estilos y sus fundadores legendarios.",
-        path: "tradicional",
-        beltId: "dan-6",
-        levels: [
-            {
-                id: "level-estilos",
-                number: 1,
-                title: "Los Cuatro Grandes Estilos",
-                subtitle: "Shotokan, Goju-Ryu, Shito-Ryu y Wado-Ryu",
-                tag: "Historia de Estilos",
-                icon: "🌟",
-                color: "gold",
-                xpReward: 150,
-                theory: {
-                    title: "Los Cuatro Estilos Principales del Karate",
-                    subtitle: "Reconocidos por la WKF como estilos tradicionales",
-                    quote: "Cuatro ríos, un solo océano. Cuatro estilos, un solo Karate.",
-                    content: [
-                        "SHOTOKAN (松濤館): Fundado por Gichin Funakoshi. Posiciones largas y profundas, técnicas lineales y potentes. El estilo más practicado del mundo.",
-                        "GOJU-RYU (剛柔流): Fundado por Chojun Miyagi. Combina técnicas duras (Go) y suaves (Ju). Énfasis en la respiración y el trabajo a corta distancia.",
-                        "SHITO-RYU (糸東流): Fundado por Kenwa Mabuni. Integra las tradiciones de Shuri-Te y Naha-Te. Posee el mayor número de katas de todos los estilos.",
-                        "WADO-RYU (和道流): Fundado por Hironori Ohtsuka. Fusiona karate con Jujutsu. Énfasis en esquivas (Nagashi) y eficiencia de movimiento."
-                    ],
-                    references: [
-                        "McCarthy, P. (1999). Ancient Okinawan Martial Arts."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-estilos-1",
-                        type: "matching",
-                        prompt: "Empareja cada estilo con su fundador:",
-                        explanation: "Los cuatro pilares del karate moderno y sus creadores.",
-                        pairs: [
-                            { id: "p1", left: "Shotokan", right: "Gichin Funakoshi" },
-                            { id: "p2", left: "Goju-Ryu", right: "Chojun Miyagi" },
-                            { id: "p3", left: "Shito-Ryu", right: "Kenwa Mabuni" },
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 7° DAN — NANADAN ⚫×7 ──────────────────────────────
-    {
-        id: "unit-dan-7",
-        title: "El Vacío Perfecto",
-        description: "Nanadan: Mushin, Fudoshin y la mente inmutable del guerrero supremo.",
-        path: "tradicional",
-        beltId: "dan-7",
-        levels: [
-            {
-                id: "level-mushin",
-                number: 1,
-                title: "Mushin — La Mente Vacía",
-                subtitle: "Cuando la mente no piensa, el cuerpo actúa en perfección",
-                tag: "Filosofía Zen",
-                icon: "🧘",
-                color: "gold",
-                xpReward: 160,
-                theory: {
-                    title: "Mushin (無心) — La Mente Sin Mente",
-                    subtitle: "El estado supremo de la conciencia marcial",
-                    quote: "La mente debe ser como el agua: cuando está quieta, refleja la luna con claridad perfecta.",
-                    content: [
-                        "MUSHIN (無心): Literalmente 'sin mente'. Es el estado donde el karateka reacciona instintivamente, sin pensamiento consciente que retrase la acción.",
-                        "FUDOSHIN (不動心): La mente inamovible. Ninguna emoción (miedo, ira, orgullo) perturba la calma interior del maestro.",
-                        "ZANSHIN (残心): La mente que permanece. Incluso después de ejecutar una técnica, la atención nunca se relaja.",
-                        "Estos tres estados mentales (Mushin, Fudoshin, Zanshin) forman el triángulo de la maestría psicológica del Budo."
-                    ],
-                    references: [
-                        "Suzuki, D.T. (1959). Zen and Japanese Culture."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-mushin-1",
-                        type: "matching",
-                        prompt: "Empareja cada estado mental con su significado:",
-                        explanation: "Mushin = sin mente, Fudoshin = mente inamovible, Zanshin = mente que permanece.",
-                        pairs: [
-                            { id: "p1", left: "Mushin (無心)", right: "Mente vacía — Reacción instintiva sin pensamiento" },
-                            { id: "p2", left: "Fudoshin (不動心)", right: "Mente inamovible — Calma ante cualquier situación" },
-                            { id: "p3", left: "Zanshin (残心)", right: "Mente que permanece — Alerta constante" },
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 8° DAN — HACHIDAN ⚫×8 ──────────────────────────────
-    {
-        id: "unit-dan-8",
-        title: "La Calma del Océano",
-        description: "Hachidan: Wabi-Sabi, la belleza de la imperfección en el arte marcial.",
-        path: "tradicional",
-        beltId: "dan-8",
-        levels: [
-            {
-                id: "level-wabi-sabi",
-                number: 1,
-                title: "Wabi-Sabi en el Budo",
-                subtitle: "La belleza reside en lo imperfecto, lo efímero y lo incompleto",
-                tag: "Estética Zen",
-                icon: "🍂",
-                color: "gold",
-                xpReward: 170,
-                theory: {
-                    title: "Wabi-Sabi (侘寂) en el Karate",
-                    subtitle: "La perfección de la imperfección",
-                    quote: "El maestro más grande reconoce que siempre es un estudiante. Esa humildad es la verdadera perfección.",
-                    content: [
-                        "Wabi-Sabi es la estética japonesa que encuentra belleza en la imperfección, la transitoriedad y la incompletitud.",
-                        "Aplicado al Budo: ninguna técnica será jamás perfecta. Cada repetición revela nuevas capas de comprensión. El camino no tiene final.",
-                        "El cinturón negro que se desgasta hasta volver a ser blanco encarna perfectamente el Wabi-Sabi: el ciclo eterno de aprendizaje y humildad."
-                    ],
-                    references: [
-                        "Koren, L. (1994). Wabi-Sabi for Artists, Designers, Poets & Philosophers."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-wabi-1",
-                        type: "multiple_choice",
-                        prompt: "¿Qué concepto japonés celebra la belleza de la imperfección y la transitoriedad?",
-                        options: [
-                            { id: "o1", text: "Wabi-Sabi (侘寂)", isCorrect: true },
-                            { id: "o2", text: "Bushido (武士道)", isCorrect: false },
-                            { id: "o3", text: "Ikebana (生け花)", isCorrect: false },
-                            { id: "o4", text: "Origami (折り紙)", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "Wabi-Sabi es la estética zen que encuentra perfección en lo imperfecto, lo efímero y lo incompleto.",
-                        hint: "Es un concepto estético, no una técnica marcial."
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 9° DAN — KUDAN ⚫×9 ──────────────────────────────
-    {
-        id: "unit-dan-9",
-        title: "El Viento Eterno",
-        description: "Kudan: el legado del maestro, la preservación y transmisión del arte.",
-        path: "tradicional",
-        beltId: "dan-9",
-        levels: [
-            {
-                id: "level-legado",
-                number: 1,
-                title: "El Legado del Maestro",
-                subtitle: "Transmitir el arte intacto a las generaciones futuras",
-                tag: "Legado & Tradición",
-                icon: "🕊️",
-                color: "gold",
-                xpReward: 180,
-                theory: {
-                    title: "Shu-Ha-Ri (守破離) — Las Tres Etapas del Aprendizaje",
-                    subtitle: "El ciclo eterno del discípulo al maestro",
-                    quote: "Shu: obedece la regla. Ha: rompe la regla. Ri: sé la regla.",
-                    content: [
-                        "SHU (守 — Proteger/Obedecer): El estudiante imita fielmente al maestro sin cuestionar. Absorbe la forma exacta.",
-                        "HA (破 — Romper): El practicante avanzado comienza a experimentar, adaptar y cuestionar las formas aprendidas.",
-                        "RI (離 — Trascender): El maestro trasciende las formas. Ya no sigue reglas porque su cuerpo y mente SON la regla.",
-                        "Kudan marca la etapa Ri: el maestro ha interiorizado el arte tan profundamente que cada movimiento suyo es expresión pura."
-                    ],
-                    references: [
-                        "Hatsumi, M. (2006). Japanese Sword Fighting."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-shuhari-1",
-                        type: "matching",
-                        prompt: "Empareja cada etapa de Shu-Ha-Ri con su significado:",
-                        explanation: "Shu = obedecer, Ha = romper, Ri = trascender.",
-                        pairs: [
-                            { id: "p1", left: "Shu (守)", right: "Obedecer — Imitar fielmente al maestro" },
-                            { id: "p2", left: "Ha (破)", right: "Romper — Experimentar y adaptar" },
-                            { id: "p3", left: "Ri (離)", right: "Trascender — Ser la regla misma" },
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-
-    // ── 10° DAN — JUDAN ⚫×10 ──────────────────────────────
-    {
-        id: "unit-dan-10",
-        title: "La Corona del Cielo",
-        description: "Judan: Shin-Gi-Tai — la trinidad sagrada de mente, técnica y cuerpo.",
-        path: "tradicional",
-        beltId: "dan-10",
-        levels: [
-            {
-                id: "level-shin-gi-tai",
-                number: 1,
-                title: "Shin-Gi-Tai — La Trinidad Sagrada",
-                subtitle: "Mente, técnica y cuerpo se funden en la unidad absoluta",
-                tag: "Maestría Suprema",
-                icon: "👑",
-                color: "gold",
-                xpReward: 200,
-                theory: {
-                    title: "Shin-Gi-Tai (心技体) — La Unidad Perfecta",
-                    subtitle: "La cumbre de la pirámide marcial",
-                    quote: "Cuando el corazón, la técnica y el cuerpo son uno solo, has alcanzado el Karate verdadero.",
-                    content: [
-                        "SHIN (心 — Corazón/Mente/Espíritu): La fortaleza mental, la ética y la compasión del guerrero. Sin Shin, el arte es vacío.",
-                        "GI (技 — Técnica/Habilidad): La perfección técnica forjada por décadas de práctica incansable. Sin Gi, el espíritu no tiene expresión.",
-                        "TAI (体 — Cuerpo/Físico): La salud, la fortaleza y la resistencia que sostienen al espíritu y la técnica. Sin Tai, nada se materializa.",
-                        "Judan (10° Dan) es el rango supremo del Karate, otorgado históricamente solo a los fundadores de estilos y a los maestros cuya contribución al arte es inconmensurable."
-                    ],
-                    references: [
-                        "Funakoshi, G. (1975). Karate-Do: My Way of Life.",
-                        "Nakayama, M. (1966). Dynamic Karate."
-                    ]
-                },
-                questions: [
-                    {
-                        id: "q-shingi-1",
-                        type: "matching",
-                        prompt: "Empareja cada componente de Shin-Gi-Tai:",
-                        explanation: "Shin = mente/espíritu, Gi = técnica/habilidad, Tai = cuerpo/físico.",
-                        pairs: [
-                            { id: "p1", left: "Shin (心)", right: "Corazón, mente y espíritu del guerrero" },
-                            { id: "p2", left: "Gi (技)", right: "Técnica y habilidad perfeccionada" },
-                            { id: "p3", left: "Tai (体)", right: "Cuerpo, salud y fortaleza física" },
-                        ]
-                    },
-                    {
-                        id: "q-shingi-2",
-                        type: "multiple_choice",
-                        prompt: "¿A quiénes se ha otorgado históricamente el 10° Dan (Judan)?",
-                        options: [
-                            { id: "o1", text: "Solo a fundadores de estilos y maestros de contribución histórica inconmensurable", isCorrect: true },
-                            { id: "o2", text: "A cualquier competidor que gane 3 campeonatos mundiales", isCorrect: false },
-                            { id: "o3", text: "A todos los que entrenen más de 40 años", isCorrect: false },
-                            { id: "o4", text: "A instructores con más de 100 alumnos", isCorrect: false },
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "El 10° Dan es un honor reservado para los pilares del arte cuya contribución transformó la historia del Karate.",
-                        hint: "Es el rango más alto que existe y se concede muy raramente."
-                    }
-                ]
-            }
-        ]
-    },
+    ...KYU_UNITS,
+    ...DAN_UNITS,
 
     // ==========================================
     // CAMINO DEPORTIVO WKF 🏆

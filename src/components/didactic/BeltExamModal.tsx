@@ -22,7 +22,7 @@ interface BeltExamModalProps {
     examConfig: BeltExamConfig;
     currentBelt: BeltRank;
     targetBelt?: BeltRank | null;
-    onExamPassed: (earnedBeltId: string, earnedXp: number) => void;
+    onExamPassed: (earnedBeltId: string, earnedXp: number, examId?: string) => void;
 }
 
 export function BeltExamModal({
@@ -92,7 +92,7 @@ export function BeltExamModal({
 
     const handleClaimBeltPromotion = () => {
         didacticSound.playBeltWon();
-        onExamPassed(examConfig.targetBeltId, examConfig.xpReward);
+        onExamPassed(examConfig.targetBeltId, examConfig.xpReward, `exam-${examConfig.beltId}`);
         onClose();
     };
 

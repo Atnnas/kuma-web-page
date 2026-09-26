@@ -40,7 +40,7 @@ interface DojoLingoMapProps {
     onOpenAbsenceModal?: () => void;
     updatedUnitIds?: string[];
     updatedLevelIds?: string[];
-    onExamPassed?: (targetBeltId: string, earnedXp: number) => void;
+    onExamPassed?: (targetBeltId: string, earnedXp: number, examId?: string) => void;
 }
 
 export function DojoLingoMap({
@@ -358,11 +358,9 @@ export function DojoLingoMap({
                                 const isFirstBelt = idx === 0;
                                 const prevUnit = idx > 0 ? tradUnits[idx - 1] : null;
                                 const prevBelt = prevUnit ? getBeltRank(prevUnit.beltId || "") : null;
-                                const isPrevWhiteBelt = prevUnit?.beltId === "kyu-10";
-                                const isWhiteBeltExamPassed = progress.completedLevelIds.includes("exam-kyu-10");
+                                const prevBeltExamPassed = prevBelt ? progress.completedLevelIds.includes(`exam-${prevBelt.id}`) : true;
                                 const prevBeltWon = prevUnit
-                                    ? prevUnit.levels.every((l) => progress.completedLevelIds.includes(l.id)) &&
-                                      (isPrevWhiteBelt ? isWhiteBeltExamPassed : true)
+                                    ? prevUnit.levels.every((l) => progress.completedLevelIds.includes(l.id)) && prevBeltExamPassed
                                     : true;
                                 const currentBeltStarted = unit.levels.some((l) => progress.completedLevelIds.includes(l.id));
 

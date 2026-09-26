@@ -18,7 +18,7 @@ import {
 import { FloatingSteppingStone } from "./FloatingSteppingStone";
 import { ExaminersTableCartoon } from "./ExaminersTableCartoon";
 import { BeltExamModal } from "./BeltExamModal";
-import { WHITE_BELT_EXAM } from "@/data/beltExamData";
+import { getBeltExamConfig } from "@/data/beltExamData";
 
 interface BeltCascadeSectionProps {
     unit: Unit;
@@ -33,7 +33,7 @@ interface BeltCascadeSectionProps {
     onFocusBelt?: (beltId: BeltRankId) => void;
     hasNewQuestions?: boolean;
     updatedLevelIds?: string[];
-    onExamPassed?: (targetBeltId: string, earnedXp: number) => void;
+    onExamPassed?: (targetBeltId: string, earnedXp: number, examId?: string) => void;
 }
 
 /**
@@ -959,7 +959,8 @@ export function BeltCascadeSection({
     const isSuperAdmin = Boolean(session?.user && (session.user as any).role === "super_admin");
 
     const [isExamModalOpen, setIsExamModalOpen] = useState(false);
-    const hasPassedExam = progress.completedLevelIds.includes("exam-kyu-10");
+    const examId = `exam-${belt.id}`;
+    const hasPassedExam = progress.completedLevelIds.includes(examId);
 
     const isDan = belt.category === "dan";
     const isWhiteBelt = belt.category === "kyu" && belt.levelNumber === 10;
@@ -973,9 +974,9 @@ export function BeltCascadeSection({
         progress.completedLevelIds.includes(l.id)
     ).length;
     const isAllLevelsCompleted = completedLevelsCount === beltLevels.length && beltLevels.length > 0;
-    const isBeltCompleted = isWhiteBelt
-        ? isAllLevelsCompleted && hasPassedExam
-        : isAllLevelsCompleted;
+    const isBeltCompleted = isLast
+        ? isAllLevelsCompleted
+        : isAllLevelsCompleted && hasPassedExam;
 
     // Check unlock state for levels within this belt (only relevant if the belt itself is unlocked)
     const isLevelUnlocked = (level: Level) => {
@@ -1281,7 +1282,7 @@ export function BeltCascadeSection({
             )}
 
             {/* TRIBUNAL DE EXAMEN CON 3 EXAMINADORES Y MESA ANIMADA ("TOMAR EXAMEN") */}
-            {!isLast && isWhiteBelt && (
+            {!isLast && (
                 <div className="relative z-10 w-full flex flex-col items-center">
                     <ExaminersTableCartoon
                         belt={belt}
@@ -1296,11 +1297,11 @@ export function BeltCascadeSection({
                     <BeltExamModal
                         isOpen={isExamModalOpen}
                         onClose={() => setIsExamModalOpen(false)}
-                        examConfig={WHITE_BELT_EXAM}
+                        examConfig={getBeltExamConfig(belt.id, belt, nextBelt, unit)}
                         currentBelt={belt}
                         targetBelt={nextBelt}
-                        onExamPassed={(targetBeltId, earnedXp) => {
-                            onExamPassed?.(targetBeltId, earnedXp);
+                        onExamPassed={(targetBeltId, earnedXp, passedExamId) => {
+                            onExamPassed?.(targetBeltId, earnedXp, passedExamId || examId);
                             if (nextBelt) {
                                 onFocusBelt?.(nextBelt.id);
                             }

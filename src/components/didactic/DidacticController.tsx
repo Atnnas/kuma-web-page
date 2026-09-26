@@ -436,12 +436,12 @@ export function DidacticController() {
         saveProgress(updated);
     };
 
-    // Exam graduation handler (promotion to Yellow Belt / target belt, XP bonus, full hearts)
-    const handleExamPassed = (targetBeltId: string, earnedXp: number) => {
-        const examId = "exam-kyu-10";
-        const newCompleted = progress.completedLevelIds.includes(examId)
+    // Exam graduation handler (promotion to target belt, XP bonus, full hearts)
+    const handleExamPassed = (targetBeltId: string, earnedXp: number, examId?: string) => {
+        const passedExamId = examId || `exam-${targetBeltId}`;
+        const newCompleted = progress.completedLevelIds.includes(passedExamId)
             ? progress.completedLevelIds
-            : [...progress.completedLevelIds, examId];
+            : [...progress.completedLevelIds, passedExamId];
 
         const now = Date.now();
         const updated: UserDidacticProgress = {
@@ -450,11 +450,11 @@ export function DidacticController() {
             completedLevelIds: newCompleted,
             levelStars: {
                 ...progress.levelStars,
-                [examId]: 3,
+                [passedExamId]: 3,
             },
             levelLastPracticed: {
                 ...(progress.levelLastPracticed || {}),
-                [examId]: now,
+                [passedExamId]: now,
             },
             lastVisitedTimestamp: now,
             xp: progress.xp + earnedXp,
