@@ -14,11 +14,13 @@ import {
     Trophy,
     ShieldWarning,
     BellRinging,
+    Clock,
 } from "@phosphor-icons/react";
 import { FloatingSteppingStone } from "./FloatingSteppingStone";
 import { ExaminersTableCartoon } from "./ExaminersTableCartoon";
 import { BeltExamModal } from "./BeltExamModal";
 import { getBeltExamConfig } from "@/data/beltExamData";
+import { isBeltAvailable } from "@/data/beltRanks";
 
 interface BeltCascadeSectionProps {
     unit: Unit;
@@ -34,6 +36,7 @@ interface BeltCascadeSectionProps {
     hasNewQuestions?: boolean;
     updatedLevelIds?: string[];
     onExamPassed?: (targetBeltId: string, earnedXp: number, examId?: string) => void;
+    isComingSoon?: boolean;
 }
 
 /**
@@ -706,6 +709,7 @@ function MartialInterBeltConnector({
 }) {
     const isCompleted = isBeltCompleted;
     const isUnlocked = isBeltUnlocked;
+    const isNextBeltAvailable = nextBelt ? isBeltAvailable(nextBelt.id) : false;
 
     return (
         <div className="relative flex flex-col items-center justify-center my-6 py-1 select-none pointer-events-none">
@@ -844,14 +848,31 @@ function MartialInterBeltConnector({
                 {/* Martial Calligraphy Ribbon / Plaque */}
                 <div
                     className={`mt-2.5 px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 border transition-all duration-300 ${
-                        isCompleted
+                        !isNextBeltAvailable
+                            ? isCompleted
+                                ? "bg-amber-950/80 border-amber-500/60 text-amber-300 shadow-[0_4px_15px_rgba(245,158,11,0.3)]"
+                                : "bg-zinc-950 border-amber-500/30 text-amber-400/80"
+                            : isCompleted
                             ? "bg-black/90 border-amber-400/70 text-amber-300 shadow-[0_4px_15px_rgba(245,158,11,0.3)]"
                             : isUnlocked
                             ? "bg-black/85 border-amber-500/40 text-kuma-gold shadow-md"
                             : "bg-zinc-950 border-zinc-800 text-zinc-600"
                     }`}
                 >
-                    {isCompleted ? (
+                    {!isNextBeltAvailable ? (
+                        isCompleted ? (
+                            <>
+                                <Sparkle className="w-3 h-3 text-amber-300 animate-pulse" weight="fill" />
+                                <span>Cinturón Culminado • Siguientes Grados Próximamente</span>
+                                <Sparkle className="w-3 h-3 text-amber-300 animate-pulse" weight="fill" />
+                            </>
+                        ) : (
+                            <>
+                                <Clock className="w-2.5 h-2.5 text-amber-400" weight="bold" />
+                                <span>Próximamente • En Preparación</span>
+                            </>
+                        )
+                    ) : isCompleted ? (
                         <>
                             <Sparkle className="w-3 h-3 text-amber-300 animate-pulse" weight="fill" />
                             <span>Ascenso Culminado • 昇段</span>
@@ -954,9 +975,13 @@ export function BeltCascadeSection({
     hasNewQuestions = false,
     updatedLevelIds = [],
     onExamPassed,
+    isComingSoon: propComingSoon,
 }: BeltCascadeSectionProps) {
     const { data: session } = useSession();
     const isSuperAdmin = Boolean(session?.user && (session.user as any).role === "super_admin");
+
+    const isComingSoon = propComingSoon ?? !isBeltAvailable(belt.id);
+    const effectiveBeltUnlocked = !isComingSoon && isBeltUnlocked;
 
     const [isExamModalOpen, setIsExamModalOpen] = useState(false);
     const examId = `exam-${belt.id}`;
@@ -980,8 +1005,8 @@ export function BeltCascadeSection({
 
     // Check unlock state for levels within this belt (only relevant if the belt itself is unlocked)
     const isLevelUnlocked = (level: Level) => {
+        if (!effectiveBeltUnlocked) return false;
         if (isSuperAdmin) return true; // Super admin can inspect and test all levels
-        if (!isBeltUnlocked) return false;
         const globalIdx = allPathLevels.findIndex((l) => l.id === level.id);
         if (globalIdx <= 0) return true; // Very first level of 10° Kyu is always unlocked
         const prevLevel = allPathLevels[globalIdx - 1];
@@ -996,13 +1021,13 @@ export function BeltCascadeSection({
             id={`belt-${belt.id}`}
             className="relative w-full max-w-2xl mx-auto my-8 scroll-mt-24"
             onMouseEnter={() => {
-                if (isBeltUnlocked) onFocusBelt?.(belt.id);
+                if (effectiveBeltUnlocked) onFocusBelt?.(belt.id);
             }}
         >
             {/* 1. FLOATING BELT HEADER (100% TRANSPARENT OVER WATER - NO BOX) */}
             <div className="relative w-full py-4 transition-all duration-500">
                 {/* Floating ambient spotlight for white belt */}
-                {isWhiteBelt && isBeltUnlocked && (
+                {isWhiteBelt && effectiveBeltUnlocked && (
                     <>
                         <motion.div
                             animate={{
@@ -1056,7 +1081,7 @@ export function BeltCascadeSection({
                 )}
 
                 {/* Ambient glow accent matching belt color */}
-                {isBeltUnlocked && (
+                {effectiveBeltUnlocked && (
                     <div
                         className="absolute -top-20 -right-20 w-48 h-48 rounded-full blur-3xl pointer-events-none"
                         style={{
@@ -1070,7 +1095,7 @@ export function BeltCascadeSection({
                     <BeltObiVisual
                         belt={belt}
                         isCompleted={isBeltCompleted}
-                        isLocked={!isBeltUnlocked}
+                        isLocked={!effectiveBeltUnlocked}
                     />
                 </div>
 
@@ -1078,33 +1103,34 @@ export function BeltCascadeSection({
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
                     <div className="flex items-center gap-3.5">
                         {/* Circular Emblem */}
-                        <BeltCircularEmblem belt={belt} isLocked={!isBeltUnlocked} />
+                        <BeltCircularEmblem belt={belt} isLocked={!effectiveBeltUnlocked} />
 
                         <div>
                             <div className="flex items-center gap-2 flex-wrap mb-1">
-                                <span
-                                    className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border bg-black/40 backdrop-blur-sm"
-                                    style={{
-                                        borderColor: !isBeltUnlocked
-                                            ? "rgba(255,255,255,0.1)"
-                                            : isDan
-                                            ? "rgba(245,158,11,0.5)"
-                                            : `${belt.strokeColor}50`,
-                                        color: !isBeltUnlocked
-                                            ? "#71717A"
-                                            : isDan
-                                            ? "#F59E0B"
-                                            : belt.category === "kyu" && belt.levelNumber === 10
-                                            ? "#CBD5E1"
-                                            : belt.strokeColor,
-                                    }}
-                                >
-                                    {!isBeltUnlocked
-                                        ? "Cinturón Bloqueado"
-                                        : isDan
-                                        ? "Grado Dan • Maestría"
-                                        : `Grado Kyu • ${belt.shortName}`}
-                                </span>
+                                {isComingSoon ? (
+                                    <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border bg-amber-500/10 border-amber-500/40 text-amber-300 inline-flex items-center gap-1.5 shadow-sm">
+                                        <Sparkle className="w-3 h-3 text-amber-400" weight="fill" />
+                                        <span>Disponible Próximamente</span>
+                                    </span>
+                                ) : !effectiveBeltUnlocked ? (
+                                    <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border bg-black/40 backdrop-blur-sm border-white/10 text-zinc-400">
+                                        Cinturón Bloqueado
+                                    </span>
+                                ) : isDan ? (
+                                    <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border bg-black/40 backdrop-blur-sm border-amber-500/50 text-[#F59E0B]">
+                                        Grado Dan • Maestría
+                                    </span>
+                                ) : (
+                                    <span
+                                        className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border bg-black/40 backdrop-blur-sm"
+                                        style={{
+                                            borderColor: `${belt.strokeColor}50`,
+                                            color: belt.category === "kyu" && belt.levelNumber === 10 ? "#CBD5E1" : belt.strokeColor,
+                                        }}
+                                    >
+                                        {`Grado Kyu • ${belt.shortName}`}
+                                    </span>
+                                )}
 
                                 {unitHasNewQuestions && (
                                     <motion.span
@@ -1135,12 +1161,17 @@ export function BeltCascadeSection({
 
                     {/* Progress / Lock Status Badge */}
                     <div className="flex items-center md:flex-col md:items-end justify-between shrink-0">
-                        {isBeltCompleted ? (
+                        {isComingSoon ? (
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/60 border border-amber-500/40 text-amber-300 text-xs font-black shadow-md backdrop-blur-sm">
+                                <Clock className="w-3.5 h-3.5 text-amber-400" weight="bold" />
+                                <span>Próximamente</span>
+                            </div>
+                        ) : isBeltCompleted ? (
                             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-black shadow-lg backdrop-blur-sm">
                                 <CheckCircle className="w-4 h-4 text-emerald-400" weight="fill" />
                                 <span>Cinturón Superado</span>
                             </div>
-                        ) : isBeltUnlocked ? (
+                        ) : effectiveBeltUnlocked ? (
                             <div className="flex flex-col items-end">
                                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-black/50 border border-amber-500/40 text-amber-300 text-xs font-black backdrop-blur-sm shadow-md">
                                     <Sparkle className="w-3.5 h-3.5 text-amber-400" weight="fill" />
@@ -1194,8 +1225,31 @@ export function BeltCascadeSection({
                     </motion.div>
                 )}
 
-                {/* LOCKED: THE BELT REMAINS CLOSED AND DOES NOT REVEAL ITS LESSONS */}
-                {!isBeltUnlocked && (
+                {/* LOCKED OR COMING SOON CARD */}
+                {isComingSoon ? (
+                    <div className="mt-4 p-6 rounded-3xl bg-gradient-to-b from-[#181510] via-black/85 to-[#0B1320] backdrop-blur-md border-2 border-amber-500/30 flex flex-col items-center text-center max-w-md mx-auto shadow-[0_15px_35px_rgba(0,0,0,0.7),0_0_20px_rgba(245,158,11,0.1)] relative overflow-hidden">
+                        <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+                        <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 mb-3 shadow-[0_0_15px_rgba(245,158,11,0.25)]">
+                            <Sparkle className="w-6 h-6 text-amber-400" weight="fill" />
+                        </div>
+
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-300 px-3 py-0.5 rounded-full bg-amber-950/70 border border-amber-500/40 mb-2">
+                            Módulo en Preparación
+                        </span>
+
+                        <h4 className="text-base sm:text-lg font-serif font-black text-white uppercase tracking-wider">
+                            {belt.name} • Próximamente
+                        </h4>
+
+                        <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                            Las lecciones teóricas, principios biomecánicos, katas y tribunal examinador de este cinturón están siendo desarrollados por la Dirección Técnica del Dojo.
+                        </p>
+
+                        <div className="mt-4 pt-3 border-t border-white/10 w-full flex items-center justify-center gap-1.5 text-[11px] text-amber-300 font-semibold">
+                            <span>🥋 Disponible próximamente en la Academia</span>
+                        </div>
+                    </div>
+                ) : !effectiveBeltUnlocked ? (
                     <div className="mt-4 p-5 rounded-2xl bg-black/50 backdrop-blur-md border border-white/10 flex flex-col items-center text-center max-w-md mx-auto">
                         <div className="w-12 h-12 rounded-full bg-zinc-900/90 border border-zinc-700/80 flex items-center justify-center text-zinc-500 mb-2 shadow-inner">
                             <Lock className="w-6 h-6 text-zinc-400" weight="duotone" />
@@ -1217,14 +1271,14 @@ export function BeltCascadeSection({
                             )}
                         </p>
                     </div>
-                )}
+                ) : null}
             </div>
 
             {/* ================================================================= */}
             {/* 2. PIEDRAS FLOTANTES EN EL ESTANQUE ZEN (TOBI-ISHI 飛び石)        */}
             {/* ¡SIN CAJA ENVOLVENTE! FLOTAN DIRECTAMENTE SOBRE EL AGUA Y PECES KOI */}
             {/* ================================================================= */}
-            {isBeltUnlocked && (
+            {effectiveBeltUnlocked && (
                 <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -1281,14 +1335,40 @@ export function BeltCascadeSection({
                 </motion.div>
             )}
 
-            {/* TRIBUNAL DE EXAMEN CON 3 EXAMINADORES Y MESA ANIMADA ("TOMAR EXAMEN") */}
-            {!isLast && (
+            {/* CELEBRACIÓN DE FIN DE GRADOS DISPONIBLES AL TERMINAR AMARILLO */}
+            {belt.id === "kyu-9" && isAllLevelsCompleted && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="my-6 p-6 rounded-3xl bg-gradient-to-b from-[#2B230E] via-zinc-950 to-black border-2 border-yellow-400/60 shadow-[0_0_30px_rgba(250,204,21,0.25)] text-center max-w-md mx-auto"
+                >
+                    <div className="w-12 h-12 rounded-2xl bg-yellow-400/20 border border-yellow-400/50 flex items-center justify-center text-yellow-300 mx-auto mb-3 shadow-[0_0_15px_rgba(250,204,21,0.3)]">
+                        <Trophy className="w-6 h-6 text-yellow-300" weight="fill" />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-yellow-400 block mb-1">
+                        ¡Grados Disponibles Superados!
+                    </span>
+                    <h4 className="text-lg font-serif font-black text-white">
+                        Has Culminado el Cinturón Amarillo (9° Kyu)
+                    </h4>
+                    <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                        ¡Felicitaciones! Has completado todas las clases de los cinturones <strong className="text-white">Blanco</strong> y <strong className="text-yellow-300">Amarillo</strong>. Los cinturones superiores (desde Cinturón Naranja hasta Cinturón Negro) se habilitarán próximamente.
+                    </p>
+                    <div className="mt-3.5 pt-3 border-t border-white/10 text-[11px] font-bold text-yellow-300 flex items-center justify-center gap-1.5">
+                        <Sparkle className="w-3.5 h-3.5 text-yellow-300" weight="fill" />
+                        <span>¡Puedes seguir repasando tus lecciones y manteniendo tu racha diaria!</span>
+                    </div>
+                </motion.div>
+            )}
+
+            {/* TRIBUNAL DE EXAMEN (SOLO PARA CINTURONES ACTIVOS) */}
+            {!isLast && !isComingSoon && (
                 <div className="relative z-10 w-full flex flex-col items-center">
                     <ExaminersTableCartoon
                         belt={belt}
                         nextBelt={nextBelt}
                         isBeltCompleted={isAllLevelsCompleted}
-                        isBeltUnlocked={isBeltUnlocked}
+                        isBeltUnlocked={effectiveBeltUnlocked}
                         onTakeExam={() => setIsExamModalOpen(true)}
                         hasPassedExam={hasPassedExam}
                     />
@@ -1302,7 +1382,7 @@ export function BeltCascadeSection({
                         targetBelt={nextBelt}
                         onExamPassed={(targetBeltId, earnedXp, passedExamId) => {
                             onExamPassed?.(targetBeltId, earnedXp, passedExamId || examId);
-                            if (nextBelt) {
+                            if (nextBelt && isBeltAvailable(nextBelt.id)) {
                                 onFocusBelt?.(nextBelt.id);
                             }
                         }}

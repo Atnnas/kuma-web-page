@@ -2,6 +2,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { BeltRank } from "@/types/didactica";
+import { isBeltAvailable } from "@/data/beltRanks";
+import { Sparkle, Clock } from "@phosphor-icons/react";
 
 interface ExaminersTableCartoonProps {
     belt: BeltRank;
@@ -28,6 +30,8 @@ export function ExaminersTableCartoon({
     onTakeExam,
     hasPassedExam = false,
 }: ExaminersTableCartoonProps) {
+    const isNextBeltAvailable = nextBelt ? isBeltAvailable(nextBelt.id) : true;
+
     return (
         <div className="relative my-4 flex flex-col items-center select-none w-full max-w-[280px] sm:max-w-[320px] mx-auto px-2">
             {/* AURA AMBIENTAL DORADA EN EL ESTANQUE */}
@@ -45,7 +49,7 @@ export function ExaminersTableCartoon({
                 whileTap={{ scale: 0.98 }}
                 onClick={onTakeExam}
                 className="relative w-full cursor-pointer group flex flex-col items-center"
-                title="Haz clic para rendir el Exámen de Grado"
+                title={!isNextBeltAvailable ? "Examen de Maestría • Siguiente cinturón próximamente" : "Haz clic para rendir el Exámen de Grado"}
             >
                 {/* MARCO ESCULPIDO CON SOMBRA */}
                 <div className="relative w-full rounded-2xl overflow-hidden border-2 border-amber-400/40 group-hover:border-amber-300 transition-all duration-300 shadow-[0_15px_35px_rgba(0,0,0,0.85),0_0_20px_rgba(245,158,11,0.2)] bg-[#050B14]">
@@ -80,6 +84,14 @@ export function ExaminersTableCartoon({
                     </div>
                 </div>
             </motion.div>
+
+            {/* BADGE INFORMATIVO SI EL SIGUIENTE CINTURÓN ESTÁ EN FORJA */}
+            {!isNextBeltAvailable && (
+                <div className="mt-2.5 flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950/80 border border-amber-500/50 text-amber-300 text-[10px] font-black uppercase tracking-wider shadow-sm text-center">
+                    <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" weight="bold" />
+                    <span>Próximo Cinturón ({nextBelt?.name.split("—")[1]?.trim() || "Naranja"}) Próximamente</span>
+                </div>
+            )}
         </div>
     );
 }

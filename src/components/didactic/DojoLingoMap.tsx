@@ -8,7 +8,7 @@ import { KumaMascot } from "./KumaMascot";
 import { TheorySheetModal } from "./TheorySheetModal";
 import { BeltCascadeSection } from "./BeltCascadeSection";
 import { InstallAppButton } from "./InstallAppButton";
-import { getBeltRank, BELT_RANKS } from "@/data/beltRanks";
+import { getBeltRank, BELT_RANKS, isBeltAvailable } from "@/data/beltRanks";
 import { JapaneseFlagIcon, JapaneseFlagBadge, WkfShieldIcon, WkfOfficialBadge } from "./PathIcons";
 import {
     Star,
@@ -63,7 +63,10 @@ export function DojoLingoMap({
     const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
     const [theoryLevel, setTheoryLevel] = useState<Level | null>(null);
     const [wkfColor, setWkfColor] = useState<"red" | "blue">(() => (Math.random() < 0.5 ? "red" : "blue"));
-    const [activeBeltId, setActiveBeltId] = useState<BeltRankId>(progress.activeBeltId || "kyu-10");
+    const initialBeltId: BeltRankId = (progress.activeBeltId && isBeltAvailable(progress.activeBeltId))
+        ? progress.activeBeltId
+        : "kyu-10";
+    const [activeBeltId, setActiveBeltId] = useState<BeltRankId>(initialBeltId);
 
     // Active belt metadata for Sensei Kuma companion
     const activeBelt = getBeltRank(activeBeltId);
@@ -89,8 +92,13 @@ export function DojoLingoMap({
         return progress.completedLevelIds.includes(levelId);
     };
 
-    const completedInPath = allPathLevels.filter((l) => progress.completedLevelIds.includes(l.id)).length;
-    const pathPercent = allPathLevels.length > 0 ? Math.round((completedInPath / allPathLevels.length) * 100) : 0;
+    // Available levels for progress calculation (active curriculum: White & Yellow belts)
+    const availableTradUnits = tradUnits.filter((u) => isBeltAvailable(u.beltId || ""));
+    const availableTradLevels = availableTradUnits.flatMap((u) => u.levels);
+    const activePathLevels = activePath === "tradicional" ? availableTradLevels : allWkfLevels;
+
+    const completedInPath = activePathLevels.filter((l) => progress.completedLevelIds.includes(l.id)).length;
+    const pathPercent = activePathLevels.length > 0 ? Math.round((completedInPath / activePathLevels.length) * 100) : 0;
 
     return (
         <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row gap-10 items-start relative">
@@ -291,17 +299,17 @@ export function DojoLingoMap({
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-[0.25em] text-[#1CB0F6] uppercase mb-1.5 px-2.5 py-0.5 rounded-full bg-[#0E2A47] border-2 border-[#1CB0F6]/40 shadow-sm">
                                     <Compass className="w-3 h-3 text-[#1CB0F6]" weight="fill" />
                                     {activePath === "tradicional"
-                                        ? "20 Cinturones Tradicionales: 10 Kyu a 10 Dan"
+                                        ? "10° Kyu Blanco y 9° Kyu Amarillo Disponibles • Demás Grados Próximamente"
                                         : "World Karate Federation • Módulo Próximamente"}
                                 </span>
                                 <h2 className="text-xl md:text-2xl font-serif font-black text-white leading-tight">
                                     {activePath === "tradicional"
-                                        ? "El Sendero del Guerrero: De Blanco a 10° Dan"
+                                        ? "El Sendero del Guerrero: Blanco y Amarillo"
                                         : "Camino Deportivo WKF — Próximamente"}
                                 </h2>
                                 <p className="text-xs text-slate-300 mt-1 max-w-lg leading-relaxed">
                                     {activePath === "tradicional"
-                                        ? "Recorre la cascada hacia abajo. Cada cinturón está encapsulado con sus grados y lecciones teóricas y prácticas a resolver."
+                                        ? "Recorre la cascada hacia abajo. Los grados 10° Kyu (Blanco) y 9° Kyu (Amarillo) están activos con sus lecciones y exámenes. Los grados posteriores (Naranja a 10° Dan) están disponibles próximamente."
                                         : "Módulo interactivo de arbitraje, señales del réferi y kumite deportivo WKF actualmente en fase de preparación."}
                                 </p>
                             </div>
@@ -352,9 +360,11 @@ export function DojoLingoMap({
                                 const beltRank = getBeltRank(unit.beltId || "");
                                 if (!beltRank) return null;
 
-                                // The belt is unlocked ONLY if it's 10° Kyu,
-                                // or all classes of the prior belt were completed/won,
-                                // or the user has already completed a level in this belt!
+                                const isAvailable = isBeltAvailable(unit.beltId || "");
+
+                                // The belt is unlocked ONLY if it's available AND
+                                // (it's 10° Kyu, or all classes of the prior belt were completed/won,
+                                // or the user has already completed a level in this belt!)
                                 const isFirstBelt = idx === 0;
                                 const prevUnit = idx > 0 ? tradUnits[idx - 1] : null;
                                 const prevBelt = prevUnit ? getBeltRank(prevUnit.beltId || "") : null;
@@ -364,7 +374,7 @@ export function DojoLingoMap({
                                     : true;
                                 const currentBeltStarted = unit.levels.some((l) => progress.completedLevelIds.includes(l.id));
 
-                                const isBeltUnlocked = isSuperAdmin || isFirstBelt || prevBeltWon || currentBeltStarted;
+                                const isBeltUnlocked = isAvailable && (isSuperAdmin || isFirstBelt || prevBeltWon || currentBeltStarted);
 
                                 const nextUnit = idx < tradUnits.length - 1 ? tradUnits[idx + 1] : null;
                                 const nextBelt = nextUnit ? getBeltRank(nextUnit.beltId || "") : null;
@@ -377,11 +387,16 @@ export function DojoLingoMap({
                                         prevBelt={prevBelt}
                                         nextBelt={nextBelt}
                                         isBeltUnlocked={isBeltUnlocked}
+                                        isComingSoon={!isAvailable}
                                         allPathLevels={allTradLevels}
                                         progress={progress}
                                         onSelectLevel={(level) => setSelectedLevel(level)}
                                         isLast={idx === tradUnits.length - 1}
-                                        onFocusBelt={(bId) => setActiveBeltId(bId)}
+                                        onFocusBelt={(bId) => {
+                                            if (isBeltAvailable(bId)) {
+                                                setActiveBeltId(bId);
+                                            }
+                                        }}
                                         hasNewQuestions={updatedUnitIds.includes(unit.id)}
                                         updatedLevelIds={updatedLevelIds}
                                         onExamPassed={onExamPassed}

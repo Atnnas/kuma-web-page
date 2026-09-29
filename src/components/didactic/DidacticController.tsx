@@ -10,6 +10,7 @@ import { LessonSessionModal } from "./LessonSessionModal";
 import { KumaAbsenceGreetingModal } from "./KumaAbsenceGreetingModal";
 import { InstallAppButton } from "./InstallAppButton";
 import { getDidacticCatalogStats, DIDACTIC_UNITS } from "@/data/didacticaData";
+import { isBeltAvailable } from "@/data/beltRanks";
 import {
     Compass,
     BookOpen,
@@ -443,10 +444,13 @@ export function DidacticController() {
             ? progress.completedLevelIds
             : [...progress.completedLevelIds, passedExamId];
 
+        // Ensure active belt never moves to an unreleased/coming soon belt
+        const nextActiveBelt = isBeltAvailable(targetBeltId) ? targetBeltId : "kyu-9";
+
         const now = Date.now();
         const updated: UserDidacticProgress = {
             ...progress,
-            activeBeltId: (targetBeltId as any) || "kyu-9",
+            activeBeltId: (nextActiveBelt as any) || "kyu-9",
             completedLevelIds: newCompleted,
             levelStars: {
                 ...progress.levelStars,

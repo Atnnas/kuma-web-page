@@ -15,6 +15,7 @@ import {
 import { BeltExamConfig } from "@/data/beltExamData";
 import { BeltRank } from "@/types/didactica";
 import { didacticSound } from "@/lib/didacticSound";
+import { isBeltAvailable } from "@/data/beltRanks";
 
 interface BeltExamModalProps {
     isOpen: boolean;
@@ -42,6 +43,7 @@ export function BeltExamModal({
 
     if (!isOpen) return null;
 
+    const isTargetAvailable = targetBelt ? isBeltAvailable(targetBelt.id) : false;
     const currentQuestion = questions[currentIndex];
     const isLastQuestion = currentIndex === questions.length - 1;
     const isPassing = correctAnswersCount >= examConfig.passingScore;
@@ -322,19 +324,24 @@ export function BeltExamModal({
                                             . El panel de árbitros te otorga la consagración formal a tu nuevo rango.
                                         </p>
 
-                                        {/* CINTURÓN AMARILLO CONSAGRADO */}
+                                        {/* CINTURÓN CONSAGRADO / MAESTRÍA */}
                                         <div className="p-4 sm:p-5 rounded-2xl bg-zinc-900/90 border-2 border-yellow-400 max-w-sm mx-auto shadow-[0_0_25px_rgba(250,204,21,0.3)] mb-6 text-center">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1">
-                                                Grado Alcanzado
+                                                {isTargetAvailable ? "Grado Alcanzado" : "Maestría Consagrada"}
                                             </span>
                                             <div className="flex items-center justify-center gap-2">
-                                                <div className="w-6 h-6 rounded-full bg-yellow-400 border border-black shadow-[0_0_10px_#facc15]" />
+                                                <div
+                                                    className="w-6 h-6 rounded-full border border-black shadow-[0_0_10px_#facc15]"
+                                                    style={{ backgroundColor: isTargetAvailable ? (targetBelt?.color || "#facc15") : currentBelt.color }}
+                                                />
                                                 <h4 className="text-xl font-serif font-black text-yellow-300">
-                                                    Cinturón Amarillo (9° Kyu)
+                                                    {isTargetAvailable ? (targetBelt?.name || examConfig.targetBeltName) : `${currentBelt.name} Culminado`}
                                                 </h4>
                                             </div>
                                             <p className="text-[11px] text-zinc-300 mt-1">
-                                                "Los Primeros Rayos del Sol: Dominio de las Posiciones Fundamentales (Dachi)."
+                                                {isTargetAvailable
+                                                    ? (targetBelt?.theme ? `"${targetBelt.theme}"` : `"Dominio de los fundamentos del grado."`)
+                                                    : `Has aprobado el examen con honor. El siguiente grado (${targetBelt?.name.split("—")[1]?.trim() || "Cinturón Naranja"}) estará disponible próximamente en la Academia.`}
                                             </p>
                                         </div>
 
@@ -345,7 +352,11 @@ export function BeltExamModal({
                                             className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-black text-sm uppercase tracking-widest shadow-[0_0_30px_rgba(250,204,21,0.6)] cursor-pointer active:scale-95 transition-all inline-flex items-center gap-2"
                                         >
                                             <Sparkle className="w-4 h-4 text-black" weight="fill" />
-                                            <span>Consagrar Cinturón Amarillo (+200 XP)</span>
+                                            <span>
+                                                {isTargetAvailable
+                                                    ? `Consagrar ${targetBelt?.name || examConfig.targetBeltName} (+${examConfig.xpReward} XP)`
+                                                    : `Reclamar Maestría (+${examConfig.xpReward} XP)`}
+                                            </span>
                                             <Sparkle className="w-4 h-4 text-black" weight="fill" />
                                         </button>
                                     </motion.div>

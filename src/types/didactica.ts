@@ -157,6 +157,7 @@ export interface BeltRank {
     motto: string; // Guiding philosophical motto
     description: string; // Cultural & technical meaning
     icon: string; // Distinctive martial symbol emoji / icon
+    isAvailable?: boolean; // Whether this belt is currently available in the curriculum
 }
 
 export interface UserDidacticProgress {

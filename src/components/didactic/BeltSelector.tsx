@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { BELT_RANKS, getBeltRank } from "@/data/beltRanks";
+import { BELT_RANKS, getBeltRank, isBeltAvailable } from "@/data/beltRanks";
 import { DIDACTIC_UNITS } from "@/data/didacticaData";
 import { BeltRankId, BeltRank, UserDidacticProgress } from "@/types/didactica";
 import { BeltObiVisual, BeltCircularEmblem } from "./BeltCascadeSection";
@@ -87,7 +87,8 @@ export function BeltSelector({ activeBeltId, onSelectBelt, progress }: BeltSelec
                     {displayRanks.map((b) => {
                         const isActive = b.id === activeBeltId;
                         const isDan = b.category === "dan";
-                        const isUnlocked = checkIsBeltUnlocked(b.id);
+                        const isAvailable = isBeltAvailable(b.id);
+                        const isUnlocked = isAvailable && checkIsBeltUnlocked(b.id);
 
                         return (
                             <button
@@ -124,7 +125,11 @@ export function BeltSelector({ activeBeltId, onSelectBelt, progress }: BeltSelec
 
                                 <span className="font-serif">{b.shortName}</span>
 
-                                {!isUnlocked ? (
+                                {!isAvailable ? (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 font-bold uppercase tracking-wider">
+                                        Próx.
+                                    </span>
+                                ) : !isUnlocked ? (
                                     <Lock className="w-3 h-3 text-zinc-500" weight="fill" />
                                 ) : (
                                     <span className="text-[10px] text-zinc-500 group-hover:text-zinc-300 transition-colors">
@@ -140,7 +145,7 @@ export function BeltSelector({ activeBeltId, onSelectBelt, progress }: BeltSelec
                 <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-[11px] text-zinc-400">
                     <span className="flex items-center gap-1">
                         <ArrowDown className="w-3.5 h-3.5 text-kuma-gold animate-bounce" weight="bold" />
-                        Gana las clases de cada cinturón para abrir el siguiente
+                        10° Kyu Blanco y 9° Kyu Amarillo disponibles • Demás grados próximamente
                     </span>
                     {activeBelt && (
                         <span className="text-kuma-gold font-bold">
