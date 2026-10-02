@@ -678,7 +678,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-ikken-hissatsu-control",
                         type: "sundome_timing",
-                        prompt: "El Principio de Ikken Hissatsu: Freno Milimétrico (Sundome)",
+                        prompt: "El principio del ikken hissatsu: Control del Kime",
                         description: "Detén la técnica en la Zona Dorada a 2 centímetros del blanco para demostrar dominio marcial sin lesionar.",
                         image: "/images/didactic/kuma_pixar_ikken_hissatsu.jpg",
                         explanation: "¡Maestría marcial demostrada! Ikken Hissatsu exige entregar el 100% de tu energía y velocidad en un solo impacto decisivo, pero el verdadero cinturón negro domina el Sundome: el freno milimétrico a 2 cm para proteger la salud de su compañero.",

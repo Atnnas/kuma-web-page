@@ -152,19 +152,10 @@ export function SundomeTimingQuestion({
 
     return (
         <div className="w-full flex flex-col items-center select-none">
-            {/* CABECERA MARCIAL */}
-            <div className="w-full max-w-3xl mb-4 text-center">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950/80 border border-amber-500/50 text-[#FFC800] text-[11px] font-black uppercase tracking-widest mb-2 shadow-sm">
-                    <Sparkle className="w-3.5 h-3.5 text-[#FFC800]" weight="fill" />
-                    <span>Reto Marcial de Autocontrol</span>
-                </div>
-
-                <h3 className="text-xl md:text-2xl font-serif font-black text-white leading-tight">
-                    El Principio de Ikken Hissatsu: Freno Milimétrico (Sundome)
-                </h3>
-
-                <p className="text-xs md:text-sm text-slate-300 mt-1.5 max-w-2xl mx-auto leading-relaxed">
-                    <strong className="text-amber-300 font-bold">Ikken Hissatsu</strong> exige entregar el 100% de velocidad y potencia en un solo impacto decisivo, pero el verdadero karateka domina el <strong className="text-emerald-400 font-bold">Sundome</strong>: detener el golpe exactamente a <strong>2 centímetros del objetivo</strong> para cuidar la salud del compañero.
+            {/* GUÍA BREVE (OCULTA EN MOBILE: en móviles solo queda el título principal sin textos largos) */}
+            <div className="hidden md:block w-full max-w-3xl mb-3 text-center">
+                <p className="text-xs text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                    Detén la técnica en la <strong className="text-amber-300 font-bold">Zona Dorada</strong> a 2 cm del blanco para demostrar autocontrol sin lesionar.
                 </p>
             </div>
 
