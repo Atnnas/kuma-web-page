@@ -8,7 +8,8 @@ export type QuestionType =
     | 'kanji_draw'
     | 'map_drag'
     | 'tree_pillars'
-    | 'okinawa_branches';
+    | 'okinawa_branches'
+    | 'sundome_timing';
 
 export interface DragMapItem {
     id: string;

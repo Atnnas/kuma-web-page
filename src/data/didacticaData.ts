@@ -677,34 +677,12 @@ export const DIDACTIC_UNITS: Unit[] = [
                     },
                     {
                         id: "q-ikken-hissatsu-control",
-                        type: "multiple_choice",
-                        prompt: "¿Qué exige la regla «Ikken Hissatsu» (Golpe Decisivo) en el dojo?",
-                        description: "El balance supremo entre potencia y autocontrol.",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "💥 Buscar el nocaut inmediato del compañero",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o2",
-                                text: "🎯 Máxima potencia con autocontrol para no lesionar",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o3",
-                                text: "🙈 Golpear con los ojos cerrados",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "🛑 Detenerse solo con silbato",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o2",
-                        explanation: "¡Extraordinario! 'Ikken Hissatsu' enseña a dar el 100% de potencia con el autocontrol milimétrico (Sundome) para cuidar a los compañeros.",
-                        hint: "El poder real es la capacidad de controlar la fuerza.",
+                        type: "sundome_timing",
+                        prompt: "El Principio de Ikken Hissatsu: Freno Milimétrico (Sundome)",
+                        description: "Detén la técnica en la Zona Dorada a 2 centímetros del blanco para demostrar dominio marcial sin lesionar.",
+                        image: "/images/didactic/kuma_pixar_ikken_hissatsu.jpg",
+                        explanation: "¡Maestría marcial demostrada! Ikken Hissatsu exige entregar el 100% de tu energía y velocidad en un solo impacto decisivo, pero el verdadero cinturón negro domina el Sundome: el freno milimétrico a 2 cm para proteger la salud de su compañero.",
+                        hint: "Presiona el botón de frenar cuando la aguja cruce la Zona Dorada de 2 cm.",
                         references: [
                             {
                                 title: "Karate-Do Kyohan: El Texto Maestro",

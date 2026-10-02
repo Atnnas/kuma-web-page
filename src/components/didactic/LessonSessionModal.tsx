@@ -11,6 +11,7 @@ import { KanjiDrawCanvas } from "./KanjiDrawCanvas";
 import { MapOriginDragQuestion } from "./MapOriginDragQuestion";
 import { TreePillarsQuestion } from "./TreePillarsQuestion";
 import { OkinawaBranchesQuestion } from "./OkinawaBranchesQuestion";
+import { SundomeTimingQuestion } from "./SundomeTimingQuestion";
 import { didacticSound } from "@/lib/didacticSound";
 import { DIDACTIC_UNITS } from "@/data/didacticaData";
 import { getBeltRank } from "@/data/beltRanks";
@@ -186,6 +187,7 @@ export function LessonSessionModal({
     const [isMapDragDone, setIsMapDragDone] = useState(false);
     const [isTreePillarsDone, setIsTreePillarsDone] = useState(false);
     const [isOkinawaBranchesDone, setIsOkinawaBranchesDone] = useState(false);
+    const [isSundomeDone, setIsSundomeDone] = useState(false);
 
 // Fisher-Yates shuffle helper para orden aleatorio
 function shuffleArray<T>(array: T[]): T[] {
@@ -383,6 +385,8 @@ function shuffleArray<T>(array: T[]): T[] {
             ? isTreePillarsDone
             : currentQuestion.type === "okinawa_branches"
             ? isOkinawaBranchesDone
+            : currentQuestion.type === "sundome_timing"
+            ? isSundomeDone
             : false;
 
     const handleDirectMapCheckAndNext = () => {
@@ -433,6 +437,22 @@ function shuffleArray<T>(array: T[]): T[] {
         }
     };
 
+    const handleDirectSundomeCheckAndNext = () => {
+        didacticSound.playCorrect();
+        setCorrectCount((prev) => prev + 1);
+        setStreak((prev) => prev + 1);
+        setMascotMood("streak");
+        setCustomSpeech("¡KIAI! ¡Dominaste el principio de Ikken Hissatsu con Sundome milimétrico! 🥋✨");
+        setIsSundomeDone(false);
+        setAnswerStatus("idle");
+
+        if (currentIndex + 1 < totalQuestions) {
+            setCurrentIndex((prev) => prev + 1);
+        } else {
+            handleNextQuestion();
+        }
+    };
+
     const handleValidation = (isMatchingAutoCorrect: boolean = false) => {
         let isCorrect = false;
 
@@ -451,6 +471,11 @@ function shuffleArray<T>(array: T[]): T[] {
         } else if (currentQuestion.type === "okinawa_branches") {
             if (isOkinawaBranchesDone) {
                 handleDirectOkinawaBranchesCheckAndNext();
+                return;
+            }
+        } else if (currentQuestion.type === "sundome_timing") {
+            if (isSundomeDone) {
+                handleDirectSundomeCheckAndNext();
                 return;
             }
         } else if (currentQuestion.type === "multiple_choice" || currentQuestion.type === "image_choice") {
@@ -560,7 +585,8 @@ function shuffleArray<T>(array: T[]): T[] {
         currentQuestion.type === "map_drag" ||
         currentQuestion.type === "tree_pillars" ||
         currentQuestion.type === "okinawa_branches" ||
-        currentQuestion.type === "kanji_draw";
+        currentQuestion.type === "kanji_draw" ||
+        currentQuestion.type === "sundome_timing";
 
     return (
         <div className="fixed inset-0 z-[70] flex flex-col bg-[#0B132B] text-white select-none overflow-hidden">
@@ -794,7 +820,8 @@ function shuffleArray<T>(array: T[]): T[] {
                                 {currentQuestion.image &&
                                     currentQuestion.type !== "tree_pillars" &&
                                     currentQuestion.type !== "map_drag" &&
-                                    currentQuestion.type !== "okinawa_branches" && (
+                                    currentQuestion.type !== "okinawa_branches" &&
+                                    currentQuestion.type !== "sundome_timing" && (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.96 }}
                                         animate={{ opacity: 1, scale: 1 }}
@@ -1098,6 +1125,21 @@ function shuffleArray<T>(array: T[]): T[] {
                                                 setCustomSpeech("¡KIAI! ¡Descubriste las 3 ramas matrices de Okinawa: Shuri-Te, Tomari-Te y Naha-Te! 🏯⚓🚢");
                                             }}
                                             onCheckAndNext={handleDirectOkinawaBranchesCheckAndNext}
+                                        />
+                                    </div>
+                                )}
+                                {/* SUNDOME TIMING QUESTION (IKKEN HISSATSU Y AUTOCONTROL) */}
+                                {currentQuestion.type === "sundome_timing" && (
+                                    <div className="w-full">
+                                        <SundomeTimingQuestion
+                                            question={currentQuestion}
+                                            isSuperAdmin={isSuperAdmin}
+                                            onCompleted={() => {
+                                                setIsSundomeDone(true);
+                                                setMascotMood("streak");
+                                                setCustomSpeech("¡KIAI! ¡Dominaste el principio de Ikken Hissatsu con Sundome milimétrico! 🥋✨");
+                                            }}
+                                            onCheckAndNext={handleDirectSundomeCheckAndNext}
                                         />
                                     </div>
                                 )}
