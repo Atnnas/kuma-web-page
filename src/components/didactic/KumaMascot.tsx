@@ -1129,7 +1129,7 @@ export function KumaMascot({
                             {/* DYNAMIC MOUTH (DESOPILANTE JAW-DROP ANIME EXTREME EXPRESSIVITY) */}
                             {isStriking ? (
                                 // DESOPILANTE CARTOON JAW DROP ROAR (Mandíbula Caída Abierta de Par en Par)
-                                <g id="kuma-jaw-drop-roar">
+                                <g id="kuma-jaw-drop-roar" key="mouth-roar">
                                     {/* Cavernous Throat Cavity */}
                                     <path
                                         d="M96 128 Q120 118 144 128 L142 174 Q120 186 98 174 Z"
@@ -1185,7 +1185,7 @@ export function KumaMascot({
                                 // YOI DEEP BREATH EXHALATION MOUTH (Soplo de Aire al Exhalar)
                                 // Small focused breath opening releasing the martial breath
                                 // ========================================================
-                                <g id="kuma-yoi-breath-mouth">
+                                <g id="kuma-yoi-breath-mouth" key="mouth-yoi-breath">
                                     <ellipse cx="120" cy="137" rx="5" ry="3.8" fill="#5A1212" stroke="#26150D" strokeWidth="2.8" />
                                     <ellipse cx="120" cy="136" rx="3.5" ry="1.8" fill="#18181B" opacity="0.6" />
                                     <path d="M112 137 Q115 137 116 137" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" />
@@ -1196,7 +1196,7 @@ export function KumaMascot({
                                 // YOI POSITION MARTIAL EXPRESSION (Zanshin - Composed & Triumphant)
                                 // Confident martial smile with disciplined breath in Yoi stance
                                 // ========================================================
-                                <g id="kuma-yoi-mouth">
+                                <g id="kuma-yoi-mouth" key="mouth-yoi">
                                     <path
                                         d="M104 135 Q120 147 136 135 Q120 141 104 135 Z"
                                         fill="#7F1D1D"
@@ -1212,19 +1212,19 @@ export function KumaMascot({
                                 </g>
                             ) : isSad ? (
                                 // Dramatic Anime Wavy Pout (Pucca / Garu style)
-                                <g id="kuma-sad-mouth">
+                                <g id="kuma-sad-mouth" key="mouth-sad">
                                     <path d="M104 144 Q112 137 120 144 Q128 151 136 144" stroke="#26150D" strokeWidth="4" strokeLinecap="round" fill="none" />
                                     <ellipse cx="120" cy="147" rx="5" ry="1.5" fill="#26150D" opacity="0.25" />
                                 </g>
                             ) : isThinking ? (
                                 // Puzzled / Concentrated Mouth
-                                <g id="kuma-thinking-mouth">
+                                <g id="kuma-thinking-mouth" key="mouth-thinking">
                                     <path d="M112 139 Q120 134 128 139" stroke="#26150D" strokeWidth="3.5" strokeLinecap="round" fill="none" />
                                     <circle cx="110" cy="139" r="1.5" fill="#26150D" />
                                 </g>
                             ) : (
                                 // Confident Garu Martial Smirk
-                                <g id="kuma-idle-mouth">
+                                <g id="kuma-idle-mouth" key="mouth-idle">
                                     <path d="M106 134 Q120 144 134 135" stroke="#26150D" strokeWidth="3.5" strokeLinecap="round" fill="none" />
                                     <path d="M133 133 Q136 135 135 138" stroke="#26150D" strokeWidth="2.5" strokeLinecap="round" fill="none" />
                                 </g>
@@ -1233,13 +1233,13 @@ export function KumaMascot({
                             {/* DYNAMIC EYES & MARTIAL EYEBROWS (GARU & PUCCA HIGH EXPRESSIVITY) */}
                             {isBlinking ? (
                                 // Blinking Eyelid Lines
-                                <g id="kuma-blink-eyes">
+                                <g id="kuma-blink-eyes" key="eyes-blink">
                                     <path d="M86 102 Q98 109 110 102" stroke="#18181B" strokeWidth="5" strokeLinecap="round" fill="none" />
                                     <path d="M130 102 Q142 109 154 102" stroke="#18181B" strokeWidth="5" strokeLinecap="round" fill="none" />
                                 </g>
                             ) : isExcited ? (
                                 // TSUKI ATTACK EYES: Fierce Anime Focus (NO STARS, clean crisp action glints!)
-                                <g id="kuma-tsuki-eyes">
+                                <g id="kuma-tsuki-eyes" key="eyes-tsuki">
                                     {/* Large Intense Eye Sclera */}
                                     <ellipse cx="98" cy="102" rx="12" ry="11" fill="#FFFFFF" stroke="#18181B" strokeWidth="3.5" />
                                     <ellipse cx="142" cy="102" rx="12" ry="11" fill="#FFFFFF" stroke="#18181B" strokeWidth="3.5" />
@@ -1265,7 +1265,7 @@ export function KumaMascot({
                                 </g>
                             ) : isThinking ? (
                                 // Curious Inquisitive Garu Expression
-                                <g id="kuma-thinking-eyes">
+                                <g id="kuma-thinking-eyes" key="eyes-thinking">
                                     <ellipse cx="98" cy="99" rx="9" ry="10" fill="#FFFFFF" stroke="#18181B" strokeWidth="3" />
                                     <ellipse cx="142" cy="99" rx="9" ry="10" fill="#FFFFFF" stroke="#18181B" strokeWidth="3" />
                                     <circle cx="101" cy="95" r="6" fill="#18181B" />
@@ -1278,7 +1278,7 @@ export function KumaMascot({
                                 </g>
                             ) : isSad ? (
                                 // Dramatic Anime Disappointment (Pucca / Garu style)
-                                <g id="kuma-sad-eyes">
+                                <g id="kuma-sad-eyes" key="eyes-sad">
                                     <ellipse cx="98" cy="103" rx="9.5" ry="10" fill="#FFFFFF" stroke="#18181B" strokeWidth="3" />
                                     <ellipse cx="142" cy="103" rx="9.5" ry="10" fill="#FFFFFF" stroke="#18181B" strokeWidth="3" />
                                     <circle cx="98" cy="105" r="6" fill="#18181B" />
@@ -1353,7 +1353,7 @@ export function KumaMascot({
                                 </g>
                             ) : (
                                 // Charismatic Confident Garu Martial Eyes
-                                <g id="kuma-idle-eyes">
+                                <g id="kuma-idle-eyes" key="eyes-idle">
                                     <ellipse cx="98" cy="101" rx="10.5" ry="11.5" fill="#FFFFFF" stroke="#18181B" strokeWidth="3.5" />
                                     <ellipse cx="142" cy="101" rx="10.5" ry="11.5" fill="#FFFFFF" stroke="#18181B" strokeWidth="3.5" />
                                     {/* Espresso Sharp Pupils */}
@@ -1993,94 +1993,94 @@ export function KumaMascot({
                                 <polygon points="209,154 204,157 207,161 211,157" fill="#5C2D1C" stroke="#26150D" strokeWidth="0.8" />
                             </motion.g>
 
-                            {/* HIGH-VELOCITY DISPERSING PARTICLES (Efectos de estallido dinámico) */}
-                            <motion.polygon
-                                points="216,146 222,143 221,148 215,149"
-                                fill="#F59E0B"
-                                stroke="#78350F"
-                                strokeWidth="0.8"
-                                initial={{ x: 0, y: 0, opacity: 0 }}
-                                animate={{
-                                    x: [0, 0, 42, 92, 130],
-                                    y: [0, 0, -32, -65, -88],
-                                    rotate: [0, 0, 120, 360, 600],
-                                    opacity: [0, 0, 1, 0.75, 0],
-                                }}
-                                transition={{ duration: 0.95, times: [0, 0.28, 0.38, 0.65, 0.95], ease: "easeOut" }}
-                            />
-                            <motion.polygon
-                                points="212,155 218,157 216,162 210,159"
-                                fill="#B45309"
-                                stroke="#451A03"
-                                strokeWidth="0.8"
-                                initial={{ x: 0, y: 0, opacity: 0 }}
-                                animate={{
-                                    x: [0, 0, 30, 68, 95],
-                                    y: [0, 0, 22, 45, 62],
-                                    rotate: [0, 0, -100, -280, -480],
-                                    opacity: [0, 0, 1, 0.7, 0],
-                                }}
-                                transition={{ duration: 0.95, times: [0, 0.28, 0.38, 0.65, 0.95], ease: "easeOut" }}
-                            />
-                            <motion.polygon
-                                points="208,148 203,145 205,152 210,151"
-                                fill="#78350F"
-                                stroke="#26150D"
-                                strokeWidth="0.8"
-                                initial={{ x: 0, y: 0, opacity: 0 }}
-                                animate={{
-                                    x: [0, 0, -24, -52, -74],
-                                    y: [0, 0, -10, -22, -30],
-                                    rotate: [0, 0, -80, -200, -360],
-                                    opacity: [0, 0, 1, 0.65, 0],
-                                }}
-                                transition={{ duration: 0.95, times: [0, 0.28, 0.38, 0.65, 0.95], ease: "easeOut" }}
-                            />
-
-                            {/* Flying Sawdust Cloud Particles billow down toward feet */}
-                            <motion.circle
-                                cx="214"
-                                cy="152"
-                                r="2.5"
-                                fill="#FDE68A"
-                                initial={{ opacity: 0 }}
-                                animate={{
-                                    cx: [214, 214, 185, 165],
-                                    cy: [152, 152, 195, 230],
-                                    opacity: [0, 0, 1, 0],
-                                }}
-                                transition={{ duration: 0.85, times: [0, 0.28, 0.55, 1], ease: "easeOut" }}
-                            />
-                            <motion.circle
-                                cx="214"
-                                cy="152"
-                                r="2.2"
-                                fill="#FEF08A"
-                                initial={{ opacity: 0 }}
-                                animate={{
-                                    cx: [214, 214, 175, 150],
-                                    cy: [152, 152, 205, 236],
-                                    opacity: [0, 0, 1, 0],
-                                }}
-                                transition={{ duration: 0.85, times: [0, 0.28, 0.55, 1], ease: "easeOut" }}
-                            />
-                            <motion.circle
-                                cx="214"
-                                cy="152"
-                                r="3"
-                                fill="#F59E0B"
-                                initial={{ opacity: 0 }}
-                                animate={{
-                                    cx: [214, 214, 195, 180],
-                                    cy: [152, 152, 190, 228],
-                                    opacity: [0, 0, 0.9, 0],
-                                }}
-                                transition={{ duration: 0.8, times: [0, 0.28, 0.55, 1], ease: "easeOut" }}
-                            />
-
                             {/* TRANSIENT COMIC ACTION EFFECTS (Only active during impact) */}
                             {isStriking && (
                                 <>
+                                    {/* HIGH-VELOCITY DISPERSING PARTICLES (Efectos de estallido dinámico) */}
+                                    <motion.polygon
+                                        points="216,146 222,143 221,148 215,149"
+                                        fill="#F59E0B"
+                                        stroke="#78350F"
+                                        strokeWidth="0.8"
+                                        initial={{ x: 0, y: 0, opacity: 0 }}
+                                        animate={{
+                                            x: [0, 0, 42, 92, 130],
+                                            y: [0, 0, -32, -65, -88],
+                                            rotate: [0, 0, 120, 360, 600],
+                                            opacity: [0, 0, 1, 0.75, 0],
+                                        }}
+                                        transition={{ duration: 0.95, times: [0, 0.28, 0.38, 0.65, 0.95], ease: "easeOut" }}
+                                    />
+                                    <motion.polygon
+                                        points="212,155 218,157 216,162 210,159"
+                                        fill="#B45309"
+                                        stroke="#451A03"
+                                        strokeWidth="0.8"
+                                        initial={{ x: 0, y: 0, opacity: 0 }}
+                                        animate={{
+                                            x: [0, 0, 30, 68, 95],
+                                            y: [0, 0, 22, 45, 62],
+                                            rotate: [0, 0, -100, -280, -480],
+                                            opacity: [0, 0, 1, 0.7, 0],
+                                        }}
+                                        transition={{ duration: 0.95, times: [0, 0.28, 0.38, 0.65, 0.95], ease: "easeOut" }}
+                                    />
+                                    <motion.polygon
+                                        points="208,148 203,145 205,152 210,151"
+                                        fill="#78350F"
+                                        stroke="#26150D"
+                                        strokeWidth="0.8"
+                                        initial={{ x: 0, y: 0, opacity: 0 }}
+                                        animate={{
+                                            x: [0, 0, -24, -52, -74],
+                                            y: [0, 0, -10, -22, -30],
+                                            rotate: [0, 0, -80, -200, -360],
+                                            opacity: [0, 0, 1, 0.65, 0],
+                                        }}
+                                        transition={{ duration: 0.95, times: [0, 0.28, 0.38, 0.65, 0.95], ease: "easeOut" }}
+                                    />
+
+                                    {/* Flying Sawdust Cloud Particles billow down toward feet */}
+                                    <motion.circle
+                                        cx="214"
+                                        cy="152"
+                                        r="2.5"
+                                        fill="#FDE68A"
+                                        initial={{ x: 0, y: 0, opacity: 0 }}
+                                        animate={{
+                                            x: [0, 0, -29, -49],
+                                            y: [0, 0, 43, 78],
+                                            opacity: [0, 0, 1, 0],
+                                        }}
+                                        transition={{ duration: 0.85, times: [0, 0.28, 0.55, 1], ease: "easeOut" }}
+                                    />
+                                    <motion.circle
+                                        cx="214"
+                                        cy="152"
+                                        r="2.2"
+                                        fill="#FEF08A"
+                                        initial={{ x: 0, y: 0, opacity: 0 }}
+                                        animate={{
+                                            x: [0, 0, -39, -64],
+                                            y: [0, 0, 53, 84],
+                                            opacity: [0, 0, 1, 0],
+                                        }}
+                                        transition={{ duration: 0.85, times: [0, 0.28, 0.55, 1], ease: "easeOut" }}
+                                    />
+                                    <motion.circle
+                                        cx="214"
+                                        cy="152"
+                                        r="3"
+                                        fill="#F59E0B"
+                                        initial={{ x: 0, y: 0, opacity: 0 }}
+                                        animate={{
+                                            x: [0, 0, -19, -34],
+                                            y: [0, 0, 38, 76],
+                                            opacity: [0, 0, 0.9, 0],
+                                        }}
+                                        transition={{ duration: 0.8, times: [0, 0.28, 0.55, 1], ease: "easeOut" }}
+                                    />
+
                                     {/* RAZOR ANIME LASER SLASH BEAM */}
                                     <motion.line
                                         x1="176"
