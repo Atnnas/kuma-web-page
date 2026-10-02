@@ -9,7 +9,9 @@ import confetti from "canvas-confetti";
 import {
     SpeakerHigh,
     ArrowCounterClockwise,
-    MagicWand,
+    Eye,
+    EyeSlash,
+    Lightbulb,
     CheckCircle,
     CaretLeft,
     CaretRight,
@@ -17,6 +19,8 @@ import {
     ArrowRight,
     Sparkle,
     HandPointing,
+    WarningCircle,
+    PencilSimple,
 } from "@phosphor-icons/react";
 
 interface ShodoNumbersQuestionProps {
@@ -50,9 +54,11 @@ export function ShodoNumbersQuestion({
     const [strokeGeometries, setStrokeGeometries] = useState<{ [strokeId: number]: StrokeGeometry }>({});
     const [isDrawing, setIsDrawing] = useState(false);
     const [userPoints, setUserPoints] = useState<Array<{ x: number; y: number }>>([]);
+    const [currentPointer, setCurrentPointer] = useState<{ x: number; y: number } | null>(null);
     const [strokeProgress, setStrokeProgress] = useState(0);
     const [highestCheckpoint, setHighestCheckpoint] = useState(0);
     const [flashStrokeId, setFlashStrokeId] = useState<number | null>(null);
+    const [showGuide, setShowGuide] = useState(true);
     const [isDemonstrating, setIsDemonstrating] = useState(false);
     const [feedbackTip, setFeedbackTip] = useState<string | null>(null);
 
@@ -105,7 +111,7 @@ export function ShodoNumbersQuestion({
         }
     }, [playZenBell]);
 
-    // Calcular checkpoints para detección precisa del trazo
+    // 1. Calcular checkpoints de alta densidad (40 muestras) para tethering 1-a-1 exacto idéntico a Karate-Do
     useEffect(() => {
         if (typeof window === "undefined") return;
         const geometries: { [strokeId: number]: StrokeGeometry } = {};
@@ -115,7 +121,7 @@ export function ShodoNumbersQuestion({
             const pathEl = document.createElementNS(svgNamespace, "path");
             pathEl.setAttribute("d", stroke.path);
             const totalLength = pathEl.getTotalLength();
-            const samples = 35;
+            const samples = 40; // 40 muestras densas para exactitud máxima
             const checkpoints: Array<{ x: number; y: number }> = [];
 
             for (let i = 0; i < samples; i++) {
@@ -131,6 +137,7 @@ export function ShodoNumbersQuestion({
         setStrokeProgress(0);
         setHighestCheckpoint(0);
         setUserPoints([]);
+        setCurrentPointer(null);
         setFeedbackTip(null);
     }, [activeItem]);
 
@@ -152,7 +159,7 @@ export function ShodoNumbersQuestion({
     const completeStroke = useCallback((strokeId: number) => {
         didacticSound.playClick();
         setFlashStrokeId(strokeId);
-        setTimeout(() => setFlashStrokeId(null), 500);
+        setTimeout(() => setFlashStrokeId(null), 600);
 
         setCompletedStrokesByKanji((prev) => {
             const existing = prev[activeItem.kanji] || [];
@@ -179,29 +186,39 @@ export function ShodoNumbersQuestion({
                                 onCompleted();
                             }, 700);
                         } else {
-                            // Breve confeti sutil de aliento para el niño
-                            confetti({
-                                particleCount: 30,
-                                spread: 50,
-                                origin: { y: 0.7 },
-                                colors: ["#FFD700", "#FFFFFF"],
-                            });
+                            // Avance automático suave al siguiente número no dominado
+                            setTimeout(() => {
+                                const nextUncompletedIdx = NUMBERS_1_TO_10_KANJIS.findIndex(
+                                    (item) => !newMastered.includes(item.kanji)
+                                );
+                                if (nextUncompletedIdx !== -1) {
+                                    setActiveIndex(nextUncompletedIdx);
+                                    setUserPoints([]);
+                                    setCurrentPointer(null);
+                                    setStrokeProgress(0);
+                                    setHighestCheckpoint(0);
+                                    setFeedbackTip(null);
+                                }
+                            }, 1200);
                         }
                         return newMastered;
                     }
                     return prevMastered;
                 });
             }
+
             return { ...prev, [activeItem.kanji]: updated };
         });
 
+        // Reset live drawing state
         setStrokeProgress(0);
         setHighestCheckpoint(0);
         setUserPoints([]);
+        setCurrentPointer(null);
         setFeedbackTip(null);
     }, [activeItem, onCompleted, playPronunciation]);
 
-    // Refs sincronizados para touch a 60fps
+    // Refs sincronizados a 60Hz/120Hz sin retraso por closure de React
     const isDrawingRef = useRef(false);
     const currentTargetStrokeRef = useRef(currentTargetStroke);
     currentTargetStrokeRef.current = currentTargetStroke;
@@ -209,116 +226,272 @@ export function ShodoNumbersQuestion({
     strokeGeometriesRef.current = strokeGeometries;
     const highestCheckpointRef = useRef(highestCheckpoint);
     highestCheckpointRef.current = highestCheckpoint;
+    const userPointsRef = useRef(userPoints);
+    userPointsRef.current = userPoints;
+    const strokeProgressRef = useRef(strokeProgress);
+    strokeProgressRef.current = strokeProgress;
+    const isCurrentKanjiFinishedRef = useRef(isCurrentKanjiFinished);
+    isCurrentKanjiFinishedRef.current = isCurrentKanjiFinished;
     const isDemonstratingRef = useRef(isDemonstrating);
     isDemonstratingRef.current = isDemonstrating;
-    const isKanjiFinishedRef = useRef(isCurrentKanjiFinished);
-    isKanjiFinishedRef.current = isCurrentKanjiFinished;
 
-    const startDrawing = useCallback((clientX: number, clientY: number) => {
-        if (isKanjiFinishedRef.current || isDemonstratingRef.current || !currentTargetStrokeRef.current) return;
-        const coords = getSvgCoords(clientX, clientY);
-        if (!coords) return;
+    // MOTOR UNIFICADO DE TRAZO (Idéntico a KanjiDrawCanvas de Karate-Do)
+    const startDrawing = useCallback(
+        (clientX: number, clientY: number) => {
+            if (isCurrentKanjiFinishedRef.current || isDemonstratingRef.current || !currentTargetStrokeRef.current) return;
+            const coords = getSvgCoords(clientX, clientY);
+            if (!coords) return;
 
-        const stroke = currentTargetStrokeRef.current;
-        const geom = strokeGeometriesRef.current[stroke.id];
-        if (!geom || geom.checkpoints.length === 0) return;
+            const stroke = currentTargetStrokeRef.current;
+            const geom = strokeGeometriesRef.current[stroke.id];
+            if (!geom || geom.checkpoints.length === 0) return;
 
-        const startPt = geom.checkpoints[0];
-        const distToStart = distance(coords, startPt);
+            const startPt = geom.checkpoints[0];
+            const distToStart = distance(coords, startPt);
 
-        // Tolerancia generosa para dedos infantiles en pantallas táctiles: 26 unidades
-        if (distToStart < 26) {
-            isDrawingRef.current = true;
-            setIsDrawing(true);
-            setUserPoints([coords]);
-            highestCheckpointRef.current = 0;
-            setHighestCheckpoint(0);
-            setStrokeProgress(0.05);
-            setFeedbackTip(null);
-        } else {
-            setFeedbackTip(`Toca en el círculo rojo (${stroke.id}) para iniciar`);
-            setTimeout(() => setFeedbackTip(null), 1800);
-        }
-    }, [getSvgCoords]);
+            // Tolerancia de inicio ergonómica para dedos en móviles (24 unidades)
+            if (distToStart < 24) {
+                isDrawingRef.current = true;
+                setIsDrawing(true);
+                setUserPoints([coords]);
+                userPointsRef.current = [coords];
+                setCurrentPointer(coords);
+                highestCheckpointRef.current = 0;
+                setHighestCheckpoint(0);
+                strokeProgressRef.current = 0.02;
+                setStrokeProgress(0.02);
+                setFeedbackTip(null);
+            } else {
+                setFeedbackTip(`Toca en el círculo rojo (${stroke.id}) para iniciar`);
+                setTimeout(() => setFeedbackTip(null), 2000);
+            }
+        },
+        [getSvgCoords]
+    );
 
-    const moveDrawing = useCallback((clientX: number, clientY: number) => {
-        if (!isDrawingRef.current || isDemonstratingRef.current || !currentTargetStrokeRef.current) return;
-        const coords = getSvgCoords(clientX, clientY);
-        if (!coords) return;
+    const moveDrawing = useCallback(
+        (clientX: number, clientY: number) => {
+            if (!isDrawingRef.current || isCurrentKanjiFinishedRef.current || isDemonstratingRef.current || !currentTargetStrokeRef.current) return;
+            const coords = getSvgCoords(clientX, clientY);
+            if (!coords) return;
 
-        const stroke = currentTargetStrokeRef.current;
-        const geom = strokeGeometriesRef.current[stroke.id];
-        if (!geom || geom.checkpoints.length === 0) return;
+            setUserPoints((prev) => {
+                const next = [...prev, coords];
+                userPointsRef.current = next;
+                return next;
+            });
+            setCurrentPointer(coords);
 
-        setUserPoints((prev) => [...prev.slice(-16), coords]);
+            const stroke = currentTargetStrokeRef.current;
+            const geom = strokeGeometriesRef.current[stroke.id];
+            if (!geom) return;
 
-        // Verificar avance a lo largo de los checkpoints
-        const checkpoints = geom.checkpoints;
-        let highest = highestCheckpointRef.current;
+            const checkpoints = geom.checkpoints;
+            const total = checkpoints.length;
+            const currentK = highestCheckpointRef.current;
 
-        for (let i = highest; i < Math.min(checkpoints.length, highest + 9); i++) {
-            const cp = checkpoints[i];
-            const d = distance(coords, cp);
-            if (d < 26) {
-                if (i > highest) {
-                    highest = i;
-                    highestCheckpointRef.current = i;
-                    setHighestCheckpoint(i);
+            // Proyección matemática sobre segmentos adelantados (Lookahead)
+            // Evita que swiping rápido o curvas en 60Hz/120Hz se traben
+            const maxLookahead = Math.min(total - 1, currentK + 10);
+            let bestK = currentK;
+            let bestDist = 999;
+            let bestT = 0;
+
+            for (let k = currentK; k < maxLookahead; k++) {
+                const p1 = checkpoints[k];
+                const p2 = checkpoints[k + 1];
+                const dx = p2.x - p1.x;
+                const dy = p2.y - p1.y;
+                const lenSq = dx * dx + dy * dy;
+                if (lenSq < 0.0001) continue;
+
+                const t = ((coords.x - p1.x) * dx + (coords.y - p1.y) * dy) / lenSq;
+                const clampedT = Math.max(0, Math.min(1, t));
+                const projX = p1.x + clampedT * dx;
+                const projY = p1.y + clampedT * dy;
+                const dist = Math.hypot(coords.x - projX, coords.y - projY);
+
+                if (dist < 24 && dist < bestDist) {
+                    bestDist = dist;
+                    bestK = k;
+                    bestT = clampedT;
                 }
             }
-        }
 
-        const prog = highest / (checkpoints.length - 1);
-        setStrokeProgress(prog);
+            if (bestDist < 24 && bestK >= currentK) {
+                highestCheckpointRef.current = bestK;
+                setHighestCheckpoint(bestK);
+                const fraction = (bestK + bestT) / (total - 1);
+                strokeProgressRef.current = fraction;
+                setStrokeProgress((prev) => Math.max(prev, fraction));
+            }
+        },
+        [getSvgCoords]
+    );
 
-        // Si llega al 82% del trazo, ¡se da por completado con éxito!
-        if (prog >= 0.82) {
-            isDrawingRef.current = false;
-            setIsDrawing(false);
-            completeStroke(stroke.id);
-        }
-    }, [completeStroke, getSvgCoords]);
+    const endDrawing = useCallback(() => {
+        if (!isDrawingRef.current || !currentTargetStrokeRef.current) return;
 
-    const stopDrawing = useCallback(() => {
-        if (!isDrawingRef.current) return;
-        isDrawingRef.current = false;
-        setIsDrawing(false);
+        const stroke = currentTargetStrokeRef.current;
+        const geom = strokeGeometriesRef.current[stroke.id];
+        if (geom) {
+            const totalCheckpoints = geom.checkpoints.length;
+            const endPt = geom.checkpoints[totalCheckpoints - 1];
+            const pts = userPointsRef.current;
+            const lastPt = pts.length > 0 ? pts[pts.length - 1] : null;
+            const distToEnd = lastPt ? distance(lastPt, endPt) : 999;
 
-        // Si soltó el dedo cerca del final (prog >= 0.75), auto-completar
-        if (strokeProgress >= 0.75 && currentTargetStrokeRef.current) {
-            completeStroke(currentTargetStrokeRef.current.id);
-        } else {
-            // Reintento suave sin frustración
-            setUserPoints([]);
-            setStrokeProgress(0);
-            setHighestCheckpoint(0);
-        }
-    }, [completeStroke, strokeProgress]);
+            // Condición de finalización idéntica a Karate-Do:
+            // Trazó >= 76% O alcanzó el punto final (< 28 unidades) habiendo avanzado >= 45%
+            const hasPassedMajority = highestCheckpointRef.current >= Math.floor(totalCheckpoints * 0.76) || strokeProgressRef.current >= 0.76;
+            const isNearEnd = distToEnd < 28 && highestCheckpointRef.current >= Math.floor(totalCheckpoints * 0.45);
 
-    // Demostración automática con Sensei (Pincel Mágico)
-    const handleDemonstrate = () => {
-        if (isDemonstrating || !currentTargetStroke) return;
-        setIsDemonstrating(true);
-        const stroke = currentTargetStroke;
-        const geom = strokeGeometries[stroke.id];
-        if (!geom) {
-            setIsDemonstrating(false);
-            return;
-        }
-
-        const cps = geom.checkpoints;
-        let step = 0;
-        const interval = setInterval(() => {
-            if (step >= cps.length) {
-                clearInterval(interval);
-                setIsDemonstrating(false);
+            if (hasPassedMajority || isNearEnd) {
                 completeStroke(stroke.id);
             } else {
-                setUserPoints((prev) => [...prev.slice(-14), cps[step]]);
-                setStrokeProgress(step / (cps.length - 1));
-                step += 2;
+                setFeedbackTip("¡Traza todo el recorrido de la línea hasta el final!");
+                setTimeout(() => setFeedbackTip(null), 2000);
             }
-        }, 22);
+        }
+
+        isDrawingRef.current = false;
+        setIsDrawing(false);
+        setStrokeProgress(0);
+        strokeProgressRef.current = 0;
+        setHighestCheckpoint(0);
+        highestCheckpointRef.current = 0;
+        setUserPoints([]);
+        userPointsRef.current = [];
+        setCurrentPointer(null);
+    }, [completeStroke]);
+
+    // LISTENERS TÁCTILES NATIVOS NO PASIVOS (Evitan que el scroll o gestos del navegador interfieran)
+    useEffect(() => {
+        const el = svgRef.current;
+        if (!el) return;
+
+        const onTouchStart = (e: TouchEvent) => {
+            if (e.touches.length > 1) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            startDrawing(touch.clientX, touch.clientY);
+        };
+
+        const onTouchMove = (e: TouchEvent) => {
+            if (e.touches.length > 1) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            moveDrawing(touch.clientX, touch.clientY);
+        };
+
+        const onTouchEnd = (e: TouchEvent) => {
+            e.preventDefault();
+            endDrawing();
+        };
+
+        const onTouchCancel = (e: TouchEvent) => {
+            e.preventDefault();
+            endDrawing();
+        };
+
+        el.addEventListener("touchstart", onTouchStart, { passive: false });
+        el.addEventListener("touchmove", onTouchMove, { passive: false });
+        el.addEventListener("touchend", onTouchEnd, { passive: false });
+        el.addEventListener("touchcancel", onTouchCancel, { passive: false });
+
+        return () => {
+            el.removeEventListener("touchstart", onTouchStart);
+            el.removeEventListener("touchmove", onTouchMove);
+            el.removeEventListener("touchend", onTouchEnd);
+            el.removeEventListener("touchcancel", onTouchCancel);
+        };
+    }, [startDrawing, moveDrawing, endDrawing]);
+
+    // HANDLERS PARA POINTER / MOUSE EN ESCRITORIO
+    const handlePointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
+        if (e.pointerType === "touch") return; // Touch ya es atendido por los native listeners
+        try {
+            e.currentTarget.setPointerCapture(e.pointerId);
+        } catch {
+            // Ignorar error de captura
+        }
+        startDrawing(e.clientX, e.clientY);
+    };
+
+    const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
+        if (e.pointerType === "touch") return;
+        moveDrawing(e.clientX, e.clientY);
+    };
+
+    const handlePointerUp = (e: React.PointerEvent<SVGSVGElement>) => {
+        if (e.pointerType === "touch") return;
+        try {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+        } catch {
+            // Ignorar error de liberación
+        }
+        endDrawing();
+    };
+
+    // Spline suave de tinta negra Sumi-e para el trazo en vivo del usuario
+    const renderUserInkSpline = () => {
+        if (userPoints.length < 2) return null;
+        let d = `M ${userPoints[0].x},${userPoints[0].y}`;
+        for (let i = 1; i < userPoints.length - 1; i++) {
+            const xc = (userPoints[i].x + userPoints[i + 1].x) / 2;
+            const yc = (userPoints[i].y + userPoints[i + 1].y) / 2;
+            d += ` Q ${userPoints[i].x},${userPoints[i].y} ${xc},${yc}`;
+        }
+        d += ` L ${userPoints[userPoints.length - 1].x},${userPoints[userPoints.length - 1].y}`;
+
+        return (
+            <g>
+                {/* Halo de absorción del papel húmedo */}
+                <path
+                    d={d}
+                    fill="none"
+                    stroke="#27272a"
+                    strokeWidth="9"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="opacity-25"
+                />
+                {/* Tinta negra pura de carbón Sumi-e */}
+                <path
+                    d={d}
+                    fill="none"
+                    stroke="#09090b"
+                    strokeWidth="7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="opacity-95"
+                />
+            </g>
+        );
+    };
+
+    // MODO DEMOSTRACIÓN GUIADA (Pincel Mágico fluido paso a paso)
+    const handleDemonstrate = async () => {
+        if (isDemonstrating || isCurrentKanjiFinished) return;
+        setIsDemonstrating(true);
+        didacticSound.playClick();
+
+        for (let s = completedStrokes.length; s < activeItem.strokes.length; s++) {
+            const stroke = activeItem.strokes[s];
+            const geom = strokeGeometries[stroke.id];
+            if (geom) {
+                const steps = 16;
+                for (let i = 1; i <= steps; i++) {
+                    setStrokeProgress(i / steps);
+                    await new Promise((res) => setTimeout(res, 22));
+                }
+            }
+            await new Promise((res) => setTimeout(res, 80));
+            completeStroke(stroke.id);
+            await new Promise((res) => setTimeout(res, 180));
+        }
+
+        setIsDemonstrating(false);
     };
 
     // Limpiar trazos del kanji actual para volver a practicar
@@ -327,6 +500,7 @@ export function ShodoNumbersQuestion({
         setCompletedStrokesByKanji((prev) => ({ ...prev, [activeItem.kanji]: [] }));
         setMasteredKanjis((prev) => prev.filter((k) => k !== activeItem.kanji));
         setUserPoints([]);
+        setCurrentPointer(null);
         setStrokeProgress(0);
         setHighestCheckpoint(0);
         setFeedbackTip(null);
@@ -438,210 +612,383 @@ export function ShodoNumbersQuestion({
                             type="button"
                             onClick={() => playPronunciation(activeItem.hiragana, activeItem.romaji)}
                             className="p-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-zinc-950 transition-all shadow-[0_0_15px_rgba(245,158,11,0.35)] cursor-pointer flex items-center gap-1.5 active:scale-95"
-                            title="Escuchar pronunciación"
+                            title="Escuchar pronunciación oficial en japonés"
                         >
                             <SpeakerHigh className="w-5 h-5" weight="fill" />
-                            <span className="text-xs font-black uppercase hidden sm:inline">Escuchar</span>
+                            <span className="text-xs font-black uppercase hidden sm:inline">Pronunciación</span>
                         </button>
                     </div>
 
-                    {/* EL PERGAMINO DE ARROZ (LIENZO SUMI-E) */}
-                    <div className="relative w-full max-w-[320px] sm:max-w-[360px] aspect-square rounded-3xl bg-[#FAF6EE] border-4 border-[#C8B289] shadow-[0_10px_30px_rgba(0,0,0,0.6)] overflow-hidden flex items-center justify-center">
-                        {/* Textura sutil y líneas guía marciales tradicionales */}
-                        <div className="absolute inset-0 pointer-events-none">
-                            {/* Cuadrícula tradicional de caligrafía japonesa */}
-                            <div className="w-full h-full relative">
-                                <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-red-900/10 border-t border-dashed border-red-900/20" />
-                                <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-red-900/10 border-l border-dashed border-red-900/20" />
-                                <div className="absolute inset-4 rounded-2xl border border-red-900/10" />
-                            </div>
+                    {/* BANNER DE PROGRESO DEL TRAZO ACTUAL */}
+                    <div className="w-full max-w-[300px] xs:max-w-[340px] sm:max-w-[380px] bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 mb-2 flex items-center justify-between text-xs backdrop-blur-md">
+                        <div className="flex items-center gap-2 text-zinc-300">
+                            <PencilSimple className="w-4 h-4 text-amber-400" weight="bold" />
+                            <span>
+                                Trazo <strong>{completedStrokes.length}</strong> de{" "}
+                                <strong>{activeItem.strokes.length}</strong>:{" "}
+                                <span className="text-amber-400 font-bold">
+                                    {currentTargetStroke ? currentTargetStroke.name : "¡Número Dominado!"}
+                                </span>
+                            </span>
                         </div>
+                        <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider bg-black/50 px-2 py-0.5 rounded-md border border-amber-400/30">
+                            {Math.round((completedStrokes.length / activeItem.strokes.length) * 100)}%
+                        </span>
+                    </div>
 
-                        {/* SELLO INKAN ROJO DE MAESTRÍA (Hanko Stamp) */}
+                    {/* TOAST DE FEEDBACK Y GUÍA */}
+                    <AnimatePresence>
+                        {feedbackTip && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -6 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -6 }}
+                                className="mb-2 px-3.5 py-1 rounded-full bg-red-950/80 border border-red-500/50 text-red-300 text-xs font-bold flex items-center gap-1.5 shadow-md"
+                            >
+                                <WarningCircle className="w-3.5 h-3.5" weight="fill" />
+                                <span>{feedbackTip}</span>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* EL AUTÉNTICO LIENZO DE PAPEL WASHI BLANCO CON CUADRÍCULA DE ARROZ (米 GRID EN TINTA BERMELLÓN) */}
+                    <div className="relative w-full max-w-[300px] xs:max-w-[340px] sm:max-w-[380px] aspect-square rounded-2xl overflow-hidden border-2 border-zinc-700 shadow-[0_25px_60px_rgba(0,0,0,0.85),inset_0_0_25px_rgba(215,200,175,0.15)] bg-gradient-to-b from-[#FFFDF9] via-[#FAF6EE] to-[#F5EFEB] touch-none select-none">
+                        {/* CUADRÍCULA DE PRÁCTICA TRADICIONAL JAPONESA (米 GRID BERMELLÓN) */}
+                        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25" viewBox="0 0 100 100">
+                            {/* Borde exterior */}
+                            <rect x="3" y="3" width="94" height="94" fill="none" stroke="#DC2626" strokeWidth="0.8" />
+                            {/* Línea horizontal central */}
+                            <line x1="3" y1="50" x2="97" y2="50" stroke="#DC2626" strokeWidth="0.6" strokeDasharray="2,2" />
+                            {/* Línea vertical central */}
+                            <line x1="50" y1="3" x2="50" y2="97" stroke="#DC2626" strokeWidth="0.6" strokeDasharray="2,2" />
+                            {/* Diagonales */}
+                            <line x1="3" y1="3" x2="97" y2="97" stroke="#DC2626" strokeWidth="0.4" strokeDasharray="1.5,2.5" />
+                            <line x1="97" y1="3" x2="3" y2="97" stroke="#DC2626" strokeWidth="0.4" strokeDasharray="1.5,2.5" />
+                        </svg>
+
+                        {/* CAPA SVG INTERACTIVA (Idéntica a Karate-Do) */}
+                        <svg
+                            ref={svgRef}
+                            className="absolute inset-0 w-full h-full cursor-crosshair touch-none select-none"
+                            viewBox="0 0 100 100"
+                            onPointerDown={handlePointerDown}
+                            onPointerMove={handlePointerMove}
+                            onPointerUp={handlePointerUp}
+                            onPointerCancel={handlePointerUp}
+                            onPointerLeave={handlePointerUp}
+                            style={{
+                                touchAction: "none",
+                                WebkitTouchCallout: "none",
+                                WebkitUserSelect: "none",
+                                userSelect: "none",
+                            }}
+                        >
+                            {/* 1. GUÍA FANTASMA DE TRAZOS NO COMPLETADOS (Grafito suave sobre papel Washi) */}
+                            {showGuide &&
+                                activeItem.strokes.map((stroke) => {
+                                    const isCompleted = completedStrokes.includes(stroke.id);
+                                    if (isCompleted) return null;
+
+                                    return (
+                                        <path
+                                            key={`ghost-${stroke.id}`}
+                                            d={stroke.path}
+                                            fill="none"
+                                            stroke="rgba(113, 113, 122, 0.22)"
+                                            strokeWidth="7.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    );
+                                })}
+
+                            {/* 2. TRAZOS COMPLETADOS EN AUTÉNTICA TINTA NEGRA SUMI-E (3 Capas) */}
+                            {activeItem.strokes.map((stroke) => {
+                                const isCompleted = completedStrokes.includes(stroke.id);
+                                if (!isCompleted) return null;
+                                const isFlashing = flashStrokeId === stroke.id;
+
+                                return (
+                                    <g key={`ink-${stroke.id}`}>
+                                        {/* Capa 1: Difuminado de absorción en el papel */}
+                                        <path
+                                            d={stroke.path}
+                                            fill="none"
+                                            stroke="#18181b"
+                                            strokeWidth="10"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="opacity-20"
+                                        />
+                                        {/* Capa 2: Cuerpo principal de carbón negro puro */}
+                                        <path
+                                            d={stroke.path}
+                                            fill="none"
+                                            stroke="#09090b"
+                                            strokeWidth="7.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="opacity-95"
+                                        />
+                                        {/* Capa 3: Textura sutil del pelo del pincel */}
+                                        <path
+                                            d={stroke.path}
+                                            fill="none"
+                                            stroke="#27272a"
+                                            strokeWidth="2.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="opacity-35"
+                                        />
+                                        {/* Destello dorado al sellar */}
+                                        {isFlashing && (
+                                            <path
+                                                d={stroke.path}
+                                                fill="none"
+                                                stroke="#F59E0B"
+                                                strokeWidth="8"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                className="opacity-60 animate-ping"
+                                            />
+                                        )}
+                                    </g>
+                                );
+                            })}
+
+                            {/* 3. TRAZO OBJETIVO ACTIVO: Guía bermellón y flujo progresivo de tinta negra */}
+                            {currentTargetStroke && !isCurrentKanjiFinished && strokeGeometries[currentTargetStroke.id] && (
+                                <g>
+                                    {/* Guía punteada bermellón */}
+                                    {showGuide && (
+                                        <>
+                                            <path
+                                                d={currentTargetStroke.path}
+                                                fill="none"
+                                                stroke="#EF4444"
+                                                strokeWidth="5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeDasharray="2,3"
+                                                className="opacity-55 animate-pulse"
+                                            />
+
+                                            {/* Círculo de inicio numerado (Estilo sello de laca roja) */}
+                                            <circle
+                                                cx={currentTargetStroke.start[0]}
+                                                cy={currentTargetStroke.start[1]}
+                                                r="4.8"
+                                                fill="#DC2626"
+                                                stroke="#991B1B"
+                                                strokeWidth="1"
+                                                className="drop-shadow-sm"
+                                            />
+                                            <circle
+                                                cx={currentTargetStroke.start[0]}
+                                                cy={currentTargetStroke.start[1]}
+                                                r="7"
+                                                fill="none"
+                                                stroke="#DC2626"
+                                                strokeWidth="0.8"
+                                                className="animate-ping opacity-50"
+                                            />
+                                            <text
+                                                x={currentTargetStroke.start[0]}
+                                                y={currentTargetStroke.start[1] + 1.6}
+                                                textAnchor="middle"
+                                                fill="#FFFFFF"
+                                                fontSize="4.5"
+                                                fontWeight="900"
+                                                className="select-none pointer-events-none"
+                                            >
+                                                {currentTargetStroke.id}
+                                            </text>
+
+                                            {/* Círculo objetivo de llegada */}
+                                            <circle
+                                                cx={currentTargetStroke.end[0]}
+                                                cy={currentTargetStroke.end[1]}
+                                                r="3.5"
+                                                fill="none"
+                                                stroke="#DC2626"
+                                                strokeWidth="1.2"
+                                                strokeDasharray="1.5,1.5"
+                                                className="opacity-80"
+                                            />
+                                            <circle
+                                                cx={currentTargetStroke.end[0]}
+                                                cy={currentTargetStroke.end[1]}
+                                                r="1.2"
+                                                fill="#DC2626"
+                                            />
+                                        </>
+                                    )}
+
+                                    {/* REVELACIÓN PROGRESIVA DE TINTA SUMI-E (Pinta la curva exacta bajo el dedo del karateka) */}
+                                    {strokeProgress > 0 && (
+                                        <g>
+                                            {/* Halo de absorción */}
+                                            <path
+                                                d={currentTargetStroke.path}
+                                                fill="none"
+                                                stroke="#18181b"
+                                                strokeWidth="10"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeDasharray={strokeGeometries[currentTargetStroke.id].totalLength}
+                                                strokeDashoffset={
+                                                    strokeGeometries[currentTargetStroke.id].totalLength *
+                                                    (1 - strokeProgress)
+                                                }
+                                                className="opacity-25"
+                                            />
+                                            {/* Tinta negra pura */}
+                                            <path
+                                                d={currentTargetStroke.path}
+                                                fill="none"
+                                                stroke="#09090b"
+                                                strokeWidth="7.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeDasharray={strokeGeometries[currentTargetStroke.id].totalLength}
+                                                strokeDashoffset={
+                                                    strokeGeometries[currentTargetStroke.id].totalLength *
+                                                    (1 - strokeProgress)
+                                                }
+                                                className="opacity-95"
+                                            />
+                                            {/* Espina del pincel */}
+                                            <path
+                                                d={currentTargetStroke.path}
+                                                fill="none"
+                                                stroke="#27272a"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeDasharray={strokeGeometries[currentTargetStroke.id].totalLength}
+                                                strokeDashoffset={
+                                                    strokeGeometries[currentTargetStroke.id].totalLength *
+                                                    (1 - strokeProgress)
+                                                }
+                                                className="opacity-40"
+                                            />
+                                        </g>
+                                    )}
+                                </g>
+                            )}
+
+                            {/* 4. TRAZO SUAVE EN VIVO (SPLINE DE TINTA) */}
+                            {renderUserInkSpline()}
+
+                            {/* 5. PUNTERO DEL PINCEL SHODO (Orbe y punta que sigue el dedo) */}
+                            {isDrawing && currentPointer && (
+                                <g>
+                                    <circle
+                                        cx={currentPointer.x}
+                                        cy={currentPointer.y}
+                                        r="5.5"
+                                        fill="#09090b"
+                                        opacity="0.2"
+                                        className="animate-pulse"
+                                    />
+                                    <circle
+                                        cx={currentPointer.x}
+                                        cy={currentPointer.y}
+                                        r="3.5"
+                                        fill="#09090b"
+                                        stroke="#27272a"
+                                        strokeWidth="1"
+                                    />
+                                    <circle
+                                        cx={currentPointer.x - 1}
+                                        cy={currentPointer.y - 1}
+                                        r="1"
+                                        fill="#FFFFFF"
+                                        opacity="0.6"
+                                    />
+                                </g>
+                            )}
+                        </svg>
+
+                        {/* SELLO INKAN ROJO DE MAESTRÍA (Hanko Stamp sobre el papel) */}
                         <AnimatePresence>
                             {isCurrentKanjiFinished && (
                                 <motion.div
-                                    initial={{ scale: 2.5, opacity: 0, rotate: -15 }}
-                                    animate={{ scale: 1, opacity: 0.9, rotate: -5 }}
-                                    exit={{ opacity: 0 }}
-                                    className="absolute bottom-4 right-4 z-20 pointer-events-none border-2 border-red-700 bg-red-600/10 rounded-lg p-1.5 shadow-md"
+                                    initial={{ scale: 2.2, opacity: 0, rotate: -20 }}
+                                    animate={{ scale: 1, opacity: 1, rotate: -6 }}
+                                    transition={{ type: "spring", damping: 14, stiffness: 180 }}
+                                    className="absolute bottom-4 right-4 pointer-events-none drop-shadow-md z-20"
                                 >
-                                    <div className="border border-red-600 px-2 py-0.5 text-center">
-                                        <span className="text-[10px] font-serif font-black text-red-700 tracking-widest block uppercase">
-                                            合格 • APTO
+                                    <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-lg border-3 border-red-700 bg-red-600/10 p-1 flex flex-col items-center justify-center text-red-600 font-serif font-black shadow-inner relative overflow-hidden backdrop-blur-[0.5px]">
+                                        <div className="absolute inset-1 border border-red-700/50 rounded-sm pointer-events-none" />
+                                        <span className="text-[9px] tracking-widest leading-none border-b border-red-700/50 pb-0.5 font-black uppercase">
+                                            APROBADO
+                                        </span>
+                                        <span className="text-xs tracking-wider font-extrabold text-red-700 mt-1 leading-none uppercase">
+                                            {activeItem.romaji}
+                                        </span>
+                                        <span className="text-[8px] text-red-600/90 tracking-wider leading-none mt-0.5 font-sans font-bold uppercase">
+                                            KUMA DOJO
                                         </span>
                                     </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
 
-                        {/* SVG INTERACTIVO DE TRAZO DE CALIGRAFÍA */}
-                        <svg
-                            ref={svgRef}
-                            viewBox="0 0 100 100"
-                            className="w-full h-full cursor-crosshair touch-none select-none relative z-10"
-                            onMouseDown={(e) => startDrawing(e.clientX, e.clientY)}
-                            onMouseMove={(e) => moveDrawing(e.clientX, e.clientY)}
-                            onMouseUp={stopDrawing}
-                            onMouseLeave={stopDrawing}
-                            onTouchStart={(e) => {
-                                if (e.touches.length > 0) {
-                                    startDrawing(e.touches[0].clientX, e.touches[0].clientY);
-                                }
-                            }}
-                            onTouchMove={(e) => {
-                                if (e.touches.length > 0) {
-                                    moveDrawing(e.touches[0].clientX, e.touches[0].clientY);
-                                }
-                            }}
-                            onTouchEnd={stopDrawing}
-                        >
-                            <defs>
-                                <linearGradient id="brushGold" x1="0" y1="0" x2="1" y2="1">
-                                    <stop offset="0%" stopColor="#F59E0B" />
-                                    <stop offset="100%" stopColor="#FDE047" />
-                                </linearGradient>
-                                <filter id="sumiGlow" x="-20%" y="-20%" width="140%" height="140%">
-                                    <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#18181B" floodOpacity="0.4" />
-                                </filter>
-                            </defs>
-
-                            {/* 1. GUÍA GRIS CLARA DEL KANJI COMPLETO */}
-                            {activeItem.strokes.map((stroke) => (
-                                <path
-                                    key={`ghost-${stroke.id}`}
-                                    d={stroke.path}
-                                    fill="none"
-                                    stroke="#D1C7B7"
-                                    strokeWidth="8"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    opacity="0.45"
-                                />
-                            ))}
-
-                            {/* 2. TRAZOS COMPLETADOS EN TINTA NEGRA SUMI-E */}
-                            {completedStrokes.map((strokeId) => {
-                                const stroke = activeItem.strokes.find((s) => s.id === strokeId);
-                                if (!stroke) return null;
-                                const isFlashing = flashStrokeId === strokeId;
-                                return (
-                                    <path
-                                        key={`done-${strokeId}`}
-                                        d={stroke.path}
-                                        fill="none"
-                                        stroke={isFlashing ? "#F59E0B" : "#1A1512"}
-                                        strokeWidth={isFlashing ? "10" : "8.5"}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        filter="url(#sumiGlow)"
-                                        className="transition-all duration-300"
-                                    />
-                                );
-                            })}
-
-                            {/* 3. GUÍA INTERACTIVA DEL TRAZO ACTUAL */}
-                            {currentTargetStroke && !isCurrentKanjiFinished && (
-                                <>
-                                    {/* Trazo objetivo con flecha punteada */}
-                                    <path
-                                        d={currentTargetStroke.path}
-                                        fill="none"
-                                        stroke="#F59E0B"
-                                        strokeWidth="5"
-                                        strokeDasharray="4 4"
-                                        strokeLinecap="round"
-                                        opacity="0.75"
-                                        className="animate-pulse"
-                                    />
-
-                                    {/* CÍRCULO ROJO INICIAL DE PARTIDA */}
-                                    <g>
-                                        <circle
-                                            cx={currentTargetStroke.start[0]}
-                                            cy={currentTargetStroke.start[1]}
-                                            r="5"
-                                            fill="#DC2626"
-                                            stroke="#FFFFFF"
-                                            strokeWidth="1.5"
-                                            className="animate-ping opacity-75"
-                                        />
-                                        <circle
-                                            cx={currentTargetStroke.start[0]}
-                                            cy={currentTargetStroke.start[1]}
-                                            r="4.5"
-                                            fill="#DC2626"
-                                            stroke="#FFFFFF"
-                                            strokeWidth="1.5"
-                                        />
-                                        <text
-                                            x={currentTargetStroke.start[0]}
-                                            y={currentTargetStroke.start[1] + 1.5}
-                                            textAnchor="middle"
-                                            fontSize="4.5"
-                                            fontWeight="900"
-                                            fill="#FFFFFF"
-                                        >
-                                            {currentTargetStroke.id}
-                                        </text>
-                                    </g>
-                                </>
-                            )}
-
-                            {/* 4. TRAZO ACTIVO EN TIEMPO REAL DEL USUARIO */}
-                            {userPoints.length > 1 && (
-                                <path
-                                    d={`M ${userPoints.map((p) => `${p.x} ${p.y}`).join(" L ")}`}
-                                    fill="none"
-                                    stroke="url(#brushGold)"
-                                    strokeWidth="9"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            )}
-                        </svg>
-
-                        {/* MENSAJE DE AYUDA RÁPIDO */}
-                        <AnimatePresence>
-                            {feedbackTip && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 5 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0 }}
-                                    className="absolute bottom-3 left-3 right-3 bg-zinc-900/90 border border-amber-400 text-amber-300 text-[11px] font-bold py-1.5 px-3 rounded-xl text-center shadow-lg pointer-events-none"
-                                >
-                                    {feedbackTip}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                        {/* BANNER INICIAL INDICATIVO */}
+                        {completedStrokes.length === 0 && !isDrawing && (
+                            <div className="absolute inset-x-0 bottom-4 flex justify-center pointer-events-none z-20">
+                                <div className="bg-zinc-950/85 text-white backdrop-blur-md px-3.5 py-1.5 rounded-full border border-amber-500/40 flex items-center gap-1.5 shadow-xl animate-bounce">
+                                    <HandPointing className="w-4 h-4 text-amber-400" weight="fill" />
+                                    <span className="text-[11px] font-bold">
+                                        Desliza el pincel de tinta desde el punto (1)
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
-                    {/* BOTONES DE HERRAMIENTAS Y CONTROL */}
-                    <div className="mt-4 w-full max-w-[360px] flex items-center justify-between gap-2">
-                        {/* Demo con Sensei */}
+                    {/* BARRA DE HERRAMIENTAS Y CONTROL (Idéntica a Karate-Do) */}
+                    <div className="flex items-center justify-between w-full max-w-[300px] xs:max-w-[340px] sm:max-w-[380px] mt-3 gap-2">
+                        {/* BOTÓN LIMPIAR */}
+                        <button
+                            type="button"
+                            onClick={handleResetCurrent}
+                            title="Limpiar este número para volver a trazar"
+                            className="flex-1 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 text-xs font-medium transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                            <ArrowCounterClockwise className="w-3.5 h-3.5" />
+                            <span>Limpiar</span>
+                        </button>
+
+                        {/* BOTÓN CONMUTAR GUÍA */}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                didacticSound.playClick();
+                                setShowGuide((prev) => !prev);
+                            }}
+                            title="Mostrar u ocultar guías"
+                            className={`py-2 px-3 rounded-xl border text-xs font-medium transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                                showGuide
+                                    ? "bg-amber-500/15 border-amber-400/50 text-amber-400"
+                                    : "bg-white/5 border-white/10 text-zinc-400"
+                            }`}
+                        >
+                            {showGuide ? <Eye className="w-3.5 h-3.5" /> : <EyeSlash className="w-3.5 h-3.5" />}
+                            <span className="hidden sm:inline">Guía</span>
+                        </button>
+
+                        {/* BOTÓN DEMOSTRACIÓN / PINCEL MÁGICO */}
                         <button
                             type="button"
                             disabled={isDemonstrating || isCurrentKanjiFinished}
                             onClick={handleDemonstrate}
-                            className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                                isDemonstrating || isCurrentKanjiFinished
-                                    ? "bg-zinc-800 text-zinc-500 border border-white/5 cursor-not-allowed"
-                                    : "bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/50"
-                            }`}
+                            title="Demostración guiada con pincel de tinta Sumi-e"
+                            className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500/20 to-yellow-500/20 hover:from-amber-500/30 hover:to-yellow-500/30 border border-amber-400/40 text-amber-300 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
-                            <MagicWand className="w-4 h-4" weight="fill" />
-                            <span>Pincel Mágico</span>
-                        </button>
-
-                        {/* Limpiar trazo */}
-                        <button
-                            type="button"
-                            onClick={handleResetCurrent}
-                            className="py-2.5 px-3 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-slate-300 border border-white/10 text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
-                            title="Limpiar para volver a trazar"
-                        >
-                            <ArrowCounterClockwise className="w-4 h-4" weight="bold" />
-                            <span>Limpiar</span>
+                            <Lightbulb className="w-3.5 h-3.5" weight="bold" />
+                            <span>{isDemonstrating ? "Trazando..." : "Demostración"}</span>
                         </button>
                     </div>
 
