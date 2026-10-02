@@ -147,9 +147,6 @@ export function SundomeTimingQuestion({
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [isRunning, outcome]);
 
-    // Calcular distancia simulada en centímetros
-    const currentDistanceCm = Math.max(0, Math.round(((100 - progress) / 100) * 15 * 10) / 10);
-
     return (
         <div className="w-full flex flex-col items-center select-none">
             {/* GUÍA BREVE (OCULTA EN MOBILE: en móviles solo queda el título principal sin textos largos) */}
@@ -173,25 +170,6 @@ export function SundomeTimingQuestion({
 
                     {/* Velo sutil inferior para contraste */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
-
-                    {/* OVERLAY DINÁMICO DE DISTANCIA MARCIAL */}
-                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex items-center gap-2">
-                        <div className="px-3 py-1.5 rounded-xl bg-black/80 backdrop-blur-md border border-white/20 text-xs font-mono font-bold shadow-lg flex items-center gap-2 text-white">
-                            <HandFist className="w-4 h-4 text-amber-400" weight="fill" />
-                            <span>Distancia al blanco:</span>
-                            <span
-                                className={`text-sm font-black px-2 py-0.5 rounded-lg ${
-                                    outcome === "perfect" || (isRunning && progress >= SUNDOME_MIN && progress <= SUNDOME_MAX)
-                                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/60 animate-pulse"
-                                        : progress > SUNDOME_MAX
-                                        ? "bg-red-500/20 text-red-300 border border-red-400/60"
-                                        : "bg-blue-500/20 text-blue-300 border border-blue-400/60"
-                                }`}
-                            >
-                                {outcome === "perfect" ? "2.0 cm" : `${currentDistanceCm} cm`}
-                            </span>
-                        </div>
-                    </div>
 
                     {/* ANILLO DE ENERGÍA Y SHOCKWAVE EN EL BLANCO */}
                     <div className="absolute right-[16%] sm:right-[18%] md:right-[20%] top-[40%] sm:top-[38%] -translate-y-1/2 pointer-events-none">
