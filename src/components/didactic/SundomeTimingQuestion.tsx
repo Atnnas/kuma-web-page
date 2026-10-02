@@ -39,7 +39,6 @@ export function SundomeTimingQuestion({
 }: SundomeTimingQuestionProps) {
     // Estado del juego
     const [progress, setProgress] = useState(0);
-    const [direction, setDirection] = useState<1 | -1>(1);
     const [isRunning, setIsRunning] = useState(true);
     const [outcome, setOutcome] = useState<"idle" | "too_early" | "perfect" | "too_late">("idle");
     const [stoppedValue, setStoppedValue] = useState<number | null>(null);
@@ -49,7 +48,7 @@ export function SundomeTimingQuestion({
     const animationFrameRef = useRef<number | null>(null);
     const lastTimestampRef = useRef<number | null>(null);
 
-    // Animación continua de la barra de energía
+    // Animación continua de la barra de energía: siempre avanza de izquierda a derecha (0% a 100%), nunca retrocede
     const updateProgress = useCallback((timestamp: number) => {
         if (!lastTimestampRef.current) lastTimestampRef.current = timestamp;
         const delta = timestamp - lastTimestampRef.current;
@@ -59,19 +58,13 @@ export function SundomeTimingQuestion({
         const speed = 0.085;
 
         setProgress((prev) => {
-            let next = prev + direction * speed * delta;
-            if (next >= 100) {
-                next = 100;
-                setDirection(-1);
-            } else if (next <= 0) {
-                next = 0;
-                setDirection(1);
-            }
-            return next;
+            const next = prev + speed * delta;
+            // Solo aumenta: al completar el 100% reinicia el ciclo desde el inicio
+            return next >= 100 ? next % 100 : next;
         });
 
         animationFrameRef.current = requestAnimationFrame(updateProgress);
-    }, [direction]);
+    }, []);
 
     useEffect(() => {
         if (isRunning) {
@@ -127,7 +120,6 @@ export function SundomeTimingQuestion({
         setStoppedValue(null);
         setShowSuccessCard(false);
         setProgress(0);
-        setDirection(1);
         setIsRunning(true);
     };
 
