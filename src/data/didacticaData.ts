@@ -333,59 +333,22 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ]
                     },
                     {
-                        id: "q-karate-ni-sente-nashi",
-                        type: "multiple_choice",
-                        prompt: "¿Qué enseña el lema «Karate ni sente nashi»?",
-                        description: "Pilar ético fundamental del Maestro Gichin Funakoshi.",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🕊️ En el Karate no existe el primer ataque (defensa y paz)",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o2",
-                                text: "⚡ Atacar antes que el rival para ganar",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o3",
-                                text: "🛡️ Rendirse jamás ante la derrota",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "🥊 Buscar el nocaut obligatorio en el primer golpe",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o1",
-                        explanation: "¡Brillante! 'Karate ni sente nashi' enseña que un karateka jamás inicia la violencia: el arte fue creado para la autoprotección y la paz.",
-                        hint: "La palabra 'sente' significa la primera iniciativa o agresión.",
+                        id: "q-shodo-numeros-1-10",
+                        type: "shodo_numbers",
+                        prompt: "Conteo Marcial: Los Números del 1 al 10",
+                        description: "Traza con el pincel los 10 Kanjis y aprende su pronunciación tradicional en el Dojo.",
+                        image: "/images/didactic/kuma_pixar_shodo_numbers.jpg",
+                        options: [],
+                        correctAnswerId: "completed",
+                        explanation: "¡Excelente maestría! Ahora dominas el conteo del 1 al 10 en japonés (Ichi, Ni, San, Shi, Go, Roku, Shichi, Hachi, Kyu, Ju) para los calentamientos y series de golpes en el Dojo.",
                         references: [
                             {
-                                title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
-                                author: "Maestro Gichin Funakoshi",
-                                year: 1938,
-                                editorial: "Editorial Tutor",
-                                chapter: "Principio 2: Karate ni sente nashi (En el Karate no existe el primer ataque)",
-                                note: "Fundamento moral que distingue al verdadero practicante del Budo de un peleador callejero."
-                            },
-                            {
-                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                title: "Karate-Do Kyohan: Terminología y Conteo Tradicional",
                                 author: "Maestro Gichin Funakoshi",
                                 year: 1935,
                                 editorial: "Editorial Eyras",
-                                chapter: "Introducción: La naturaleza defensiva y pacífica del Karate",
-                                note: "Establece que todas las katas tradicionales comienzan siempre con un movimiento de defensa o bloqueo."
-                            },
-                            {
-                                title: "Enciclopedia de las Artes Marciales del Extremo Oriente",
-                                author: "Roland Habersetzer (Hanshi 9° Dan)",
-                                year: 2004,
-                                editorial: "Editorial Miraguano",
-                                chapter: "Tomo II: Filosofía moral del Budo y el concepto 'Sente Nashi'",
-                                note: "Exégesis histórica sobre el origen okinawense de la máxima y su integración en el código de honor japonés."
+                                chapter: "Capítulo II: Comandos y Conteo de Kihon en el Dojo",
+                                note: "Establece el conteo formal del 1 al 10 en japonés para la sincronización grupal y el ritmo respiratorio."
                             }
                         ]
                     },

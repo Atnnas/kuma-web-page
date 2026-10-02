@@ -9,7 +9,8 @@ export type QuestionType =
     | 'map_drag'
     | 'tree_pillars'
     | 'okinawa_branches'
-    | 'sundome_timing';
+    | 'sundome_timing'
+    | 'shodo_numbers';
 
 export interface DragMapItem {
     id: string;

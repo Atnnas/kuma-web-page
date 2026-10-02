@@ -12,6 +12,7 @@ import { MapOriginDragQuestion } from "./MapOriginDragQuestion";
 import { TreePillarsQuestion } from "./TreePillarsQuestion";
 import { OkinawaBranchesQuestion } from "./OkinawaBranchesQuestion";
 import { SundomeTimingQuestion } from "./SundomeTimingQuestion";
+import { ShodoNumbersQuestion } from "./ShodoNumbersQuestion";
 import { didacticSound } from "@/lib/didacticSound";
 import { DIDACTIC_UNITS } from "@/data/didacticaData";
 import { getBeltRank } from "@/data/beltRanks";
@@ -188,6 +189,7 @@ export function LessonSessionModal({
     const [isTreePillarsDone, setIsTreePillarsDone] = useState(false);
     const [isOkinawaBranchesDone, setIsOkinawaBranchesDone] = useState(false);
     const [isSundomeDone, setIsSundomeDone] = useState(false);
+    const [isShodoNumbersDone, setIsShodoNumbersDone] = useState(false);
 
 // Fisher-Yates shuffle helper para orden aleatorio
 function shuffleArray<T>(array: T[]): T[] {
@@ -387,6 +389,8 @@ function shuffleArray<T>(array: T[]): T[] {
             ? isOkinawaBranchesDone
             : currentQuestion.type === "sundome_timing"
             ? isSundomeDone
+            : currentQuestion.type === "shodo_numbers"
+            ? isShodoNumbersDone
             : false;
 
     const handleDirectMapCheckAndNext = () => {
@@ -453,6 +457,22 @@ function shuffleArray<T>(array: T[]): T[] {
         }
     };
 
+    const handleDirectShodoNumbersCheckAndNext = () => {
+        didacticSound.playCorrect();
+        setCorrectCount((prev) => prev + 1);
+        setStreak((prev) => prev + 1);
+        setMascotMood("streak");
+        setCustomSpeech("¡KIAI! ¡Dominaste el trazo Shodo y el conteo del 1 al 10 en japonés! 🥋🖌️✨");
+        setIsShodoNumbersDone(false);
+        setAnswerStatus("idle");
+
+        if (currentIndex + 1 < totalQuestions) {
+            setCurrentIndex((prev) => prev + 1);
+        } else {
+            handleNextQuestion();
+        }
+    };
+
     const handleValidation = (isMatchingAutoCorrect: boolean = false) => {
         let isCorrect = false;
 
@@ -476,6 +496,11 @@ function shuffleArray<T>(array: T[]): T[] {
         } else if (currentQuestion.type === "sundome_timing") {
             if (isSundomeDone) {
                 handleDirectSundomeCheckAndNext();
+                return;
+            }
+        } else if (currentQuestion.type === "shodo_numbers") {
+            if (isShodoNumbersDone) {
+                handleDirectShodoNumbersCheckAndNext();
                 return;
             }
         } else if (currentQuestion.type === "multiple_choice" || currentQuestion.type === "image_choice") {
@@ -586,7 +611,8 @@ function shuffleArray<T>(array: T[]): T[] {
         currentQuestion.type === "tree_pillars" ||
         currentQuestion.type === "okinawa_branches" ||
         currentQuestion.type === "kanji_draw" ||
-        currentQuestion.type === "sundome_timing";
+        currentQuestion.type === "sundome_timing" ||
+        currentQuestion.type === "shodo_numbers";
 
     return (
         <div className="fixed inset-0 z-[70] flex flex-col bg-[#0B132B] text-white select-none overflow-hidden">
@@ -821,7 +847,8 @@ function shuffleArray<T>(array: T[]): T[] {
                                     currentQuestion.type !== "tree_pillars" &&
                                     currentQuestion.type !== "map_drag" &&
                                     currentQuestion.type !== "okinawa_branches" &&
-                                    currentQuestion.type !== "sundome_timing" && (
+                                    currentQuestion.type !== "sundome_timing" &&
+                                    currentQuestion.type !== "shodo_numbers" && (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.96 }}
                                         animate={{ opacity: 1, scale: 1 }}
@@ -1140,6 +1167,21 @@ function shuffleArray<T>(array: T[]): T[] {
                                                 setCustomSpeech("¡KIAI! ¡Dominaste el principio de Ikken Hissatsu con Sundome milimétrico! 🥋✨");
                                             }}
                                             onCheckAndNext={handleDirectSundomeCheckAndNext}
+                                        />
+                                    </div>
+                                )}
+                                {/* SHODO NUMBERS QUESTION (CONTEO MARCIAL DEL 1 AL 10 CON KANJI) */}
+                                {currentQuestion.type === "shodo_numbers" && (
+                                    <div className="w-full">
+                                        <ShodoNumbersQuestion
+                                            question={currentQuestion}
+                                            isSuperAdmin={isSuperAdmin}
+                                            onCompleted={() => {
+                                                setIsShodoNumbersDone(true);
+                                                setMascotMood("streak");
+                                                setCustomSpeech("¡KIAI! ¡Dominaste el trazo Shodo y el conteo del 1 al 10 en japonés! 🥋🖌️✨");
+                                            }}
+                                            onCheckAndNext={handleDirectShodoNumbersCheckAndNext}
                                         />
                                     </div>
                                 )}
