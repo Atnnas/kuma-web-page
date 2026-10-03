@@ -137,7 +137,7 @@ export function OkinawaBranchesQuestion({
 
     const [selectedBranchId, setSelectedBranchId] = useState<BranchId | null>("shuri");
     const [lastCompletedCity, setLastCompletedCity] = useState<BranchId>("naha");
-    const [isVoiceActive, setIsVoiceActive] = useState<boolean>(true);
+    const [isVoiceActive, setIsVoiceActive] = useState<boolean>(false);
     const [latinVoice, setLatinVoice] = useState<SpeechSynthesisVoice | null>(null);
     const [isExplainingTriangle, setIsExplainingTriangle] = useState<boolean>(false);
     const [showVictoryModal, setShowVictoryModal] = useState<boolean>(false);
@@ -168,9 +168,10 @@ export function OkinawaBranchesQuestion({
         }
     }, []);
 
-    // Síntesis de voz amigable en Español Latino
-    const speakKuma = (text: string) => {
-        if (!isVoiceActive || typeof window === "undefined" || !window.speechSynthesis) return;
+    // Síntesis de voz amigable en Español Latino (apagado por defecto)
+    const speakKuma = (text: string, forceVoice?: boolean) => {
+        const active = forceVoice !== undefined ? forceVoice : isVoiceActive;
+        if (!active || typeof window === "undefined" || !window.speechSynthesis) return;
 
         try {
             window.speechSynthesis.cancel();
@@ -390,7 +391,8 @@ export function OkinawaBranchesQuestion({
                             speakKuma(
                                 isAllDiscovered
                                     ? "¡Las tres ciudades han sido reveladas! Toca comprobar técnica."
-                                    : "Toca una rama abajo y luego toca su ciudad en el mapa."
+                                    : "Toca una rama abajo y luego toca su ciudad en el mapa.",
+                                true
                             );
                         }
                     }}

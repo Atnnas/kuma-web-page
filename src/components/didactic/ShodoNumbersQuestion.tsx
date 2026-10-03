@@ -8,6 +8,7 @@ import { didacticSound } from "@/lib/didacticSound";
 import confetti from "canvas-confetti";
 import {
     SpeakerHigh,
+    SpeakerSlash,
     ArrowCounterClockwise,
     Eye,
     EyeSlash,
@@ -43,6 +44,7 @@ export function ShodoNumbersQuestion({
 }: ShodoNumbersQuestionProps) {
     const [activeIndex, setActiveIndex] = useState(0);
     const activeItem: NumberKanjiDef = NUMBERS_1_TO_10_KANJIS[activeIndex] || NUMBERS_1_TO_10_KANJIS[0];
+    const [isVoiceActive, setIsVoiceActive] = useState<boolean>(false);
 
     // Trazos completados por cada kanji: { [kanjiChar]: number[] }
     const [completedStrokesByKanji, setCompletedStrokesByKanji] = useState<{ [kanji: string]: number[] }>({});
@@ -168,7 +170,11 @@ export function ShodoNumbersQuestion({
 
             // Si se completaron todos los trazos del número actual
             if (updated.length === activeItem.strokes.length) {
-                playPronunciation(activeItem.hiragana, activeItem.romaji);
+                if (isVoiceActive) {
+                    playPronunciation(activeItem.hiragana, activeItem.romaji);
+                } else {
+                    playZenBell();
+                }
                 setMasteredKanjis((prevMastered) => {
                     if (!prevMastered.includes(activeItem.kanji)) {
                         const newMastered = [...prevMastered, activeItem.kanji];
@@ -536,12 +542,46 @@ export function ShodoNumbersQuestion({
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-black/40 to-transparent" />
 
-                    {/* BADGE MARCIAL FLOTANTE */}
+                    {/* BADGE MARCIAL FLOTANTE Y CONTROL DE VOZ */}
                     <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex items-center gap-2">
                         <div className="px-3 py-1.5 rounded-xl bg-black/85 backdrop-blur-md border border-amber-400/40 text-xs font-bold text-amber-300 flex items-center gap-1.5 shadow-lg">
                             <Sparkle className="w-4 h-4 text-yellow-400" weight="fill" />
                             <span>Pincel Shodo: Números del 1 al 10</span>
                         </div>
+
+                        {/* Botón sutil flotante de Voz (apagada por defecto) */}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (isVoiceActive) {
+                                    if (typeof window !== "undefined" && window.speechSynthesis) {
+                                        window.speechSynthesis.cancel();
+                                    }
+                                    setIsVoiceActive(false);
+                                } else {
+                                    setIsVoiceActive(true);
+                                    playPronunciation(activeItem.hiragana, activeItem.romaji);
+                                }
+                            }}
+                            className={`px-2.5 py-1.5 rounded-xl text-[11px] font-black flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md border shadow-md ${
+                                isVoiceActive
+                                    ? "bg-black/85 border-[#58CC02]/80 text-[#58CC02] shadow-[0_0_10px_rgba(88,204,2,0.3)]"
+                                    : "bg-black/70 border-white/20 text-slate-300 hover:text-white"
+                            }`}
+                            title={isVoiceActive ? "Voz activa (toca para silenciar)" : "Activar voz"}
+                        >
+                            {isVoiceActive ? (
+                                <>
+                                    <SpeakerHigh className="w-3.5 h-3.5" weight="fill" />
+                                    <span>Voz: ON</span>
+                                </>
+                            ) : (
+                                <>
+                                    <SpeakerSlash className="w-3.5 h-3.5" />
+                                    <span>Voz: OFF</span>
+                                </>
+                            )}
+                        </button>
                     </div>
 
                     {/* CONTADOR DE PROGRESO 1 AL 10 */}

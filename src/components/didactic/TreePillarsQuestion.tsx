@@ -165,7 +165,7 @@ export function TreePillarsQuestion({
     });
 
     const [selectedGemId, setSelectedGemId] = useState<PillarId | null>(null);
-    const [isVoiceActive, setIsVoiceActive] = useState<boolean>(true);
+    const [isVoiceActive, setIsVoiceActive] = useState<boolean>(false);
     const [latinVoice, setLatinVoice] = useState<SpeechSynthesisVoice | null>(null);
     const [isExplainingKumite, setIsExplainingKumite] = useState<boolean>(false);
     const [showVictoryModal, setShowVictoryModal] = useState<boolean>(false);
@@ -196,9 +196,10 @@ export function TreePillarsQuestion({
         }
     }, []);
 
-    // Síntesis de voz en Español Latino
-    const speakKuma = (text: string) => {
-        if (!isVoiceActive || typeof window === "undefined" || !window.speechSynthesis) return;
+    // Síntesis de voz en Español Latino (apagado por defecto)
+    const speakKuma = (text: string, forceVoice?: boolean) => {
+        const active = forceVoice !== undefined ? forceVoice : isVoiceActive;
+        if (!active || typeof window === "undefined" || !window.speechSynthesis) return;
 
         try {
             window.speechSynthesis.cancel();
@@ -397,7 +398,8 @@ export function TreePillarsQuestion({
                             speakKuma(
                                 isAllPlaced
                                     ? "¡El árbol ha florecido! Toca comprobar técnica."
-                                    : "Toca una gema abajo y luego toca su altar en el árbol."
+                                    : "Toca una gema abajo y luego toca su altar en el árbol.",
+                                true
                             );
                         }
                     }}

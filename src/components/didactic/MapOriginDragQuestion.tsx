@@ -157,7 +157,7 @@ export function MapOriginDragQuestion({
     // 2 = En Okinawa, listo para navegar a Japón
     // 3 = Completado en Japón
     const [step, setStep] = useState<number>(0);
-    const [isVoiceActive, setIsVoiceActive] = useState<boolean>(true);
+    const [isVoiceActive, setIsVoiceActive] = useState<boolean>(false);
     const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
     const [latinVoice, setLatinVoice] = useState<SpeechSynthesisVoice | null>(null);
     const [isExplainingJapan, setIsExplainingJapan] = useState<boolean>(false);
@@ -190,9 +190,10 @@ export function MapOriginDragQuestion({
         }
     }, []);
 
-    // Sistema de síntesis de voz en Español Latino amigable para niños
-    const speakKuma = (text: string) => {
-        if (!isVoiceActive || typeof window === "undefined" || !window.speechSynthesis) return;
+    // Sistema de síntesis de voz en Español Latino amigable para niños (apagado por defecto)
+    const speakKuma = (text: string, forceVoice?: boolean) => {
+        const active = forceVoice !== undefined ? forceVoice : isVoiceActive;
+        if (!active || typeof window === "undefined" || !window.speechSynthesis) return;
 
         try {
             window.speechSynthesis.cancel();
@@ -396,7 +397,8 @@ export function MapOriginDragQuestion({
                                     ? "Ahora toca la isla de Okinawa en el centro."
                                     : step === 2
                                     ? "Toca Japón para terminar el viaje."
-                                    : "¡Completaste el origen del Karate!"
+                                    : "¡Completaste el origen del Karate!",
+                                true
                             );
                         }
                     }}
