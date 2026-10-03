@@ -45,9 +45,6 @@ export function TatamiReiQuestion({
     const [bowAngle, setBowAngle] = useState(0);
     const [isAutoBowing, setIsAutoBowing] = useState(false);
 
-    // Sello Hanko y Victoria
-    const [hasStampedHanko, setHasStampedHanko] = useState(false);
-
     const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
 
     // Web Audio: Pisada firme en borde del tatami ("Tak")
@@ -235,7 +232,6 @@ export function TatamiReiQuestion({
                 setTimeout(() => {
                     // PASO 4: Aprobación del Sensei/Senpai para ingresar al tatami
                     setCurrentStep(4);
-                    setHasStampedHanko(true);
                     didacticSound.playCorrect();
 
                     confetti({
@@ -261,7 +257,6 @@ export function TatamiReiQuestion({
         setIsStep2Done(false);
         setIsStep3Done(false);
         setBowAngle(0);
-        setHasStampedHanko(false);
         didacticSound.playClick();
     };
 
@@ -353,39 +348,7 @@ export function TatamiReiQuestion({
                             <ArrowCounterClockwise className="w-4 h-4" weight="bold" />
                         </button>
 
-                        {isSuperAdmin && (
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    onCompleted();
-                                    if (onCheckAndNext) onCheckAndNext();
-                                }}
-                                className="px-3 py-1.5 bg-purple-900/90 hover:bg-purple-800 text-purple-200 text-xs sm:text-sm font-bold rounded-xl border border-purple-500/50 backdrop-blur-md shadow-sm"
-                            >
-                                ⚡ Omitir
-                            </button>
-                        )}
                     </div>
-
-                    {/* SELLO HANKO DE APROBACIÓN CUANDO SE COMPLETA */}
-                    <AnimatePresence>
-                        {hasStampedHanko && (
-                            <motion.div
-                                initial={{ scale: 3, opacity: 0, rotate: -25 }}
-                                animate={{ scale: 1, opacity: 1, rotate: -6 }}
-                                transition={{ type: "spring", stiffness: 280, damping: 18 }}
-                                className="absolute bottom-5 right-5 z-30 pointer-events-none"
-                            >
-                                <div className="w-28 h-28 sm:w-36 sm:h-36 border-4 border-red-600 bg-red-700/95 text-white rounded-2xl flex flex-col items-center justify-center p-2 shadow-[0_0_40px_rgba(220,38,38,0.9)] backdrop-blur-sm select-none">
-                                    <div className="border border-red-300/60 w-full h-full rounded-xl flex flex-col items-center justify-center p-1">
-                                        <span className="text-[11px] font-black tracking-widest text-red-200 uppercase">APROBADO</span>
-                                        <span className="text-3xl sm:text-4xl font-black font-serif my-0.5 tracking-wider text-red-100 drop-shadow">礼</span>
-                                        <span className="text-[10px] font-bold text-red-200 tracking-wider">DOJO KUN</span>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
 
                     {/* BADGE INFORMATIVO INFERIOR */}
                     <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 bg-slate-950/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-slate-700 text-xs sm:text-sm font-bold text-slate-200">
