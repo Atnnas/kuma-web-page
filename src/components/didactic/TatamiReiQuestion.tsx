@@ -310,7 +310,7 @@ export function TatamiReiQuestion({
                     <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 flex items-center gap-2">
                         <div className="px-3.5 py-1.5 rounded-xl bg-slate-950/90 backdrop-blur-md border border-blue-400/60 text-xs sm:text-sm font-black text-blue-300 flex items-center gap-2 shadow-lg">
                             <Sparkle className="w-4 h-4 text-blue-400" weight="fill" />
-                            <span>Protocolo WKF • Entrada al Tatami</span>
+                            <span>Entrando al Tatami de Manera Correcta • Saludo y Seguridad</span>
                         </div>
                     </div>
 

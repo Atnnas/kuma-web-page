@@ -1212,7 +1212,7 @@ function shuffleArray<T>(array: T[]): T[] {
                                         />
                                     </div>
                                 )}
-                                {/* TATAMI REI QUESTION (EL UMBRAL DEL TATAMI WKF - REI Y OSS SENSEI) */}
+                                {/* TATAMI REI QUESTION (ENTRANDO AL TATAMI DE MANERA CORRECTA: SALUDO Y SEGURIDAD) */}
                                 {currentQuestion.type === "tatami_rei" && (
                                     <div className="w-full">
                                         <TatamiReiQuestion

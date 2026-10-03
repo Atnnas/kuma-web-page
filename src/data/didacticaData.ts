@@ -413,8 +413,8 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-significado-saludo-rei",
                         type: "tatami_rei",
-                        prompt: "El Umbral del Tatami: El saludo de respeto (Rei) y '¡Oss Sensei!'",
-                        description: "Protocolo tradicional de cortesía marcial (Reigi Sahō) al pisar el tatami.",
+                        prompt: "Entrando al tatami de manera correcta: saludo y seguridad entrando al tatami",
+                        description: "Protocolo de cortesía y seguridad al ingresar al tatami.",
                         image: "/images/didactic/kuma_tatami_3_steps.jpg",
                         explanation: "¡Excelente! Has cumplido el protocolo marcial: 1. Pararse al borde del tatami con la mano levantada, 2. Decir con energía '¡Oss Sensei!', 3. Realizar la reverencia formal Rei a 30°, y tras la aprobación del Sensei o Senpai, ingresar al tatami con honor.",
                         hint: "Sigue los 3 pasos: 1. Pararse al borde con la mano levantada, 2. Decir '¡Oss Sensei!', 3. Hacer Rei (reverencia) y esperar la aprobación del Sensei para ingresar.",
