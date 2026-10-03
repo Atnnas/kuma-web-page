@@ -417,7 +417,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                         description: "Protocolo tradicional de cortesía marcial (Reigi Sahō) al pisar el tatami.",
                         image: "/images/didactic/kuma_pixar_tatami_rei.jpg",
                         explanation: "¡Excelente reverencia! En el Karate tradicional, cada vez que ingresamos al tatami saludamos con respeto (Rei) y exclamamos con convicción '¡Oss Sensei!'. El respeto mutuo y la cortesía marcial protegen la armonía y disciplina del Dojo.",
-                        hint: "Sigue los 3 pasos: Postura Musubi-dachi (talones a 45°), Reverencia Rei a 30°, y saluda con convicción: '¡Oss Sensei!'.",
+                        hint: "Sigue los 3 pasos: Saludo con mano levantada y postura Musubi-dachi (talones a 45°), Reverencia Rei a 30°, y saluda con convicción: '¡Oss Sensei!'.",
                         references: [
                             {
                                 title: "Karate-Do: Mi Camino de Vida",

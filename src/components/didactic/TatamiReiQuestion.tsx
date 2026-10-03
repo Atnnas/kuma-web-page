@@ -439,14 +439,14 @@ export function TatamiReiQuestion({
 
                 {/* 3. CONSOLA INTERACTIVA INFERIOR (PULCRA, TÁCTIL Y RÁPIDA) */}
                 <div className="w-full p-4 sm:p-6 bg-slate-950 flex flex-col justify-center min-h-[160px]">
-                    {/* PASO 1: MUSUBI-DACHI */}
+                    {/* PASO 1: MANO LEVANTADA Y MUSUBI-DACHI */}
                     {currentStep === 1 && (
                         <div className="flex flex-col items-center text-center">
                             <h3 className="text-base sm:text-lg font-bold text-white mb-1">
-                                Paso 1: Junta los talones en <span className="text-amber-400 font-black">Musubi-dachi (45°)</span>
+                                Paso 1: Saludo con <span className="text-amber-400 font-black">Mano Levantada</span> y postura <span className="text-amber-400 font-black">Musubi-dachi</span>
                             </h3>
                             <p className="text-xs text-slate-300 max-w-lg mb-4">
-                                Antes de cruzar la línea roja del tatami WKF, unimos los talones manteniendo las puntas abiertas a 45 grados.
+                                Antes de cruzar la línea de seguridad al tatami WKF, levantamos la mano abierta en señal de respeto y unimos los talones a 45°.
                             </p>
 
                             <button
@@ -462,12 +462,12 @@ export function TatamiReiQuestion({
                                 {feetAligned ? (
                                     <>
                                         <CheckCircle className="w-5 h-5 text-white" weight="fill" />
-                                        <span>¡Talones alineados a 45°!</span>
+                                        <span>¡Mano levantada y talones a 45°!</span>
                                     </>
                                 ) : (
                                     <>
                                         <HandPointing className="w-5 h-5 text-slate-950" weight="fill" />
-                                        <span>Alinear Talones a 45°</span>
+                                        <span>✋ Levantar Mano y Alinear a 45°</span>
                                     </>
                                 )}
                             </button>
