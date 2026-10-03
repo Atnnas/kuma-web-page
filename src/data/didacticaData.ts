@@ -412,34 +412,12 @@ export const DIDACTIC_UNITS: Unit[] = [
                     },
                     {
                         id: "q-significado-saludo-rei",
-                        type: "multiple_choice",
-                        prompt: "¿Por qué toda práctica marcial inicia y termina con el saludo (Rei)?",
-                        description: "Protocolo y etiqueta sagrada del Dojo.",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🙇‍♂️ Por sumisión obligatoria ante el sensei",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o2",
-                                text: "🤝 Por respeto mutuo y cortesía marcial",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o3",
-                                text: "⏱️ Para que el árbitro inicie el reloj",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "🧘 Para estirar los músculos del cuello",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o2",
-                        explanation: "¡Exacto! 'El Karate empieza y termina con respeto'. El saludo (Rei) recuerda que el compañero nos ayuda a crecer y superarnos mutuamente.",
-                        hint: "El Budo busca forjar carácter y respeto, no violencia.",
+                        type: "tatami_rei",
+                        prompt: "El Umbral del Tatami: El saludo de respeto (Rei) y '¡Oss Sensei!'",
+                        description: "Protocolo tradicional de cortesía marcial (Reigi Sahō) al pisar el tatami.",
+                        image: "/images/didactic/kuma_pixar_tatami_rei.jpg",
+                        explanation: "¡Excelente reverencia! En el Karate tradicional, cada vez que ingresamos al tatami saludamos con respeto (Rei) y exclamamos con convicción '¡Oss Sensei!'. El respeto mutuo y la cortesía marcial protegen la armonía y disciplina del Dojo.",
+                        hint: "Sigue los 3 pasos: Postura Musubi-dachi (talones a 45°), Reverencia Rei a 30°, y saluda con convicción: '¡Oss Sensei!'.",
                         references: [
                             {
                                 title: "Karate-Do: Mi Camino de Vida",
@@ -447,7 +425,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 year: 1975,
                                 editorial: "Editorial Eyras",
                                 chapter: "Capítulo 1: El espíritu del Rei y la etiqueta marcial en el dojo tradicional",
-                                note: "El fundador advierte que la técnica de combate sin reverencia ni respeto se degrada a simple violencia."
+                                note: "El maestro fundador advierte que la técnica marcial sin reverencia ni respeto mutuo carece de verdadero sentido formativo."
                             },
                             {
                                 title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
@@ -455,7 +433,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 year: 1938,
                                 editorial: "Editorial Tutor",
                                 chapter: "Principio 1: Karate-do wa rei ni hajimari, rei ni owaru koto (El Karate empieza y termina con respeto)",
-                                note: "La regla áurea número uno del Karate tradicional como camino de elevación del espíritu humano."
+                                note: "La regla de oro del Karate tradicional como sendero de autocontrol y elevación del espíritu humano."
                             },
                             {
                                 title: "El Mejor Karate: Fundamentos",
@@ -463,7 +441,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 year: 1989,
                                 editorial: "Editorial Tutor",
                                 chapter: "Capítulo 1: Reigi Sahō: El protocolo y la cortesía dentro del Dojo",
-                                note: "Manual formativo que detalla la reverencia al maestro (Sensei ni rei), a los compañeros (Otagai ni rei) y al recinto sagrado."
+                                note: "Manual formativo que detalla la reverencia al maestro (Sensei ni rei), a los compañeros (Otagai ni rei) y al recinto del Dojo."
                             }
                         ]
                     },

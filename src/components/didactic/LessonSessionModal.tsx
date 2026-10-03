@@ -13,6 +13,7 @@ import { TreePillarsQuestion } from "./TreePillarsQuestion";
 import { OkinawaBranchesQuestion } from "./OkinawaBranchesQuestion";
 import { SundomeTimingQuestion } from "./SundomeTimingQuestion";
 import { ShodoNumbersQuestion } from "./ShodoNumbersQuestion";
+import { TatamiReiQuestion } from "./TatamiReiQuestion";
 import { didacticSound } from "@/lib/didacticSound";
 import { DIDACTIC_UNITS } from "@/data/didacticaData";
 import { getBeltRank } from "@/data/beltRanks";
@@ -190,6 +191,7 @@ export function LessonSessionModal({
     const [isOkinawaBranchesDone, setIsOkinawaBranchesDone] = useState(false);
     const [isSundomeDone, setIsSundomeDone] = useState(false);
     const [isShodoNumbersDone, setIsShodoNumbersDone] = useState(false);
+    const [isTatamiReiDone, setIsTatamiReiDone] = useState(false);
 
 // Fisher-Yates shuffle helper para orden aleatorio
 function shuffleArray<T>(array: T[]): T[] {
@@ -473,6 +475,22 @@ function shuffleArray<T>(array: T[]): T[] {
         }
     };
 
+    const handleDirectTatamiReiCheckAndNext = () => {
+        didacticSound.playCorrect();
+        setCorrectCount((prev) => prev + 1);
+        setStreak((prev) => prev + 1);
+        setMascotMood("streak");
+        setCustomSpeech("¡KIAI! ¡Dominaste el protocolo de respeto Rei y el saludo Oss Sensei en el tatami! 🥋🙇‍♂️✨");
+        setIsTatamiReiDone(false);
+        setAnswerStatus("idle");
+
+        if (currentIndex + 1 < totalQuestions) {
+            setCurrentIndex((prev) => prev + 1);
+        } else {
+            handleNextQuestion();
+        }
+    };
+
     const handleValidation = (isMatchingAutoCorrect: boolean = false) => {
         let isCorrect = false;
 
@@ -612,7 +630,8 @@ function shuffleArray<T>(array: T[]): T[] {
         currentQuestion.type === "okinawa_branches" ||
         currentQuestion.type === "kanji_draw" ||
         currentQuestion.type === "sundome_timing" ||
-        currentQuestion.type === "shodo_numbers";
+        currentQuestion.type === "shodo_numbers" ||
+        currentQuestion.type === "tatami_rei";
 
     return (
         <div className="fixed inset-0 z-[70] flex flex-col bg-[#0B132B] text-white select-none overflow-hidden">
@@ -848,7 +867,8 @@ function shuffleArray<T>(array: T[]): T[] {
                                     currentQuestion.type !== "map_drag" &&
                                     currentQuestion.type !== "okinawa_branches" &&
                                     currentQuestion.type !== "sundome_timing" &&
-                                    currentQuestion.type !== "shodo_numbers" && (
+                                    currentQuestion.type !== "shodo_numbers" &&
+                                    currentQuestion.type !== "tatami_rei" && (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.96 }}
                                         animate={{ opacity: 1, scale: 1 }}
