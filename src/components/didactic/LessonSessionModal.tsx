@@ -393,6 +393,8 @@ function shuffleArray<T>(array: T[]): T[] {
             ? isSundomeDone
             : currentQuestion.type === "shodo_numbers"
             ? isShodoNumbersDone
+            : currentQuestion.type === "tatami_rei"
+            ? isTatamiReiDone
             : false;
 
     const handleDirectMapCheckAndNext = () => {
@@ -519,6 +521,11 @@ function shuffleArray<T>(array: T[]): T[] {
         } else if (currentQuestion.type === "shodo_numbers") {
             if (isShodoNumbersDone) {
                 handleDirectShodoNumbersCheckAndNext();
+                return;
+            }
+        } else if (currentQuestion.type === "tatami_rei") {
+            if (isTatamiReiDone) {
+                handleDirectTatamiReiCheckAndNext();
                 return;
             }
         } else if (currentQuestion.type === "multiple_choice" || currentQuestion.type === "image_choice") {
@@ -1202,6 +1209,21 @@ function shuffleArray<T>(array: T[]): T[] {
                                                 setCustomSpeech("¡KIAI! ¡Dominaste el trazo Shodo y el conteo del 1 al 10 en japonés! 🥋🖌️✨");
                                             }}
                                             onCheckAndNext={handleDirectShodoNumbersCheckAndNext}
+                                        />
+                                    </div>
+                                )}
+                                {/* TATAMI REI QUESTION (EL UMBRAL DEL TATAMI WKF - REI Y OSS SENSEI) */}
+                                {currentQuestion.type === "tatami_rei" && (
+                                    <div className="w-full">
+                                        <TatamiReiQuestion
+                                            question={currentQuestion}
+                                            isSuperAdmin={isSuperAdmin}
+                                            onCompleted={() => {
+                                                setIsTatamiReiDone(true);
+                                                setMascotMood("streak");
+                                                setCustomSpeech("¡KIAI! ¡Dominaste el protocolo de respeto Rei y el saludo Oss Sensei en el tatami! 🥋🙇‍♂️✨");
+                                            }}
+                                            onCheckAndNext={handleDirectTatamiReiCheckAndNext}
                                         />
                                     </div>
                                 )}
