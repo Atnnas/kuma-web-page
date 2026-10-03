@@ -130,6 +130,11 @@ function QuestionBibliography({
                                             {item.chapter && <span className="text-slate-300 font-medium">{item.chapter}</span>}
                                         </div>
                                     )}
+                                    {item.note && (
+                                        <p className="text-[10px] text-slate-300/80 italic mt-0.5 leading-snug">
+                                            📌 {item.note}
+                                        </p>
+                                    )}
                                 </div>
                             );
                         })}

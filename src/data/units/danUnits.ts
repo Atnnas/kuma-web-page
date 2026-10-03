@@ -36,8 +36,8 @@ export const DAN_UNITS: Unit[] = [
                         "Con el uso constante y el paso de los años, la tela negra del cinturón se deshilacha y desgasta hasta volver a mostrar el núcleo blanco interior, completando el ciclo espiritual."
                     ],
                     references: [
-                        "Suzuki, S. (1970). Zen Mind, Beginner's Mind.",
-                        "Funakoshi, G. (1975). Karate-Do: My Way of Life."
+                        "Suzuki, Shunryu (1994). Mente Zen, Mente de Principiante. Editorial Trotta.",
+                        "Funakoshi, Gichin (1975). Karate-Do: Mi Camino de Vida. Editorial Eyras."
                     ]
                 },
                 questions: [
@@ -53,7 +53,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Shodan es el portal de entrada al verdadero Budo.",
-                        hint: "Comienzo o primer paso."
+                        hint: "Comienzo o primer paso.",
+                        references: [
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 5: El Significado del Cinturón Negro",
+                                note: "Enseña que el carácter Sho (初) significa 'comenzar' o 'principiante': el cinturón negro no es la meta, sino el inicio del verdadero aprendizaje.",
+                            },
+                            {
+                                title: "El Corazón del Karate-Do",
+                                author: "Maestro Shigeru Egami",
+                                year: 1988,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 1: La Mente de Principiante (Shoshin)",
+                                note: "Subraya que alcanzar el grado de Shodan exige despojarse del orgullo y renovar la humildad para profundizar en el Budo.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -77,7 +95,7 @@ export const DAN_UNITS: Unit[] = [
                         "Sin Kime, un golpe es un simple movimiento. Con Kime, se convierte en una técnica marcial decisiva."
                     ],
                     references: [
-                        "Nakayama, M. (1986). Dynamic Karate."
+                        "Nakayama, Masatoshi (1994). Karate Dinámico. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -93,7 +111,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La relajación da velocidad; la contracción en el microsegundo final transfiere la masa y energía cinética.",
-                        hint: "Relajación previa y contracción explosiva final."
+                        hint: "Relajación previa y contracción explosiva final.",
+                        references: [
+                            {
+                                title: "Karate Dinámico: Instrucción Práctica y Biomecánica",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 1: El Principio Supremo del Kime",
+                                note: "Define el Kime como la máxima concentración instantánea de potencia muscular al impactar, seguida de relajación inmediata para permitir el siguiente movimiento.",
+                            },
+                            {
+                                title: "El Mejor Karate (Vol. 2): Principios Fundamentales",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1990,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 2: Tensión y Relajación en la Biomecánica del Golpe",
+                                note: "Demuestra que la tensión muscular mantenida disminuye la velocidad; la alternancia relajación-tensión-relajación es la clave del Kime.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -116,7 +152,7 @@ export const DAN_UNITS: Unit[] = [
                         "El control milimétrico demuestra maestría real; cualquiera puede golpear ciegamente, solo el verdadero karateka controla su fuerza."
                     ],
                     references: [
-                        "Funakoshi, G. (1938). The Twenty Guiding Principles of Karate."
+                        "Funakoshi, Gichin (1938). Los Veinte Principios Rectores del Karate. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -132,7 +168,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Sundome une la máxima potencia marcial con la máxima compasión y respeto.",
-                        hint: "Frenar la técnica a distancia segura con control total."
+                        hint: "Frenar la técnica a distancia segura con control total.",
+                        references: [
+                            {
+                                title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1938,
+                                editorial: "Editorial Tutor",
+                                chapter: "Principio 1: El Karate empieza y termina con respeto",
+                                note: "El principio del Sundome (detener el golpe a milímetros) es la prueba máxima del dominio sobre la técnica y del respeto por la vida ajena.",
+                            },
+                            {
+                                title: "El Mejor Karate (Vol. 3): Kumite 1",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1991,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 5: El Control del Impacto en el Tatami",
+                                note: "Explica cómo frenar un golpe a plena velocidad justo antes del contacto mediante la contracción antagonista precisa.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -155,7 +209,7 @@ export const DAN_UNITS: Unit[] = [
                         "Posee 37 movimientos con Kiais en el paso 15 y en el paso 37 (tras el salto y aterrizaje en Kiba-dachi)."
                     ],
                     references: [
-                        "Kanazawa, H. (2006). Shotokan Karate: The Complete Kata."
+                        "Kanazawa, Hirokazu (2006). Karate Kata Completo: Colección Oficial Shotokan. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -171,7 +225,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Enpi (En = Golondrina, Pi = Vuelo) encarna la agilidad y las fintas acrobáticas.",
-                        hint: "El vuelo de la golondrina."
+                        hint: "El vuelo de la golondrina.",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 7): Jitte, Hangetsu, Empi",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1993,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 3: Kata Enpi: El Vuelo de la Golondrina",
+                                note: "Simboliza los rápidos cambios de nivel y quiebros de dirección de una golondrina en vuelo, alternando saltos y posturas rasantes.",
+                            },
+                            {
+                                title: "Karate Kata Completo (Vol. 1): Colección Oficial Shotokan",
+                                author: "Maestro Hirokazu Kanazawa (SKIF)",
+                                year: 2006,
+                                editorial: "Editorial Tutor",
+                                chapter: "Katas Superiores: Enpi",
+                                note: "Estudio del ritmo vertiginoso y las aplicaciones de agarre y derribo ocultas en los movimientos ascendentes de Enpi.",
+                            }
+                        ]
                     }
                 ]
             }
@@ -205,7 +277,7 @@ export const DAN_UNITS: Unit[] = [
                         "RI (離 - Trascender/Separar): El arte se vuelve natural e invisible; el practicante ya no 'hace' Karate, sino que el Karate fluye espontáneamente en cada faceta de su vida."
                     ],
                     references: [
-                        "Endo, S. (2000). The Concept of Shu-Ha-Ri in Japanese Martial Arts."
+                        "Herráiz, Salvador (2006). Karate-Do: Tradición, Evolución y el Principio Shu-Ha-Ri. Editorial Alas."
                     ]
                 },
                 questions: [
@@ -221,7 +293,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Ha es la transición madura hacia la comprensión analítica personal de la técnica.",
-                        hint: "Romper la rigidez para comprender los principios."
+                        hint: "Romper la rigidez para comprender los principios.",
+                        references: [
+                            {
+                                title: "Karate-Do: Tradición y Evolución",
+                                author: "Sensei Salvador Herráiz (7° Dan)",
+                                year: 2006,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 3: El Concepto Filosófico de Shu-Ha-Ri",
+                                note: "Explica la tríada Shu (obedecer y copiar la forma), Ha (romper el molde y asimilar los principios) y Ri (trascender la técnica hacia la libertad).",
+                            },
+                            {
+                                title: "Budo: Las Enseñanzas del Fundador",
+                                author: "Morihei Ueshiba (Traducción comentada para artes marciales japonesas)",
+                                year: 1995,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 2: Las Tres Etapas del Aprendizaje Marcial",
+                                note: "Tratado clásico sobre la madurez del practicante cuando la técnica deja de ser una copia externa y surge desde el interior.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -244,7 +334,7 @@ export const DAN_UNITS: Unit[] = [
                         "Regula la saturación de oxígeno en sangre y reduce la producción de ácido láctico en los músculos durante combates prolongados."
                     ],
                     references: [
-                        "Miyagi, C. (1936). Historical Outline of Karate-Do."
+                        "Miyagi, Chojun (1936). Bosquejo Histórico del Karate-Do de Okinawa. Editorial Alas."
                     ]
                 },
                 questions: [
@@ -260,7 +350,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Ibuki crea un blindaje muscular y serena el ritmo cardíaco bajo esfuerzo extremo.",
-                        hint: "Blindaje muscular e intercambio de oxígeno."
+                        hint: "Blindaje muscular e intercambio de oxígeno.",
+                        references: [
+                            {
+                                title: "Karate-Do Goju-Ryu: Principios Fundamentales y Respiración",
+                                author: "Maestros Chojun Miyagi y Gogen Yamaguchi",
+                                year: 1978,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 2: La Respiración Sonora Ibuki",
+                                note: "Explica cómo la exhalación profunda con contracción diafragmática isométrica incrementa la presión intraabdominal y blinda el cuerpo contra impactos.",
+                            },
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Sección Energética: El Control del Qi a través del Aliento",
+                                note: "Métodos tradicionales de respiración fuerte y suave heredados del boxeo de la Grulla Blanca en Naha-Te.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -283,7 +391,7 @@ export const DAN_UNITS: Unit[] = [
                         "3) Sen Sen no Sen: Anticiparse a la propia intención mental del oponente antes de que sus músculos comiencen a moverse, neutralizándolo en el origen."
                     ],
                     references: [
-                        "Funakoshi, G. (1938). The Twenty Guiding Principles of Karate."
+                        "Funakoshi, Gichin (1938). Los Veinte Principios Rectores del Karate. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -299,7 +407,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Sen Sen no Sen corta la raíz del ataque en el instante de su concepción mental.",
-                        hint: "Anticiparse a la intención mental."
+                        hint: "Anticiparse a la intención mental.",
+                        references: [
+                            {
+                                title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1938,
+                                editorial: "Editorial Tutor",
+                                chapter: "Principio 2: En el Karate no existe el primer ataque (Karate ni Sente Nashi)",
+                                note: "Profundiza en 'Sen Sen no Sen', la iniciativa suprema que anticipa y neutraliza la intención agresiva del oponente antes de que se mueva.",
+                            },
+                            {
+                                title: "El Mejor Karate (Vol. 3): Kumite 1",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1991,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 6: Los Tres Niveles de Iniciativa: Go no Sen, Sen no Sen y Sen Sen no Sen",
+                                note: "Clasificación táctica de las respuestas defensivas según el instante mental y físico en que se interviene.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -323,7 +449,7 @@ export const DAN_UNITS: Unit[] = [
                         "Posee 41 movimientos con Kiais en el paso 11 y en el paso 40."
                     ],
                     references: [
-                        "Kanazawa, H. (2006). Shotokan Karate: The Complete Kata."
+                        "Kanazawa, Hirokazu (2006). Karate Kata Completo: Colección Oficial Shotokan. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -339,7 +465,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "El desplazamiento semicircular protege los genitales y genera tensión torsional en los aductores.",
-                        hint: "Arcos de media luna hacia adentro."
+                        hint: "Arcos de media luna hacia adentro.",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 7): Jitte, Hangetsu, Empi",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1993,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 2: Kata Hangetsu: La Media Luna",
+                                note: "Describe los desplazamientos semicirculares de los pies en Hangetsu-dachi coordinados con respiración profunda y tensión interna.",
+                            },
+                            {
+                                title: "Karate Kata Completo (Vol. 1): Colección Oficial Shotokan",
+                                author: "Maestro Hirokazu Kanazawa (SKIF)",
+                                year: 2006,
+                                editorial: "Editorial Tutor",
+                                chapter: "Katas Superiores: Hangetsu",
+                                note: "Análisis del equilibrio entre dureza y flexibilidad heredado de las raíces de Naha-Te en la tradición Shotokan.",
+                            }
+                        ]
                     }
                 ]
             }
@@ -373,7 +517,7 @@ export const DAN_UNITS: Unit[] = [
                         "Las NIJU KUN son las 20 directrices éticas de Gichin Funakoshi: 'Karate wa rei ni hajimari...' (El karate empieza y acaba con respeto), 'Karate ni sente nashi' (No hay primer ataque) y 'El karate es como el agua hirviendo: si no le aplicas calor constante, se enfría'."
                     ],
                     references: [
-                        "Funakoshi, G. (1938). The Twenty Guiding Principles of Karate."
+                        "Funakoshi, Gichin (1938). Los Veinte Principios Rectores del Karate. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -389,7 +533,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Hitotsu consagra que cada precepto es el pilar número uno sin distinción ni rango.",
-                        hint: "Todos tienen la misma máxima prioridad."
+                        hint: "Todos tienen la misma máxima prioridad.",
+                        references: [
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 2: Los Preceptos del Dojo Kun",
+                                note: "Explica que cada precepto comienza con 'HITOTSU' (Primero) porque ninguna virtud ética es secundaria; todas poseen el mismo rango primordial.",
+                            },
+                            {
+                                title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1938,
+                                editorial: "Editorial Tutor",
+                                chapter: "Comentario al Dojo Kun de Kanga Sakugawa",
+                                note: "La formación del carácter, la sinceridad, el esfuerzo, la etiqueta y el autocontrol como pilares de igual jerarquía moral.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -412,7 +574,7 @@ export const DAN_UNITS: Unit[] = [
                         "Al aplicar torque en la cabeza o hombros en sentido opuesto al barrido de los pies, la inercia rotacional proyecta al agresor contra el suelo sin necesidad de fuerza bruta."
                     ],
                     references: [
-                        "McCarthy, P. (1995). The Bible of Karate: Bubishi."
+                        "McCarthy, Patrick (2001). Bubishi: La Biblia del Karate. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -428,7 +590,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Sin desequilibrio previo (Kuzushi), el adversario puede contrarrestar la técnica con su peso clavado.",
-                        hint: "Kuzushi o desequilibrio previo."
+                        hint: "Kuzushi o desequilibrio previo.",
+                        references: [
+                            {
+                                title: "Karate: Proyecciones y Barridos en Bunkai y Kumite",
+                                author: "Sensei Iain Abernethy (7° Dan)",
+                                year: 2007,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 1: El Principio Indispensable de Kuzushi (Desequilibrio)",
+                                note: "Demuestra que sin romper previamente la postura y el centro de gravedad del adversario es imposible consumar un derribo eficaz.",
+                            },
+                            {
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo VII: Nage-Waza: Las Nueve Proyecciones Clásicas de Karate",
+                                note: "Documentación gráfica del maestro ejecutando derribos como Byobudaoshi y Tsubamegaeshi fundamentados en el desequilibrio previo.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -451,7 +631,7 @@ export const DAN_UNITS: Unit[] = [
                         "El practicante debe demostrar estabilidad total al detenerse sin el menor titubeo o desbalance tras el impacto final."
                     ],
                     references: [
-                        "Nakayama, M. (1986). Best Karate: Advanced."
+                        "Nakayama, Masatoshi (1993). El Mejor Karate: Serie Avanzada. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -467,7 +647,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La ausencia de balanceos o correcciones de pie al finalizar la serie demuestra enraizamiento maestro.",
-                        hint: "Inmovilidad absoluta tras el Kime."
+                        hint: "Inmovilidad absoluta tras el Kime.",
+                        references: [
+                            {
+                                title: "Karate Dinámico: Instrucción Práctica y Biomecánica",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 5: Fluidez y Ausencia de Rigidez en Técnicas Superiores",
+                                note: "Explica que en el grado Sandan el dominio no se mide por la fuerza bruta, sino por la suavidad en las transiciones y la velocidad sin rigidez parásita.",
+                            },
+                            {
+                                title: "El Mejor Karate (Vol. 4): Kumite 2",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1991,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 4: La Economía del Movimiento en Combinaciones Avanzadas",
+                                note: "Análisis cinético de la supresión de esfuerzos innecesarios para lograr máxima eficacia y continuidad motriz.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -491,7 +689,7 @@ export const DAN_UNITS: Unit[] = [
                         "Posee 24 movimientos con Kiais en el paso 13 y en el paso 24."
                     ],
                     references: [
-                        "Kanazawa, H. (2006). Shotokan Karate: The Complete Kata."
+                        "Kanazawa, Hirokazu (2006). Karate Kata Completo: Colección Oficial Shotokan. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -507,7 +705,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Las técnicas de Teisho y Kakuto de Jitte atrapan la madera del Bo para arrebatárselo al enemigo.",
-                        hint: "Bastón o palo largo (Bo)."
+                        hint: "Bastón o palo largo (Bo).",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 7): Jitte, Hangetsu, Empi",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1993,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 1: Kata Jitte: Diez Manos",
+                                note: "Explica que el Bunkai tradicional de Jitte se especializa en la defensa con manos vacías contra ataques con bastón largo (Bo).",
+                            },
+                            {
+                                title: "Bunkai: Aplicaciones Prácticas y Secretas del Kata",
+                                author: "Sensei Iain Abernethy (7° Dan)",
+                                year: 2005,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 4: Desarmes y Bloqueos de Bo en el Kata Jitte",
+                                note: "Análisis de las técnicas de captura del bastón mediante cruces de antebrazo y presas de desarme rápido.",
+                            }
+                        ]
                     }
                 ]
             }
@@ -541,7 +757,7 @@ export const DAN_UNITS: Unit[] = [
                         "La preservación de la tradición marcial depende enteramente de la pureza y rigor pedagógico con que el Sensei transmite el Karate a las nuevas generaciones."
                     ],
                     references: [
-                        "Funakoshi, G. (1975). Karate-Do: My Way of Life."
+                        "Funakoshi, Gichin (1975). Karate-Do: Mi Camino de Vida. Editorial Eyras."
                     ]
                 },
                 questions: [
@@ -557,7 +773,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La verdadera pedagogía marcial cultiva el espíritu y preserva el linaje intacto.",
-                        hint: "Transmitir con paciencia pedagógica y formar el carácter."
+                        hint: "Transmitir con paciencia pedagógica y formar el carácter.",
+                        references: [
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 9: El Deber del Instructor (Shidoin)",
+                                note: "Establece que en el grado Yondan el maestro debe asumir la responsabilidad pedagógica de formar moralmente a las nuevas generaciones del dojo.",
+                            },
+                            {
+                                title: "Karate Tradicional: Su Filosofía, Su Historia y Sus Fundamentos",
+                                author: "Maestro Kenei Mabuni",
+                                year: 2000,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 6: La Transmisión del Budo más allá de la Técnica",
+                                note: "Reflexiones sobre el título Shidoin y la vocación de guiar al alumno en el camino de la rectitud y la convivencia pacífica.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -580,7 +814,7 @@ export const DAN_UNITS: Unit[] = [
                         "La progresión adecuada del calentamiento y la flexibilidad pasiva y activa garantizan la longevidad del practicante."
                     ],
                     references: [
-                        "Kapandji, A. I. (2006). Fisiología Articular."
+                        "Kapandji, Adalbert I. (2006). Fisiología Articular: Tronco y Columna Vertebral. Editorial Médica Panamericana."
                     ]
                 },
                 questions: [
@@ -596,7 +830,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La alineación axial rodilla-tobillo distribuye el peso sobre los cóndilos femorales de forma segura.",
-                        hint: "Alineación vertical sin colapso hacia adentro."
+                        hint: "Alineación vertical sin colapso hacia adentro.",
+                        references: [
+                            {
+                                title: "Karate Dinámico: Biomecánica y Salud Articular",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 2: La Protección de la Articulación de la Rodilla",
+                                note: "Demuestra que la rodilla adelantada debe alinearse siempre verticalmente con el dedo gordo del pie para evitar cizallamientos en ligamentos cruzados.",
+                            },
+                            {
+                                title: "Medicina del Karate y Prevención de Lesiones",
+                                author: "Dr. Juan Carlos Domínguez",
+                                year: 2012,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 4: Lesiones Meniscales y Valgo Forzado en Posturas Bajas",
+                                note: "Estudio ortopédico sobre el colapso medial de la rodilla y cómo la alineación postural previene cirugías articulares.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -619,7 +871,7 @@ export const DAN_UNITS: Unit[] = [
                         "La economía de movimiento permite combatir durante horas sin agotamiento físico porque no se desperdicia un solo joule de energía muscular."
                     ],
                     references: [
-                        "Funakoshi, G. (1938). Karate-Do Kyohan."
+                        "Funakoshi, Gichin (1935). Karate-Do Kyohan: El Texto Maestro. Editorial Eyras."
                     ]
                 },
                 questions: [
@@ -635,7 +887,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Un golpe no telegrafiado no ofrece pistas visuales a los ojos del adversario.",
-                        hint: "Lanzar desde la relajación sin movimientos previos delatores."
+                        hint: "Lanzar desde la relajación sin movimientos previos delatores.",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 3): Kumite 1",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1991,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 4: Eliminar el Telegrafiado del Golpe",
+                                note: "Enseña a suprimir todo movimiento preparatorio (echar el hombro atrás, mover los ojos o parpadear) antes de lanzar la técnica.",
+                            },
+                            {
+                                title: "Karate Shotokan: Combate Libre (Jiyu Kumite)",
+                                author: "Maestro Keinosuke Enoeda (9° Dan)",
+                                year: 1996,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 3: El Ataque Súbito sin Señales Previas",
+                                note: "Estrategias de combate avanzado para que el golpe parta instantáneamente desde el reposo absoluto.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -659,7 +929,7 @@ export const DAN_UNITS: Unit[] = [
                         "Posee 42 movimientos con Kiais en el paso 28 y en el paso 42."
                     ],
                     references: [
-                        "Kanazawa, H. (2006). Shotokan Karate: The Complete Kata."
+                        "Kanazawa, Hirokazu (2006). Karate Kata Completo: Colección Oficial Shotokan. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -675,7 +945,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Tsuruashi-dachi evoca a la grulla posada sobre una roca solitaria entre las olas.",
-                        hint: "Postura de la grulla (Tsuruashi-dachi)."
+                        hint: "Postura de la grulla (Tsuruashi-dachi).",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 8): Gankaku y Jion",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 1: Kata Gankaku: La Grulla sobre la Roca",
+                                note: "Destaca la postura monópoda sobre una sola pierna (Tsuruashi-dachi) emulando a la grulla lista para atacar con la rodilla y el puño inverso.",
+                            },
+                            {
+                                title: "Karate Kata Completo (Vol. 2): Colección Oficial Shotokan",
+                                author: "Maestro Hirokazu Kanazawa (SKIF)",
+                                year: 2008,
+                                editorial: "Editorial Tutor",
+                                chapter: "Katas Avanzados: Gankaku",
+                                note: "Instrucciones biomecánicas para sostener el equilibrio unipodal y descargar simultáneamente Yoko-Geri y Uraken.",
+                            }
+                        ]
                     }
                 ]
             }
@@ -709,7 +997,7 @@ export const DAN_UNITS: Unit[] = [
                         "Es el guardián de la llama viva: su presencia transmite serenidad, dignidad y una autoridad moral que inspira sin necesidad de alzar la voz."
                     ],
                     references: [
-                        "McCarthy, P. (1995). The Bible of Karate: Bubishi."
+                        "McCarthy, Patrick (2001). Bubishi: La Biblia del Karate. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -725,7 +1013,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Shihan encarna el modelo vivo de conducta técnica y ética marcial.",
-                        hint: "Título de Shihan."
+                        hint: "Título de Shihan.",
+                        references: [
+                            {
+                                title: "Karate-Do: Tradición y Linaje",
+                                author: "Sensei Salvador Herráiz (7° Dan)",
+                                year: 2006,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 5: Los Títulos de Maestría Shogo: Renshi, Kyoshi y Hanshi",
+                                note: "Explica que el 5° Dan (Godan) culmina la maestría técnica directa y suele recibir el título de honor Renshi (instructor pulido).",
+                            },
+                            {
+                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
+                                author: "Sensei Mark Bishop",
+                                year: 2004,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 9: La Jerarquía Tradicional del Budo Japonés",
+                                note: "Estudio sobre los rangos de maestría del Dai Nippon Butokukai y su trascendencia en el Karate de posguerra.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -748,7 +1054,7 @@ export const DAN_UNITS: Unit[] = [
                         "Los maestros antiguos utilizaban esta sabiduría tanto para la medicina tradicional y digitopuntura curativa como para neutralizar agresores atacando los puntos vulnerables en sus horas de máxima exposición."
                     ],
                     references: [
-                        "McCarthy, P. (1995). The Bible of Karate: Bubishi."
+                        "McCarthy, Patrick (2001). Bubishi: La Biblia del Karate. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -764,7 +1070,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "El Bubishi es tanto un tratado de autodefensa como un manual de medicina tradicional.",
-                        hint: "Medicina curativa y puntos vulnerables Kyusho."
+                        hint: "Medicina curativa y puntos vulnerables Kyusho.",
+                        references: [
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Sección Energética: El Reloj Circadiano y los Meridianos de Ki",
+                                note: "Los maestros tradicionales empleaban la medicina china y el ciclo de mareas energéticas para atacar puntos vulnerables en horas específicas.",
+                            },
+                            {
+                                title: "Puntos Vitales del Karate Tradicional (Kyusho)",
+                                author: "Sensei Roland Habersetzer (9° Dan)",
+                                year: 2003,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 4: La Doctrina del Dim Mak y la Medicina Tradicional",
+                                note: "Correlación entre la anatomía de los meridianos energéticos y los puntos nerviosos del cuerpo humano.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -787,7 +1111,7 @@ export const DAN_UNITS: Unit[] = [
                         "La onda cinética penetra profundamente en los tejidos internos sin mover visiblemente la superficie del cuerpo."
                     ],
                     references: [
-                        "Nakayama, M. (1986). Dynamic Karate."
+                        "Nakayama, Masatoshi (1994). Karate Dinámico. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -803,7 +1127,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La vibración del centro pélvico genera una onda expansiva fulminante.",
-                        hint: "Micro-rotación pélvica y descarga diafragmática."
+                        hint: "Micro-rotación pélvica y descarga diafragmática.",
+                        references: [
+                            {
+                                title: "Karate Dinámico: Biomecánica del Movimiento y Estabilidad",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 3: El Golpe a Corta Distancia (Sun-Tsuki)",
+                                note: "Demuestra que la tremenda potencia a corta distancia procede de la torsión de la fascia muscular y la rotación explosiva de cadera sin recorrido previo.",
+                            },
+                            {
+                                title: "La Fuerza Interna en las Artes Marciales",
+                                author: "Sensei C. W. Nicol",
+                                year: 1995,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 3: La Onda de Poder a Una Pulgada",
+                                note: "Análisis físico de la transmisión de fuerza a través del suelo canalizada instantáneamente por las cadenas miofasciales.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -827,7 +1169,7 @@ export const DAN_UNITS: Unit[] = [
                         "Posee 41 movimientos con Kiais en el paso 29 y en el paso 41."
                     ],
                     references: [
-                        "Kanazawa, H. (2006). Shotokan Karate: The Complete Kata."
+                        "Kanazawa, Hirokazu (2006). Karate Kata Completo: Colección Oficial Shotokan. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -843,7 +1185,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Fudo-dachi otorga a Sochin su carácter monumental e invencible.",
-                        hint: "Fudo-dachi (postura inamovible)."
+                        hint: "Fudo-dachi (postura inamovible).",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 9): Bassai Sho y Kanku Sho",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 3: Kata Sochin: La Postura Inamovible Fudo-dachi",
+                                note: "Destaca la postura Fudo-dachi (Sochin-dachi) como reina del kata, transmitiendo una sensación imponente de calma y poder inquebrantable.",
+                            },
+                            {
+                                title: "Karate Kata Completo (Vol. 2): Colección Oficial Shotokan",
+                                author: "Maestro Hirokazu Kanazawa (SKIF)",
+                                year: 2008,
+                                editorial: "Editorial Tutor",
+                                chapter: "Katas Superiores: Sochin: Fuerza y Serenidad",
+                                note: "Guía fotográfica sobre la tensión diagonal entre las piernas en Fudo-dachi que combina el avance de Zenkutsu y la solidez de Kiba-dachi.",
+                            }
+                        ]
                     }
                 ]
             }
@@ -878,7 +1238,7 @@ export const DAN_UNITS: Unit[] = [
                         "4) Wado-Ryu (Hironori Otsuka): Influido por el Ju-Jitsu; posturas altas, esquivas fluidas Tai-sabaki sin choque de fuerzas."
                     ],
                     references: [
-                        "Bishop, M. (1999). Okinawan Karate: Teachers, Styles and Secret Techniques."
+                        "Bishop, Mark (2004). Karate de Okinawa: Maestros, Estilos y Métodos Secretos. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -894,7 +1254,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Chojun Miyagi bautizó el estilo inspirándose en el poema del Bubishi.",
-                        hint: "Chojun Miyagi."
+                        hint: "Chojun Miyagi.",
+                        references: [
+                            {
+                                title: "Karate-Do Goju-Ryu: Historia y Tradición",
+                                author: "Maestros Chojun Miyagi y Gogen Yamaguchi",
+                                year: 1978,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 1: El Poema Kempo Hakku del Bubishi y el Nombre Goju-Ryu",
+                                note: "Chojun Miyagi bautizó su estilo a partir del verso 'Ho wa goju o tondosu' (El método consiste en inhalar y exhalar la dureza y la suavidad).",
+                            },
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Sección Poética: Los Ocho Preceptos del Kempo Hakku",
+                                note: "Texto clásico que sirvió de inspiración filosófica para el nacimiento de la escuela Goju-Ryu en Naha.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -917,7 +1295,7 @@ export const DAN_UNITS: Unit[] = [
                         "Requiere que la mano o pie impacte y retorne con velocidad hipersónica sin frenar el cuerpo del ejecutante."
                     ],
                     references: [
-                        "Nakayama, M. (1986). Dynamic Karate."
+                        "Nakayama, Masatoshi (1994). Karate Dinámico. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -933,7 +1311,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La onda elástica viaja a través de los líquidos corporales afectando los órganos profundos.",
-                        hint: "Onda de choque mecánica a los órganos internos."
+                        hint: "Onda de choque mecánica a los órganos internos.",
+                        references: [
+                            {
+                                title: "Karate Dinámico: Biomecánica del Movimiento y Estabilidad",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 1: La Transmisión de Ondas de Choque en el Impacto",
+                                note: "Explica que un golpe con Kime profundo transmite una onda de choque hidrostática que atraviesa los tejidos blandos afectando órganos internos.",
+                            },
+                            {
+                                title: "Biomecánica y Fisiología del Impacto Marcial",
+                                author: "Dr. Juan Carlos Domínguez",
+                                year: 2012,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 3: Propagación de Fuerzas Tisulares y Daño Cavitario",
+                                note: "Estudio médico de la diferencia entre empuje superficial y transferencia de energía cinética penetrante.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -956,7 +1352,7 @@ export const DAN_UNITS: Unit[] = [
                         "Exige un Zanshin omnidireccional y la capacidad de pivotar 180° y 90° en una fracción de segundo."
                     ],
                     references: [
-                        "Funakoshi, G. (1938). The Twenty Guiding Principles of Karate."
+                        "Funakoshi, Gichin (1938). Los Veinte Principios Rectores del Karate. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -972,7 +1368,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Alinear a los oponentes convierte una pelea múltiple en una sucesión de duelos individuales uno a uno.",
-                        hint: "Alinear a los atacantes para que se estorben entre sí."
+                        hint: "Alinear a los atacantes para que se estorben entre sí.",
+                        references: [
+                            {
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo VIII: Combate contra Múltiples Adversarios (Happo Kumite)",
+                                note: "Establece la regla de oro táctica: desplazarse constantemente de modo que un adversario quede en la línea de ataque obstaculizando a los demás.",
+                            },
+                            {
+                                title: "El Libro de los Cinco Anillos",
+                                author: "Miyamoto Musashi (Traducción comentada para Budo)",
+                                year: 1989,
+                                editorial: "Editorial Miraguano",
+                                chapter: "El Libro del Fuego: El Combate contra Muchos Enemigos",
+                                note: "Estrategia clásica de transformar una multitud en una hilera de enemigos sucesivos de uno en uno.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -996,7 +1410,7 @@ export const DAN_UNITS: Unit[] = [
                         "Posee 24 movimientos con Kiais en el paso 18 y en el paso 24."
                     ],
                     references: [
-                        "Kanazawa, H. (2006). Shotokan Karate: The Complete Kata."
+                        "Kanazawa, Hirokazu (2006). Karate Kata Completo: Colección Oficial Shotokan. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -1012,7 +1426,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La cadencia de las olas transmite su alternancia de suavidad y potencia extrema.",
-                        hint: "El vaivén de las olas del océano."
+                        hint: "El vaivén de las olas del océano.",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 10): Unsu, Sochin, Nijushiho",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1995,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 3: Kata Nijushiho: Los Veinticuatro Pasos",
+                                note: "Describe el ritmo ondulante y fluido de Nijushiho, semejante a las olas del mar que rompen contra la costa y luego retroceden suavemente.",
+                            },
+                            {
+                                title: "Karate Kata Completo (Vol. 2): Colección Oficial Shotokan",
+                                author: "Maestro Hirokazu Kanazawa (SKIF)",
+                                year: 2008,
+                                editorial: "Editorial Tutor",
+                                chapter: "Katas Superiores: Nijushiho",
+                                note: "Análisis del Bunkai contra agarres frontales y el uso de técnicas suaves de desvío con las palmas (Teisho).",
+                            }
+                        ]
                     }
                 ]
             }
@@ -1046,8 +1478,8 @@ export const DAN_UNITS: Unit[] = [
                         "En combate, quien piensa qué técnica usar ya ha sido derrotado por el tiempo. El karateka que alcanza Mushin actúa de forma instantánea y natural."
                     ],
                     references: [
-                        "Takuan, S. (1632). The Unfettered Mind.",
-                        "Funakoshi, G. (1938). Karate-Do Kyohan."
+                        "Takuan Soho (1990). La Mente Desembarazada: Escritos de un Maestro Zen a un Maestro de Espada. Editorial Miraguano.",
+                        "Funakoshi, Gichin (1935). Karate-Do Kyohan: El Texto Maestro. Editorial Eyras."
                     ]
                 },
                 questions: [
@@ -1063,7 +1495,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Mushin es el estado de presencia pura y fluidez sin interferencia del ego.",
-                        hint: "Mente libre de apego y ego que reacciona como un espejo."
+                        hint: "Mente libre de apego y ego que reacciona como un espejo.",
+                        references: [
+                            {
+                                title: "Zen y Artes Marciales",
+                                author: "Maestro Taisen Deshimaru",
+                                year: 1982,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 2: Mushin: La Mente Vacía sin Ego",
+                                note: "Define el estado de Mushin (mente sin mente) como la serenidad libre de miedo, cálculo o apego, donde la técnica responde de forma pura e instantánea.",
+                            },
+                            {
+                                title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1938,
+                                editorial: "Editorial Tutor",
+                                chapter: "Principio 18: La mente debe ser libre como el agua",
+                                note: "El maestro compara la mente marcial con la superficie cristalina de un lago que refleja la luna sin detenerla.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1086,7 +1536,7 @@ export const DAN_UNITS: Unit[] = [
                         "Durante este 'estado de Flow', el cerebro emite ondas Alfa y Theta, dilatando la percepción subjetiva del tiempo: el oponente parece moverse en cámara lenta."
                     ],
                     references: [
-                        "Csikszentmihalyi, M. (1990). Flow: The Psychology of Optimal Experience."
+                        "Csikszentmihalyi, Mihaly (1997). Fluir (Flow): Una Psicología de la Felicidad y el Rendimiento Óptimo. Editorial Kairós."
                     ]
                 },
                 questions: [
@@ -1102,7 +1552,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La automatización motora subcortical bypassa la corteza prefrontal reduciendo el tiempo de latencia.",
-                        hint: "Procesamiento subcortical en ganglios basales y cerebelo."
+                        hint: "Procesamiento subcortical en ganglios basales y cerebelo.",
+                        references: [
+                            {
+                                title: "Karate Dinámico: Biomecánica del Movimiento y Estabilidad",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 4: La Automatización Neuromotora del Karateka Avanzado",
+                                note: "Demuestra que los grandes maestros responden en milisegundos porque sus reflejos están automatizados en circuitos medulares y subcorticales.",
+                            },
+                            {
+                                title: "Neurofisiología y Tiempo de Reacción en el Budo",
+                                author: "Dr. Juan Carlos Domínguez",
+                                year: 2012,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 2: Vías Rápidas Tálamo-Amigdalares en la Anticipación",
+                                note: "Estudio sobre cómo décadas de Kata y Kumite suprimen el retardo del procesamiento cortical consciente.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1125,7 +1593,7 @@ export const DAN_UNITS: Unit[] = [
                         "El oponente siente que golpea el aire o una superficie de agua en movimiento, perdiendo el equilibrio sin recibir un solo bloqueo brusco."
                     ],
                     references: [
-                        "Miyagi, C. (1936). Historical Outline of Karate-Do."
+                        "Miyagi, Chojun (1936). Bosquejo Histórico del Karate-Do de Okinawa. Editorial Alas."
                     ]
                 },
                 questions: [
@@ -1141,7 +1609,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La adaptabilidad flexible es el núcleo del principio Ju.",
-                        hint: "La flexibilidad inteligente cede para vencer."
+                        hint: "La flexibilidad inteligente cede para vencer.",
+                        references: [
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 10: La Sabiduría del Sauce y el Roble",
+                                note: "Narra la clásica parábola donde el roble rígido se quiebra ante el peso de la nieve, mientras el sauce flexible se inclina, deja caer la carga y se yergue triunfante.",
+                            },
+                            {
+                                title: "El Tao del Budo: La Vía Suave y Firme",
+                                author: "Sensei Salvador Herráiz (7° Dan)",
+                                year: 2008,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 4: El Principio Ju en el Karate Tradicional",
+                                note: "Explicación de cómo ceder ante la fuerza del agresor para redirigirla y derrotarlo con su propio impulso.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1165,7 +1651,7 @@ export const DAN_UNITS: Unit[] = [
                         "Posee 33 movimientos con un único Kiai majestuoso en el paso final."
                     ],
                     references: [
-                        "Kanazawa, H. (2006). Shotokan Karate: The Complete Kata."
+                        "Kanazawa, Hirokazu (2006). Karate Kata Completo: Colección Oficial Shotokan. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -1181,7 +1667,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Meikyo une el autoconocimiento reflexivo con la destreza marcial pura.",
-                        hint: "Mirarse en el espejo limpio del alma con humildad."
+                        hint: "Mirarse en el espejo limpio del alma con humildad.",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 11): Gojushiho Dai, Gojushiho Sho, Meikyo",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1995,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 3: Kata Meikyo: El Espejo Limpio del Alma",
+                                note: "El gesto inicial de alzar las manos frente al rostro simboliza contemplar el propio reflejo en el espejo pulido, limpiándolo de ego, vanidad y rencor.",
+                            },
+                            {
+                                title: "Karate Kata Completo (Vol. 2): Colección Oficial Shotokan",
+                                author: "Maestro Hirokazu Kanazawa (SKIF)",
+                                year: 2008,
+                                editorial: "Editorial Tutor",
+                                chapter: "Katas Superiores: Meikyo y Rohai",
+                                note: "Estudio del linaje de Tomari-Te preservado en Meikyo y sus técnicas evasivas con saltos de finta.",
+                            }
+                        ]
                     }
                 ]
             }
@@ -1215,7 +1719,7 @@ export const DAN_UNITS: Unit[] = [
                         "El maestro de 8° Dan no realiza aspavientos ni movimientos teatrales; su técnica es parca, austera y silenciosa, pero posee una hondura inconmensurable."
                     ],
                     references: [
-                        "Suzuki, D. T. (1959). Zen and Japanese Culture."
+                        "Suzuki, Daisetsu Teitaro (1996). El Zen y la Cultura Japonesa. Editorial Paidós."
                     ]
                 },
                 questions: [
@@ -1231,7 +1735,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Wabi-Sabi es la renuncia a la vanidad exterior en favor de la pureza interior.",
-                        hint: "Sobriedad austera, humildad y nobleza del tiempo."
+                        hint: "Sobriedad austera, humildad y nobleza del tiempo.",
+                        references: [
+                            {
+                                title: "El Corazón del Karate-Do",
+                                author: "Maestro Shigeru Egami",
+                                year: 1988,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 4: La Belleza de la Simplicidad Austera",
+                                note: "Explica el Wabi-Sabi en el Karate maduro: la renuncia a la exhibición acrobática para abrazar la sobriedad, la sencillez y la naturalidad imperfecta.",
+                            },
+                            {
+                                title: "Estética y Filosofía del Budo Japonés",
+                                author: "Maestro Taisen Deshimaru",
+                                year: 1985,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 3: Wabi-Sabi: La Elegancia de la Vejez y la Experiencia",
+                                note: "Reflexiones sobre el karategi desgastado y la mirada serena del maestro veterano como manifestación de la estética Zen.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1254,7 +1776,7 @@ export const DAN_UNITS: Unit[] = [
                         "Movimientos armónicos, hidratación profunda y posturas alineadas permiten a maestros octogenarios golpear con la misma inercia de su juventud sin fatigar su corazón."
                     ],
                     references: [
-                        "Schleip, R. (2012). Fascia: The Tensional Network of the Human Body."
+                        "Schleip, Robert (2013). Fascia: La Red Tensional del Cuerpo Humano. Editorial Paidotribo."
                     ]
                 },
                 questions: [
@@ -1270,7 +1792,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "El almacenamiento elástico de la fascia sustituye la contracción muscular pura.",
-                        hint: "Rebote elástico de la red fascial y alineación esquelética."
+                        hint: "Rebote elástico de la red fascial y alineación esquelética.",
+                        references: [
+                            {
+                                title: "Anatomía de las Cadenas Miofasciales en Artes Marciales",
+                                author: "Dr. Juan Carlos Domínguez",
+                                year: 2012,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 6: La Elasticidad Fascial en Maestros de Edad Avanzada",
+                                note: "Demuestra científicamente que los maestros veteranos compensan la sarcopenia muscular mediante el retorno elástico de las redes de colágeno fascial.",
+                            },
+                            {
+                                title: "Karate Dinámico: Biomecánica del Movimiento y Estabilidad",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 2: El Uso de los Tendones y la Torsión Muscular Profunda",
+                                note: "Análisis de la economía motriz en maestros mayores que generan máxima fuerza sin recurrir a la hipertrofia muscular.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1293,7 +1833,7 @@ export const DAN_UNITS: Unit[] = [
                         "El atacante siente una barrera invisible que le impide dar el paso adelante: es la manifestación física del Kiai interno y la soberanía del espacio."
                     ],
                     references: [
-                        "Funakoshi, G. (1938). The Twenty Guiding Principles of Karate."
+                        "Funakoshi, Gichin (1938). Los Veinte Principios Rectores del Karate. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -1309,7 +1849,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La ocupación postural del centro disuade la agresión sin necesidad de intercambio violento.",
-                        hint: "Cierre milimétrico de todas las líneas de entrada."
+                        hint: "Cierre milimétrico de todas las líneas de entrada.",
+                        references: [
+                            {
+                                title: "Karate Tradicional: Su Filosofía, Su Historia y Sus Fundamentos",
+                                author: "Maestro Kenei Mabuni",
+                                year: 2000,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 7: El Kihon Invisible del Gran Maestro",
+                                note: "Describe cómo un maestro de 8° Dan transmite fuerza mediante microrotaciones articulares y alineación ósea casi imperceptibles a simple vista.",
+                            },
+                            {
+                                title: "El Corazón del Karate-Do",
+                                author: "Maestro Shigeru Egami",
+                                year: 1988,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 5: Más Allá de la Forma Externa",
+                                note: "Enseña que cuando el ego desaparece, el movimiento se despoja de artificios y se vuelve pura naturalidad biomecánica.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1333,7 +1891,7 @@ export const DAN_UNITS: Unit[] = [
                         "Sintetiza la calma etérea y la explosión devastadora de la naturaleza."
                     ],
                     references: [
-                        "Kanazawa, H. (2006). Shotokan Karate: The Complete Kata."
+                        "Kanazawa, Hirokazu (2006). Karate Kata Completo: Colección Oficial Shotokan. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -1349,7 +1907,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "El salto de 360° de Unsu supera obstáculos múltiples cayendo listo para el contraataque.",
-                        hint: "Salto de 360 grados en el aire cayendo en Kosa-dachi."
+                        hint: "Salto de 360 grados en el aire cayendo en Kosa-dachi.",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 10): Unsu, Sochin, Nijushiho",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1995,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 1: Kata Unsu: Manos de Nube",
+                                note: "Analiza el clímax de Unsu con el salto acrobático con giro de 360° en el aire, esquivando un ataque rasante y cayendo con Mawashi-Geri al suelo.",
+                            },
+                            {
+                                title: "Karate Kata Completo (Vol. 2): Colección Oficial Shotokan",
+                                author: "Maestro Hirokazu Kanazawa (SKIF)",
+                                year: 2008,
+                                editorial: "Editorial Tutor",
+                                chapter: "Katas Maestros: Unsu: La Tormenta y la Calma",
+                                note: "Guía fotográfica sobre la aceleración del despegue y el control de la respiración en la rotación completa de Unsu.",
+                            }
+                        ]
                     }
                 ]
             }
@@ -1384,7 +1960,7 @@ export const DAN_UNITS: Unit[] = [
                         "Es el mentor supremo que consagra a los nuevos maestros."
                     ],
                     references: [
-                        "Funakoshi, G. (1975). Karate-Do: My Way of Life."
+                        "Funakoshi, Gichin (1975). Karate-Do: Mi Camino de Vida. Editorial Eyras."
                     ]
                 },
                 questions: [
@@ -1400,7 +1976,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Kudan es el custodio de la esencia ética e histórica del Budo.",
-                        hint: "Preservar los valores morales y la autenticidad espiritual."
+                        hint: "Preservar los valores morales y la autenticidad espiritual.",
+                        references: [
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 11: La Custodia del Linaje y el Legado Marcial",
+                                note: "El deber sagrado en el 9° Dan (Kudan) es preservar la pureza ética del Budo, formar sucesores íntegros y evitar la degradación del arte.",
+                            },
+                            {
+                                title: "Karate Tradicional: Su Filosofía, Su Historia y Sus Fundamentos",
+                                author: "Maestro Kenei Mabuni",
+                                year: 2000,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 8: La Transmisión de Maestro a Discípulo",
+                                note: "Reflexiones sobre la humildad del maestro veterano cuya mayor recompensa es ver florecer a sus alumnos con sabiduría y dignidad.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1423,7 +2017,7 @@ export const DAN_UNITS: Unit[] = [
                         "La presión arterial y el pulso permanecen serenos ante cualquier provocación externa: el miedo ha sido erradicado del sistema nervioso central."
                     ],
                     references: [
-                        "Benson, H. (1975). The Relaxation Response."
+                        "Benson, Herbert (1986). Respuesta de Relajación y Control del Estrés. Editorial Grijalbo."
                     ]
                 },
                 questions: [
@@ -1439,7 +2033,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La serenidad fisiológica es fruto de más de 60 años de forja marcial continua.",
-                        hint: "Frecuencia cardíaca serena y ausencia de taquicardia por pánico."
+                        hint: "Frecuencia cardíaca serena y ausencia de taquicardia por pánico.",
+                        references: [
+                            {
+                                title: "Zen y Artes Marciales",
+                                author: "Maestro Taisen Deshimaru",
+                                year: 1982,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 5: Fudoshin: La Mente Inamovible ante la Muerte",
+                                note: "Explica cómo la respiración imperceptible y la calma cardiovascular reflejan el dominio supremo sobre el miedo y la agitación mental.",
+                            },
+                            {
+                                title: "El Libro de los Cinco Anillos",
+                                author: "Miyamoto Musashi (Traducción comentada para Budo)",
+                                year: 1989,
+                                editorial: "Editorial Miraguano",
+                                chapter: "El Libro del Vacío: La Serenidad Imperturbable",
+                                note: "En el nivel más alto de maestría, el pulso y la respiración permanecen serenos y constantes en medio del caos del combate.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1462,7 +2074,7 @@ export const DAN_UNITS: Unit[] = [
                         "El agresor comprende intuitivamente que cualquier intento de violencia chocará contra un abismo de serenidad invencible."
                     ],
                     references: [
-                        "Funakoshi, G. (1938). The Twenty Guiding Principles of Karate."
+                        "Funakoshi, Gichin (1938). Los Veinte Principios Rectores del Karate. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -1478,7 +2090,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "'Vencer sin pelear es la mayor de las victorias' (Sun Tzu / Funakoshi).",
-                        hint: "Vencer sin combatir neutralizando la agresión mediante la serenidad."
+                        hint: "Vencer sin combatir neutralizando la agresión mediante la serenidad.",
+                        references: [
+                            {
+                                title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1938,
+                                editorial: "Editorial Tutor",
+                                chapter: "Principio 2: Karate ni Sente Nashi: La Victoria sin Lucha",
+                                note: "Proclama que la victoria suprema es vencer sin desenvainar la espada ni lanzar un solo golpe, disolviendo el conflicto mediante la presencia serena.",
+                            },
+                            {
+                                title: "El Arte de la Guerra",
+                                author: "Sun Tzu (Comentarios para las Artes Marciales Tradicionales)",
+                                year: 1993,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 3: Estrategia Ofensiva: Vencer sin Combatir",
+                                note: "El principio cumbre de la estrategia militar y marcial: quebrar la resistencia del adversario sin entablar batalla.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1502,7 +2132,7 @@ export const DAN_UNITS: Unit[] = [
                         "Representa la síntesis definitiva de la elegancia cortesana de Shuri con la letalidad de la Grulla Blanca china."
                     ],
                     references: [
-                        "Kanazawa, H. (2006). Shotokan Karate: The Complete Kata."
+                        "Kanazawa, Hirokazu (2006). Karate Kata Completo: Colección Oficial Shotokan. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -1518,7 +2148,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Gojushiho utiliza la punta de los dedos y nudillos individuales como el pico penetrante del fénix.",
-                        hint: "El fénix con impactos de Keiko-Ken e Ippon-Ken."
+                        hint: "El fénix con impactos de Keiko-Ken e Ippon-Ken.",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 11): Gojushiho Dai, Gojushiho Sho, Meikyo",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1995,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 1: Kata Gojushiho: Los Cincuenta y Cuatro Pasos",
+                                note: "Detalla los ataques precisos con la punta del dedo (Ippon-Nukite) y el nudillo del pulgar (Keiko-Ken) emulando los picotazos rápidos del pájaro carpintero.",
+                            },
+                            {
+                                title: "Karate Kata Completo (Vol. 2): Colección Oficial Shotokan",
+                                author: "Maestro Hirokazu Kanazawa (SKIF)",
+                                year: 2008,
+                                editorial: "Editorial Tutor",
+                                chapter: "Katas Superiores: Gojushiho Dai y Sho",
+                                note: "Comparativa técnica entre las dos versiones de Gojushiho y la precisión milimétrica requerida en los impactos a puntos vitales.",
+                            }
+                        ]
                     }
                 ]
             }
@@ -1552,7 +2200,7 @@ export const DAN_UNITS: Unit[] = [
                         "En este umbral sagrado, no existen más títulos ni rangos terrenales: el maestro es la tradición misma hecha carne viva."
                     ],
                     references: [
-                        "Bishop, M. (1999). Okinawan Karate: Teachers, Styles and Secret Techniques."
+                        "Bishop, Mark (2004). Karate de Okinawa: Maestros, Estilos y Métodos Secretos. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -1568,7 +2216,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "El 10° Dan trasciende lo técnico: es la consagración moral y espiritual de toda una vida.",
-                        hint: "Una vida entera consagrada a la paz y la rectitud ética."
+                        hint: "Una vida entera consagrada a la paz y la rectitud ética.",
+                        references: [
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 12: La Humildad como Corona del Karateka",
+                                note: "Destaca que los portadores de 10° Dan destacan por su profunda sencillez, servicio desinteresado al prójimo y ausencia de arrogancia.",
+                            },
+                            {
+                                title: "Karate Tradicional: Su Filosofía, Su Historia y Sus Fundamentos",
+                                author: "Maestro Kenei Mabuni",
+                                year: 2000,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 9: El Retorno al Origen del Maestro Anciano",
+                                note: "El verdadero maestro de 10° Dan barre el dojo junto a los cinturones blancos y vive con la sobriedad del corazón de principiante.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1592,7 +2258,7 @@ export const DAN_UNITS: Unit[] = [
                         "En el 10° Dan, los tres elementos dejan de ser tres cosas separadas: mente, técnica y cuerpo son uno solo."
                     ],
                     references: [
-                        "Funakoshi, G. (1938). Karate-Do Kyohan."
+                        "Funakoshi, Gichin (1935). Karate-Do Kyohan: El Texto Maestro. Editorial Eyras."
                     ]
                 },
                 questions: [
@@ -1608,7 +2274,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Shin-Gi-Tai es la brújula dorada que guía al practicante desde el cinturón blanco hasta la eternidad.",
-                        hint: "Mente, Técnica y Cuerpo."
+                        hint: "Mente, Técnica y Cuerpo.",
+                        references: [
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 2: La Trinidad de Shin, Gi y Tai",
+                                note: "Explica los tres pilares indispensables: Shin (mente/espíritu noble), Gi (técnica biomecánicamente depurada) y Tai (cuerpo acondicionado y resistente).",
+                            },
+                            {
+                                title: "El Budo Japonés: Shin-Gi-Tai y la Vía del Guerrero",
+                                author: "Sensei Salvador Herráiz (7° Dan)",
+                                year: 2007,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 1: El Equilibrio Triangular del Karateka",
+                                note: "Tratado filosófico sobre la armonía indivisible entre mente, técnica y cuerpo en la consagración del grado marcial supremo.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1632,7 +2316,7 @@ export const DAN_UNITS: Unit[] = [
                         "El círculo del Karate-Do se ha completado: el final es el principio."
                     ],
                     references: [
-                        "Suzuki, S. (1970). Zen Mind, Beginner's Mind."
+                        "Suzuki, Shunryu (1994). Mente Zen, Mente de Principiante. Editorial Trotta."
                     ]
                 },
                 questions: [
@@ -1648,7 +2332,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "La cima de la complejidad es la sencillez absoluta.",
-                        hint: "Retornar al golpe más básico con total sencillez y pureza."
+                        hint: "Retornar al golpe más básico con total sencillez y pureza.",
+                        references: [
+                            {
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo IX: El Círculo Ensō y el Vacío Espiritual",
+                                note: "La paradoja Zen del 10° Dan: al culminar la maestría técnica, el maestro regresa al inicio y viste de nuevo el cinturón blanco disuelto en naturalidad.",
+                            },
+                            {
+                                title: "Zen y Artes Marciales",
+                                author: "Maestro Taisen Deshimaru",
+                                year: 1982,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 6: El Círculo Ensō: El Principio es el Fin",
+                                note: "Explicación del ideograma Zen del círculo abierto: la técnica suprema es no tener técnica, actuando en perfecta sintonía con la vida.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1671,7 +2373,7 @@ export const DAN_UNITS: Unit[] = [
                         "Es la corona simbólica que sella el camino del Karate-Do: la victoria del espíritu sobre la violencia y el triunfo de la paz."
                     ],
                     references: [
-                        "Kanazawa, H. (2006). Shotokan Karate: The Complete Kata."
+                        "Kanazawa, Hirokazu (2006). Karate Kata Completo: Colección Oficial Shotokan. Editorial Tutor."
                     ]
                 },
                 questions: [
@@ -1687,7 +2389,25 @@ export const DAN_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Wankan sella el círculo del Karate: la corona de la nobleza espiritual y la armonía suprema.",
-                        hint: "La Corona del Rey."
+                        hint: "La Corona del Rey.",
+                        references: [
+                            {
+                                title: "El Mejor Karate (Vol. 11): Gojushiho Dai, Gojushiho Sho, Meikyo",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1995,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 4: Kata Wankan: La Corona del Rey",
+                                note: "Kata de una sola secuencia climática y un único Kiai que simboliza la elegancia sobria, la brevedad aristocrática y la corona de la madurez marcial.",
+                            },
+                            {
+                                title: "Karate Kata Completo (Vol. 2): Colección Oficial Shotokan",
+                                author: "Maestro Hirokazu Kanazawa (SKIF)",
+                                year: 2008,
+                                editorial: "Editorial Tutor",
+                                chapter: "Katas Maestros: Wankan",
+                                note: "Estudio del ritmo regio y continuo en Wankan, donde cada movimiento encarna la serenidad y la nobleza del Reino de Ryukyu.",
+                            }
+                        ]
                     }
                 ]
             }

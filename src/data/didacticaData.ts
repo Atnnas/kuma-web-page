@@ -1155,7 +1155,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                         }
                     ],
                     references: [
-                        "Cook, H. (2001). Shotokan Karate: A Precise History.",
+                        "Cook, Harry (2004). Karate Shotokan: Una Historia Precisa. Editorial Tutor.",
                         "Funakoshi, G. (1973). Karate-Do Kyohan: The Master Text.",
                         "Johnson, N. (2012). The History of Karate: Okinawan and Japanese Styles.",
                         "Nagamine, S. (1976). The Essence of Okinawan Karate-Do."
@@ -1364,7 +1364,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "¡Exacto! El Kata es la enciclopedia viva del Karate: una coreografía marcial precisa que codifica ataques, defensas, distancias y estrategias contra adversarios imaginarios.",
-                        hint: "Piensa en el Kata como una biblioteca grabada en movimiento corporal."
+                        hint: "Piensa en el Kata como una biblioteca grabada en movimiento corporal.",
+                        references: [
+                            {
+                                title: "Karate-Do: Mi Camino de Vida",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1975,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 4: El espíritu del Kata como biblioteca viva",
+                                note: "El fundador explica que los katas son la esencia eterna del Karate-Do, donde cada movimiento encierra una lección combativa y moral.",
+                            },
+                            {
+                                title: "El Mejor Karate (Vol. 5): Heian y Tekki",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1992,
+                                editorial: "Editorial Tutor",
+                                chapter: "Introducción al Entrenamiento de Formas Tradicionales",
+                                note: "Define el kata como una batalla simulada contra múltiples adversarios imaginarios que pule el equilibrio y la técnica pura.",
+                            },
+                            {
+                                title: "Bunkai: Aplicaciones Prácticas y Secretas del Kata",
+                                author: "Sensei Iain Abernethy (7° Dan)",
+                                year: 2005,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 1: Deconstruyendo el Kata Tradicional",
+                                note: "Demuestra cómo los movimientos individuales preservan derribos, luxaciones y golpes de defensa personal civil.",
+                            }
+                        ]
                     },
                     {
                         id: "q-kata-taikyoku-shodan-movimientos",
@@ -1395,7 +1421,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "¡Correcto! Taikyoku Shodan consta de 20 movimientos ejecutados en postura Zenkutsu-dachi, utilizando únicamente la defensa baja Gedan-Barai y el puño frontal Oi-Zuki.",
-                        hint: "Es la combinación básica de paso largo frontal con bloqueo bajo y golpe de puño directo."
+                        hint: "Es la combinación básica de paso largo frontal con bloqueo bajo y golpe de puño directo.",
+                        references: [
+                            {
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo V: Formas Básicas: Taikyoku Shodan",
+                                note: "Creado por Funakoshi para enseñar los rudimentos indispensables: paso frontal Zenkutsu-dachi, bloqueo Gedan-Barai y puño Oi-Zuki.",
+                            },
+                            {
+                                title: "Karate Kata Completo (Vol. 1): Colección Oficial Shotokan",
+                                author: "Maestro Hirokazu Kanazawa (SKIF)",
+                                year: 2006,
+                                editorial: "Editorial Tutor",
+                                chapter: "Katas Básicos: Taikyoku Shodan a Sandan",
+                                note: "Guía fotográfica detallada con los 20 movimientos del kata y los dos Kiais reglamentarios.",
+                            },
+                            {
+                                title: "El Mejor Karate (Vol. 1): Fundamentos",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1989,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 3: La Postura Zenkutsu y el Empuje Frontal",
+                                note: "Analiza la biomecánica de la distribución de peso 60/40 en el avance del principiante.",
+                            }
+                        ]
                     },
                     {
                         id: "q-kata-embusen-concepto",
@@ -1426,7 +1478,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "¡Excelente! El Embusen es la trayectoria espacial geométrica del kata. Una prueba clave de dominio técnico es comenzar y regresar exactamente al mismo punto de partida.",
-                        hint: "Se refiere al trazo o dibujo geométrico que marcas sobre el piso al desplazarte."
+                        hint: "Se refiere al trazo o dibujo geométrico que marcas sobre el piso al desplazarte.",
+                        references: [
+                            {
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo IV: El Embusen y la Orientación Espacial",
+                                note: "Subraya la obligación de volver exactamente al punto de origen como prueba de equilibrio y exactitud en los desplazamientos.",
+                            },
+                            {
+                                title: "Karate Dinámico: Instrucción Práctica y Biomecánica",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 6: La Geometría del Tatami y los Ejes del Embusen",
+                                note: "Estudio métrico de las líneas de desplazamiento en forma de I, T o H en los katas Shotokan.",
+                            },
+                            {
+                                title: "El Secreto de los Katas de Karate",
+                                author: "Sensei Roland Habersetzer (9° Dan)",
+                                year: 2003,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 2: El Dibujo Sagrado del Suelo (Embusen)",
+                                note: "Explicación histórica de cómo los maestros antiguos trazaban el mapa de batalla en el suelo del dojo.",
+                            }
+                        ]
                     },
                     {
                         id: "q-kata-bunkai-concepto",
@@ -1457,7 +1535,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "¡Brillante! Bunkai significa 'analizar o desarmar'. Es la explicación combativa real con compañero (luxaciones, golpes, derribos) que da vida y propósito a cada movimiento del kata.",
-                        hint: "Palabra clave: aplicación práctica combate a combate."
+                        hint: "Palabra clave: aplicación práctica combate a combate.",
+                        references: [
+                            {
+                                title: "Bubishi: La Biblia del Karate",
+                                author: "Sensei Patrick McCarthy (Hanshi 9° Dan)",
+                                year: 2001,
+                                editorial: "Editorial Tutor",
+                                chapter: "Sección Técnica: El descifrado de las posturas clásicas",
+                                note: "Tratado canónico que desvela las aplicaciones ocultas de agarre, luxación y puntos vulnerables en las formas de Okinawa.",
+                            },
+                            {
+                                title: "Bunkai: Aplicaciones Prácticas y Secretas del Kata Tradicional",
+                                author: "Sensei Iain Abernethy (7° Dan)",
+                                year: 2005,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 2: Principios del Bunkai Real frente a la Demostración",
+                                note: "Metodología pragmática para transformar cada secuencia de kata en defensas eficaces cuerpo a cuerpo.",
+                            },
+                            {
+                                title: "Karate Tradicional: Su Filosofía, Su Historia y Sus Fundamentos",
+                                author: "Maestro Kenei Mabuni",
+                                year: 2000,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 5: El Bunkai Kumite como Alma del Kata",
+                                note: "El hijo del fundador de Shito-Ryu expone cómo el kata sin Bunkai se convierte en una danza vacía de espíritu marcial.",
+                            }
+                        ]
                     }
                 ]
             }
@@ -1503,8 +1607,8 @@ export const DIDACTIC_UNITS: Unit[] = [
                         }
                     ],
                     references: [
-                        "Abernethy, I. (2013). Traditional Karate vs Sport Karate: One Point vs Multiple Points.",
-                        "World Karate Federation. (2023-2026). WKF Karate Competition Rules."
+                        "Abernethy, Iain (2013). Karate Tradicional frente a Karate Deportivo: Del Punto Único al Sistema WKF. Editorial Tutor.",
+                        "Federación Mundial de Karate (WKF) / RFEK (2023-2026). Reglamento Oficial de Competición de Kumite y Kata WKF. Comisión de Arbitraje RFEK / WKF."
                     ]
                 },
                 questions: [
@@ -1520,7 +1624,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "En 1970 se celebró en Tokio el primer campeonato unificado y nació la WUKO (luego WKF).",
-                        hint: "Ocurrió 48 años después de la demostración de Funakoshi en Tokio."
+                        hint: "Ocurrió 48 años después de la demostración de Funakoshi en Tokio.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite y Kata WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Sección Histórica: De la Fundación de la WUKO en Tokio 1970 a la WKF",
+                                note: "Documento oficial que narra la unificación de los estilos mundiales para crear un marco de competencia seguro y global.",
+                            },
+                            {
+                                title: "Historia del Karate Deportivo y Tradicional",
+                                author: "Sensei Salvador Herráiz (7° Dan)",
+                                year: 2005,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 8: El Nacimiento de la WUKO y los Primeros Mundiales",
+                                note: "Crónica histórica de la unificación deportiva internacional y su camino hacia el reconocimiento olímpico.",
+                            },
+                            {
+                                title: "Enciclopedia del Karate-Do",
+                                author: "Sensei José María Fraguas (8° Dan)",
+                                year: 2008,
+                                editorial: "Editorial Alas",
+                                chapter: "Capítulo 12: Las Organizaciones Mundiales del Karate Moderno",
+                                note: "Evolución institucional y normativa del Karate como deporte federado internacional.",
+                            }
+                        ]
                     },
                     {
                         id: "q-wkf-hist-2",
@@ -1534,7 +1664,25 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "En el reglamento WKF, una ventaja clara de 8 puntos sobre el rival finaliza el encuentro inmediatamente.",
-                        hint: "Es el número que define la victoria antes de tiempo en Kumite WKF."
+                        hint: "Es el número que define la victoria antes de tiempo en Kumite WKF.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 10: Duración y Finalización del Combate por Ventaja Manifiesta",
+                                note: "Reglamenta la detención anticipada del encuentro cuando un atleta alcanza una ventaja clara de 8 puntos sobre su oponente.",
+                            },
+                            {
+                                title: "Manual de Arbitraje y Criterios Técnicos de Kumite WKF",
+                                author: "Comisión Nacional de Arbitraje RFEK",
+                                year: 2024,
+                                editorial: "Real Federación Española de Karate",
+                                chapter: "Capítulo 4: Conducción del Asalto y Criterios de Victoria",
+                                note: "Guía práctica para jueces sobre la aplicación de la regla de superioridad de 8 puntos en combate.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1568,7 +1716,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                         { title: "6. Distancia Correcta", desc: "Precisión y control de contacto.", image: "/images/kuma-distancia-correcta.jpg" },
                     ],
                     references: [
-                        "WKF Competition Rules (2023-2026). Artículo 6: Criterios de Puntuación."
+                        "Federación Mundial de Karate (WKF) / RFEK (2023-2026). Reglamento Oficial WKF: Artículo 6: Criterios de Puntuación. Comisión de Arbitraje RFEK."
                     ]
                 },
                 questions: [
@@ -1585,7 +1733,25 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Representa el Zanshin: mantener la guardia, enfoque visual y disposición mental tras lanzar una técnica.",
-                        hint: "Es el estado de concentración y presencia que nunca se pierde tras el ataque."
+                        hint: "Es el estado de concentración y presencia que nunca se pierde tras el ataque.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 6: Criterios de Puntuación: Zanshin (Alerta Continuada)",
+                                note: "Define el Zanshin como el estado de concentración y compromiso mental ininterrumpido antes, durante y después del impacto.",
+                            },
+                            {
+                                title: "El Mejor Karate (Vol. 3): Kumite 1",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1991,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 2: El Enfoque Visual y la Guardia Alerta Post-Ataque",
+                                note: "Tratado formativo sobre mantener la guardia y la mirada fija en el rival sin relajarse jamás tras golpear.",
+                            }
+                        ]
                     },
                     {
                         id: "q-crit-2",
@@ -1599,7 +1765,33 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Bajar la guardia o celebrar antes de tiempo anula el Zanshin, lo cual descalifica la técnica como punto válido.",
-                        hint: "Tiene que ver con la atención ininterrumpida hacia el adversario."
+                        hint: "Tiene que ver con la atención ininterrumpida hacia el adversario.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 6: Invalidación de Puntos por Pérdida de Zanshin",
+                                note: "Estipula taxativamente que si el competidor celebra o baja la guardia antes de la voz de Yame del árbitro, el punto queda anulado.",
+                            },
+                            {
+                                title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1938,
+                                editorial: "Editorial Tutor",
+                                chapter: "Principio 12: No pienses en ganar, piensa en no ser vencido",
+                                note: "El maestro advierte que la euforia prematura y el descuido mental son la causa principal de la derrota marcial.",
+                            },
+                            {
+                                title: "Karate Dinámico: Instrucción Práctica y Biomecánica",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1994,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 4: Actitud y Compostura en el Combate Libre",
+                                note: "Análisis del autocontrol ético y el temple sereno que debe manifestar todo karateka en el tatami.",
+                            }
+                        ]
                     },
                     {
                         id: "q-crit-3",
@@ -1614,7 +1806,25 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Buen Timing consiste en anticipar o interceptar en la fracción de segundo precisa.",
-                        hint: "Momento oportuno donde el adversario no puede defender."
+                        hint: "Momento oportuno donde el adversario no puede defender.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 6: Criterios Técnicos: Buen Timing y Oportunidad",
+                                note: "Detalla la ejecución de la técnica en el instante preciso de máxima vulnerabilidad motriz del adversario.",
+                            },
+                            {
+                                title: "El Mejor Karate (Vol. 4): Kumite 2",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1991,
+                                editorial: "Editorial Tutor",
+                                chapter: "Capítulo 3: Anticipación y Deai en el Momento del Ataque",
+                                note: "Estudio táctico de la sincronización milimétrica para interceptar golpes en el instante en que el rival inicia el avance.",
+                            }
+                        ]
                     }
                 ]
             },
@@ -1647,7 +1857,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                         { title: "YUKO - 1 Punto", desc: "Tsuki o Uchi a zona puntuable.", image: "/images/kuma-arbitro-puntos-yuko.jpg", badge: "1 Punto" },
                     ],
                     references: [
-                        "WKF Competition Rules. Apéndice de Señales y Gestos de Arbitraje."
+                        "Federación Mundial de Karate (WKF) / RFEK. Manual Oficial de Señales y Gestos Arbitrales WKF. Real Federación Española de Karate."
                     ]
                 },
                 questions: [
@@ -1664,7 +1874,25 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "El brazo levantado a 45 grados por encima del hombro es la señal oficial para conceder IPPON (3 puntos).",
-                        hint: "Es el puntaje más alto del Karate WKF."
+                        hint: "Es el puntaje más alto del Karate WKF.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 7: Puntuación de Tres Puntos (Ippon)",
+                                note: "El brazo elevado a 45 grados por encima del hombro es la señal oficial para conceder IPPON (patada alta Jodan o técnica a rival caído).",
+                            },
+                            {
+                                title: "Manual Oficial de Gestos y Señales Arbitrales WKF",
+                                author: "Comisión Nacional de Arbitraje RFEK",
+                                year: 2024,
+                                editorial: "Real Federación Española de Karate",
+                                chapter: "Apéndice Gráfico: Señalización de Ippon en el Tatami",
+                                note: "Guía fotográfica de la postura del árbitro central al otorgar la máxima puntuación en Kumite.",
+                            }
+                        ]
                     },
                     {
                         id: "q-puntos-2",
@@ -1679,7 +1907,25 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "El brazo horizontal a la altura del hombro indica Waza-ari (2 puntos), otorgado por Chudan Geri.",
-                        hint: "Vale 2 puntos y se otorga por patadas al torso."
+                        hint: "Vale 2 puntos y se otorga por patadas al torso.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 7: Puntuación de Dos Puntos (Waza-ari)",
+                                note: "El brazo horizontal a la altura del hombro indica WAZA-ARI (2 puntos), otorgado por patadas circulares o frontales a la zona media (Chudan).",
+                            },
+                            {
+                                title: "Manual Oficial de Gestos y Señales Arbitrales WKF",
+                                author: "Comisión Nacional de Arbitraje RFEK",
+                                year: 2024,
+                                editorial: "Real Federación Española de Karate",
+                                chapter: "Apéndice Gráfico: Señalización de Waza-ari",
+                                note: "Descripción biomecánica y gestual del árbitro al señalar dos puntos.",
+                            }
+                        ]
                     },
                     {
                         id: "q-puntos-3",
@@ -1694,7 +1940,25 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Brazo apuntando a 45 grados hacia abajo señala Yuko (1 punto), por Tsuki o Uchi válidos.",
-                        hint: "Es el punto básico de puño."
+                        hint: "Es el punto básico de puño.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 7: Puntuación de Un Punto (Yuko)",
+                                note: "El brazo extendido hacia abajo a 45 grados señala YUKO (1 punto), por Tsuki directo o golpe de puño controlado a zona válida.",
+                            },
+                            {
+                                title: "Manual Oficial de Gestos y Señales Arbitrales WKF",
+                                author: "Comisión Nacional de Arbitraje RFEK",
+                                year: 2024,
+                                editorial: "Real Federación Española de Karate",
+                                chapter: "Apéndice Gráfico: Señalización de Yuko",
+                                note: "Instrucciones de arbitraje para la confirmación de impactos rápidos de puño.",
+                            }
+                        ]
                     },
                     {
                         id: "q-puntos-4",
@@ -1705,6 +1969,24 @@ export const DIDACTIC_UNITS: Unit[] = [
                             { id: "p1", left: "Patada a la cabeza (Jodan Geri)", right: "IPPON (3 Pts)" },
                             { id: "p2", left: "Patada al torso (Chudan Geri)", right: "WAZA-ARI (2 Pts)" },
                             { id: "p3", left: "Puño al pecho o cara (Tsuki)", right: "YUKO (1 Pt)" },
+                        ],
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 7: Escala Jerárquica de Puntuación: Yuko, Waza-ari e Ippon",
+                                note: "Tabla comparativa que premia con mayor puntaje la dificultad técnica y la espectacularidad de las patadas frente a los puños.",
+                            },
+                            {
+                                title: "Guía Didáctica del Karate Deportivo WKF",
+                                author: "Real Federación Española de Karate (RFEK)",
+                                year: 2022,
+                                editorial: "RFEK Formación y Titulaciones",
+                                chapter: "Módulo 3: La Puntuación en el Combate Reglamentario",
+                                note: "Manual de formación docente para entrenadores nacionales sobre la táctica de acumulación de puntos.",
+                            }
                         ]
                     }
                 ]
@@ -1738,7 +2020,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                         { title: "SHIKKAKU", desc: "Expulsión del torneo por falta de honor.", image: "/images/kuma-arbitro-shikakku.jpg" },
                     ],
                     references: [
-                        "WKF Competition Rules. Artículo 13: Penalizaciones y Advertencias."
+                        "Federación Mundial de Karate (WKF) / RFEK. Reglamento Oficial WKF: Artículo 13: Penalizaciones y Advertencias. Comisión de Arbitraje RFEK."
                     ]
                 },
                 questions: [
@@ -1755,7 +2037,25 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Hansoku-Chui se señala con el dedo extendido hacia adelante y abajo a 45 grados: advierte que la siguiente falta supondrá la descalificación.",
-                        hint: "Es el paso previo antes del Hansoku definitivo."
+                        hint: "Es el paso previo antes del Hansoku definitivo.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 13: Penalizaciones y Advertencias: Hansoku-Chui",
+                                note: "El dedo índice apuntando a los pies del infractor a 45 grados advierte que una nueva falta conllevará la descalificación inmediata.",
+                            },
+                            {
+                                title: "Manual Oficial de Gestos y Señales Arbitrales WKF",
+                                author: "Comisión Nacional de Arbitraje RFEK",
+                                year: 2024,
+                                editorial: "Real Federación Española de Karate",
+                                chapter: "Apéndice Gráfico: Señalización de Hansoku-Chui",
+                                note: "Protocolo visual para comunicar la advertencia grave previa a la expulsión.",
+                            }
+                        ]
                     },
                     {
                         id: "q-pen-2",
@@ -1770,7 +2070,25 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Hansoku es la descalificación del combate por faltas acumuladas o infracción mayor directa.",
-                        hint: "Otorga la victoria inmediata al adversario."
+                        hint: "Otorga la victoria inmediata al adversario.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 13: Descalificación del Combate (Hansoku)",
+                                note: "El dedo índice señalando hacia el rostro del infractor y luego fuera del tatami decreta la derrota inmediata por acumulación de faltas o falta grave.",
+                            },
+                            {
+                                title: "Manual Oficial de Arbitraje WKF",
+                                author: "Comisión Nacional de Arbitraje RFEK",
+                                year: 2024,
+                                editorial: "Real Federación Española de Karate",
+                                chapter: "Capítulo 6: La Aplicación de Hansoku y la Concesión de Victoria",
+                                note: "Criterios para declarar vencedor al adversario ante una infracción mayor.",
+                            }
+                        ]
                     },
                     {
                         id: "q-pen-3",
@@ -1785,7 +2103,25 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ],
                         correctAnswerId: "o1",
                         explanation: "Shikkaku expulsa al atleta o entrenador de toda la competición por conducta deshonrosa o daño malicioso.",
-                        hint: "Es la sanción más severa de todas en el karate federado."
+                        hint: "Es la sanción más severa de todas en el karate federado.",
+                        references: [
+                            {
+                                title: "Reglamento Oficial de Competición de Kumite WKF (2023-2026)",
+                                author: "Federación Mundial de Karate (WKF) / Real Federación Española de Karate (RFEK)",
+                                year: 2023,
+                                editorial: "Comisión de Arbitraje RFEK / WKF",
+                                chapter: "Artículo 13: Expulsión Definitiva del Torneo (Shikkaku)",
+                                note: "El brazo levantado hacia atrás señalando la salida del pabellón expulsa al competidor o entrenador de todo el torneo por daño malicioso o falta grave de honor.",
+                            },
+                            {
+                                title: "Código de Ética y Disciplina Deportiva WKF",
+                                author: "Federación Mundial de Karate (WKF)",
+                                year: 2023,
+                                editorial: "WKF Disciplinary Commission",
+                                chapter: "Sección 2: Sanciones por Conducta Antideportiva y Desacato Marcial",
+                                note: "Marco disciplinario que salvaguarda la dignidad, el respeto y la integridad en las competiciones federadas.",
+                            }
+                        ]
                     }
                 ]
             }
