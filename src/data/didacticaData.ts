@@ -29,7 +29,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                 xpReward: 50,
                 theory: {
                     title: "Historia y Filosofía del Karate-Do",
-                    subtitle: "La Travesía de la Mano Vacía, el Árbol Sagrado y las Tres Ramas Matrices de Okinawa",
+                    subtitle: "La Travesía de la Mano Vacía, los 3 Pilares y las Tres Ramas Matrices de Okinawa",
                     quote: "El Karate no consiste en herir o vencer a otros; consiste en vencer las propias debilidades, dominar el ego y forjar un espíritu noble de rectitud, serenidad y paz. — Maestro Gichin Funakoshi (Padre del Karate Moderno)",
                     images: [
                         {
@@ -39,28 +39,28 @@ export const DIDACTIC_UNITS: Unit[] = [
                         },
                         {
                             src: "/images/didactic/kuma_pixar_okinawa_branches.jpg",
-                            alt: "El Triángulo Sagrado de Okinawa: Shuri-Te, Tomari-Te y Naha-Te",
+                            alt: "El Triángulo Histórico de Okinawa: Shuri-Te, Tomari-Te y Naha-Te",
                             caption: "Fig 2. El Triángulo de Ryukyu: Las tres ramas matrices de donde nació el Karate: Shuri-Te (Castillo Real y nobleza), Tomari-Te (bahía pesquera y campesinos) y Naha-Te (puerto comercial y marineros)."
                         },
                         {
                             src: "/images/didactic/kuma_pixar_tree_pillars.jpg",
-                            alt: "El Árbol Sagrado del Karate: Kihon, Kata y Kumite",
-                            caption: "Fig 3. El Árbol Sagrado y las 3 'K': Las raíces profundas de Kihon alimentan el tronco firme de Kata para hacer florecer el combate Kumite con respeto, distancia y control."
+                            alt: "Los 3 Pilares del Karate: Kihon, Kata y Kumite",
+                            caption: "Fig 3. El Árbol de los 3 Pilares (Kihon, Kata y Kumite): Las raíces de Kihon alimentan el tronco firme de Kata para desarrollar el combate Kumite con respeto, distancia y control."
                         },
                         {
                             src: "/images/didactic/bubishi_ancient_scroll.jpg",
-                            alt: "El Manuscrito Sagrado Bubishi (武備志)",
+                            alt: "El Manuscrito Clásico Bubishi (武備志)",
                             caption: "Fig 4. El Manuscrito Secreto Bubishi (武備志): compendio canónico de 48 técnicas combativas de Grulla Blanca de Fujian preservado en secreto en Okinawa."
                         }
                     ],
                     content: [
                         "1. La Travesía de la Mano Vacía y la Ruta del Barco (China ➔ Okinawa ➔ Japón): El Karate-Do (空手道) no nació en el Japón continental, sino en el antiguo archipiélago de Ryukyu —hoy prefectura de Okinawa—. Por su posición privilegiada en el Mar de China Oriental, los maestros pioneros viajaron en barco a la provincia de Fujian (China meridional) para estudiar el Quan-Fa (Kung-Fu) y el boxeo de la Grulla Blanca. Este saber navegó hacia Okinawa y se fusionó con el combate autóctono insular ('Te') para dar origen a la 'Mano Vacía'. Décadas después, el Maestro Gichin Funakoshi zarpó desde Okinawa hacia el puerto de Tokio en 1922, presentando el arte marcial en el Ministerio de Educación y fundando los primeros clubes en universidades japonesas (Keio, Waseda, Takushoku), abriendo las puertas para que el Karate se expandiera a todos los dojos del planeta.",
-                        "2. Cartografía Ancestral de Okinawa: Las Tres Ramas Matrices (Shuri, Tomari y Naha): Antes de las escuelas modernas, el arte se conocía como 'Okinawa-Te' y se forjó en un triángulo geográfico sagrado de tres ciudades con identidades marciales únicas (Fig 2):\n\n• Shuri-Te (首里手 - La Corte Real y la Nobleza Peichin): Desarrollado en la colina del Castillo de Shuri por la aristocracia y la escolta de los reyes de Ryukyu. Se distingue por desplazamientos lineales fulminantes, velocidad explosiva, posturas dinámicas y contraataques decisivos de largo alcance. Maestros cumbres: Kanga Sakugawa, Sokon Matsumura y Anko Itosu. Es la matriz directa del estilo Shotokan (fundado por Gichin Funakoshi) y co-fundamento del Shito-Ryu (Kenwa Mabuni).\n\n• Tomari-Te (泊手 - Los Pescadores, Náufragos y la Esquiva Tenshin): Forjado en la bahía y puerto pesquero de Tomari, nutrido por náufragos chinos y marineros que enseñaron en secreto a orillas del mar. Se caracteriza por su asombrosa ligereza, giros en rotación evasiva (Tenshin), cambios repentinos de altura y fintas con saltos sorpresivos. Maestros cumbres: Kosaku Matsumora, Kishin Teruya y Choki Motobu. Preservó katas clásicas como Rohai, Wankan y Chinto (Gankaku).\n\n• Naha-Te (那覇手 - El Puerto Mercantil, Enraizamiento e Ibuki): Nacido en el bullicioso puerto comercial de Naha y la comunidad china de Kumemura. Con fuerte raíz en el boxeo del sur de China, se enfoca en el combate a muy corta distancia, posiciones bajas y sólidas (Sanchin-dachi), agarres pesados y respiración diafragmática profunda e isométrica (Ibuki) que fortalece el cuerpo como hierro. Maestros cumbres: Kanryo Higaonna y Chojun Miyagi. Dio origen directo al estilo Goju-Ryu ('Duro y Suave') y al Uechi-Ryu.",
-                        "3. El Árbol Sagrado del Karate: La Tríada Indivisible de las 3 'K' (Kihon, Kata y Kumite): La pedagogía tradicional concibe al Karate como un árbol vivo sagrado (Fig 3) que debe nutrirse en equilibrio perfecto:\n\n• Kihon (基本 - La Raíz Profunda): Son los cimientos biomecánicos: posturas (Dachi), golpes de puño (Tsuki), bloqueos (Uke) y patadas (Geri). Una raíz débil hace caer al árbol; por ello, la repetición constante del Kihon forja la alineación articular, el equilibrio y la fuerza del enraizamiento en la tierra.\n\n• Kata (型 - El Tronco Sólido): Es el tronco que une y da estructura a todo el árbol. Cada Kata es una enciclopedia viva y biblioteca en movimiento creada por los maestros antiguos para preservar las técnicas de supervivencia, derribos y luxaciones (Bunkai) sin necesidad de registros escritos.\n\n• Kumite (組手 - Las Flores del Combate): Es la copa florecida del árbol; el combate frente a un compañero donde la técnica cobra vida real. No busca lastimar ni vencer al otro por la fuerza bruta, sino poner a prueba la distancia adecuada (Maai), el tiempo de reacción, el temple espiritual y el respeto reverencial inquebrantable, aplicando el control milimétrico (Sundome) para cuidar la salud del compañero.",
+                        "2. Cartografía Ancestral de Okinawa: Las Tres Ramas Matrices (Shuri, Tomari y Naha): Antes de las escuelas modernas, el arte se conocía como 'Okinawa-Te' y se forjó en un triángulo geográfico histórico de tres ciudades con identidades marciales únicas (Fig 2):\n\n• Shuri-Te (首里手 - La Corte Real y la Nobleza Peichin): Desarrollado en la colina del Castillo de Shuri por la aristocracia y la escolta de los reyes de Ryukyu. Se distingue por desplazamientos lineales fulminantes, velocidad explosiva, posturas dinámicas y contraataques decisivos de largo alcance. Maestros cumbres: Kanga Sakugawa, Sokon Matsumura y Anko Itosu. Es la matriz directa del estilo Shotokan (fundado por Gichin Funakoshi) y co-fundamento del Shito-Ryu (Kenwa Mabuni).\n\n• Tomari-Te (泊手 - Los Pescadores, Náufragos y la Esquiva Tenshin): Forjado en la bahía y puerto pesquero de Tomari, nutrido por náufragos chinos y marineros que enseñaron en secreto a orillas del mar. Se caracteriza por su asombrosa ligereza, giros en rotación evasiva (Tenshin), cambios repentinos de altura y fintas con saltos sorpresivos. Maestros cumbres: Kosaku Matsumora, Kishin Teruya y Choki Motobu. Preservó katas clásicas como Rohai, Wankan y Chinto (Gankaku).\n\n• Naha-Te (那覇手 - El Puerto Mercantil, Enraizamiento e Ibuki): Nacido en el bullicioso puerto comercial de Naha y la comunidad china de Kumemura. Con fuerte raíz en el boxeo del sur de China, se enfoca en el combate a muy corta distancia, posiciones bajas y sólidas (Sanchin-dachi), agarres pesados y respiración diafragmática profunda e isométrica (Ibuki) que fortalece el cuerpo como hierro. Maestros cumbres: Kanryo Higaonna y Chojun Miyagi. Dio origen directo al estilo Goju-Ryu ('Duro y Suave') y al Uechi-Ryu.",
+                        "3. El Árbol de los 3 Pilares del Karate: La Tríada de las 3 'K' (Kihon, Kata y Kumite): La pedagogía tradicional compara al Karate con un árbol en crecimiento (Fig 3) que se desarrolla en equilibrio constante:\n\n• Kihon (基本 - La Raíz Profunda): Son los cimientos biomecánicos: posturas (Dachi), golpes de puño (Tsuki), bloqueos (Uke) y patadas (Geri). Una raíz sólida da estabilidad; por ello, la repetición constante del Kihon forja la alineación articular, el equilibrio y la firmeza postural.\n\n• Kata (型 - El Tronco Sólido): Es la estructura central que une todo el árbol. Cada Kata es una enciclopedia en movimiento creada por los maestros antiguos para preservar las secuencias técnicas y aplicaciones prácticas (Bunkai) sin necesidad de registros escritos.\n\n• Kumite (組手 - Las Flores del Combate): Es la copa florecida del árbol; la práctica con un compañero donde la técnica se aplica de forma dinámica. No busca lastimar ni vencer por fuerza desmedida, sino ejercitar la distancia adecuada (Maai), el tiempo de reacción, la concentración y el respeto mutuo, aplicando el control milimétrico (Sundome) para cuidar la integridad física del compañero.",
                         "4. La Invasión Satsuma de 1609 y la Forja Clandestina del Kobudo: En 1609, los samuráis del clan Satsuma invadieron Ryukyu e impusieron un edicto de desarme absoluto castigado con la pena de muerte. Los maestros llevaron el entrenamiento marcial a la clandestinidad nocturna, endureciendo sus nudillos contra el makiwara forrado de paja, y transformaron aperos de labranza y pesca en armas defensivas (el Bo o vara larga, el Tonfa o manivela de molino de arroz, el Sai o tridente, el Nunchaku y el remo Eku).",
-                        "5. El Manuscrito Sagrado Bubishi (武備志): La Biblia Secreta del Karate: El texto documental más venerado que sobrevivió a generaciones de maestros es el Bubishi (武備志 - 'Tratado de Preparación Marcial'). Este texto fundacional, copiado a mano con tinta china y transmitido de maestro a discípulo predilecto en secreto absoluto, recopila 48 posturas combativas ilustradas de la Grulla Blanca de Fujian, diagramas anatómicos de meridianos energéticos y horas del reloj circadiano donde el flujo de Ki se concentra en puntos vulnerables (doctrina Kyusho-Jitsu / Dim Mak), y recetas de medicina herbolaria y digitopuntura para tratar fracturas y contusiones. Gigantes como Kanryo Higaonna, Chojun Miyagi, Anko Itosu, Kenwa Mabuni y Gichin Funakoshi preservaron copias de este manuscrito sagrado.",
+                        "5. El Manuscrito Clásico Bubishi (武備志): Tratado Histórico del Karate: El documento tradicional más influyente preservado por los maestros antiguos es el Bubishi (武備志 - 'Tratado de Preparación Marcial'). Este texto histórico, copiado a mano y transmitido de maestro a discípulo en Okinawa, recopila 48 posturas combativas ilustradas de la Grulla Blanca de Fujian, nociones anatómicas de puntos vulnerables (Kyusho), y formulaciones de medicina herbolaria tradicional y digitopuntura para el tratamiento de lesiones y golpes. Maestros fundamentales como Kanryo Higaonna, Chojun Miyagi, Anko Itosu, Kenwa Mabuni y Gichin Funakoshi conservaron copias de este tratado clásico.",
                         "6. La Cumbre Histórica de Naha de 1936 y la Esencia de 'Mano Vacía': A inicios del siglo XX, Gichin Funakoshi y otros pioneros llevaron el arte a Tokio y a las universidades japonesas. El 25 de octubre de 1936, los máximos maestros de Okinawa (Chojun Miyagi, Chomo Hanashiro, Kentsu Yabu, Choki Motobu, Choshin Chibana, Shinpan Shiroma y Genwa Nakasone) celebraron una reunión cumbre en el palacio Showa Kaikan de Naha. En un acuerdo histórico, oficializaron el reemplazo del kanji original 唐手 ('To-de' / Mano de la dinastía Tang de China) por el ideograma homófono 空手 ('Kara-Te' / Mano Vacía), incorporando el sufijo 'Dō' (道 - Vía espiritual de superación personal). Esta evolución filosófica se basa en el principio Zen del vacío: 'Vaciar la mente de ego, vanidad, rencor y soberbia para reflejar el universo con la nitidez y calma de un espejo de agua'. Cada 25 de octubre se celebra el Día Mundial del Karate en conmemoración de aquella asamblea.",
-                        "7. Pilares Éticos y Biomecánicos: Del Tatami al Espíritu de Vida: La práctica tradicional del Karate descansa sobre la tríada indivisible de Kihon (fundamentos biomecánicos y postura), Kata (la biblioteca viva del estilo y sus aplicaciones secretas Bunkai) y Kumite (el combate donde se prueba la distancia Maai y el temple). Toda esta capacidad técnica está consagrada a los mandamientos supremos del Budo: 'Karate ni sente nashi' (空手に先手なし - En el Karate no existe el primer ataque; el practicante jamás busca la violencia y solo actúa para preservar la vida), 'Rei' (礼 - Respeto reverencial incondicional que rige el inicio y final de toda sesión marcial) e 'Ikken Hissatsu' (el compromiso total de concentrar toda la energía física y mental en un solo golpe definitivo mediante el Kime y Kiai, siempre controlado con la maestría milimétrica del Sundome para proteger la salud de quien entrena junto a nosotros)."
+                        "7. Pilares Éticos y Biomecánicos: Fundamentos del Dojo a la Vida Diaria: La práctica tradicional del Karate se apoya en los tres pilares de Kihon (fundamentos biomecánicos y postura), Kata (las formas clásicas del estilo y sus aplicaciones prácticas Bunkai) y Kumite (la práctica interactiva donde se ejercita la distancia Maai y el autocontrol). Toda esta disciplina técnica está orientada a principios fundamentales de convivencia y ética marcial: 'Karate ni sente nashi' (空手に先手なし - En el Karate no existe el primer ataque; el practicante evita cualquier agresión y solo actúa con fines de autodefensa legítima), 'Rei' (礼 - Respeto mutuo y cortesía que rige el inicio y final de cada práctica) y el control absoluto del impacto (Sundome) para cuidar siempre la seguridad de los compañeros de entrenamiento."
                     ],
                     bulletPoints: [
                         {
@@ -70,13 +70,13 @@ export const DIDACTIC_UNITS: Unit[] = [
                             image: "/images/didactic/kuma_pixar_origins_map.jpg"
                         },
                         {
-                            title: "El Triángulo Sagrado de Okinawa (Shuri, Tomari y Naha)",
+                            title: "El Triángulo Histórico de Okinawa (Shuri, Tomari y Naha)",
                             desc: "Las tres ciudades matrices donde nació el Karate-Do: la nobleza de Shuri, los pescadores de Tomari y los marineros comerciantes de Naha.",
                             badge: "3 Ramas Matrices",
                             image: "/images/didactic/kuma_pixar_okinawa_branches.jpg"
                         },
                         {
-                            title: "El Árbol Sagrado: Las 3 'K' (Kihon, Kata y Kumite)",
+                            title: "Los 3 Pilares: Las 3 'K' (Kihon, Kata y Kumite)",
                             desc: "La raíz profunda de Kihon sostiene el tronco estructurado de Kata para hacer florecer el combate Kumite con respeto, distancia y control.",
                             badge: "Pilares del Árbol",
                             image: "/images/didactic/kuma_pixar_tree_pillars.jpg"
@@ -100,8 +100,8 @@ export const DIDACTIC_UNITS: Unit[] = [
                             image: "/images/didactic/kuma_pixar_okinawa_branches.jpg"
                         },
                         {
-                            title: "El Manuscrito Sagrado Bubishi (武備志)",
-                            desc: "La biblia secreta del Karate: 48 técnicas combativas de la Grulla Blanca, anatomía de puntos vitales (Kyusho-Jitsu) y medicina herbolaria tradicional copiada de maestro a discípulo.",
+                            title: "El Manuscrito Clásico Bubishi (武備志)",
+                            desc: "El manual fundacional del Karate: 48 técnicas combativas de la Grulla Blanca, anatomía de puntos vulnerables (Kyusho) y medicina tradicional transmitida entre maestros.",
                             badge: "Tratado Clave",
                             image: "/images/didactic/bubishi_ancient_scroll.jpg"
                         },
@@ -247,7 +247,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-karate-kanji-draw-1",
                         type: "kanji_draw",
-                        prompt: "Traza con tu dedo o mouse los Kanjis sagrados de KARATE-DO (空手道)",
+                        prompt: "Traza con tu dedo o mouse los Kanjis de KARATE-DO (空手道)",
                         description: "Sigue los trazos guiados en orden sobre el pergamino para forjar la caligrafía marcial del guerrero.",
                         explanation: "¡Excelente maestría caligráfica! Karate-Dō (空手道) significa literalmente 'El Camino de la Mano Vacía'. El maestro Gichin Funakoshi adoptó el kanji 空 (Kara - Vacío) para representar tanto la autodefensa sin armas como el ideal del Budismo Zen: una mente despejada de ego, orgullo y malas intenciones.",
                         hint: "Sigue el punto rojo numerado y traza en dirección al círculo guía.",
@@ -281,7 +281,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-shotokan-kanji-draw",
                         type: "kanji_draw",
-                        prompt: "Traza los Kanjis sagrados de SHŌTŌKAN (松濤館)",
+                        prompt: "Traza los Kanjis de SHŌTŌKAN (松濤館)",
                         description: "Sigue los trazos en el pergamino para forjar el nombre del estilo de Gichin Funakoshi.",
                         kanjiList: SHOTOKAN_KANJIS,
                         explanation: "¡Excelente maestría! Shōtōkan (松濤館) significa 'La Casa del Susurro de los Pinos'. Shōtō (松濤 - Olas de Pino) era el seudónimo poético de Funakoshi en su juventud en Okinawa, y Kan (館) representa el dojo o escuela.",
@@ -429,11 +429,11 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-kiai-kanji-draw",
                         type: "kanji_draw",
-                        prompt: "Traza los Kanjis sagrados del KIAI (気合): Energía & Blindaje",
-                        description: "Traza Ki (Energía) y Ai (Unión) para forjar la respiración y el escudo abdominal de Kuma Sensei.",
+                        prompt: "Traza los Kanjis del KIAI (気合): Energía & Concentración",
+                        description: "Traza Ki (Energía) y Ai (Unión) para forjar la respiración y el control abdominal de Kuma Sensei.",
                         kanjiList: KIAI_KANJIS,
-                        explanation: "¡KIAI extraordinario! 気合 une Ki (Energía / Espíritu) y Ai (Unión). Al gritar, la exhalación brusca blinda tu abdomen (Tanden) como un escudo de hierro y transmite el 100% de tu masa y concentración (Kime) al golpe.",
-                        hint: "Sigue el punto rojo numerado para trazar cada ideograma y desbloquear el poder de Kuma.",
+                        explanation: "¡KIAI extraordinario! 気合 une Ki (Energía / Espíritu) y Ai (Unión). Al emitir el Kiai, la exhalación brusca estabiliza tu centro abdominal (Tanden) y transmite la fuerza y concentración (Kime) al impacto.",
+                        hint: "Sigue el punto rojo numerado para trazar cada ideograma y avanzar.",
                         references: [
                             {
                                 title: "Karate Dinámico",
@@ -464,8 +464,8 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-pilares-kihon-kata-kumite",
                         type: "tree_pillars",
-                        prompt: "Los 3 Pilares del Karate: ¡Haz florecer el Árbol Sagrado!",
-                        description: "Coloca cada gema en su altar: la Raíz (Kihon), el Tronco (Kata) y las Flores (Kumite).",
+                        prompt: "Los 3 Pilares del Karate: ¡Completa el Árbol de las 3 'K'!",
+                        description: "Ubica cada pilar en el árbol: la Raíz (Kihon), el Tronco (Kata) y las Flores (Kumite).",
                         options: [
                             {
                                 id: "o1",
@@ -521,11 +521,11 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-kata-bunkai-kanji-draw",
                         type: "kanji_draw",
-                        prompt: "Traza los Kanjis sagrados de KATA & BUNKAI (型・解)",
-                        description: "Descubre el secreto: de la Forma en solitario (型) a la Aplicación real en combate (解).",
+                        prompt: "Traza los Kanjis de KATA & BUNKAI (型・解)",
+                        description: "De la Forma técnica individual (型) a la Aplicación práctica en defensa (解).",
                         kanjiList: KATA_KANJIS,
-                        explanation: "¡Maestría revelada! Kata (型) es el molde o biblioteca viviente en la memoria del cuerpo. Bunkai (解) es el análisis que demuestra que ningún movimiento es un baile: cada paso oculta llaves, derribos y defensas reales frente a agresiones.",
-                        hint: "Sigue el punto rojo numerado para trazar cada ideograma y desbloquear el poder de Kuma.",
+                        explanation: "¡Excelente trazo! Kata (型) es el molde y archivo técnico en la memoria del cuerpo. Bunkai (解) es el análisis práctico que demuestra la aplicación de cada movimiento frente a situaciones reales de autodefensa.",
+                        hint: "Sigue el punto rojo numerado para trazar cada ideograma y continuar.",
                         references: [
                             {
                                 title: "Bubishi: La Biblia del Karate",
@@ -584,7 +584,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 year: 1938,
                                 editorial: "Editorial Tutor",
                                 chapter: "Principio 12: No pienses que tienes que ganar; piensa más bien en no perder",
-                                note: "Tratado filosófico sobre la templanza y el cuidado reverencial de la vida humana en el tatami."
+                                note: "Tratado formativo sobre el autocontrol, la disciplina y el respeto a la vida dentro y fuera del tatami."
                             }
                         ]
                     }
@@ -1226,7 +1226,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                 xpReward: 80,
                 theory: {
                     title: "Kata (型 / 形) — El Alma y la Biblioteca Viva del Karate",
-                    subtitle: "Secuencias sagradas, memoria corporal y la aplicación real (Bunkai)",
+                    subtitle: "Formas tradicionales, memoria motriz y aplicación práctica (Bunkai)",
                     quote: "El Kata no es una simple danza; es un combate real grabado en la memoria del cuerpo donde cada respiración y cada pausa deciden la vida. — Maestro Gichin Funakoshi",
                     content: [
                         "1. ¿Qué es un Kata?: Literalmente significa 'forma' o 'molde'. En la tradición marcial de Okinawa y Japón, el Kata es la enciclopedia viva y el archivo histórico del Karate. Es una coreografía geométrica predeterminada que simula un combate a muerte contra múltiples adversarios invisibles.",
@@ -1438,7 +1438,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 author: "Sensei Roland Habersetzer (9° Dan)",
                                 year: 2003,
                                 editorial: "Editorial Alas",
-                                chapter: "Capítulo 2: El Dibujo Sagrado del Suelo (Embusen)",
+                                chapter: "Capítulo 2: El Diagrama de Desplazamiento en el Suelo (Embusen)",
                                 note: "Explicación histórica de cómo los maestros antiguos trazaban el mapa de batalla en el suelo del dojo.",
                             }
                         ]

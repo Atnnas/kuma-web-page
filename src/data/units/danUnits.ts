@@ -749,12 +749,12 @@ export const DAN_UNITS: Unit[] = [
                 xpReward: 125,
                 theory: {
                     title: "El Arte de Enseñar: La Pedagogía del Budo",
-                    subtitle: "De practicante a guía espiritual y formador de instructores",
-                    quote: "Enseñar no es llenar un cántaro vacío; es encender un fuego sagrado en el corazón del discípulo.",
+                    subtitle: "De practicante a pedagogo y formador de instructores",
+                    quote: "Enseñar no es llenar un cántaro vacío; es encender la motivación y la pasión por aprender en el estudiante.",
                     content: [
                         "En el grado Yondan (4° Dan), el karateka recibe el título de 'Shidoin' (Instructor Oficial). La responsabilidad ya no es su propio progreso individual, sino el florecimiento de sus estudiantes.",
-                        "Un maestro no impone su ego; comprende las diferencias anatómicas, la psicología infantil y los miedos del principiante para guiarlos con paciencia y rectitud.",
-                        "La preservación de la tradición marcial depende enteramente de la pureza y rigor pedagógico con que el Sensei transmite el Karate a las nuevas generaciones."
+                        "Un maestro no impone su ego; comprende las diferencias anatómicas, la pedagogía adecuada y las dudas del principiante para guiarlos con paciencia y rectitud.",
+                        "La preservación de la tradición marcial depende enteramente de la claridad y rigor pedagógico con que el Sensei transmite el Karate a las nuevas generaciones."
                     ],
                     references: [
                         "Funakoshi, Gichin (1975). Karate-Do: Mi Camino de Vida. Editorial Eyras."
@@ -1230,7 +1230,7 @@ export const DAN_UNITS: Unit[] = [
                 theory: {
                     title: "La Gran Genealogía de los 4 Estilos Tradicionales",
                     subtitle: "Reconocidos por la Dai Nippon Butokukai y la WKF",
-                    quote: "Muchos son los senderos que suben a la montaña sagrada, pero todos contemplan la misma luna en la cumbre.",
+                    quote: "Muchos son los senderos que suben a la montaña, pero todos contemplan la misma cumbre.",
                     content: [
                         "1) Shotokan (Gichin Funakoshi): Desplazamientos largos, posturas bajas y profundas, gran velocidad lineal y Kime devastador.",
                         "2) Shito-Ryu (Kenwa Mabuni): El más enciclopédico; fusiona la ligereza de Shuri y la dureza de Naha en más de 50 katas.",
@@ -1641,12 +1641,12 @@ export const DAN_UNITS: Unit[] = [
                 color: "gold",
                 xpReward: 150,
                 theory: {
-                    title: "Meikyo (明鏡): El Espejo Limpio del Alma",
-                    subtitle: "33 movimientos de pureza de línea y serenidad mística",
-                    quote: "Limpia el polvo del espejo de tu corazón para que refleje la verdad del universo sin distorsión.",
+                    title: "Meikyo (明鏡): El Espejo Limpio",
+                    subtitle: "33 movimientos de precisión técnica y serenidad mental",
+                    quote: "Mantén la mente clara y despejada para percibir con objetividad la realidad y la intención del adversario.",
                     content: [
                         "Meikyo (antiguamente Rohai de Tomari-Te) significa 'Espejo Brillante o Pulido'.",
-                        "Comienza con las dos palmas juntas formando un espejo frente al rostro, un gesto ritual que simboliza contemplar las propias debilidades y purificar la mente de vanidad.",
+                        "Comienza con las dos palmas juntas formando un espejo frente al rostro, un gesto tradicional que simboliza la concentración y el control mental.",
                         "Contiene el salto 'Sankaku-Tobi' (salto triangular) para esquivar una lanza o bastón barriendo en el suelo, y desarmes de Bo atrapando el arma entre los antebrazos.",
                         "Posee 33 movimientos con un único Kiai majestuoso en el paso final."
                     ],
@@ -1984,7 +1984,7 @@ export const DAN_UNITS: Unit[] = [
                                 year: 1975,
                                 editorial: "Editorial Eyras",
                                 chapter: "Capítulo 11: La Custodia del Linaje y el Legado Marcial",
-                                note: "El deber sagrado en el 9° Dan (Kudan) es preservar la pureza ética del Budo, formar sucesores íntegros y evitar la degradación del arte.",
+                                note: "El deber formativo en el 9° Dan (Kudan) es preservar los valores éticos del Budo, formar sucesores íntegros y evitar la degradación técnica del arte.",
                             },
                             {
                                 title: "Karate Tradicional: Su Filosofía, Su Historia y Sus Fundamentos",
@@ -2177,7 +2177,7 @@ export const DAN_UNITS: Unit[] = [
     {
         id: "unit-dan-10",
         title: "La Corona del Cielo",
-        description: "Judan: La culminación sagrada, Shin-Gi-Tai unificado y el kata Wankan.",
+        description: "Judan: La culminación técnica, Shin-Gi-Tai unificado y el kata Wankan.",
         path: "tradicional",
         beltId: "dan-10",
         levels: [
@@ -2193,11 +2193,11 @@ export const DAN_UNITS: Unit[] = [
                 theory: {
                     title: "La Corona de los Grandes Maestros",
                     subtitle: "Judan (十段): La cima de la pirámide marcial tradicional",
-                    quote: "El círculo está completo: el 10° Dan vuelve al primer paso del 10° Kyu con la inocencia de un niño y la sabiduría de un sabio.",
+                    quote: "El círculo está completo: el 10° Dan vuelve al primer paso del 10° Kyu con la sencillez de un niño y la sabiduría de los años.",
                     content: [
-                        "El 10° Dan (Judan) es el grado supremo en las artes marciales de Okinawa y Japón. Reservado únicamente a patriarcas que dedicaron su vida entera a elevar el espíritu humano a través del Karate.",
+                        "El 10° Dan (Judan) es el grado supremo en las artes marciales de Okinawa y Japón. Reservado únicamente a patriarcas que dedicaron su vida entera a la pedagogía y la formación humana a través del Karate.",
                         "Figuras legendarias como Chojun Miyagi, Choshin Chibana, Hironori Otsuka o Masatoshi Nakayama personificaron esta dignidad.",
-                        "En este umbral sagrado, no existen más títulos ni rangos terrenales: el maestro es la tradición misma hecha carne viva."
+                        "En este grado cumbre, se alcanza la máxima madurez marcial: el maestro encarna la experiencia y la pedagogía del arte en su totalidad."
                     ],
                     references: [
                         "Bishop, Mark (2004). Karate de Okinawa: Maestros, Estilos y Métodos Secretos. Editorial Tutor."
@@ -2209,14 +2209,14 @@ export const DAN_UNITS: Unit[] = [
                         type: "multiple_choice",
                         prompt: "¿Qué condición humana y ética distingue a los portadores históricos del grado 10° Dan (Judan)?",
                         options: [
-                            { id: "o1", text: "Una vida entera consagrada a la paz, la rectitud ética y el perfeccionamiento moral de la humanidad", isCorrect: true },
+                            { id: "o1", text: "Una vida entera dedicada a la docencia, la rectitud ética y el perfeccionamiento formativo del arte", isCorrect: true },
                             { id: "o2", text: "Tener mucho dinero en el banco", isCorrect: false },
                             { id: "o3", text: "Haber vencido a mil personas en peleas callejeras", isCorrect: false },
                             { id: "o4", text: "Ser el presidente de un partido político", isCorrect: false },
                         ],
                         correctAnswerId: "o1",
-                        explanation: "El 10° Dan trasciende lo técnico: es la consagración moral y espiritual de toda una vida.",
-                        hint: "Una vida entera consagrada a la paz y la rectitud ética.",
+                        explanation: "El 10° Dan representa el máximo reconocimiento a la trayectoria formativa, rectitud ética y aporte pedagógico durante toda una vida.",
+                        hint: "Una vida entera dedicada a la docencia, la rectitud ética y la formación.",
                         references: [
                             {
                                 title: "Karate-Do: Mi Camino de Vida",
@@ -2242,17 +2242,17 @@ export const DAN_UNITS: Unit[] = [
                 id: "level-shin-gi-tai",
                 number: 2,
                 title: "Cuerpo Humano",
-                subtitle: "Shin-Gi-Tai (心技体): La trinidad indivisible de mente, técnica y cuerpo",
+                subtitle: "Shin-Gi-Tai (心技体): La tríada indivisible de mente, técnica y cuerpo",
                 tag: "Cuerpo Humano & Biomecánica",
                 icon: "💪",
                 color: "gold",
                 xpReward: 160,
                 theory: {
-                    title: "Shin-Gi-Tai (心技体): La Trinidad Sagrada del Budo",
-                    subtitle: "Mente (Shin), Técnica (Gi) y Cuerpo (Tai) fundidos en unidad indivisible",
-                    quote: "El cuerpo sin mente es una bestia ciega; la mente sin técnica es impotente; unidos los tres en armonía, el espíritu trasciende la muerte.",
+                    title: "Shin-Gi-Tai (心技体): La Tríada Fundamental del Budo",
+                    subtitle: "Mente (Shin), Técnica (Gi) y Cuerpo (Tai) fundidos en unidad armónica",
+                    quote: "El cuerpo sin mente pierde dirección; la mente sin técnica pierde eficacia; unidos los tres en armonía, se alcanza la verdadera maestría.",
                     content: [
-                        "SHIN (心): El corazón, la mente despierta, el coraje moral, la compasión y la devoción hacia la justicia.",
+                        "SHIN (心): La actitud mental, la serenidad, el coraje moral, la empatía y el sentido de justicia.",
                         "GI (技): La técnica milimétrica, la precisión anatómica, el ritmo y el refinamiento de cada bloqueo y golpe.",
                         "TAI (体): El cuerpo físico, la salud, la postura sólida, la respiración profunda y el enraizamiento.",
                         "En el 10° Dan, los tres elementos dejan de ser tres cosas separadas: mente, técnica y cuerpo son uno solo."

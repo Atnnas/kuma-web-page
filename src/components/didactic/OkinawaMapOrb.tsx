@@ -48,7 +48,7 @@ export function OkinawaMapOrb({
                 <div className="absolute top-1 left-2.5 right-2.5 h-6 rounded-[50%] bg-gradient-to-b from-white/40 via-white/10 to-transparent pointer-events-none z-20" />
             </div>
 
-            {/* Placa Sagrada de la Cuenta Maestra de Okinawa */}
+            {/* Placa Histórica de la Cuenta Maestra de Okinawa */}
             {showLabel && (
                 <motion.div
                     initial={{ y: 2, opacity: 0 }}

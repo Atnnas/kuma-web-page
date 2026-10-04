@@ -423,7 +423,7 @@ function shuffleArray<T>(array: T[]): T[] {
         setCorrectCount((prev) => prev + 1);
         setStreak((prev) => prev + 1);
         setMascotMood("streak");
-        setCustomSpeech("¡KIAI! ¡El Árbol Sagrado floreció con Kihon, Kata y Kumite! Avanzando... 🌸🥋🔥");
+        setCustomSpeech("¡KIAI! ¡El Árbol de los 3 Pilares floreció con Kihon, Kata y Kumite! Avanzando... 🌸🥋🔥");
         setIsTreePillarsDone(false);
         setAnswerStatus("idle");
 
@@ -439,7 +439,7 @@ function shuffleArray<T>(array: T[]): T[] {
         setCorrectCount((prev) => prev + 1);
         setStreak((prev) => prev + 1);
         setMascotMood("streak");
-        setCustomSpeech("¡KIAI! ¡Descubriste las 3 ramas sagradas de Okinawa: Shuri, Tomari y Naha! 🏯⚓🚢🔥");
+        setCustomSpeech("¡KIAI! ¡Descubriste las 3 ramas históricas de Okinawa: Shuri, Tomari y Naha! 🏯⚓🚢🔥");
         setIsOkinawaBranchesDone(false);
         setAnswerStatus("idle");
 
@@ -1160,7 +1160,7 @@ function shuffleArray<T>(array: T[]): T[] {
                                                     const targetName = currentQuestion.kanjiList
                                                         ? currentQuestion.kanjiList.map((k) => k.kanji).join("・")
                                                         : "KARATE-DO (空・手・道)";
-                                                    setCustomSpeech(`¡KIAI! ¡Has forjado los Kanjis sagrados de ${targetName}! ¡Comprueba tu técnica ahora! 👊🥋🔥`);
+                                                    setCustomSpeech(`¡KIAI! ¡Has forjado los Kanjis de ${targetName}! ¡Comprueba tu técnica ahora! 👊🥋🔥`);
                                                 }
                                             }}
                                         />
@@ -1181,7 +1181,7 @@ function shuffleArray<T>(array: T[]): T[] {
                                         />
                                     </div>
                                 )}
-                                {/* TREE PILLARS QUESTION (EL ÁRBOL SAGRADO: KIHON, KATA Y KUMITE) */}
+                                {/* TREE PILLARS QUESTION (EL ÁRBOL DE LAS 3 'K': KIHON, KATA Y KUMITE) */}
                                 {currentQuestion.type === "tree_pillars" && (
                                     <div className="w-full">
                                         <TreePillarsQuestion
@@ -1190,7 +1190,7 @@ function shuffleArray<T>(array: T[]): T[] {
                                             onCompleted={() => {
                                                 setIsTreePillarsDone(true);
                                                 setMascotMood("streak");
-                                                setCustomSpeech("¡KIAI! ¡Colocaste las 3 gemas sagradas: Kihon, Kata y Kumite! 🌸🥋");
+                                                setCustomSpeech("¡KIAI! ¡Colocaste los 3 pilares: Kihon, Kata y Kumite! 🌸🥋");
                                             }}
                                             onCheckAndNext={handleDirectTreeCheckAndNext}
                                         />
@@ -1279,7 +1279,7 @@ function shuffleArray<T>(array: T[]): T[] {
                             {/* BARRA DE MAESTRÍA DE 3 ESTRELLAS */}
                             <div className="w-full mt-6 p-4 rounded-2xl bg-gradient-to-b from-[#1C180A]/90 to-[#0A0D18]/90 border-2 border-[#FFC800]/50 shadow-[0_0_20px_rgba(255,200,0,0.15)] flex flex-col items-center">
                                 <span className="text-[11px] font-black uppercase tracking-widest text-[#FFC800]">
-                                    {earnedStars === 3 ? "👑 Maestría de Nivel Consagrada" : "⭐ Forja de Maestría Marcial"}
+                                    {earnedStars === 3 ? "👑 Maestría de Nivel Completada" : "⭐ Avance de Nivel Marcial"}
                                 </span>
 
                                 <div className="flex items-center gap-3.5 my-3">

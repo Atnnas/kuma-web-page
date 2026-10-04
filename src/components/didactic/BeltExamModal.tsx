@@ -321,13 +321,13 @@ export function BeltExamModal({
                                             <strong className="text-amber-300 font-black">
                                                  {correctAnswersCount}/10 aciertos
                                             </strong>
-                                            . El panel de árbitros te otorga la consagración formal a tu nuevo rango.
+                                            . El panel de árbitros y examinadores avala formalmente tu nuevo rango.
                                         </p>
 
-                                        {/* CINTURÓN CONSAGRADO / MAESTRÍA */}
+                                        {/* CINTURÓN OBTENIDO / MAESTRÍA */}
                                         <div className="p-4 sm:p-5 rounded-2xl bg-zinc-900/90 border-2 border-yellow-400 max-w-sm mx-auto shadow-[0_0_25px_rgba(250,204,21,0.3)] mb-6 text-center">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1">
-                                                {isTargetAvailable ? "Grado Alcanzado" : "Maestría Consagrada"}
+                                                {isTargetAvailable ? "Grado Alcanzado" : "Máximo Grado de Maestría"}
                                             </span>
                                             <div className="flex items-center justify-center gap-2">
                                                 <div

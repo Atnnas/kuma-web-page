@@ -21,7 +21,7 @@ interface FloatingSteppingStoneProps {
  * - CERO imágenes rasterizadas (sin JPGs generados por IA).
  * - Curvas Bézier orgánicas de canto rodado pulido por el agua.
  * - Gradientes de roca mineral: Jade Imperial, Basalto Volcánico y Pizarra con Musgo.
- * - Kanji sagrados tallados con resplandor interior de Ki.
+ * - Kanjis tradicionales tallados con resplandor interior.
  * - Ondas de agua vivas (Hamon 波紋) y sombra submarina en el lecho del estanque.
  */
 export function FloatingSteppingStone({
@@ -39,7 +39,7 @@ export function FloatingSteppingStone({
     const floatDelay = ((level.number || 1) % 5) * 0.4;
     const floatDuration = 4.2 + ((level.number || 1) % 3) * 0.4;
 
-    // Kanji sagrado grabado en la piedra según el estado
+    // Kanji tradicional grabado en la piedra según el estado
     const stoneKanji = isOkinawa
         ? "空" // Kara (Vacío / Karate)
         : isCompleted
@@ -281,7 +281,7 @@ export function FloatingSteppingStone({
                         />
 
                         {/* ===================================================== */}
-                        {/* GRABADO SAGRADO CENTRAL SEGÚN ESTADO DE LA PIEDRA     */}
+                        {/* GRABADO TRADICIONAL CENTRAL SEGÚN ESTADO DE LA PIEDRA */}
                         {/* ===================================================== */}
                         {isCompleted ? (
                             /* CÍRCULO ZEN ENSO (円相) TALLADO EN PAN DE ORO */

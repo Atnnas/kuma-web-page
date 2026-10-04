@@ -254,15 +254,15 @@ export function OkinawaBranchesQuestion({
 
                 if (cityId === "naha") {
                     speakKuma(
-                        "¡Naha-Te en el gran puerto comercial! Los marineros y comerciantes forjaron un estilo de fuerza física sólida, agarres y respiración profunda Ibuki. ¡Con esto el Triángulo Sagrado de Okinawa queda completo junto a Shuri y Tomari!"
+                        "¡Naha-Te en el gran puerto comercial! Los marineros y comerciantes forjaron un estilo de fuerza física sólida, agarres y respiración profunda Ibuki. ¡Con esto el Triángulo Histórico de Okinawa queda completo junto a Shuri y Tomari!"
                     );
                 } else if (cityId === "tomari") {
                     speakKuma(
-                        "¡Tomari-Te en la bahía pesquera! Los pescadores crearon técnicas fluidas, fintas evasivas y saltos sorpresivos. ¡Con esto el Triángulo Sagrado de Okinawa queda completo junto a Shuri y Naha!"
+                        "¡Tomari-Te en la bahía pesquera! Los pescadores crearon técnicas fluidas, fintas evasivas y saltos sorpresivos. ¡Con esto el Triángulo Histórico de Okinawa queda completo junto a Shuri y Naha!"
                     );
                 } else {
                     speakKuma(
-                        "¡Shuri-Te en el Castillo Real! La nobleza entrenaba técnicas rápidas, ágiles y lineales. ¡Con esto el Triángulo Sagrado de Okinawa queda completo junto a Tomari y Naha!"
+                        "¡Shuri-Te en el Castillo Real! La nobleza entrenaba técnicas rápidas, ágiles y lineales. ¡Con esto el Triángulo Histórico de Okinawa queda completo junto a Tomari y Naha!"
                     );
                 }
 
@@ -429,7 +429,7 @@ export function OkinawaBranchesQuestion({
                     </button>
                 )}
 
-                {/* 2. SVG CON LÍNEAS DEL TRIÁNGULO SAGRADO DE OKINAWA */}
+                {/* 2. SVG CON LÍNEAS DEL TRIÁNGULO HISTÓRICO DE OKINAWA */}
                 <svg className="absolute inset-0 w-full h-full pointer-events-none z-15">
                     {/* Línea Shuri <-> Tomari */}
                     {discovered.shuri && discovered.tomari && (
@@ -484,7 +484,7 @@ export function OkinawaBranchesQuestion({
                     )}
                 </svg>
 
-                {/* 3. PINES / ALTARES TÁCTILES EN EL MAPA */}
+                {/* 3. PINES TÁCTILES EN EL MAPA */}
                 {BRANCHES.map((branch) => {
                     const isFound = discovered[branch.id];
                     const isCurrentTarget = selectedBranchId === branch.id;
@@ -584,10 +584,10 @@ export function OkinawaBranchesQuestion({
                             </div>
                             <p className="text-[11px] sm:text-xs text-white mt-0.5 leading-snug">
                                 {lastCompletedCity === "naha"
-                                    ? "En el puerto de Naha nació la potencia muscular y respiración Ibuki. ¡Junto a Shuri (agilidad) y Tomari (fluidez), el Triángulo Sagrado de Okinawa queda completo!"
+                                    ? "En el puerto de Naha nació la potencia muscular y respiración Ibuki. ¡Junto a Shuri (agilidad) y Tomari (fluidez), el Triángulo Histórico de Okinawa queda completo!"
                                     : lastCompletedCity === "tomari"
-                                    ? "En Tomari nació la fluidez y fintas sorpresivas. ¡Junto a Shuri (agilidad) y Naha (potencia), el Triángulo Sagrado de Okinawa queda completo!"
-                                    : "En Shuri nació la velocidad y técnicas lineales de palacio. ¡Junto a Tomari (fluidez) y Naha (potencia), el Triángulo Sagrado de Okinawa queda completo!"}
+                                    ? "En Tomari nació la fluidez y fintas sorpresivas. ¡Junto a Shuri (agilidad) y Naha (potencia), el Triángulo Histórico de Okinawa queda completo!"
+                                    : "En Shuri nació la velocidad y técnicas lineales de palacio. ¡Junto a Tomari (fluidez) y Naha (potencia), el Triángulo Histórico de Okinawa queda completo!"}
                             </p>
                             <div className="mt-1.5 flex items-center justify-center gap-2">
                                 <span className="text-[10px] font-bold text-amber-200 bg-black/60 px-2 py-0.5 rounded-full border border-white/20 animate-pulse">

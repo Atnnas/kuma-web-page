@@ -153,7 +153,7 @@ export function TreePillarsQuestion({
     onCheckAndNext,
     isSuperAdmin = false,
 }: TreePillarsQuestionProps) {
-    // Estado de gemas colocadas en los altares
+    // Estado de los 3 pilares colocados en el árbol
     const [placedGems, setPlacedGems] = useState<{
         kihon: boolean;
         kata: boolean;
@@ -242,7 +242,7 @@ export function TreePillarsQuestion({
         };
     }, []);
 
-    // Manejo de colocación de gema en un altar
+    // Manejo de colocación de un pilar en su espacio
     const handlePlaceOnSlot = (slotId: PillarId) => {
         didacticSound.playClick();
 
@@ -254,7 +254,7 @@ export function TreePillarsQuestion({
         if (!gemToPlace) return;
 
         if (gemToPlace === slotId) {
-            // Acierto: la gema coincide con el altar
+            // Acierto: la opción coincide con el pilar correspondiente
             didacticSound.playCorrect();
             const nextPlaced = { ...placedGems, [slotId]: true };
             setPlacedGems(nextPlaced);
@@ -277,11 +277,11 @@ export function TreePillarsQuestion({
 
                 if (slotId === "kumite") {
                     speakKuma(
-                        "¡Kumite en la copa del árbol! Las flores representan el combate libre. Es donde aplicas tu técnica con respeto, distancia y control, haciendo florecer todo el árbol de Karate."
+                        "¡Kumite en la copa del árbol! Las flores representan el combate formativo. Es donde aplicas tu técnica con respeto, distancia y control, completando todo el árbol de Karate."
                     );
                 } else {
                     speakKuma(
-                        "¡El Árbol Sagrado ha florecido! Con la raíz de Kihon y el tronco de Kata, el combate de Kumite florece en lo más alto con respeto y control."
+                        "¡El árbol de los 3 pilares se ha completado! Con la raíz de Kihon y el tronco de Kata, la práctica de Kumite se desarrolla con respeto y control."
                     );
                 }
 
@@ -369,13 +369,13 @@ export function TreePillarsQuestion({
             )}
 
             {/* ========================================================= */}
-            {/* EL GRAN ÁRBOL PIXAR 3D CON ALTARES MÍSTICOS */}
+            {/* EL GRAN ÁRBOL CON LOS 3 PILARES */}
             {/* ========================================================= */}
             <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] min-h-[350px] sm:min-h-[420px] md:min-h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden border-2 sm:border-4 border-amber-400/50 shadow-[0_8px_30px_rgba(0,0,0,0.8)] bg-slate-950">
                 {/* 1. Fondo: Ilustración 3D Pixar del Árbol de Cerezo */}
                 <Image
                     src="/images/didactic/kuma_pixar_tree_pillars_v2.jpg"
-                    alt="Árbol Sagrado de Karate Pixar 3D con Kuma Sensei"
+                    alt="Árbol de los 3 Pilares del Karate con Kuma Sensei"
                     fill
                     priority
                     className="object-cover object-center"
@@ -398,7 +398,7 @@ export function TreePillarsQuestion({
                             speakKuma(
                                 isAllPlaced
                                     ? "¡El árbol ha florecido! Toca comprobar técnica."
-                                    : "Toca una gema abajo y luego toca su altar en el árbol.",
+                                    : "Toca una tarjeta abajo y luego colócala en el árbol.",
                                 true
                             );
                         }
@@ -436,7 +436,7 @@ export function TreePillarsQuestion({
                     </button>
                 )}
 
-                {/* 2. LOS 3 ALTARES SAGRADOS EN EL ÁRBOL */}
+                {/* 2. LOS 3 PILARES EN EL ÁRBOL */}
                 {GEMS.map((gem) => {
                     const isPlaced = placedGems[gem.id];
                     const isCurrentTarget = selectedGemId === gem.id;
@@ -451,7 +451,7 @@ export function TreePillarsQuestion({
                             }}
                             className="absolute z-20"
                         >
-                            {/* Flecha saltarina guiando al altar si la gema correspondiente está seleccionada */}
+                            {/* Flecha saltarina guiando al espacio si la opción correspondiente está seleccionada */}
                             {isCurrentTarget && (
                                 <motion.div
                                     animate={{ y: [-4, 0, -4] }}
@@ -465,7 +465,7 @@ export function TreePillarsQuestion({
                                 </motion.div>
                             )}
 
-                            {/* Altar táctil circular */}
+                            {/* Espacio táctil circular */}
                             <motion.button
                                 type="button"
                                 whileHover={{ scale: 1.08 }}
@@ -493,7 +493,7 @@ export function TreePillarsQuestion({
                                 )}
                             </motion.button>
 
-                            {/* Etiqueta ultra-clara del altar */}
+                            {/* Etiqueta ultra-clara del pilar */}
                             <div className="mt-1 text-center pointer-events-none whitespace-nowrap">
                                 <span
                                     className={`inline-block px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider backdrop-blur-md shadow-md border ${
@@ -562,7 +562,7 @@ export function TreePillarsQuestion({
                                     🌸🥋✨
                                 </div>
                                 <span className="inline-block text-[11px] font-black uppercase tracking-[0.2em] text-pink-300 bg-pink-950/80 px-3 py-1 rounded-full border border-pink-400/50 mb-1.5">
-                                    ¡Árbol Sagrado Florecido!
+                                    ¡Árbol de los 3 Pilares Completo!
                                 </span>
                                 <h3 className="text-lg sm:text-xl font-serif font-black text-white">
                                     🪨 Kihon + 🪵 Kata + 🌸 Kumite
@@ -643,7 +643,7 @@ export function TreePillarsQuestion({
                                     </span>
                                 ) : isSelected ? (
                                     <span className="inline-block text-[9px] font-black uppercase text-yellow-300 bg-yellow-950 px-2 py-0.5 rounded-full border border-yellow-400/40 animate-pulse">
-                                        ¡Toca el Altar!
+                                        ¡Toca en el Árbol!
                                     </span>
                                 ) : (
                                     <span className="inline-block text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">

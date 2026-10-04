@@ -77,8 +77,8 @@ export const WHITE_BELT_EXAM: BeltExamConfig = {
         {
             id: "exam-k10-q4",
             type: "multiple_choice",
-            prompt: "4. MANUSCRITO: ¿Qué tratado secreto chino se considera la 'Biblia Sagrada' preservada por los maestros de Okinawa?",
-            description: "Compendio con 48 técnicas combativas y medicina herbolaria.",
+            prompt: "4. MANUSCRITO: ¿Qué texto histórico clásico preservaron en secreto los maestros de Okinawa?",
+            description: "Compendio con 48 técnicas combativas y medicina tradicional.",
             options: [
                 { id: "o1", text: "El Bubishi (武備志 — Tratado de Preparación Marcial)", isCorrect: true },
                 { id: "o2", text: "El Libro de los Cinco Anillos de Musashi", isCorrect: false },
@@ -219,7 +219,7 @@ export const BELT_EXAMS: Record<string, BeltExamConfig> = {
                 type: "multiple_choice",
                 prompt: "2. FILOSOFÍA: ¿Qué significado encierra la reverencia tradicional 'Rei' al ingresar al Dojo?",
                 options: [
-                    { id: "o1", text: "Humildad, respeto reverencial hacia el espacio sagrado, maestros y compañeros", isCorrect: true },
+                    { id: "o1", text: "Humildad, respeto y cortesía en el dojo hacia maestros y compañeros", isCorrect: true },
                     { id: "o2", text: "Una obligación militar sin significado interno", isCorrect: false },
                     { id: "o3", text: "Pedir permiso para no hacer flexiones", isCorrect: false },
                     { id: "o4", text: "Comprobar que el suelo esté limpio", isCorrect: false },

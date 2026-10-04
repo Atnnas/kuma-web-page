@@ -114,7 +114,7 @@ export const KYU_UNITS: Unit[] = [
                     subtitle: "Biomecánica de la presión intraabdominal y la base podal",
                     quote: "Una técnica sin raíz en el Tanden es como un árbol sin tierra: caerá ante la primera brisa.",
                     content: [
-                        "El cuerpo humano posee su centro de masa en la pelvis, 3 dedos por debajo del ombligo: el punto sagrado Tanden (o Hara).",
+                        "El cuerpo humano posee su centro de masa en la pelvis, 3 dedos por debajo del ombligo: el punto biomecánico Tanden (o centro de gravedad/Hara).",
                         "Al descender el centro de gravedad mediante la respiración diafragmática baja, se activa el músculo transverso del abdomen y los multífidos lumbares, fijando la columna como una columna de granito.",
                         "El agarre de los dedos del pie contra el tatami (Chusokutei) crea un trípode de sustentación que transmite la fuerza del suelo a través de las piernas."
                     ],
@@ -567,7 +567,7 @@ export const KYU_UNITS: Unit[] = [
                     subtitle: "De arte secreto a disciplina educativa escolar",
                     quote: "El Karate no fue creado para pelear en callejones, sino para forjar hombres rectos, valientes y útiles para la sociedad. — Maestro Anko Itosu",
                     content: [
-                        "Anko Itosu (1831–1915), conocido como 'El Anciano Sagrado de Shuri', transformó radicalmente la historia marcial en 1901 al incorporar el Karate en el currículo de las escuelas de Okinawa.",
+                        "Anko Itosu (1831–1915), conocido históricamente como el gran reformador de Shuri, transformó radicalmente la historia marcial en 1901 al incorporar el Karate en el currículo de las escuelas de Okinawa.",
                         "Comprendió que los katas antiguos (Passai, Kusanku) eran demasiado peligrosos y complejos para los niños, por lo que desglosó sus técnicas maestras para crear la serie didáctica Pinan (Heian en japonés).",
                         "En 1908 envió su famosa carta 'Tode Jukun' (Los Diez Preceptos del Karate) a los ministerios de Guerra y Educación de Japón, sentando las bases para su reconocimiento nacional."
                     ],
@@ -1872,7 +1872,7 @@ export const KYU_UNITS: Unit[] = [
                 color: "gold",
                 xpReward: 95,
                 theory: {
-                    title: "Maai (間合い): La Distancia Sagrada de Vida o Muerte",
+                    title: "Maai (間合い): La Distancia Táctica de Combate",
                     subtitle: "Las tres distancias del combate marcial tradicional",
                     quote: "Estar a un milímetro del peligro sin ser tocado; esa es la maestría del Maai.",
                     content: [
