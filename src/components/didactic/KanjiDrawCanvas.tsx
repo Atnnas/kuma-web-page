@@ -885,7 +885,58 @@ export function KanjiDrawCanvas({
                 </button>
             </div>
 
-            {/* OVERALL PROGRESS BADGE FOR ALL 3 KANJIS */}
+            {/* REVEAL CARD FOR KANJIS WITH PEDAGOGICAL ILLUSTRATION (e.g. KIAI: KI & AI) */}
+            {activeKanji.revealImage && (
+                <motion.div
+                    key={`reveal-${activeKanji.kanji}-${isKanjiFinished}`}
+                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.35 }}
+                    className={`w-full max-w-[340px] sm:max-w-[380px] mt-3 rounded-2xl p-3 border transition-all ${
+                        isKanjiFinished
+                            ? "bg-gradient-to-r from-amber-500/20 via-zinc-900/95 to-amber-600/20 border-kuma-gold/60 shadow-lg shadow-kuma-gold/15"
+                            : "bg-zinc-900/70 border-white/10 opacity-75"
+                    }`}
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-amber-500/30 shadow-md bg-black">
+                            <img
+                                src={activeKanji.revealImage}
+                                alt={activeKanji.revealTitle || activeKanji.kanji}
+                                className={`w-full h-full object-cover transition-all duration-500 ${
+                                    isKanjiFinished ? "brightness-105 scale-105" : "grayscale blur-[1px] opacity-45"
+                                }`}
+                            />
+                            {!isKanjiFinished && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-kuma-gold text-lg">
+                                    🔒
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex flex-col text-left">
+                            <div className="flex items-center gap-1.5 mb-1">
+                                <span
+                                    className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                                        isKanjiFinished
+                                            ? "bg-kuma-gold text-black shadow-sm"
+                                            : "bg-white/10 text-zinc-400"
+                                    }`}
+                                >
+                                    {isKanjiFinished ? "¡Poder Revelado! ⚡" : "Traza para revelar"}
+                                </span>
+                            </div>
+                            <h4 className="text-xs font-black text-white leading-tight">
+                                {activeKanji.revealTitle || `${activeKanji.kanji} - ${activeKanji.romaji}`}
+                            </h4>
+                            <p className="text-[11px] text-zinc-300 mt-1 leading-snug">
+                                {activeKanji.revealSubtitle || activeKanji.description}
+                            </p>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+
+            {/* OVERALL PROGRESS BADGE FOR ALL KANJIS */}
             <div className="mt-3 flex items-center gap-2 text-xs text-zinc-400">
                 <span>Kanjis completados:</span>
                 <div className="flex items-center gap-1.5">

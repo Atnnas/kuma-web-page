@@ -2,6 +2,7 @@ import { Unit, BeltRankId } from "@/types/didactica";
 import { KYU_UNITS } from "./units/kyuUnits";
 import { DAN_UNITS } from "./units/danUnits";
 import { SHOTOKAN_KANJIS } from "./shotokanKanjis";
+import { KIAI_KANJIS } from "./kiaiKanjis";
 
 export const DIDACTIC_UNITS: Unit[] = [
     // ==========================================
@@ -425,35 +426,13 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ]
                     },
                     {
-                        id: "q-funcion-real-kiai",
-                        type: "multiple_choice",
-                        prompt: "¿Para qué sirve el grito explosivo (Kiai) al golpear?",
-                        description: "Ciencia del impacto y respiración diafragmática.",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "👀 Para distraer al rival",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o2",
-                                text: "📢 Para avisar al público y jueces",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o3",
-                                text: "💥 Blindar el abdomen y enfocar máxima potencia (Kime)",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o4",
-                                text: "😮‍💨 Para fingir cansancio",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o3",
-                        explanation: "¡Perfecto! 'Kiai' significa unión de energía. Al exhalar con fuerza, el abdomen se tensa como un escudo y transmite toda la masa al impacto.",
-                        hint: "Se relaciona con la respiración y la protección del torso.",
+                        id: "q-kiai-kanji-draw",
+                        type: "kanji_draw",
+                        prompt: "Traza los Kanjis sagrados del KIAI (気合): Energía & Blindaje",
+                        description: "Traza Ki (Energía) y Ai (Unión) para forjar la respiración y el escudo abdominal de Kuma Sensei.",
+                        kanjiList: KIAI_KANJIS,
+                        explanation: "¡KIAI extraordinario! 気合 une Ki (Energía / Espíritu) y Ai (Unión). Al gritar, la exhalación brusca blinda tu abdomen (Tanden) como un escudo de hierro y transmite el 100% de tu masa y concentración (Kime) al golpe.",
+                        hint: "Sigue el punto rojo numerado para trazar cada ideograma y desbloquear el poder de Kuma.",
                         references: [
                             {
                                 title: "Karate Dinámico",
@@ -464,20 +443,20 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 note: "Estudio biomecánico que demuestra el aumento de masa efectiva y estabilidad que produce la exhalación brusca."
                             },
                             {
-                                title: "Traditional Karate-Do: Okinawa Goju Ryu Vol. 1",
-                                author: "Maestro Morio Higaonna (10° Dan)",
-                                year: 1985,
-                                editorial: "Minato Research / Miraguano",
-                                chapter: "Capítulo 3: La respiración diafragmática Ibuki y la focalización del Ki",
-                                note: "Análisis de la presión intraabdominal que blinda los órganos viscerales contra impactos directos."
-                            },
-                            {
                                 title: "Karate-Do Kyohan: El Texto Maestro",
                                 author: "Maestro Gichin Funakoshi",
                                 year: 1935,
                                 editorial: "Editorial Eyras",
                                 chapter: "Capítulo 3: La coordinación respiratoria y la manifestación del espíritu en el impacto",
                                 note: "Funakoshi describe cómo el grito unifica la mente, la respiración y la tensión muscular en un solo microsegundo."
+                            },
+                            {
+                                title: "Los Veinte Principios Rectores del Karate: El Legado Espiritual del Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1938,
+                                editorial: "Editorial Tutor",
+                                chapter: "Principio 11: El Karate debe practicarse con seriedad y espíritu sincero",
+                                note: "Explica cómo la energía interior (Ki) y la concentración en el bajo vientre (Hara) forjan el carácter y la potencia del karateka."
                             }
                         ]
                     },

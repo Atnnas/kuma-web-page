@@ -1132,19 +1132,27 @@ function shuffleArray<T>(array: T[]): T[] {
                                             onKanjiCompleted={(kanji, count, total) => {
                                                 setMascotMood("correct");
                                                 if (count < total) {
-                                                    const targetName = currentQuestion.kanjiList
-                                                        ? currentQuestion.kanjiList.map((k) => k.kanji).join("・")
-                                                        : "KARATE-DO";
-                                                    setCustomSpeech(`¡Excelente trazo de "${kanji}" (${count}/${total})! Completa los siguientes para forjar ${targetName}. 🥋✨`);
+                                                    if (currentQuestion.id === "q-kiai-kanji-draw") {
+                                                        setCustomSpeech(`¡Poder revelado! ¡Has liberado KI (気), la energía y el aliento del grito! Ahora traza AI (合) para unir tu fuerza en el Tanden. 🥋🔥`);
+                                                    } else {
+                                                        const targetName = currentQuestion.kanjiList
+                                                            ? currentQuestion.kanjiList.map((k) => k.kanji).join("・")
+                                                            : "KARATE-DO";
+                                                        setCustomSpeech(`¡Excelente trazo de "${kanji}" (${count}/${total})! Completa los siguientes para forjar ${targetName}. 🥋✨`);
+                                                    }
                                                 }
                                             }}
                                             onAllCompleted={() => {
                                                 setIsKanjiDrawn(true);
                                                 setMascotMood("streak");
-                                                const targetName = currentQuestion.kanjiList
-                                                    ? currentQuestion.kanjiList.map((k) => k.kanji).join("・")
-                                                    : "KARATE-DO (空・手・道)";
-                                                setCustomSpeech(`¡KIAI! ¡Has forjado los Kanjis sagrados de ${targetName}! ¡Comprueba tu técnica ahora! 👊🥋🔥`);
+                                                if (currentQuestion.id === "q-kiai-kanji-draw") {
+                                                    setCustomSpeech("¡KIAI! ¡Has unido la Energía (気) y el Blindaje (合)! ¡Tu cuerpo es una roca y tu golpe tiene Kime total! 👊🥋⚡");
+                                                } else {
+                                                    const targetName = currentQuestion.kanjiList
+                                                        ? currentQuestion.kanjiList.map((k) => k.kanji).join("・")
+                                                        : "KARATE-DO (空・手・道)";
+                                                    setCustomSpeech(`¡KIAI! ¡Has forjado los Kanjis sagrados de ${targetName}! ¡Comprueba tu técnica ahora! 👊🥋🔥`);
+                                                }
                                             }}
                                         />
                                     </div>

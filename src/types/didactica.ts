@@ -43,6 +43,9 @@ export interface KanjiCharDef {
     meaning: string;
     description: string;
     strokes: KanjiStrokeDef[];
+    revealImage?: string;
+    revealTitle?: string;
+    revealSubtitle?: string;
 }
 
 export interface BookReference {
