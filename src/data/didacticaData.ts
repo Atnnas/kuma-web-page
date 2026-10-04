@@ -604,11 +604,11 @@ export const DIDACTIC_UNITS: Unit[] = [
                     subtitle: "Aprende los puntos anatómicos y las alturas en japonés de pies a cabeza",
                     quote: "El cuerpo es el instrumento del karateka: la alineación y el equilibrio comienzan desde la base en los pies y ascienden hasta la mente.",
                     content: [
-                        "1. Los Tres Niveles del Cuerpo: En Karate dividimos la altura en tres zonas fundamentales: 上段 (JODAN) para la cabeza y el cuello, 中段 (CHUDAN) para el torso y el pecho, y 下段 (GEDAN) para las piernas y los pies.",
-                        "2. Base e Inferior: Los pies 足 (Ashi) proporcionan el enraizamiento firme en el tatami, las rodillas 膝 (Hiza) flexionan para absorber impacto y la cadera 腰 (Koshi) es el eje biomecánico de rotación que genera potencia.",
-                        "3. Centro y Tronco: El abdomen 腹 / 丹田 (Hara/Tanden) estabiliza el centro de gravedad y la respiración diafragmática, mientras el pecho 胸 (Mune) mantiene la columna vertebral erguida con hombros relajados.",
-                        "4. Extremidades Superiores: Los brazos 腕 (Ude) y codos 猿臂 (Empi) forman estructuras de palanca para defensas y bloqueos, y las manos 手 (Te) se configuran en puño frontal cerrado 正拳 (Seiken) o mano espada 手刀 (Shuto).",
-                        "5. Cabeza y Sentidos: La cabeza 頭 (Atama) permanece equilibrada protegiendo el cuello, y la mirada atenta 目 (Me - Metsuke) mantiene la concentración visual sin desviar la atención."
+                        "1. Los Tres Niveles del Cuerpo: En Karate dividimos la altura en tres zonas fundamentales: JODAN para la cabeza y el cuello, CHUDAN para el torso y el pecho, y GEDAN para las piernas y los pies.",
+                        "2. Base e Inferior: Los pies (Ashi) proporcionan el enraizamiento firme en el tatami, las rodillas (Hiza) flexionan para absorber impacto y la cadera (Koshi) es el eje biomecánico de rotación que genera potencia.",
+                        "3. Centro y Tronco: El abdomen (Hara / Tanden) estabiliza el centro de gravedad y la respiración diafragmática, mientras el pecho (Mune) mantiene la columna vertebral erguida con hombros relajados.",
+                        "4. Extremidades Superiores: Los brazos (Ude) y codos (Empi) forman estructuras de palanca para defensas y bloqueos, y las manos (Te) se configuran en puño frontal cerrado (Seiken) o mano espada (Shuto).",
+                        "5. Cabeza y Sentidos: La cabeza (Atama) permanece equilibrada protegiendo el cuello, y la mirada atenta (Me / Metsuke) mantiene la concentración visual sin desviar la atención."
                     ],
                     images: [
                         {
@@ -683,9 +683,9 @@ export const DIDACTIC_UNITS: Unit[] = [
                         explanation: "¡Eso es! Jodan es arriba (cabeza), Chudan al medio (pecho) y Gedan abajo (piernas y pies).",
                         hint: "Jo = Alto, Chu = Medio, Ge = Bajo.",
                         pairs: [
-                            { id: "p1", left: "上段 (JODAN)", right: "Zona Alta (Cabeza)" },
-                            { id: "p2", left: "中段 (CHUDAN)", right: "Zona Media (Pecho y Torso)" },
-                            { id: "p3", left: "下段 (GEDAN)", right: "Zona Baja (Piernas y Pies)" },
+                            { id: "p1", left: "JODAN", right: "Zona Alta (Cabeza)" },
+                            { id: "p2", left: "CHUDAN", right: "Zona Media (Pecho y Torso)" },
+                            { id: "p3", left: "GEDAN", right: "Zona Baja (Piernas y Pies)" },
                         ],
                         references: [
                             {

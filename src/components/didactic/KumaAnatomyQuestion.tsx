@@ -155,7 +155,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         zone: "cabeza",
         phase: 3,
         slotX: 50,
-        slotY: 15,
+        slotY: 7.5,
         icon: "🐻",
         heightLevel: "JODAN",
         biomechanics: "Zona de guardia alta (Jodan). La alineación del cuello mantiene el balance corporal general.",
@@ -168,8 +168,8 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         spanish: "Ojos y Mirada (Metsuke)",
         zone: "cabeza",
         phase: 3,
-        slotX: 50,
-        slotY: 22,
+        slotX: 25,
+        slotY: 16,
         icon: "👀",
         heightLevel: "JODAN",
         biomechanics: "Visión periférica fija en el adversario para anticipar trayectorias sin desviar la concentración.",
@@ -182,8 +182,8 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         spanish: "Nariz, Orejas y Boca",
         zone: "cabeza",
         phase: 3,
-        slotX: 59,
-        slotY: 12,
+        slotX: 75,
+        slotY: 16,
         icon: "👂",
         heightLevel: "JODAN",
         biomechanics: "Inhalación nasal profunda, escucha atenta de las órdenes del Sensei y exhalación enérgica con Kiai.",
@@ -364,8 +364,8 @@ export function KumaAnatomyQuestion({
 
         const distance = Math.hypot(dropPoint.x - targetScreenX, dropPoint.y - targetScreenY);
 
-        // Radio de atracción magnética generoso (~85px desktop, ~65px mobile)
-        const magnetRadius = Math.max(65, rect.width * 0.22);
+        // Radio de atracción magnética generoso (~80px desktop, ~55px mobile)
+        const magnetRadius = Math.max(55, rect.width * 0.17);
 
         if (distance <= magnetRadius) {
             placeSuccess(part);
@@ -418,27 +418,27 @@ export function KumaAnatomyQuestion({
         1: {
             title: "Fase 1: Tren Inferior (Pies a Cadera)",
             desc: "Enraíza la postura marcial desde los pies (Ashi), subiendo por las rodillas (Hiza) hasta la cadera (Koshi).",
-            badge: "下段 GEDAN",
-            color: "border-sky-500/40 text-sky-400 bg-sky-950/40",
+            badge: "GEDAN (Nivel Bajo)",
+            color: "border-sky-500/50 text-sky-300 bg-sky-950/60 backdrop-blur-sm",
         },
         2: {
             title: "Fase 2: Centro y Tronco (Vientre a Manos)",
             desc: "Fija el abdomen (Hara/Tanden), mantén el pecho erguido (Mune) y activa los brazos (Ude/Empi) y puños (Te).",
-            badge: "中段 CHUDAN",
-            color: "border-amber-500/40 text-amber-400 bg-amber-950/40",
+            badge: "CHUDAN (Nivel Medio)",
+            color: "border-amber-500/50 text-amber-300 bg-amber-950/60 backdrop-blur-sm",
         },
         3: {
             title: "Fase 3: Guardia Alta (Cabeza y Sentidos)",
-            desc: "Alinea la cabeza y cuello (Atama/Kubi), enfoca la mirada (Me - Metsuke) y sincroniza la respiración.",
-            badge: "上段 JODAN",
-            color: "border-rose-500/40 text-rose-400 bg-rose-950/40",
+            desc: "Alinea la cabeza y cuello (Atama/Kubi), enfoca la mirada (Me) y respira con concentración.",
+            badge: "JODAN (Nivel Alto)",
+            color: "border-rose-500/50 text-rose-300 bg-rose-950/60 backdrop-blur-sm",
         },
     };
 
     return (
         <div className="w-full max-w-5xl mx-auto flex flex-col items-center select-none text-white px-2 py-4">
             {/* BARRA SUPERIOR: CONTROL DE VOZ + PROGRESO DE FASES */}
-            <div className="w-full flex flex-wrap items-center justify-between gap-3 mb-4 bg-zinc-900/90 border border-zinc-800 p-3 rounded-2xl shadow-lg backdrop-blur-md">
+            <div className="w-full flex flex-wrap items-center justify-between gap-3 mb-4 bg-zinc-950/75 border border-zinc-800 p-3 rounded-2xl shadow-xl backdrop-blur-md">
                 {/* Indicador de Fases Marciales */}
                 <div className="flex items-center gap-2">
                     <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">Progreso:</span>
@@ -446,16 +446,16 @@ export function KumaAnatomyQuestion({
                         {[1, 2, 3].map((phaseNum) => (
                             <div
                                 key={phaseNum}
-                                className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
+                                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
                                     currentPhase === phaseNum
                                         ? "bg-amber-500 text-zinc-950 border-amber-300 shadow-md shadow-amber-500/30 scale-105"
                                         : currentPhase > phaseNum || placedPartIds.length === ANATOMY_PARTS.length
-                                        ? "bg-emerald-600 text-white border-emerald-400"
-                                        : "bg-zinc-800/80 text-zinc-500 border-zinc-700"
+                                        ? "bg-emerald-600/90 text-white border-emerald-400 backdrop-blur-sm"
+                                        : "bg-zinc-900/60 text-zinc-400 border-zinc-800"
                                 }`}
                             >
                                 <span>Fase {phaseNum}</span>
-                                {currentPhase > phaseNum && <CheckCircle size={14} weight="bold" />}
+                                {currentPhase > phaseNum && <CheckCircle size={15} weight="bold" />}
                             </div>
                         ))}
                     </div>
@@ -465,10 +465,10 @@ export function KumaAnatomyQuestion({
                 <button
                     onClick={toggleVoice}
                     type="button"
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
                         isVoiceActive
-                            ? "bg-amber-500/20 border-amber-500 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.3)] animate-pulse"
-                            : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-750"
+                            ? "bg-amber-500/20 border-amber-500 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.3)] animate-pulse backdrop-blur-sm"
+                            : "bg-zinc-900/70 border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
                     }`}
                     title={isVoiceActive ? "Voz activada. Clic para silenciar" : "Voz desactivada por defecto. Clic para activar"}
                 >
@@ -480,7 +480,7 @@ export function KumaAnatomyQuestion({
                     ) : (
                         <>
                             <SpeakerSlash size={18} className="text-zinc-400" />
-                            <span>Voz del Sensei: OFF (Clic para activar)</span>
+                            <span>Voz del Sensei: OFF</span>
                         </>
                     )}
                 </button>
@@ -499,15 +499,15 @@ export function KumaAnatomyQuestion({
 
             {/* BANNER DE INSTRUCCIONES */}
             <div className="w-full text-center mb-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 mb-2 text-xs font-bold uppercase tracking-wider rounded-full border shadow-sm backdrop-blur-sm">
-                    <span className={`px-2 py-0.5 rounded-md font-black ${phaseLabels[currentPhase].color}`}>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 mb-2 text-xs font-bold uppercase tracking-wider rounded-full border shadow-sm backdrop-blur-md bg-zinc-950/60">
+                    <span className={`px-2.5 py-0.5 rounded-md font-black text-xs ${phaseLabels[currentPhase].color}`}>
                         {phaseLabels[currentPhase].badge}
                     </span>
-                    <span className="text-amber-300">{phaseLabels[currentPhase].title}</span>
+                    <span className="text-amber-300 font-extrabold">{phaseLabels[currentPhase].title}</span>
                 </div>
                 <p className="text-xs md:text-sm text-zinc-300 max-w-2xl mx-auto flex items-center justify-center gap-1.5">
-                    <Magnet size={16} className="text-amber-400 animate-bounce" weight="fill" />
-                    <span>Arrastra cada <strong>parche bordado</strong> a su lugar en el cuerpo o tócalo para colocarlo.</span>
+                    <Magnet size={17} className="text-amber-400 animate-bounce" weight="fill" />
+                    <span>Arrastra el parche o tócalo para colocarlo en Kuma Sensei.</span>
                 </p>
             </div>
 
@@ -517,7 +517,7 @@ export function KumaAnatomyQuestion({
                 <div className="lg:col-span-7 flex flex-col items-center">
                     <div
                         ref={bearContainerRef}
-                        className="relative w-full max-w-[480px] aspect-square rounded-3xl overflow-hidden border-2 border-amber-500/30 shadow-[0_12px_36px_rgba(0,0,0,0.9)] bg-zinc-950"
+                        className="relative w-full max-w-[480px] aspect-square rounded-3xl overflow-hidden border-2 border-amber-500/40 shadow-[0_12px_36px_rgba(0,0,0,0.9)] bg-zinc-950"
                     >
                         {/* IMAGEN DE KUMA SENSEI EN TATAMI CON LOGO OFICIAL DOJO KUMA */}
                         <Image
@@ -554,32 +554,28 @@ export function KumaAnatomyQuestion({
                                     onClick={() => handlePlacePart(part)}
                                 >
                                     {isPlaced ? (
-                                        // PARCHE BORDADO SELLADO SOBRE EL CUERPO
+                                        // PARCHE EN ROMAJI SELLADO SOBRE EL CUERPO (MÁS GRANDE Y SEMI-TRANSPARENTE CRISTALINO)
                                         <motion.div
-                                            initial={{ scale: 0, rotate: -20 }}
+                                            initial={{ scale: 0, rotate: -15 }}
                                             animate={{ scale: 1, rotate: 0 }}
                                             transition={{ type: "spring", stiffness: 450, damping: 22 }}
-                                            whileHover={{ scale: 1.12 }}
-                                            whileTap={{ scale: 0.95 }}
-                                            className="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 text-white rounded-xl border-2 border-amber-400 shadow-[0_0_18px_rgba(245,158,11,0.6),inset_0_1px_2px_rgba(255,255,255,0.3)] text-xs font-black whitespace-nowrap backdrop-blur-md group"
-                                            title={`${part.kanji} (${part.romaji}) - Clic para escuchar`}
+                                            whileHover={{ scale: 1.1, backgroundColor: "rgba(0,0,0,0.75)" }}
+                                            whileTap={{ scale: 0.96 }}
+                                            className="flex items-center gap-2 px-3.5 py-1.5 md:px-4 md:py-2 bg-black/60 backdrop-blur-md text-white rounded-2xl border-2 border-amber-400 shadow-[0_8px_25px_rgba(0,0,0,0.65),0_0_15px_rgba(245,158,11,0.4)] whitespace-nowrap group transition-all"
+                                            title={`${part.romaji} - ${part.spanish} (Clic para escuchar)`}
                                         >
-                                            <span className="text-sm">{part.icon}</span>
-                                            <span className="font-serif text-sm font-black text-amber-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
-                                                {part.kanji}
+                                            <span className="text-base md:text-lg">{part.icon}</span>
+                                            <span className="font-sans text-xs md:text-sm lg:text-base font-black uppercase tracking-wider text-amber-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+                                                {part.romaji}
                                             </span>
-                                            {/* Sello Hanko rojo tradicional */}
-                                            <span className="text-[9px] bg-red-700 text-white px-1 py-0.2 rounded font-black tracking-tighter border border-red-400 shadow-sm">
-                                                熊
-                                            </span>
-                                            <CheckCircle size={13} weight="fill" className="text-emerald-400" />
+                                            <CheckCircle size={17} weight="fill" className="text-emerald-400 ml-0.5" />
                                         </motion.div>
                                     ) : (
-                                        // DIANA MAGNÉTICA ESPERANDO EL PARCHE BORDADO
+                                        // DIANA MAGNÉTICA ESPERANDO EL PARCHE (SEMI-TRANSPARENTE PARA VER AL OSO DEBAJO)
                                         <div className="relative group">
                                             {/* Aura pulsante magnética */}
                                             {isSelected && (
-                                                <div className="absolute -inset-3 bg-amber-400/50 rounded-full animate-ping pointer-events-none" />
+                                                <div className="absolute -inset-3 bg-amber-400/40 rounded-full animate-ping pointer-events-none" />
                                             )}
 
                                             <motion.div
@@ -589,22 +585,26 @@ export function KumaAnatomyQuestion({
                                                         : { scale: [1, 1.08, 1] }
                                                 }
                                                 transition={{ repeat: Infinity, duration: isSelected ? 1.4 : 2.5 }}
-                                                className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-sm transition-all shadow-xl border-2 ${
+                                                className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center font-black text-base md:text-lg transition-all shadow-xl border-2 ${
                                                     isSelected
-                                                        ? "bg-amber-500 text-zinc-950 border-white shadow-[0_0_24px_rgba(245,158,11,0.95)]"
-                                                        : "bg-zinc-950/90 text-amber-300 border-amber-400/80 hover:border-amber-300 hover:scale-110 shadow-black"
+                                                        ? "bg-amber-500/90 backdrop-blur-md text-zinc-950 border-white shadow-[0_0_28px_rgba(245,158,11,0.95)]"
+                                                        : "bg-black/50 backdrop-blur-md text-amber-300 border-amber-400/75 hover:border-amber-300 hover:bg-black/65 hover:scale-110 shadow-black"
                                                 }`}
                                             >
                                                 {isSelected ? (
-                                                    <Magnet size={20} weight="fill" className="text-zinc-950 animate-bounce" />
+                                                    <Magnet size={24} weight="fill" className="text-zinc-950 animate-bounce" />
                                                 ) : (
-                                                    <span className="text-base">{part.icon}</span>
+                                                    <span className="text-xl md:text-2xl">{part.icon}</span>
                                                 )}
                                             </motion.div>
 
-                                            {/* Tooltip con nombre en hover */}
-                                            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2.5 py-1 bg-zinc-950/95 border border-zinc-700 text-[10px] text-amber-300 rounded-lg font-bold uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg z-30">
-                                                {part.spanish}
+                                            {/* Tooltip con nombre en Romaji + Español en hover */}
+                                            <div
+                                                className={`absolute left-1/2 -translate-x-1/2 px-3 py-1 bg-black/80 backdrop-blur-md border border-amber-500/40 text-xs text-amber-300 rounded-xl font-bold uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-2xl z-30 ${
+                                                    part.slotY > 75 ? "bottom-full mb-2" : "top-full mt-2"
+                                                }`}
+                                            >
+                                                {part.romaji} • {part.spanish}
                                             </div>
                                         </div>
                                     )}
@@ -616,23 +616,23 @@ export function KumaAnatomyQuestion({
 
                 {/* COLUMNA LATERAL: BANDEJA DE PARCHES BORDADOS + BIOMECÁNICA (Lg: 5 cols) */}
                 <div className="lg:col-span-5 flex flex-col gap-4">
-                    {/* BANDEJA TATAMI: PARCHES BORDADOS MAGNÉTICOS */}
-                    <div className="bg-gradient-to-b from-zinc-900/95 via-zinc-950/95 to-black/95 border-2 border-amber-500/30 rounded-3xl p-4 md:p-5 shadow-[0_10px_30px_rgba(0,0,0,0.8)] backdrop-blur-md">
+                    {/* BANDEJA TATAMI: PARCHES EN ROMAJI (SEMI-TRANSPARENTE Y MÁS GRANDE) */}
+                    <div className="bg-zinc-950/80 border-2 border-amber-500/30 rounded-3xl p-4 md:p-5 shadow-[0_10px_35px_rgba(0,0,0,0.85)] backdrop-blur-xl">
                         {/* Cabecera de la bandeja */}
-                        <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-zinc-800">
+                        <div className="flex items-center justify-between mb-3.5 pb-2.5 border-b border-zinc-800">
                             <div className="flex items-center gap-2">
                                 <Magnet size={20} weight="fill" className="text-amber-400" />
                                 <h3 className="text-sm font-black uppercase tracking-wider text-white">
-                                    Parches de Entrenamiento
+                                    Parches en Japonés (Romaji)
                                 </h3>
                             </div>
-                            <span className="text-xs font-bold px-2 py-0.5 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full">
+                            <span className="text-xs font-bold px-2.5 py-0.5 bg-amber-500/15 text-amber-300 border border-amber-500/30 rounded-full backdrop-blur-sm">
                                 {placedPartIds.filter((id) => currentPhaseParts.some((p) => p.id === id)).length} /{" "}
                                 {currentPhaseParts.length}
                             </span>
                         </div>
 
-                        {/* LISTA / GRID DE PARCHES MAGNÉTICOS */}
+                        {/* LISTA / GRID DE PARCHES MAGNÉTICOS EN ROMAJI */}
                         <div className="grid grid-cols-1 gap-3">
                             {currentPhaseParts.map((part) => {
                                 const isPlaced = placedPartIds.includes(part.id);
@@ -644,7 +644,7 @@ export function KumaAnatomyQuestion({
                                         drag={!isPlaced}
                                         dragSnapToOrigin={true}
                                         whileDrag={{
-                                            scale: 1.14,
+                                            scale: 1.12,
                                             zIndex: 60,
                                             cursor: "grabbing",
                                             boxShadow: "0 20px 35px -5px rgba(245, 158, 11, 0.5)",
@@ -660,41 +660,43 @@ export function KumaAnatomyQuestion({
                                         }}
                                         onClick={() => {
                                             if (!isPlaced) {
-                                                setSelectedPartId(part.id);
-                                                speakPart(part);
+                                                if (selectedPartId === part.id) {
+                                                    placeSuccess(part);
+                                                } else {
+                                                    setSelectedPartId(part.id);
+                                                    speakPart(part);
+                                                }
                                             }
                                         }}
-                                        className={`relative w-full p-3.5 rounded-2xl border-2 transition-all select-none ${
+                                        className={`relative w-full p-4 rounded-2xl border-2 transition-all select-none backdrop-blur-md ${
                                             isPlaced
-                                                ? "bg-zinc-950/60 border-zinc-800/80 opacity-50 cursor-default"
+                                                ? "bg-zinc-950/40 border-zinc-800/60 opacity-40 cursor-default"
                                                 : isSelected
-                                                ? "bg-gradient-to-r from-amber-950/60 via-zinc-900 to-amber-950/40 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.4)] cursor-grab active:cursor-grabbing"
-                                                : "bg-gradient-to-br from-zinc-900 via-zinc-900/90 to-zinc-950 border-amber-500/40 hover:border-amber-400 hover:shadow-[0_4px_16px_rgba(245,158,11,0.2)] cursor-grab active:cursor-grabbing"
+                                                ? "bg-amber-950/50 border-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.45)] cursor-grab active:cursor-grabbing"
+                                                : "bg-zinc-900/65 border-amber-500/40 hover:border-amber-400 hover:bg-zinc-900/80 hover:shadow-[0_4px_20px_rgba(245,158,11,0.25)] cursor-grab active:cursor-grabbing"
                                         }`}
                                     >
-                                        {/* Detalle visual de pespunte textil en los bordes */}
                                         <div className="flex items-center justify-between gap-3">
-                                            {/* Lado izquierdo: Icono e Insignia Kanji en relieve de oro */}
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 rounded-xl bg-zinc-950 border border-amber-400/50 flex flex-col items-center justify-center shadow-inner">
-                                                    <span className="font-serif text-2xl font-black text-amber-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-none">
-                                                        {part.kanji}
-                                                    </span>
-                                                    <span className="text-[10px] text-zinc-400 font-bold leading-tight">
+                                            {/* Lado izquierdo: Icono grande y Texto en Romaji */}
+                                            <div className="flex items-center gap-3.5">
+                                                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-black/60 backdrop-blur-sm border border-amber-400/50 flex items-center justify-center shadow-inner flex-shrink-0">
+                                                    <span className="text-2xl md:text-3xl">
                                                         {part.icon}
                                                     </span>
                                                 </div>
 
                                                 <div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="font-black text-sm text-white tracking-wide">
+                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                        {/* NOMBRE EN ROMAJI (MÁS GRANDE Y CLARO) */}
+                                                        <span className="font-black text-lg md:text-xl text-white tracking-wide uppercase">
                                                             {part.romaji}
                                                         </span>
-                                                        <span className="text-[9px] uppercase font-black px-1.5 py-0.5 rounded border bg-zinc-950 text-amber-400 border-amber-500/40">
+                                                        <span className="text-[11px] uppercase font-black px-2.5 py-0.5 rounded-md border bg-black/60 text-amber-300 border-amber-500/40">
                                                             {part.heightLevel}
                                                         </span>
                                                     </div>
-                                                    <div className="text-xs text-zinc-300 font-medium">
+                                                    {/* NOMBRE EN ESPAÑOL */}
+                                                    <div className="text-xs md:text-sm text-zinc-300 font-medium mt-0.5">
                                                         {part.spanish}
                                                     </div>
                                                 </div>
@@ -703,18 +705,18 @@ export function KumaAnatomyQuestion({
                                             {/* Lado derecho: Estado o Indicador Magnético */}
                                             <div className="flex items-center gap-2">
                                                 {isPlaced ? (
-                                                    <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-950/60 px-2 py-1 rounded-lg border border-emerald-500/40">
+                                                    <div className="flex items-center gap-1 text-emerald-300 text-xs font-bold bg-emerald-950/70 backdrop-blur-sm px-2.5 py-1.5 rounded-xl border border-emerald-500/40">
                                                         <CheckCircle size={16} weight="fill" />
                                                         <span>Colocado</span>
                                                     </div>
                                                 ) : isSelected ? (
-                                                    <div className="flex items-center gap-1.5 text-amber-300 text-xs font-extrabold bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-400 animate-pulse">
+                                                    <div className="flex items-center gap-1.5 text-amber-300 text-xs font-black bg-amber-500/25 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-amber-400 animate-pulse">
                                                         <Magnet size={16} weight="fill" />
                                                         <span>¡Al Oso!</span>
                                                     </div>
                                                 ) : (
-                                                    <div className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-amber-300 bg-zinc-800/80 px-2 py-1 rounded-lg border border-zinc-700">
-                                                        <HandPointing size={14} />
+                                                    <div className="flex items-center gap-1 text-xs text-zinc-300 hover:text-amber-300 bg-zinc-800/70 backdrop-blur-sm px-2.5 py-1.5 rounded-xl border border-zinc-700">
+                                                        <HandPointing size={15} />
                                                         <span>Arrastrar</span>
                                                     </div>
                                                 )}
@@ -726,12 +728,12 @@ export function KumaAnatomyQuestion({
                         </div>
                     </div>
 
-                    {/* TARJETA DE APRENDIZAJE BIOMECÁNICO (ÚLTIMA PARTE COLOCADA O SELECCIONADA) */}
+                    {/* TARJETA DE APRENDIZAJE BIOMECÁNICO (SEMI-TRANSPARENTE) */}
                     {(lastPlacedPart || (selectedPartId && ANATOMY_PARTS.find((p) => p.id === selectedPartId))) && (
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-gradient-to-br from-zinc-900 via-zinc-900 to-amber-950/20 border-2 border-amber-500/30 rounded-3xl p-4 shadow-xl"
+                            className="bg-zinc-950/80 border-2 border-amber-500/30 rounded-3xl p-4 md:p-5 shadow-2xl backdrop-blur-xl"
                         >
                             {(() => {
                                 const current =
@@ -743,12 +745,12 @@ export function KumaAnatomyQuestion({
                                             <ShieldCheck size={18} weight="fill" />
                                             <span>Función Biomecánica en Karate</span>
                                         </div>
-                                        <div className="text-base font-bold text-white mb-1 flex items-center gap-2">
-                                            <span className="text-xl">{current.icon}</span>
-                                            <span className="font-serif text-lg text-amber-300 font-black">{current.kanji}</span>
-                                            <span className="text-zinc-200">({current.romaji}) - {current.spanish}</span>
+                                        <div className="text-base md:text-lg font-bold text-white mb-1.5 flex items-center gap-2">
+                                            <span className="text-2xl">{current.icon}</span>
+                                            <span className="text-lg md:text-xl text-amber-300 font-black uppercase">{current.romaji}</span>
+                                            <span className="text-zinc-300 text-sm md:text-base font-semibold">— {current.spanish}</span>
                                         </div>
-                                        <p className="text-xs text-zinc-300 leading-relaxed font-sans">
+                                        <p className="text-xs md:text-sm text-zinc-300 leading-relaxed font-sans">
                                             {current.biomechanics}
                                         </p>
                                     </>
@@ -762,20 +764,20 @@ export function KumaAnatomyQuestion({
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className="bg-gradient-to-r from-emerald-950 via-teal-900 to-emerald-950 border-2 border-emerald-400 rounded-3xl p-5 text-center shadow-[0_0_35px_rgba(16,185,129,0.4)]"
+                            className="bg-gradient-to-r from-emerald-950/90 via-teal-900/90 to-emerald-950/90 border-2 border-emerald-400 rounded-3xl p-5 text-center shadow-[0_0_35px_rgba(16,185,129,0.4)] backdrop-blur-xl"
                         >
                             <Trophy size={40} weight="fill" className="text-amber-400 mx-auto mb-2" />
-                            <h4 className="text-base font-black text-white mb-1">
+                            <h4 className="text-base md:text-lg font-black text-white mb-1">
                                 ¡El Cuerpo Humano de Pies a Cabeza Completado!
                             </h4>
-                            <p className="text-xs text-emerald-200 mb-3">
+                            <p className="text-xs md:text-sm text-emerald-200 mb-3">
                                 Has dominado los puntos anatómicos fundamentales de Karate con Kuma Sensei.
                             </p>
                             {onCheckAndNext && (
                                 <button
                                     onClick={onCheckAndNext}
                                     type="button"
-                                    className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-zinc-950 font-black rounded-xl text-sm shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
+                                    className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-zinc-950 font-black rounded-xl text-sm md:text-base shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
                                 >
                                     <span>Continuar</span>
                                     <ArrowRight size={18} weight="bold" />
