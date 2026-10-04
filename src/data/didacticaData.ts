@@ -600,7 +600,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                 color: "red",
                 xpReward: 75,
                 theory: {
-                    title: "El Cuerpo Humano: Anatomía y Biomecánica en Karate",
+                    title: "El Cuerpo Humano de Pies a Cabeza",
                     subtitle: "Aprende los puntos anatómicos y las alturas en japonés de pies a cabeza",
                     quote: "El cuerpo es el instrumento del karateka: la alineación y el equilibrio comienzan desde la base en los pies y ascienden hasta la mente.",
                     content: [
@@ -612,8 +612,8 @@ export const DIDACTIC_UNITS: Unit[] = [
                     ],
                     images: [
                         {
-                            src: "/images/didactic/kuma_clean_anatomy_bear.jpg",
-                            alt: "Kuma Sensei Pixar 3D: Anatomía de Karate de Pies a Cabeza",
+                            src: "/images/didactic/kuma_cuerpo_humano_oficial.jpg",
+                            alt: "Kuma Sensei Pixar 3D: Anatomía de Karate de Pies a Cabeza con Logo Oficial Dojo Kuma",
                             caption: "Fig 1. Mapa anatómico de Kuma Sensei: Estructura biomecánica de pies a cabeza"
                         },
                         {
@@ -717,9 +717,9 @@ export const DIDACTIC_UNITS: Unit[] = [
                     {
                         id: "q-cuerpo-2",
                         type: "kuma_anatomy",
-                        prompt: "Arma el Cuerpo de Kuma Sensei: De Pies a Cabeza",
-                        description: "Coloca cada punto anatómico en el cuerpo de Kuma Sensei, avanzando en orden biomecánico desde la base en los pies hasta la mirada en la cabeza.",
-                        image: "/images/didactic/kuma_clean_anatomy_bear.jpg",
+                        prompt: "El Cuerpo Humano de Pies a Cabeza",
+                        description: "Coloca cada punto anatómico en el cuerpo de Kuma Sensei, avanzando en orden biomecánico desde los pies hasta la cabeza.",
+                        image: "/images/didactic/kuma_cuerpo_humano_oficial.jpg",
                         explanation: "¡Excelente dominio! Has aprendido las partes anatómicas de Karate en orden de pies a cabeza: Pies (Ashi), Rodillas (Hiza), Cadera (Koshi), Abdomen (Hara/Tanden), Pecho (Mune), Brazos y Codos (Ude/Empi), Manos (Te), Cabeza (Atama) y Mirada (Me).",
                         hint: "Avanza por las 3 fases de abajo hacia arriba: primero la base (pies a cadera), luego el tronco y brazos, y por último la guardia alta (cabeza y sentidos).",
                         references: [

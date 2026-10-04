@@ -332,7 +332,7 @@ export function KumaAnatomyQuestion({
             } else if (next && unplacedInPhase.length > 0) {
                 // Saludo corto al activar
                 try {
-                    const utter = new SpeechSynthesisUtterance("Voz activada. Arma el cuerpo de Kuma Sensei de pies a cabeza.");
+                    const utter = new SpeechSynthesisUtterance("Voz activada. El cuerpo humano de pies a cabeza.");
                     utter.rate = 1.0;
                     utter.lang = "es-ES";
                     window.speechSynthesis.speak(utter);
@@ -426,10 +426,10 @@ export function KumaAnatomyQuestion({
                 {/* COLUMNA OSO INTERACTIVO (Lg: 7 cols) */}
                 <div className="lg:col-span-7 flex flex-col items-center">
                     <div className="relative w-full max-w-[480px] aspect-square rounded-3xl overflow-hidden border-2 border-zinc-700 shadow-2xl bg-zinc-950">
-                        {/* IMAGEN DE KUMA SENSEI EN TATAMI */}
+                        {/* IMAGEN DE KUMA SENSEI EN TATAMI CON LOGO OFICIAL DOJO KUMA */}
                         <Image
-                            src="/images/didactic/kuma_clean_anatomy_bear.jpg"
-                            alt="Kuma Sensei Pixar 3D: Anatomía de Karate"
+                            src="/images/didactic/kuma_cuerpo_humano_oficial.jpg"
+                            alt="El Cuerpo Humano de Pies a Cabeza - Dojo Kuma"
                             fill
                             priority
                             className="object-cover select-none pointer-events-none"
@@ -613,10 +613,10 @@ export function KumaAnatomyQuestion({
                         >
                             <Trophy size={36} weight="fill" className="text-amber-400 mx-auto mb-2" />
                             <h4 className="text-base font-extrabold text-white mb-1">
-                                ¡Cuerpo de Kuma Sensei Completado!
+                                ¡El Cuerpo Humano Completado!
                             </h4>
                             <p className="text-xs text-emerald-200 mb-3">
-                                Has dominado los puntos anatómicos fundamentales desde los pies hasta la mirada.
+                                Has dominado los puntos anatómicos fundamentales desde los pies hasta la cabeza.
                             </p>
                             {onCheckAndNext && (
                                 <button

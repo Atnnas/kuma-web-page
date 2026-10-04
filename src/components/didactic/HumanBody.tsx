@@ -8,9 +8,9 @@ import { GameController, BookOpen, Sparkle } from "@phosphor-icons/react";
 const DEMO_QUESTION: Question = {
     id: "demo-cuerpo-kuma",
     type: "kuma_anatomy",
-    prompt: "Arma el Cuerpo de Kuma Sensei: De Pies a Cabeza",
-    description: "Coloca cada punto anatómico en el cuerpo de Kuma Sensei, avanzando en orden biomecánico desde la base en los pies hasta la mirada en la cabeza.",
-    image: "/images/didactic/kuma_clean_anatomy_bear.jpg",
+    prompt: "El Cuerpo Humano de Pies a Cabeza",
+    description: "Coloca cada punto anatómico en el cuerpo de Kuma Sensei, avanzando en orden biomecánico desde los pies hasta la cabeza.",
+    image: "/images/didactic/kuma_cuerpo_humano_oficial.jpg",
     explanation: "¡Excelente! Has dominado los puntos corporales fundamentales de Karate.",
 };
 

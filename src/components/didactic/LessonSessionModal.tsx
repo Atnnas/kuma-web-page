@@ -413,7 +413,7 @@ function shuffleArray<T>(array: T[]): T[] {
         setCorrectCount((prev) => prev + 1);
         setStreak((prev) => prev + 1);
         setMascotMood("streak");
-        setCustomSpeech("¡KIAI! ¡Armaste la anatomía de Kuma Sensei de pies a cabeza con precisión marcial! 🥋🐻✨");
+        setCustomSpeech("¡KIAI! ¡Dominaste el cuerpo humano de pies a cabeza con precisión marcial! 🥋🐻✨");
         setIsKumaAnatomyDone(false);
         setAnswerStatus("idle");
 
@@ -1294,7 +1294,7 @@ function shuffleArray<T>(array: T[]): T[] {
                                             onCompleted={() => {
                                                 setIsKumaAnatomyDone(true);
                                                 setMascotMood("streak");
-                                                setCustomSpeech("¡KIAI! ¡Completaste todos los puntos anatómicos de Kuma Sensei de pies a cabeza! 🥋🐻✨");
+                                                setCustomSpeech("¡KIAI! ¡Dominaste el cuerpo humano de pies a cabeza con precisión marcial! 🥋🐻✨");
                                             }}
                                             onCheckAndNext={handleDirectKumaAnatomyCheckAndNext}
                                         />
