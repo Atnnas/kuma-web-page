@@ -475,7 +475,7 @@ export function KanjiDrawCanvas({
     return (
         <div className="w-full flex flex-col items-center select-none">
             {/* KANJI SELECTOR TABS */}
-            <div className="flex items-center justify-center gap-2 mb-3.5 w-full max-w-md">
+            <div className="flex items-center justify-center gap-2.5 mb-4 w-full max-w-lg">
                 {kanjiList.map((item, idx) => {
                     const isDone = completedKanjis.includes(item.kanji);
                     const isActive = activeKanjiIndex === idx;
@@ -492,42 +492,42 @@ export function KanjiDrawCanvas({
                                 setHighestCheckpoint(0);
                                 setFeedbackTip(null);
                             }}
-                            className={`flex-1 py-2 px-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                            className={`flex-1 py-2.5 px-3.5 rounded-2xl border-2 transition-all flex items-center justify-center gap-2.5 cursor-pointer ${
                                 isActive
-                                    ? "bg-gradient-to-b from-amber-500/25 to-kuma-gold/10 border-kuma-gold text-white shadow-lg shadow-kuma-gold/20 scale-[1.02]"
-                                    : "bg-zinc-900/80 hover:bg-zinc-850 border-white/10 text-zinc-400"
+                                    ? "bg-gradient-to-b from-amber-500/25 to-kuma-gold/15 border-kuma-gold text-white shadow-xl shadow-kuma-gold/25 scale-[1.03]"
+                                    : "bg-zinc-900/90 hover:bg-zinc-800 border-white/15 text-zinc-400"
                             }`}
                         >
-                            <span className="font-serif font-black text-2xl">{item.kanji}</span>
+                            <span className="font-serif font-black text-3xl sm:text-4xl text-amber-200">{item.kanji}</span>
                             <div className="flex flex-col text-left">
-                                <span className="text-[11px] font-black uppercase tracking-wider leading-none text-kuma-gold">
+                                <span className="text-xs sm:text-sm font-black uppercase tracking-wider leading-none text-kuma-gold">
                                     {item.romaji}
                                 </span>
-                                <span className="text-[9px] text-zinc-400 leading-none truncate max-w-[65px]">
+                                <span className="text-[11px] sm:text-xs text-zinc-200 leading-tight font-medium max-w-[110px] mt-0.5 truncate">
                                     {item.meaning}
                                 </span>
                             </div>
-                            {isDone && <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0 ml-auto" weight="fill" />}
+                            {isDone && <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0 ml-auto" weight="fill" />}
                         </button>
                     );
                 })}
             </div>
 
             {/* STROKE PROGRESS & FEEDBACK BANNER */}
-            <div className="w-full max-w-md bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 mb-2.5 flex items-center justify-between text-xs backdrop-blur-md">
-                <div className="flex items-center gap-2 text-zinc-300">
-                    <PencilSimple className="w-4 h-4 text-kuma-gold" weight="bold" />
-                    <span>
-                        Trazo <strong>{completedStrokes.length}</strong> de{" "}
-                        <strong>{activeKanji.strokes.length}</strong>:{" "}
-                        <span className="text-kuma-gold font-bold">
+            <div className="w-full max-w-lg bg-zinc-900/90 border-2 border-white/15 rounded-2xl px-4 py-2.5 mb-3 flex items-center justify-between text-sm sm:text-base backdrop-blur-md shadow-md">
+                <div className="flex items-center gap-2.5 text-zinc-200">
+                    <PencilSimple className="w-5 h-5 text-kuma-gold shrink-0" weight="bold" />
+                    <span className="text-xs sm:text-sm font-medium">
+                        Trazo <strong className="text-white font-extrabold text-sm sm:text-base">{completedStrokes.length}</strong> de{" "}
+                        <strong className="text-white font-extrabold text-sm sm:text-base">{activeKanji.strokes.length}</strong>:{" "}
+                        <span className="text-amber-300 font-black">
                             {currentTargetStroke ? currentTargetStroke.name : "¡Kanji Dominado!"}
                         </span>
                     </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black text-kuma-gold uppercase tracking-wider bg-black/50 px-2 py-0.5 rounded-md border border-kuma-gold/30">
+                    <span className="text-xs sm:text-sm font-black text-amber-300 uppercase tracking-wider bg-black/70 px-2.5 py-1 rounded-lg border border-amber-400/40 shadow-inner">
                         {Math.round((completedStrokes.length / activeKanji.strokes.length) * 100)}%
                     </span>
                 </div>
@@ -540,9 +540,9 @@ export function KanjiDrawCanvas({
                         initial={{ opacity: 0, y: -6 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -6 }}
-                        className="mb-2 px-3.5 py-1 rounded-full bg-red-950/80 border border-red-500/50 text-red-300 text-xs font-bold flex items-center gap-1.5 shadow-md"
+                        className="mb-2.5 px-4 py-1.5 rounded-full bg-red-950/90 border-2 border-red-500/60 text-red-200 text-xs sm:text-sm font-bold flex items-center gap-2 shadow-lg"
                     >
-                        <WarningCircle className="w-3.5 h-3.5" weight="fill" />
+                        <WarningCircle className="w-4 h-4 text-red-400 shrink-0" weight="fill" />
                         <span>{feedbackTip}</span>
                     </motion.div>
                 )}
@@ -674,27 +674,27 @@ export function KanjiDrawCanvas({
                                         <circle
                                             cx={currentTargetStroke.start[0]}
                                             cy={currentTargetStroke.start[1]}
-                                            r="4.8"
+                                            r="6"
                                             fill="#DC2626"
-                                            stroke="#991B1B"
-                                            strokeWidth="1"
-                                            className="drop-shadow-sm"
+                                            stroke="#7F1D1D"
+                                            strokeWidth="1.2"
+                                            className="drop-shadow-md"
                                         />
                                         <circle
                                             cx={currentTargetStroke.start[0]}
                                             cy={currentTargetStroke.start[1]}
-                                            r="7"
+                                            r="8.5"
                                             fill="none"
                                             stroke="#DC2626"
-                                            strokeWidth="0.8"
-                                            className="animate-ping opacity-50"
+                                            strokeWidth="1"
+                                            className="animate-ping opacity-60"
                                         />
                                         <text
                                             x={currentTargetStroke.start[0]}
-                                            y={currentTargetStroke.start[1] + 1.6}
+                                            y={currentTargetStroke.start[1] + 2}
                                             textAnchor="middle"
                                             fill="#FFFFFF"
-                                            fontSize="4.5"
+                                            fontSize="5.8"
                                             fontWeight="900"
                                             className="select-none pointer-events-none"
                                         >
@@ -705,12 +705,12 @@ export function KanjiDrawCanvas({
                                         <circle
                                             cx={currentTargetStroke.end[0]}
                                             cy={currentTargetStroke.end[1]}
-                                            r="3.5"
+                                            r="4.2"
                                             fill="none"
                                             stroke="#DC2626"
-                                            strokeWidth="1.2"
+                                            strokeWidth="1.4"
                                             strokeDasharray="1.5,1.5"
-                                            className="opacity-80"
+                                            className="opacity-90"
                                         />
                                         <circle
                                             cx={currentTargetStroke.end[0]}
@@ -813,17 +813,17 @@ export function KanjiDrawCanvas({
                                 initial={{ scale: 2.2, opacity: 0, rotate: -20 }}
                                 animate={{ scale: 1, opacity: 1, rotate: -6 }}
                                 transition={{ type: "spring", damping: 14, stiffness: 180 }}
-                                className="absolute bottom-4 right-4 pointer-events-none drop-shadow-md"
+                                className="absolute bottom-4 right-4 pointer-events-none drop-shadow-lg"
                             >
-                                <div className="w-18 h-18 rounded-lg border-3 border-red-700 bg-red-600/10 p-1 flex flex-col items-center justify-center text-red-600 font-serif font-black shadow-inner relative overflow-hidden backdrop-blur-[0.5px]">
+                                <div className="w-22 h-22 sm:w-24 sm:h-24 rounded-xl border-3 border-red-700 bg-red-600/10 p-1.5 flex flex-col items-center justify-center text-red-600 font-serif font-black shadow-inner relative overflow-hidden backdrop-blur-[0.5px]">
                                     <div className="absolute inset-1 border border-red-700/50 rounded-sm pointer-events-none" />
-                                    <span className="text-[9px] tracking-widest leading-none border-b border-red-700/50 pb-0.5 font-black uppercase">
+                                    <span className="text-[11px] sm:text-xs tracking-widest leading-none border-b-2 border-red-700/50 pb-0.5 font-black uppercase">
                                         APROBADO
                                     </span>
-                                    <span className="text-xs tracking-wider font-extrabold text-red-700 mt-1 leading-none uppercase">
+                                    <span className="text-sm sm:text-base tracking-wider font-extrabold text-red-700 mt-1 leading-none uppercase">
                                         {activeKanji.romaji}
                                     </span>
-                                    <span className="text-[8px] text-red-600/90 tracking-wider leading-none mt-0.5 font-sans font-bold uppercase">
+                                    <span className="text-[10px] text-red-600/90 tracking-wider leading-none mt-1 font-sans font-bold uppercase">
                                         KUMA DOJO
                                     </span>
                                 </div>
@@ -833,11 +833,11 @@ export function KanjiDrawCanvas({
 
                     {/* CALLOUT OVERLAY WHEN WAITING TO START */}
                     {completedStrokes.length === 0 && !isDrawing && (
-                        <div className="absolute inset-x-0 bottom-4 flex justify-center pointer-events-none">
-                            <div className="bg-zinc-950/85 text-white backdrop-blur-md px-4 py-2 rounded-full border border-amber-500/40 flex items-center gap-2 shadow-xl animate-bounce">
-                                <HandPointing className="w-4 h-4 text-kuma-gold" weight="fill" />
-                                <span className="text-xs font-bold">
-                                    Desliza el pincel de tinta desde el punto (1)
+                        <div className="absolute inset-x-0 bottom-4 flex justify-center pointer-events-none px-2">
+                            <div className="bg-zinc-950/90 text-white backdrop-blur-md px-5 py-2.5 rounded-full border-2 border-amber-500/50 flex items-center gap-2.5 shadow-2xl animate-bounce">
+                                <HandPointing className="w-5 h-5 text-kuma-gold shrink-0" weight="fill" />
+                                <span className="text-xs sm:text-sm font-extrabold">
+                                    Desliza el pincel desde el punto rojo (1)
                                 </span>
                             </div>
                         </div>
@@ -845,14 +845,14 @@ export function KanjiDrawCanvas({
             </div>
 
             {/* ACTION TOOLBAR CONTROLS */}
-            <div className="flex items-center justify-between w-full max-w-[340px] sm:max-w-[380px] mt-3.5 gap-2">
+            <div className="flex items-center justify-between w-full max-w-[340px] sm:max-w-md mt-4 gap-2.5">
                 {/* CLEAR CANVAS */}
                 <button
                     onClick={handleReset}
                     title="Reiniciar este Kanji"
-                    className="flex-1 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 text-xs font-medium transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 py-2.5 px-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border-2 border-white/15 text-zinc-200 text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                 >
-                    <ArrowCounterClockwise className="w-3.5 h-3.5" />
+                    <ArrowCounterClockwise className="w-4 h-4" />
                     <span>Limpiar</span>
                 </button>
 
@@ -863,14 +863,14 @@ export function KanjiDrawCanvas({
                         setShowGuide((prev) => !prev);
                     }}
                     title="Mostrar u ocultar guías"
-                    className={`py-2 px-3 rounded-xl border text-xs font-medium transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`py-2.5 px-3.5 rounded-2xl border-2 text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm ${
                         showGuide
-                            ? "bg-amber-500/15 border-kuma-gold/50 text-kuma-gold"
-                            : "bg-white/5 border-white/10 text-zinc-400"
+                            ? "bg-amber-500/20 border-kuma-gold text-kuma-gold shadow-md shadow-kuma-gold/15"
+                            : "bg-white/10 border-white/15 text-zinc-300"
                     }`}
                 >
-                    {showGuide ? <Eye className="w-3.5 h-3.5" /> : <EyeSlash className="w-3.5 h-3.5" />}
-                    <span className="hidden sm:inline">Guía</span>
+                    {showGuide ? <Eye className="w-4 h-4" /> : <EyeSlash className="w-4 h-4" />}
+                    <span>Guía</span>
                 </button>
 
                 {/* SENSEI DEMONSTRATION */}
@@ -878,9 +878,9 @@ export function KanjiDrawCanvas({
                     disabled={isDemonstrating || isKanjiFinished}
                     onClick={handleDemonstrate}
                     title="Demostración guiada de Sensei Kuma con pincel de tinta"
-                    className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500/20 to-kuma-gold/20 hover:from-amber-500/30 hover:to-kuma-gold/30 border border-kuma-gold/40 text-kuma-gold text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="flex-1 py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-amber-500/25 to-kuma-gold/25 hover:from-amber-500/35 hover:to-kuma-gold/35 border-2 border-kuma-gold/50 text-kuma-gold text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-sm"
                 >
-                    <Lightbulb className="w-3.5 h-3.5" weight="bold" />
+                    <Lightbulb className="w-4 h-4" weight="bold" />
                     <span>{isDemonstrating ? "Trazando..." : "Demostración"}</span>
                 </button>
             </div>
@@ -892,14 +892,14 @@ export function KanjiDrawCanvas({
                     initial={{ opacity: 0, y: 10, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.35 }}
-                    className={`w-full max-w-[340px] sm:max-w-[380px] mt-3 rounded-2xl p-3 border transition-all ${
+                    className={`w-full max-w-[340px] sm:max-w-md mt-4 rounded-2xl p-3.5 border-2 transition-all ${
                         isKanjiFinished
-                            ? "bg-gradient-to-r from-amber-500/20 via-zinc-900/95 to-amber-600/20 border-kuma-gold/60 shadow-lg shadow-kuma-gold/15"
-                            : "bg-zinc-900/70 border-white/10 opacity-75"
+                            ? "bg-gradient-to-r from-amber-500/25 via-zinc-900/95 to-amber-600/25 border-kuma-gold shadow-xl shadow-kuma-gold/20"
+                            : "bg-zinc-900/80 border-white/15 opacity-80"
                     }`}
                 >
-                    <div className="flex items-center gap-3">
-                        <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-amber-500/30 shadow-md bg-black">
+                    <div className="flex items-center gap-3.5">
+                        <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 border-2 border-amber-400/40 shadow-lg bg-black">
                             <img
                                 src={activeKanji.revealImage}
                                 alt={activeKanji.revealTitle || activeKanji.kanji}
@@ -908,7 +908,7 @@ export function KanjiDrawCanvas({
                                 }`}
                             />
                             {!isKanjiFinished && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-kuma-gold text-lg">
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-kuma-gold text-2xl">
                                     🔒
                                 </div>
                             )}
@@ -916,19 +916,19 @@ export function KanjiDrawCanvas({
                         <div className="flex flex-col text-left">
                             <div className="flex items-center gap-1.5 mb-1">
                                 <span
-                                    className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                                    className={`text-[11px] sm:text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md ${
                                         isKanjiFinished
-                                            ? "bg-kuma-gold text-black shadow-sm"
-                                            : "bg-white/10 text-zinc-400"
+                                            ? "bg-kuma-gold text-black shadow-sm font-black"
+                                            : "bg-white/15 text-zinc-300 font-bold"
                                     }`}
                                 >
                                     {isKanjiFinished ? "¡Poder Revelado! ⚡" : "Traza para revelar"}
                                 </span>
                             </div>
-                            <h4 className="text-xs font-black text-white leading-tight">
+                            <h4 className="text-sm sm:text-base font-black text-white leading-tight">
                                 {activeKanji.revealTitle || `${activeKanji.kanji} - ${activeKanji.romaji}`}
                             </h4>
-                            <p className="text-[11px] text-zinc-300 mt-1 leading-snug">
+                            <p className="text-xs sm:text-sm text-zinc-200 mt-1 font-medium leading-snug">
                                 {activeKanji.revealSubtitle || activeKanji.description}
                             </p>
                         </div>
@@ -937,18 +937,18 @@ export function KanjiDrawCanvas({
             )}
 
             {/* OVERALL PROGRESS BADGE FOR ALL KANJIS */}
-            <div className="mt-3 flex items-center gap-2 text-xs text-zinc-400">
-                <span>Kanjis completados:</span>
-                <div className="flex items-center gap-1.5">
+            <div className="mt-4 flex items-center gap-2.5 text-sm sm:text-base text-zinc-200">
+                <span className="font-semibold">Kanjis completados:</span>
+                <div className="flex items-center gap-2">
                     {kanjiList.map((k) => {
                         const done = completedKanjis.includes(k.kanji);
                         return (
                             <span
                                 key={`badge-${k.kanji}`}
-                                className={`px-2 py-0.5 rounded-md font-serif text-xs font-black border transition-all ${
+                                className={`px-2.5 py-1 rounded-lg font-serif text-sm sm:text-base font-black border-2 transition-all ${
                                     done
-                                        ? "bg-emerald-950/50 border-emerald-500/50 text-emerald-300"
-                                        : "bg-white/5 border-white/10 text-zinc-500"
+                                        ? "bg-emerald-950/60 border-emerald-500 text-emerald-200 shadow-sm"
+                                        : "bg-white/5 border-white/15 text-zinc-400"
                                 }`}
                             >
                                 {k.kanji} {done ? "✓" : ""}

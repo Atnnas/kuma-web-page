@@ -868,9 +868,14 @@ function shuffleArray<T>(array: T[]): T[] {
                                             Pregunta {currentIndex + 1} de {totalQuestions} • {level.tag}
                                         </span>
                                     </div>
-                                    <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-black text-white leading-snug drop-shadow-md mt-1">
+                                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black text-white leading-tight drop-shadow-md mt-1">
                                         {currentQuestion.prompt}
                                     </h2>
+                                    {currentQuestion.description && (
+                                        <p className="text-sm sm:text-base md:text-lg text-amber-200/90 font-medium mt-1.5 leading-snug">
+                                            {currentQuestion.description}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* QUESTION IMAGE (IF ANY - EXCLUDING CUSTOM INTERACTIVE QUESTIONS LIKE TREE AND MAP) */}
