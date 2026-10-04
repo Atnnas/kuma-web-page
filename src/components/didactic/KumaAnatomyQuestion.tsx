@@ -15,6 +15,8 @@ import {
     Trophy,
     HandPointing,
     ShieldCheck,
+    Magnet,
+    Compass,
 } from "@phosphor-icons/react";
 
 interface KumaAnatomyQuestionProps {
@@ -36,6 +38,7 @@ export interface AnatomyPart {
     slotX: number; // Porcentaje X en la imagen del oso (0-100)
     slotY: number; // Porcentaje Y en la imagen del oso (0-100)
     icon: string;
+    heightLevel: "GEDAN" | "CHUDAN" | "JODAN";
     biomechanics: string; // Explicación neutra y educativa
     speechText: string;
 }
@@ -52,6 +55,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         slotX: 50,
         slotY: 88,
         icon: "🦶",
+        heightLevel: "GEDAN",
         biomechanics: "Base de enraizamiento en el tatami y distribución del peso en todas las posturas marciales.",
         speechText: "Ashi. Pies y talón: Base de apoyo y enraizamiento en el tatami.",
     },
@@ -65,6 +69,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         slotX: 50,
         slotY: 74,
         icon: "🦵",
+        heightLevel: "GEDAN",
         biomechanics: "Articulación resorte para flexionar en posiciones bajas y ejecutar impactos de rodilla (Hiza-geri).",
         speechText: "Hiza. Rodillas y espinilla: Articulación resorte para posturas y golpe de rodilla.",
     },
@@ -78,6 +83,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         slotX: 50,
         slotY: 58,
         icon: "🥋",
+        heightLevel: "GEDAN",
         biomechanics: "El eje central de rotación que genera la aceleración y potencia en golpes y defensas.",
         speechText: "Koshi. Cadera: Centro de rotación que genera la fuerza de cada técnica.",
     },
@@ -93,6 +99,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         slotX: 50,
         slotY: 50,
         icon: "🎯",
+        heightLevel: "CHUDAN",
         biomechanics: "Centro de gravedad del cuerpo y control de la respiración diafragmática para la firmeza corporal.",
         speechText: "Hara o Tanden. Abdomen: Centro de gravedad y respiración diafragmática.",
     },
@@ -106,6 +113,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         slotX: 47,
         slotY: 39,
         icon: "🛡️",
+        heightLevel: "CHUDAN",
         biomechanics: "Mantiene la columna vertebral erguida (Shisei) con hombros relajados para proteger el esternón.",
         speechText: "Mune. Pecho: Alineación de la columna vertebral y postura correcta.",
     },
@@ -119,6 +127,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         slotX: 74,
         slotY: 50,
         icon: "💪",
+        heightLevel: "CHUDAN",
         biomechanics: "Estructura de palanca para los bloqueos (Uke) y técnica corta y contundente de codo (Empi).",
         speechText: "Ude y Empi. Brazos y codos: Estructura para bloqueos e impactos de corta distancia.",
     },
@@ -132,6 +141,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         slotX: 26,
         slotY: 61,
         icon: "👊",
+        heightLevel: "CHUDAN",
         biomechanics: "Formación del puño cerrado frontal (Seiken), mano espada (Shuto) y agarres defensivos.",
         speechText: "Te y Yubi. Manos y dedos: Formación del puño Seiken y mano espada Shuto.",
     },
@@ -147,6 +157,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         slotX: 50,
         slotY: 15,
         icon: "🐻",
+        heightLevel: "JODAN",
         biomechanics: "Zona de guardia alta (Jodan). La alineación del cuello mantiene el balance corporal general.",
         speechText: "Atama y Kubi. Cabeza y cuello: Protección de guardia alta y equilibrio del cuerpo.",
     },
@@ -160,6 +171,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         slotX: 50,
         slotY: 22,
         icon: "👀",
+        heightLevel: "JODAN",
         biomechanics: "Visión periférica fija en el adversario para anticipar trayectorias sin desviar la concentración.",
         speechText: "Me. Ojos y mirada Metsuke: Concentración visual para anticipar movimientos.",
     },
@@ -173,6 +185,7 @@ export const ANATOMY_PARTS: AnatomyPart[] = [
         slotX: 59,
         slotY: 12,
         icon: "👂",
+        heightLevel: "JODAN",
         biomechanics: "Inhalación nasal profunda, escucha atenta de las órdenes del Sensei y exhalación enérgica con Kiai.",
         speechText: "Hana, Mimi y Kuchi. Nariz, orejas y boca: Respiración diafragmática, escucha y grito Kiai.",
     },
@@ -202,6 +215,8 @@ export function KumaAnatomyQuestion({
     // Estado completado total
     const [isFinished, setIsFinished] = useState<boolean>(false);
 
+    // Referencia al contenedor de la imagen de Kuma Sensei para calcular soltado magnético
+    const bearContainerRef = useRef<HTMLDivElement>(null);
     const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
 
     // Síntesis de voz controlada
@@ -225,7 +240,7 @@ export function KumaAnatomyQuestion({
         [isVoiceActive]
     );
 
-    // Sonido sutil de colocación exitosa
+    // Sonido sutil de "Snap Magnético" con doble armónico
     const playSnapSound = useCallback(() => {
         if (typeof window === "undefined") return;
         try {
@@ -236,19 +251,32 @@ export function KumaAnatomyQuestion({
             const ctx = new AudioCtx();
             const now = ctx.currentTime;
 
+            // Transitorio percutivo (chasquido de imán / madera)
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = "sine";
-            osc.frequency.setValueAtTime(440, now);
-            osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+            osc.frequency.setValueAtTime(520, now);
+            osc.frequency.exponentialRampToValueAtTime(1040, now + 0.12);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now);
-            osc.stop(now + 0.15);
+            osc.stop(now + 0.12);
+
+            // Resonancia suave
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = "triangle";
+            osc2.frequency.setValueAtTime(780, now + 0.04);
+            gain2.gain.setValueAtTime(0.15, now + 0.04);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(now + 0.04);
+            osc2.stop(now + 0.2);
         } catch {
-            // Ignorar
+            // Silencio controlado
         }
     }, []);
 
@@ -267,51 +295,96 @@ export function KumaAnatomyQuestion({
                     setCurrentPhase((prev) => (prev + 1) as 1 | 2 | 3);
                     setSelectedPartId(null);
                     didacticSound.playStreak();
-                }, 800);
+                }, 900);
                 return () => clearTimeout(timer);
             } else if (!isFinished) {
                 setIsFinished(true);
                 didacticSound.playComplete();
                 confetti({
-                    particleCount: 80,
-                    spread: 70,
+                    particleCount: 90,
+                    spread: 80,
                     origin: { y: 0.6 },
+                    colors: ["#f59e0b", "#10b981", "#ef4444", "#ffffff"],
                 });
                 onCompleted();
             }
         }
     }, [placedPartIds, currentPhase, currentPhaseParts, isFinished, onCompleted]);
 
-    // Colocar una parte
-    const handlePlacePart = (targetPart: AnatomyPart) => {
-        // Si el usuario tiene una parte seleccionada y coincide con el slot
-        if (selectedPartId === targetPart.id) {
-            placeSuccess(targetPart);
-            return;
-        }
-
-        // Si solo queda una parte pendiente en esta fase, colocarla directamente
-        if (unplacedInPhase.length === 1 && unplacedInPhase[0].id === targetPart.id) {
-            placeSuccess(targetPart);
-            return;
-        }
-
-        // Si no tenía nada seleccionado, auto-seleccionar esta si está disponible
-        if (!placedPartIds.includes(targetPart.id)) {
-            setSelectedPartId(targetPart.id);
-        }
-    };
-
+    // Colocación exitosa con efectos y voz
     const placeSuccess = (part: AnatomyPart) => {
+        if (placedPartIds.includes(part.id)) return;
         playSnapSound();
         didacticSound.playCorrect();
         setPlacedPartIds((prev) => [...prev, part.id]);
         setSelectedPartId(null);
         setLastPlacedPart(part);
         speakPart(part);
+
+        // Pequeño estallido de chispas en el punto
+        try {
+            confetti({
+                particleCount: 20,
+                spread: 45,
+                origin: { y: 0.5 },
+                colors: ["#f59e0b", "#fbbf24", "#ffffff"],
+            });
+        } catch {}
     };
 
-    // Reiniciar
+    // Colocar por Tap directo en el slot del oso
+    const handlePlacePart = (targetPart: AnatomyPart) => {
+        // Si el usuario ya tiene seleccionada la parte que coincide
+        if (selectedPartId === targetPart.id) {
+            placeSuccess(targetPart);
+            return;
+        }
+
+        // Si solo queda una parte pendiente en esta fase y toca el slot correcto
+        if (unplacedInPhase.length === 1 && unplacedInPhase[0].id === targetPart.id) {
+            placeSuccess(targetPart);
+            return;
+        }
+
+        // Si no tenía nada seleccionado y toca el slot, pre-selecciona el parche
+        if (!placedPartIds.includes(targetPart.id)) {
+            setSelectedPartId(targetPart.id);
+            speakPart(targetPart);
+        }
+    };
+
+    // Lógica magnética de soltado (Drag & Drop)
+    const handleDropPart = (part: AnatomyPart, dropPoint: { x: number; y: number }) => {
+        if (!bearContainerRef.current) return;
+        const rect = bearContainerRef.current.getBoundingClientRect();
+
+        // Calcular posición en pantalla del slot correspondiente a esta parte
+        const targetScreenX = rect.left + (part.slotX / 100) * rect.width;
+        const targetScreenY = rect.top + (part.slotY / 100) * rect.height;
+
+        const distance = Math.hypot(dropPoint.x - targetScreenX, dropPoint.y - targetScreenY);
+
+        // Radio de atracción magnética generoso (~85px desktop, ~65px mobile)
+        const magnetRadius = Math.max(65, rect.width * 0.22);
+
+        if (distance <= magnetRadius) {
+            placeSuccess(part);
+        } else {
+            // Verificar si se soltó sobre cualquier otro slot válido de la misma fase
+            const hitOther = currentPhaseParts.find((other) => {
+                if (placedPartIds.includes(other.id)) return false;
+                const otherX = rect.left + (other.slotX / 100) * rect.width;
+                const otherY = rect.top + (other.slotY / 100) * rect.height;
+                return Math.hypot(dropPoint.x - otherX, dropPoint.y - otherY) <= magnetRadius;
+            });
+
+            if (hitOther && hitOther.id === part.id) {
+                placeSuccess(part);
+            }
+        }
+    };
+
+    // Reiniciar ejercicio
     const handleReset = () => {
         setPlacedPartIds([]);
         setSelectedPartId(null);
@@ -330,46 +403,59 @@ export function KumaAnatomyQuestion({
             if (!next && typeof window !== "undefined" && "speechSynthesis" in window) {
                 window.speechSynthesis.cancel();
             } else if (next && unplacedInPhase.length > 0) {
-                // Saludo corto al activar
                 try {
-                    const utter = new SpeechSynthesisUtterance("Voz activada. El cuerpo humano de pies a cabeza.");
+                    const utter = new SpeechSynthesisUtterance("Voz activada. Arrastra los parches bordados al cuerpo de Kuma Sensei.");
                     utter.rate = 1.0;
                     utter.lang = "es-ES";
                     window.speechSynthesis.speak(utter);
-                } catch {
-                    // Ignorar
-                }
+                } catch {}
             }
             return next;
         });
     };
 
     const phaseLabels = {
-        1: { title: "1. Base e Inferior (Pies a Cadera)", desc: "Enraíza los pies y activa las rodillas y la cadera." },
-        2: { title: "2. Centro y Extremidades (Tronco a Manos)", desc: "Estabiliza el abdomen, el pecho y las armas de los brazos." },
-        3: { title: "3. Cabeza y Sentidos (La Guardia Alta)", desc: "Alinea la cabeza, la mirada Metsuke y la respiración." },
+        1: {
+            title: "Fase 1: Tren Inferior (Pies a Cadera)",
+            desc: "Enraíza la postura marcial desde los pies (Ashi), subiendo por las rodillas (Hiza) hasta la cadera (Koshi).",
+            badge: "下段 GEDAN",
+            color: "border-sky-500/40 text-sky-400 bg-sky-950/40",
+        },
+        2: {
+            title: "Fase 2: Centro y Tronco (Vientre a Manos)",
+            desc: "Fija el abdomen (Hara/Tanden), mantén el pecho erguido (Mune) y activa los brazos (Ude/Empi) y puños (Te).",
+            badge: "中段 CHUDAN",
+            color: "border-amber-500/40 text-amber-400 bg-amber-950/40",
+        },
+        3: {
+            title: "Fase 3: Guardia Alta (Cabeza y Sentidos)",
+            desc: "Alinea la cabeza y cuello (Atama/Kubi), enfoca la mirada (Me - Metsuke) y sincroniza la respiración.",
+            badge: "上段 JODAN",
+            color: "border-rose-500/40 text-rose-400 bg-rose-950/40",
+        },
     };
 
     return (
         <div className="w-full max-w-5xl mx-auto flex flex-col items-center select-none text-white px-2 py-4">
-            {/* BARRA SUPERIOR: CONTROL DE VOZ + PROGRESO FASES */}
+            {/* BARRA SUPERIOR: CONTROL DE VOZ + PROGRESO DE FASES */}
             <div className="w-full flex flex-wrap items-center justify-between gap-3 mb-4 bg-zinc-900/90 border border-zinc-800 p-3 rounded-2xl shadow-lg backdrop-blur-md">
-                {/* Indicador de Fase */}
+                {/* Indicador de Fases Marciales */}
                 <div className="flex items-center gap-2">
                     <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">Progreso:</span>
                     <div className="flex gap-1.5">
                         {[1, 2, 3].map((phaseNum) => (
                             <div
                                 key={phaseNum}
-                                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                                className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
                                     currentPhase === phaseNum
-                                        ? "bg-amber-500 text-black shadow-md shadow-amber-500/30 scale-105"
+                                        ? "bg-amber-500 text-zinc-950 border-amber-300 shadow-md shadow-amber-500/30 scale-105"
                                         : currentPhase > phaseNum || placedPartIds.length === ANATOMY_PARTS.length
-                                        ? "bg-emerald-600 text-white"
-                                        : "bg-zinc-800 text-zinc-500"
+                                        ? "bg-emerald-600 text-white border-emerald-400"
+                                        : "bg-zinc-800/80 text-zinc-500 border-zinc-700"
                                 }`}
                             >
-                                Fase {phaseNum}
+                                <span>Fase {phaseNum}</span>
+                                {currentPhase > phaseNum && <CheckCircle size={14} weight="bold" />}
                             </div>
                         ))}
                     </div>
@@ -413,19 +499,26 @@ export function KumaAnatomyQuestion({
 
             {/* BANNER DE INSTRUCCIONES */}
             <div className="w-full text-center mb-4">
-                <span className="inline-block px-3 py-0.5 mb-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full">
-                    {phaseLabels[currentPhase].title}
-                </span>
-                <p className="text-sm text-zinc-300 max-w-xl mx-auto">
-                    {phaseLabels[currentPhase].desc} Selecciona una etiqueta abajo y colócala en el punto correspondiente del cuerpo.
+                <div className="inline-flex items-center gap-2 px-3 py-1 mb-2 text-xs font-bold uppercase tracking-wider rounded-full border shadow-sm backdrop-blur-sm">
+                    <span className={`px-2 py-0.5 rounded-md font-black ${phaseLabels[currentPhase].color}`}>
+                        {phaseLabels[currentPhase].badge}
+                    </span>
+                    <span className="text-amber-300">{phaseLabels[currentPhase].title}</span>
+                </div>
+                <p className="text-xs md:text-sm text-zinc-300 max-w-2xl mx-auto flex items-center justify-center gap-1.5">
+                    <Magnet size={16} className="text-amber-400 animate-bounce" weight="fill" />
+                    <span>Arrastra cada <strong>parche bordado</strong> a su lugar en el cuerpo o tócalo para colocarlo.</span>
                 </p>
             </div>
 
-            {/* CONTENEDOR PRINCIPAL: OSO PIXAR INTERACTIVO + BANDEJA DE PIEZAS */}
+            {/* CONTENEDOR PRINCIPAL: OSO PIXAR INTERACTIVO + BANDEJA DE PARCHES BORDADOS */}
             <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 {/* COLUMNA OSO INTERACTIVO (Lg: 7 cols) */}
                 <div className="lg:col-span-7 flex flex-col items-center">
-                    <div className="relative w-full max-w-[480px] aspect-square rounded-3xl overflow-hidden border-2 border-zinc-700 shadow-2xl bg-zinc-950">
+                    <div
+                        ref={bearContainerRef}
+                        className="relative w-full max-w-[480px] aspect-square rounded-3xl overflow-hidden border-2 border-amber-500/30 shadow-[0_12px_36px_rgba(0,0,0,0.9)] bg-zinc-950"
+                    >
                         {/* IMAGEN DE KUMA SENSEI EN TATAMI CON LOGO OFICIAL DOJO KUMA */}
                         <Image
                             src="/images/didactic/kuma_cuerpo_humano_oficial_v2.jpg"
@@ -439,17 +532,17 @@ export function KumaAnatomyQuestion({
                         {/* OVERLAY SUTIL OSCURO PARA RESALTAR PINES */}
                         <div className="absolute inset-0 bg-black/15 pointer-events-none" />
 
-                        {/* SLOTS Y PINES INTERACTIVOS */}
+                        {/* SLOTS Y PARCHES BORDADOS EN EL CUERPO */}
                         {ANATOMY_PARTS.map((part) => {
                             const isPlaced = placedPartIds.includes(part.id);
                             const isCurrentPhase = part.phase === currentPhase;
                             const isSelected = selectedPartId === part.id;
 
-                            // Si no pertenece a la fase actual y no está colocada, no mostramos el hotspot para no saturar
+                            // No mostrar puntos de fases futuras para no saturar visualmente
                             if (!isPlaced && !isCurrentPhase) return null;
 
                             return (
-                                <motion.div
+                                <div
                                     key={part.id}
                                     style={{
                                         position: "absolute",
@@ -459,116 +552,175 @@ export function KumaAnatomyQuestion({
                                     }}
                                     className="z-20 cursor-pointer"
                                     onClick={() => handlePlacePart(part)}
-                                    whileHover={{ scale: 1.15 }}
-                                    whileTap={{ scale: 0.95 }}
                                 >
                                     {isPlaced ? (
-                                        // PESTAÑA COLOCADA EXITOSA
+                                        // PARCHE BORDADO SELLADO SOBRE EL CUERPO
                                         <motion.div
-                                            initial={{ scale: 0, rotate: -15 }}
+                                            initial={{ scale: 0, rotate: -20 }}
                                             animate={{ scale: 1, rotate: 0 }}
-                                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                                            className="flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-full border border-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.7)] text-xs font-bold whitespace-nowrap backdrop-blur-sm"
+                                            transition={{ type: "spring", stiffness: 450, damping: 22 }}
+                                            whileHover={{ scale: 1.12 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            className="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 text-white rounded-xl border-2 border-amber-400 shadow-[0_0_18px_rgba(245,158,11,0.6),inset_0_1px_2px_rgba(255,255,255,0.3)] text-xs font-black whitespace-nowrap backdrop-blur-md group"
+                                            title={`${part.kanji} (${part.romaji}) - Clic para escuchar`}
                                         >
                                             <span className="text-sm">{part.icon}</span>
-                                            <span>{part.kanji}</span>
-                                            <CheckCircle size={14} weight="bold" className="text-emerald-200" />
+                                            <span className="font-serif text-sm font-black text-amber-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                                                {part.kanji}
+                                            </span>
+                                            {/* Sello Hanko rojo tradicional */}
+                                            <span className="text-[9px] bg-red-700 text-white px-1 py-0.2 rounded font-black tracking-tighter border border-red-400 shadow-sm">
+                                                熊
+                                            </span>
+                                            <CheckCircle size={13} weight="fill" className="text-emerald-400" />
                                         </motion.div>
                                     ) : (
-                                        // PIN VACÍO ESPERANDO COLOCACIÓN
+                                        // DIANA MAGNÉTICA ESPERANDO EL PARCHE BORDADO
                                         <div className="relative group">
-                                            {/* Aura pulsante si está seleccionada */}
+                                            {/* Aura pulsante magnética */}
                                             {isSelected && (
-                                                <div className="absolute -inset-3 bg-amber-400/40 rounded-full animate-ping" />
+                                                <div className="absolute -inset-3 bg-amber-400/50 rounded-full animate-ping pointer-events-none" />
                                             )}
-                                            <div
-                                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all shadow-lg border-2 ${
+
+                                            <motion.div
+                                                animate={
                                                     isSelected
-                                                        ? "bg-amber-400 text-black border-white shadow-[0_0_20px_rgba(251,191,36,0.9)] scale-110"
-                                                        : "bg-zinc-900/90 text-amber-300 border-amber-400/70 hover:border-amber-300 hover:scale-110 shadow-black/80"
+                                                        ? { scale: [1, 1.25, 1], rotate: [0, 90, 0] }
+                                                        : { scale: [1, 1.08, 1] }
+                                                }
+                                                transition={{ repeat: Infinity, duration: isSelected ? 1.4 : 2.5 }}
+                                                className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-sm transition-all shadow-xl border-2 ${
+                                                    isSelected
+                                                        ? "bg-amber-500 text-zinc-950 border-white shadow-[0_0_24px_rgba(245,158,11,0.95)]"
+                                                        : "bg-zinc-950/90 text-amber-300 border-amber-400/80 hover:border-amber-300 hover:scale-110 shadow-black"
                                                 }`}
                                             >
-                                                {part.icon}
-                                            </div>
-                                            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-0.5 bg-black/90 text-[10px] text-zinc-300 rounded font-bold uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                                {isSelected ? (
+                                                    <Magnet size={20} weight="fill" className="text-zinc-950 animate-bounce" />
+                                                ) : (
+                                                    <span className="text-base">{part.icon}</span>
+                                                )}
+                                            </motion.div>
+
+                                            {/* Tooltip con nombre en hover */}
+                                            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2.5 py-1 bg-zinc-950/95 border border-zinc-700 text-[10px] text-amber-300 rounded-lg font-bold uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg z-30">
                                                 {part.spanish}
                                             </div>
                                         </div>
                                     )}
-                                </motion.div>
+                                </div>
                             );
                         })}
                     </div>
                 </div>
 
-                {/* COLUMNA LATERAL: BANDEJA DE PIEZAS + FICHA DE APRENDIZAJE (Lg: 5 cols) */}
+                {/* COLUMNA LATERAL: BANDEJA DE PARCHES BORDADOS + BIOMECÁNICA (Lg: 5 cols) */}
                 <div className="lg:col-span-5 flex flex-col gap-4">
-                    {/* BANDEJA DE TARJETAS PARA ESTA FASE */}
-                    <div className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 shadow-xl">
-                        <div className="flex items-center justify-between mb-3 pb-2 border-b border-zinc-800">
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                                <HandPointing size={18} />
-                                <span>Partes a Colocar</span>
-                            </h3>
-                            <span className="text-xs text-zinc-400">
-                                {placedPartIds.filter((id) => currentPhaseParts.some((p) => p.id === id)).length} de{" "}
+                    {/* BANDEJA TATAMI: PARCHES BORDADOS MAGNÉTICOS */}
+                    <div className="bg-gradient-to-b from-zinc-900/95 via-zinc-950/95 to-black/95 border-2 border-amber-500/30 rounded-3xl p-4 md:p-5 shadow-[0_10px_30px_rgba(0,0,0,0.8)] backdrop-blur-md">
+                        {/* Cabecera de la bandeja */}
+                        <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-zinc-800">
+                            <div className="flex items-center gap-2">
+                                <Magnet size={20} weight="fill" className="text-amber-400" />
+                                <h3 className="text-sm font-black uppercase tracking-wider text-white">
+                                    Parches de Entrenamiento
+                                </h3>
+                            </div>
+                            <span className="text-xs font-bold px-2 py-0.5 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full">
+                                {placedPartIds.filter((id) => currentPhaseParts.some((p) => p.id === id)).length} /{" "}
                                 {currentPhaseParts.length}
                             </span>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-2.5">
+                        {/* LISTA / GRID DE PARCHES MAGNÉTICOS */}
+                        <div className="grid grid-cols-1 gap-3">
                             {currentPhaseParts.map((part) => {
                                 const isPlaced = placedPartIds.includes(part.id);
                                 const isSelected = selectedPartId === part.id;
 
                                 return (
-                                    <button
+                                    <motion.div
                                         key={part.id}
-                                        type="button"
-                                        disabled={isPlaced}
+                                        drag={!isPlaced}
+                                        dragSnapToOrigin={true}
+                                        whileDrag={{
+                                            scale: 1.14,
+                                            zIndex: 60,
+                                            cursor: "grabbing",
+                                            boxShadow: "0 20px 35px -5px rgba(245, 158, 11, 0.5)",
+                                        }}
+                                        whileHover={!isPlaced ? { scale: 1.03, y: -2 } : {}}
+                                        whileTap={!isPlaced ? { scale: 0.97 } : {}}
+                                        onDragStart={() => {
+                                            setSelectedPartId(part.id);
+                                            speakPart(part);
+                                        }}
+                                        onDragEnd={(event, info) => {
+                                            handleDropPart(part, info.point);
+                                        }}
                                         onClick={() => {
                                             if (!isPlaced) {
                                                 setSelectedPartId(part.id);
                                                 speakPart(part);
                                             }
                                         }}
-                                        className={`w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between ${
+                                        className={`relative w-full p-3.5 rounded-2xl border-2 transition-all select-none ${
                                             isPlaced
-                                                ? "bg-emerald-950/40 border-emerald-800/60 opacity-60 cursor-default"
+                                                ? "bg-zinc-950/60 border-zinc-800/80 opacity-50 cursor-default"
                                                 : isSelected
-                                                ? "bg-amber-500/20 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.3)] scale-[1.02]"
-                                                : "bg-zinc-800/80 border-zinc-700 hover:border-zinc-500 hover:bg-zinc-800 active:scale-[0.98]"
+                                                ? "bg-gradient-to-r from-amber-950/60 via-zinc-900 to-amber-950/40 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.4)] cursor-grab active:cursor-grabbing"
+                                                : "bg-gradient-to-br from-zinc-900 via-zinc-900/90 to-zinc-950 border-amber-500/40 hover:border-amber-400 hover:shadow-[0_4px_16px_rgba(245,158,11,0.2)] cursor-grab active:cursor-grabbing"
                                         }`}
                                     >
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-2xl">{part.icon}</span>
-                                            <div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold text-sm text-white">
-                                                        {part.kanji} ({part.romaji})
+                                        {/* Detalle visual de pespunte textil en los bordes */}
+                                        <div className="flex items-center justify-between gap-3">
+                                            {/* Lado izquierdo: Icono e Insignia Kanji en relieve de oro */}
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 rounded-xl bg-zinc-950 border border-amber-400/50 flex flex-col items-center justify-center shadow-inner">
+                                                    <span className="font-serif text-2xl font-black text-amber-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-none">
+                                                        {part.kanji}
                                                     </span>
-                                                    {isPlaced && (
-                                                        <span className="text-[10px] uppercase font-bold px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/40">
-                                                            Correcto
-                                                        </span>
-                                                    )}
+                                                    <span className="text-[10px] text-zinc-400 font-bold leading-tight">
+                                                        {part.icon}
+                                                    </span>
                                                 </div>
-                                                <div className="text-xs text-zinc-400">{part.spanish}</div>
+
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-black text-sm text-white tracking-wide">
+                                                            {part.romaji}
+                                                        </span>
+                                                        <span className="text-[9px] uppercase font-black px-1.5 py-0.5 rounded border bg-zinc-950 text-amber-400 border-amber-500/40">
+                                                            {part.heightLevel}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-xs text-zinc-300 font-medium">
+                                                        {part.spanish}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Lado derecho: Estado o Indicador Magnético */}
+                                            <div className="flex items-center gap-2">
+                                                {isPlaced ? (
+                                                    <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-950/60 px-2 py-1 rounded-lg border border-emerald-500/40">
+                                                        <CheckCircle size={16} weight="fill" />
+                                                        <span>Colocado</span>
+                                                    </div>
+                                                ) : isSelected ? (
+                                                    <div className="flex items-center gap-1.5 text-amber-300 text-xs font-extrabold bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-400 animate-pulse">
+                                                        <Magnet size={16} weight="fill" />
+                                                        <span>¡Al Oso!</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-amber-300 bg-zinc-800/80 px-2 py-1 rounded-lg border border-zinc-700">
+                                                        <HandPointing size={14} />
+                                                        <span>Arrastrar</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
-
-                                        <div>
-                                            {isPlaced ? (
-                                                <CheckCircle size={20} weight="fill" className="text-emerald-400" />
-                                            ) : isSelected ? (
-                                                <span className="text-xs font-bold text-amber-300 uppercase tracking-wider animate-pulse">
-                                                    ¡Toca el Oso!
-                                                </span>
-                                            ) : (
-                                                <span className="text-xs text-zinc-400">Seleccionar</span>
-                                            )}
-                                        </div>
-                                    </button>
+                                    </motion.div>
                                 );
                             })}
                         </div>
@@ -579,7 +731,7 @@ export function KumaAnatomyQuestion({
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-gradient-to-br from-zinc-900 via-zinc-900 to-amber-950/20 border border-amber-500/30 rounded-2xl p-4 shadow-xl"
+                            className="bg-gradient-to-br from-zinc-900 via-zinc-900 to-amber-950/20 border-2 border-amber-500/30 rounded-3xl p-4 shadow-xl"
                         >
                             {(() => {
                                 const current =
@@ -587,13 +739,14 @@ export function KumaAnatomyQuestion({
                                     ANATOMY_PARTS.find((p) => p.id === selectedPartId)!;
                                 return (
                                     <>
-                                        <div className="flex items-center gap-2 mb-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
-                                            <ShieldCheck size={18} />
+                                        <div className="flex items-center gap-2 mb-2 text-amber-400 text-xs font-black uppercase tracking-wider">
+                                            <ShieldCheck size={18} weight="fill" />
                                             <span>Función Biomecánica en Karate</span>
                                         </div>
                                         <div className="text-base font-bold text-white mb-1 flex items-center gap-2">
-                                            <span>{current.icon}</span>
-                                            <span>{current.kanji} - {current.spanish}</span>
+                                            <span className="text-xl">{current.icon}</span>
+                                            <span className="font-serif text-lg text-amber-300 font-black">{current.kanji}</span>
+                                            <span className="text-zinc-200">({current.romaji}) - {current.spanish}</span>
                                         </div>
                                         <p className="text-xs text-zinc-300 leading-relaxed font-sans">
                                             {current.biomechanics}
@@ -609,20 +762,20 @@ export function KumaAnatomyQuestion({
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className="bg-gradient-to-r from-emerald-900/80 to-teal-900/80 border-2 border-emerald-400 rounded-2xl p-4 text-center shadow-[0_0_30px_rgba(16,185,129,0.4)]"
+                            className="bg-gradient-to-r from-emerald-950 via-teal-900 to-emerald-950 border-2 border-emerald-400 rounded-3xl p-5 text-center shadow-[0_0_35px_rgba(16,185,129,0.4)]"
                         >
-                            <Trophy size={36} weight="fill" className="text-amber-400 mx-auto mb-2" />
-                            <h4 className="text-base font-extrabold text-white mb-1">
-                                ¡El Cuerpo Humano Completado!
+                            <Trophy size={40} weight="fill" className="text-amber-400 mx-auto mb-2" />
+                            <h4 className="text-base font-black text-white mb-1">
+                                ¡El Cuerpo Humano de Pies a Cabeza Completado!
                             </h4>
                             <p className="text-xs text-emerald-200 mb-3">
-                                Has dominado los puntos anatómicos fundamentales desde los pies hasta la cabeza.
+                                Has dominado los puntos anatómicos fundamentales de Karate con Kuma Sensei.
                             </p>
                             {onCheckAndNext && (
                                 <button
                                     onClick={onCheckAndNext}
                                     type="button"
-                                    className="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-zinc-950 font-bold rounded-xl text-sm shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
+                                    className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-zinc-950 font-black rounded-xl text-sm shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
                                 >
                                     <span>Continuar</span>
                                     <ArrowRight size={18} weight="bold" />
