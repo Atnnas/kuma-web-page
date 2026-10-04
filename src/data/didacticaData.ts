@@ -612,7 +612,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                     ],
                     images: [
                         {
-                            src: "/images/didactic/kuma_cuerpo_humano_oficial.jpg",
+                            src: "/images/didactic/kuma_cuerpo_humano_oficial_v2.jpg",
                             alt: "Kuma Sensei Pixar 3D: Anatomía de Karate de Pies a Cabeza con Logo Oficial Dojo Kuma",
                             caption: "Fig 1. Mapa anatómico de Kuma Sensei: Estructura biomecánica de pies a cabeza"
                         },
@@ -633,19 +633,19 @@ export const DIDACTIC_UNITS: Unit[] = [
                             title: "Seiken, Empi y Shuto: Armas de la Mano",
                             desc: "Puño cerrado, mano espada y el codo como un ariete súper duro.",
                             badge: "Brazos y Manos",
-                            image: "/images/didactic/kuma_pixar_anatomia_cuerpo.jpg"
+                            image: "/images/didactic/kuma_cuerpo_humano_oficial_v2.jpg"
                         },
                         {
                             title: "Koshi y Tanden: El Motor de Poder",
                             desc: "La fuerza nace al girar la cadera (Koshi) y concentrarse en el abdomen (Tanden).",
                             badge: "Fuerza y Centro",
-                            image: "/images/didactic/kuma_pixar_anatomia_cuerpo.jpg"
+                            image: "/images/didactic/kuma_cuerpo_humano_oficial_v2.jpg"
                         },
                         {
                             title: "Hiza, Sune y Ashi: Escudos de la Pierna",
                             desc: "Rodilla para saltar y defender, espinilla como escudo y pie para pisar fuerte.",
                             badge: "Piernas Fuertes",
-                            image: "/images/didactic/kuma_pixar_anatomia_cuerpo.jpg"
+                            image: "/images/didactic/kuma_cuerpo_humano_oficial_v2.jpg"
                         }
                     ],
                     references: [
@@ -719,7 +719,7 @@ export const DIDACTIC_UNITS: Unit[] = [
                         type: "kuma_anatomy",
                         prompt: "El Cuerpo Humano de Pies a Cabeza",
                         description: "Coloca cada punto anatómico en el cuerpo de Kuma Sensei, avanzando en orden biomecánico desde los pies hasta la cabeza.",
-                        image: "/images/didactic/kuma_cuerpo_humano_oficial.jpg",
+                        image: "/images/didactic/kuma_cuerpo_humano_oficial_v2.jpg",
                         explanation: "¡Excelente dominio! Has aprendido las partes anatómicas de Karate en orden de pies a cabeza: Pies (Ashi), Rodillas (Hiza), Cadera (Koshi), Abdomen (Hara/Tanden), Pecho (Mune), Brazos y Codos (Ude/Empi), Manos (Te), Cabeza (Atama) y Mirada (Me).",
                         hint: "Avanza por las 3 fases de abajo hacia arriba: primero la base (pies a cadera), luego el tronco y brazos, y por último la guardia alta (cabeza y sentidos).",
                         references: [

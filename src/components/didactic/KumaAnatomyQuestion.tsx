@@ -428,7 +428,7 @@ export function KumaAnatomyQuestion({
                     <div className="relative w-full max-w-[480px] aspect-square rounded-3xl overflow-hidden border-2 border-zinc-700 shadow-2xl bg-zinc-950">
                         {/* IMAGEN DE KUMA SENSEI EN TATAMI CON LOGO OFICIAL DOJO KUMA */}
                         <Image
-                            src="/images/didactic/kuma_cuerpo_humano_oficial.jpg"
+                            src="/images/didactic/kuma_cuerpo_humano_oficial_v2.jpg"
                             alt="El Cuerpo Humano de Pies a Cabeza - Dojo Kuma"
                             fill
                             priority

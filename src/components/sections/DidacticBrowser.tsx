@@ -27,7 +27,7 @@ const RESOURCES: Resource[] = [
         tag: "Anatomía Kuma",
         description: "Estudio del cuerpo humano en japonés. Puntos vitales (Kyusho) y terminología esencial.",
         link: "/resources/didactica/cuerpo-humano",
-        image: "/images/kuma-partes-cuerpo.jpg"
+        image: "/images/didactic/kuma_cuerpo_humano_oficial_v2.jpg"
     },
     {
         id: "karategi",

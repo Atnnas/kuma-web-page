@@ -102,7 +102,7 @@ export function DidacticEncyclopedia({ onBackToMap }: DidacticEncyclopediaProps)
             category: "tradicional",
             tag: "Anatomía Kuma",
             description: "Estudio del cuerpo humano en japonés. Puntos vitales (Kyusho) y terminología esencial.",
-            image: "/images/kuma-partes-cuerpo.jpg",
+            image: "/images/didactic/kuma_cuerpo_humano_oficial_v2.jpg",
             content: (
                 <div className="space-y-8 text-zinc-300 leading-relaxed">
                     <p className="text-justify">

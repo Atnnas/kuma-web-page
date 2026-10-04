@@ -10,7 +10,7 @@ const DEMO_QUESTION: Question = {
     type: "kuma_anatomy",
     prompt: "El Cuerpo Humano de Pies a Cabeza",
     description: "Coloca cada punto anatómico en el cuerpo de Kuma Sensei, avanzando en orden biomecánico desde los pies hasta la cabeza.",
-    image: "/images/didactic/kuma_cuerpo_humano_oficial.jpg",
+    image: "/images/didactic/kuma_cuerpo_humano_oficial_v2.jpg",
     explanation: "¡Excelente! Has dominado los puntos corporales fundamentales de Karate.",
 };
 
