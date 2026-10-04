@@ -3,6 +3,7 @@ import { KYU_UNITS } from "./units/kyuUnits";
 import { DAN_UNITS } from "./units/danUnits";
 import { SHOTOKAN_KANJIS } from "./shotokanKanjis";
 import { KIAI_KANJIS } from "./kiaiKanjis";
+import { KATA_KANJIS } from "./kataKanjis";
 
 export const DIDACTIC_UNITS: Unit[] = [
     // ==========================================
@@ -518,35 +519,13 @@ export const DIDACTIC_UNITS: Unit[] = [
                         ]
                     },
                     {
-                        id: "q-que-es-un-kata",
-                        type: "multiple_choice",
-                        prompt: "¿Qué función cumplían los Katas en la antigüedad marcial?",
-                        description: "Preservación del conocimiento de combate sin libros ni videos.",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🎭 Bailes festivos para la corte imperial",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o2",
-                                text: "🤸 Gimnasia rítmica para niños",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o3",
-                                text: "🧘 Calentamiento sin defensa real",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o4",
-                                text: "📚 Enciclopedias vivientes de defensa personal y derribos (Bunkai)",
-                                isCorrect: true
-                            }
-                        ],
-                        correctAnswerId: "o4",
-                        explanation: "¡Exacto! Un Kata es una biblioteca en movimiento: cada paso oculta llaves, derribos y defensas reales frente a agresiones.",
-                        hint: "Eran enciclopedias secretas de técnicas reales.",
+                        id: "q-kata-bunkai-kanji-draw",
+                        type: "kanji_draw",
+                        prompt: "Traza los Kanjis sagrados de KATA & BUNKAI (型・解)",
+                        description: "Descubre el secreto: de la Forma en solitario (型) a la Aplicación real en combate (解).",
+                        kanjiList: KATA_KANJIS,
+                        explanation: "¡Maestría revelada! Kata (型) es el molde o biblioteca viviente en la memoria del cuerpo. Bunkai (解) es el análisis que demuestra que ningún movimiento es un baile: cada paso oculta llaves, derribos y defensas reales frente a agresiones.",
+                        hint: "Sigue el punto rojo numerado para trazar cada ideograma y desbloquear el poder de Kuma.",
                         references: [
                             {
                                 title: "Bubishi: La Biblia del Karate",
@@ -557,12 +536,12 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 note: "Explica cómo cada movimiento formal de un Kata responde a una situación real de vida o muerte en la calle."
                             },
                             {
-                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
-                                author: "Mark Bishop",
-                                year: 1999,
-                                editorial: "Editorial Paidotribo",
-                                chapter: "Capítulo 4: El Kata como sistema mnemotécnico de supervivencia sin registros escritos",
-                                note: "Estudio antropológico sobre la transmisión oral y cinética de las técnicas de combate en Ryukyu."
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Capítulo 2: Relación recíproca entre Kata, Kihon y el combate libre Kumite",
+                                note: "El maestro fundador explica cómo la forma preserva el arsenal técnico y el Bunkai comprueba su efectividad marcial."
                             },
                             {
                                 title: "Watashi no Karate-Jutsu: Mi Arte del Karate",

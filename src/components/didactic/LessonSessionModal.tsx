@@ -1139,6 +1139,8 @@ function shuffleArray<T>(array: T[]): T[] {
                                                 if (count < total) {
                                                     if (currentQuestion.id === "q-kiai-kanji-draw") {
                                                         setCustomSpeech(`¡Poder revelado! ¡Has liberado KI (気), la energía y el aliento del grito! Ahora traza AI (合) para unir tu fuerza en el Tanden. 🥋🔥`);
+                                                    } else if (currentQuestion.id === "q-kata-bunkai-kanji-draw") {
+                                                        setCustomSpeech(`¡Poder revelado! Has forjado KATA (型), la biblioteca en movimiento. Ahora traza BUNKAI (解) para revelar la aplicación de combate real. 🥋✨`);
                                                     } else {
                                                         const targetName = currentQuestion.kanjiList
                                                             ? currentQuestion.kanjiList.map((k) => k.kanji).join("・")
@@ -1152,6 +1154,8 @@ function shuffleArray<T>(array: T[]): T[] {
                                                 setMascotMood("streak");
                                                 if (currentQuestion.id === "q-kiai-kanji-draw") {
                                                     setCustomSpeech("¡KIAI! ¡Has unido la Energía (気) y el Blindaje (合)! ¡Tu cuerpo es una roca y tu golpe tiene Kime total! 👊🥋⚡");
+                                                } else if (currentQuestion.id === "q-kata-bunkai-kanji-draw") {
+                                                    setCustomSpeech("¡KIAI! ¡Has dominado KATA (型) y BUNKAI (解)! Ahora sabes que cada paso oculta una defensa personal real. 👊🥋🔥");
                                                 } else {
                                                     const targetName = currentQuestion.kanjiList
                                                         ? currentQuestion.kanjiList.map((k) => k.kanji).join("・")
