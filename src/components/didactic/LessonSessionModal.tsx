@@ -1127,17 +1127,24 @@ function shuffleArray<T>(array: T[]): T[] {
                                 {currentQuestion.type === "kanji_draw" && (
                                     <div className="w-full flex flex-col items-center">
                                         <KanjiDrawCanvas
+                                            key={currentQuestion.id}
                                             customKanjiList={currentQuestion.kanjiList}
                                             onKanjiCompleted={(kanji, count, total) => {
                                                 setMascotMood("correct");
                                                 if (count < total) {
-                                                    setCustomSpeech(`¡Excelente trazo de "${kanji}" (${count}/${total})! Completa los siguientes para forjar KARATE-DO. 🥋✨`);
+                                                    const targetName = currentQuestion.kanjiList
+                                                        ? currentQuestion.kanjiList.map((k) => k.kanji).join("・")
+                                                        : "KARATE-DO";
+                                                    setCustomSpeech(`¡Excelente trazo de "${kanji}" (${count}/${total})! Completa los siguientes para forjar ${targetName}. 🥋✨`);
                                                 }
                                             }}
                                             onAllCompleted={() => {
                                                 setIsKanjiDrawn(true);
                                                 setMascotMood("streak");
-                                                setCustomSpeech("¡KIAI! ¡Has forjado los 3 Kanjis sagrados de KARATE-DO (空・手・道)! ¡Comprueba tu técnica ahora! 👊🥋🔥");
+                                                const targetName = currentQuestion.kanjiList
+                                                    ? currentQuestion.kanjiList.map((k) => k.kanji).join("・")
+                                                    : "KARATE-DO (空・手・道)";
+                                                setCustomSpeech(`¡KIAI! ¡Has forjado los Kanjis sagrados de ${targetName}! ¡Comprueba tu técnica ahora! 👊🥋🔥`);
                                             }}
                                         />
                                     </div>

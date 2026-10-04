@@ -1,6 +1,7 @@
 import { Unit, BeltRankId } from "@/types/didactica";
 import { KYU_UNITS } from "./units/kyuUnits";
 import { DAN_UNITS } from "./units/danUnits";
+import { SHOTOKAN_KANJIS } from "./shotokanKanjis";
 
 export const DIDACTIC_UNITS: Unit[] = [
     // ==========================================
@@ -275,60 +276,38 @@ export const DIDACTIC_UNITS: Unit[] = [
                             }
                         ]
                     },
-                        {
-                        id: "q-prohibicion-armas-okinawa",
-                        type: "multiple_choice",
-                        prompt: "¿Por qué se entrenaba en secreto y de noche en la antigua Okinawa?",
-                        description: "Clandestinidad marcial tras la invasión samurái de 1609.",
-                        options: [
-                            {
-                                id: "o1",
-                                text: "🌙 Por meditar y combatir bajo la luna",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o2",
-                                text: "☀️ Por el calor del mediodía",
-                                isCorrect: false
-                            },
-                            {
-                                id: "o3",
-                                text: "⚔️ Por la prohibición total de armas impuesta por los samuráis",
-                                isCorrect: true
-                            },
-                            {
-                                id: "o4",
-                                text: "⛵ Para evitar a los pescadores",
-                                isCorrect: false
-                            }
-                        ],
-                        correctAnswerId: "o3",
-                        explanation: "¡Exacto! Tras la invasión del clan Satsuma en 1609 y la prohibición de armas, los maestros entrenaban de noche en secreto para transformar su propio cuerpo en un arma de autodefensa.",
-                        hint: "Piensa en las leyes de desarme impuestas a los habitantes de Okinawa.",
+                    {
+                        id: "q-shotokan-kanji-draw",
+                        type: "kanji_draw",
+                        prompt: "Traza los Kanjis sagrados de SHŌTŌKAN (松濤館)",
+                        description: "Sigue los trazos en el pergamino para forjar el nombre del estilo de Gichin Funakoshi.",
+                        kanjiList: SHOTOKAN_KANJIS,
+                        explanation: "¡Excelente maestría! Shōtōkan (松濤館) significa 'La Casa del Susurro de los Pinos'. Shōtō (松濤 - Olas de Pino) era el seudónimo poético de Funakoshi en su juventud en Okinawa, y Kan (館) representa el dojo o escuela.",
+                        hint: "Sigue el punto rojo numerado y traza en dirección a las guías.",
                         references: [
-                            {
-                                title: "Karate de Okinawa: Maestros, Estilos y Métodos Secretos",
-                                author: "Mark Bishop",
-                                year: 1999,
-                                editorial: "Editorial Paidotribo",
-                                chapter: "Capítulo 1: El contexto sociopolítico del desarme en el Reino de Ryukyu",
-                                note: "Documenta cómo la confiscación de armas por los samuráis obligó a los maestros a enseñar a puerta cerrada en patios nocturnos."
-                            },
                             {
                                 title: "Karate-Do: Mi Camino de Vida",
                                 author: "Maestro Gichin Funakoshi",
                                 year: 1975,
                                 editorial: "Editorial Eyras",
-                                chapter: "Capítulo 1: Mis primeros años bajo la luna en el jardín de Maestro Azato",
-                                note: "Relato directo de los entrenamientos a medianoche alumbrados por faroles de papel para evitar ser descubiertos por las autoridades."
+                                chapter: "Capítulo 8: El Seudónimo Shōtō y la Creación del Shōtōkan",
+                                note: "Narra cómo su seudónimo literario en Okinawa dio nombre al dojo central inaugurado en Tokio en 1939."
                             },
                             {
-                                title: "La Esencia del Karate-Do Okinawense",
-                                author: "Maestro Shoshin Nagamine (10° Dan)",
-                                year: 1998,
-                                editorial: "Editorial Miraguano",
-                                chapter: "Capítulo I: Génesis clandestina tras la ocupación militar de Satsuma de 1609",
-                                note: "Análisis histórico de las penas de muerte por porte de armas que impulsaron el acondicionamiento corporal y el uso del makiwara."
+                                title: "Karate-Do Kyohan: El Texto Maestro",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1935,
+                                editorial: "Editorial Eyras",
+                                chapter: "Prólogo: La Filosofía de Shōtō y la Rectitud Marcial",
+                                note: "Describe la conexión entre la resistencia del pino ante el viento y el carácter perseverante del karateka."
+                            },
+                            {
+                                title: "Karate Shotokan: Una Historia Precisa",
+                                author: "Harry Cook",
+                                year: 2004,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 5: El Primer Dojo Central Shōtōkan en Tokio (1939)",
+                                note: "Documenta la construcción del salón central Meikyokan/Shotokan y el origen de la placa caligráfica en madera."
                             }
                         ]
                     },

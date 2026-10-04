@@ -31,16 +31,29 @@ export function KanjiDrawCanvas({
     onKanjiCompleted,
     customKanjiList = KARATE_DO_KANJIS,
 }: KanjiDrawCanvasProps) {
-    const kanjiList = customKanjiList;
+    const kanjiList = customKanjiList || KARATE_DO_KANJIS;
     const [activeKanjiIndex, setActiveKanjiIndex] = useState(0);
     const activeKanji = kanjiList[activeKanjiIndex] || kanjiList[0];
 
     // Completed strokes for each kanji: { [kanjiChar]: number[] }
-    const [completedStrokesByKanji, setCompletedStrokesByKanji] = useState<{ [key: string]: number[] }>({
-        "空": [],
-        "手": [],
-        "道": [],
+    const [completedStrokesByKanji, setCompletedStrokesByKanji] = useState<{ [key: string]: number[] }>(() => {
+        const initial: { [key: string]: number[] } = {};
+        kanjiList.forEach((k) => {
+            initial[k.kanji] = [];
+        });
+        return initial;
     });
+
+    // Reset when customKanjiList prop changes
+    useEffect(() => {
+        const initial: { [key: string]: number[] } = {};
+        kanjiList.forEach((k) => {
+            initial[k.kanji] = [];
+        });
+        setCompletedStrokesByKanji(initial);
+        setCompletedKanjis([]);
+        setActiveKanjiIndex(0);
+    }, [customKanjiList]);
 
     // Which kanjis are 100% completed
     const [completedKanjis, setCompletedKanjis] = useState<string[]>([]);
