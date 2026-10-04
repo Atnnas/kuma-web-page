@@ -11,7 +11,8 @@ export type QuestionType =
     | 'okinawa_branches'
     | 'sundome_timing'
     | 'shodo_numbers'
-    | 'tatami_rei';
+    | 'tatami_rei'
+    | 'kuma_anatomy';
 
 export interface DragMapItem {
     id: string;

@@ -14,6 +14,7 @@ import { OkinawaBranchesQuestion } from "./OkinawaBranchesQuestion";
 import { SundomeTimingQuestion } from "./SundomeTimingQuestion";
 import { ShodoNumbersQuestion } from "./ShodoNumbersQuestion";
 import { TatamiReiQuestion } from "./TatamiReiQuestion";
+import { KumaAnatomyQuestion } from "./KumaAnatomyQuestion";
 import { didacticSound } from "@/lib/didacticSound";
 import { DIDACTIC_UNITS } from "@/data/didacticaData";
 import { getBeltRank } from "@/data/beltRanks";
@@ -197,6 +198,7 @@ export function LessonSessionModal({
     const [isSundomeDone, setIsSundomeDone] = useState(false);
     const [isShodoNumbersDone, setIsShodoNumbersDone] = useState(false);
     const [isTatamiReiDone, setIsTatamiReiDone] = useState(false);
+    const [isKumaAnatomyDone, setIsKumaAnatomyDone] = useState(false);
 
 // Fisher-Yates shuffle helper para orden aleatorio
 function shuffleArray<T>(array: T[]): T[] {
@@ -298,6 +300,7 @@ function shuffleArray<T>(array: T[]): T[] {
         setIsKanjiDrawn(false);
         setIsMapDragDone(false);
         setIsTreePillarsDone(false);
+        setIsKumaAnatomyDone(false);
         setAnswerStatus("idle");
         setMascotMood(streak >= 3 ? "streak" : "idle");
         setCustomSpeech(undefined);
@@ -329,6 +332,7 @@ function shuffleArray<T>(array: T[]): T[] {
         setIsKanjiDrawn(false);
         setIsMapDragDone(false);
         setIsTreePillarsDone(false);
+        setIsKumaAnatomyDone(false);
         setAnswerStatus("idle");
     };
 
@@ -400,7 +404,25 @@ function shuffleArray<T>(array: T[]): T[] {
             ? isShodoNumbersDone
             : currentQuestion.type === "tatami_rei"
             ? isTatamiReiDone
+            : currentQuestion.type === "kuma_anatomy"
+            ? isKumaAnatomyDone
             : false;
+
+    const handleDirectKumaAnatomyCheckAndNext = () => {
+        didacticSound.playCorrect();
+        setCorrectCount((prev) => prev + 1);
+        setStreak((prev) => prev + 1);
+        setMascotMood("streak");
+        setCustomSpeech("¡KIAI! ¡Armaste la anatomía de Kuma Sensei de pies a cabeza con precisión marcial! 🥋🐻✨");
+        setIsKumaAnatomyDone(false);
+        setAnswerStatus("idle");
+
+        if (currentIndex + 1 < totalQuestions) {
+            setCurrentIndex((prev) => prev + 1);
+        } else {
+            handleNextQuestion();
+        }
+    };
 
     const handleDirectMapCheckAndNext = () => {
         didacticSound.playCorrect();
@@ -533,6 +555,11 @@ function shuffleArray<T>(array: T[]): T[] {
                 handleDirectTatamiReiCheckAndNext();
                 return;
             }
+        } else if (currentQuestion.type === "kuma_anatomy") {
+            if (isKumaAnatomyDone) {
+                handleDirectKumaAnatomyCheckAndNext();
+                return;
+            }
         } else if (currentQuestion.type === "multiple_choice" || currentQuestion.type === "image_choice") {
             const chosen = currentQuestion.options?.find((o) => o.id === selectedOptionId);
             isCorrect = chosen?.isCorrect || false;
@@ -643,7 +670,8 @@ function shuffleArray<T>(array: T[]): T[] {
         currentQuestion.type === "kanji_draw" ||
         currentQuestion.type === "sundome_timing" ||
         currentQuestion.type === "shodo_numbers" ||
-        currentQuestion.type === "tatami_rei";
+        currentQuestion.type === "tatami_rei" ||
+        currentQuestion.type === "kuma_anatomy";
 
     return (
         <div className="fixed inset-0 z-[70] flex flex-col bg-[#0B132B] text-white select-none overflow-hidden">
@@ -885,7 +913,8 @@ function shuffleArray<T>(array: T[]): T[] {
                                     currentQuestion.type !== "okinawa_branches" &&
                                     currentQuestion.type !== "sundome_timing" &&
                                     currentQuestion.type !== "shodo_numbers" &&
-                                    currentQuestion.type !== "tatami_rei" && (
+                                    currentQuestion.type !== "tatami_rei" &&
+                                    currentQuestion.type !== "kuma_anatomy" && (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.96 }}
                                         animate={{ opacity: 1, scale: 1 }}
@@ -1253,6 +1282,21 @@ function shuffleArray<T>(array: T[]): T[] {
                                                 setCustomSpeech("¡KIAI! ¡Dominaste el protocolo de respeto Rei y el saludo Oss Sensei en el tatami! 🥋🙇‍♂️✨");
                                             }}
                                             onCheckAndNext={handleDirectTatamiReiCheckAndNext}
+                                        />
+                                    </div>
+                                )}
+                                {/* KUMA ANATOMY QUESTION (ARMADO DEL CUERPO DE PIES A CABEZA) */}
+                                {currentQuestion.type === "kuma_anatomy" && (
+                                    <div className="w-full">
+                                        <KumaAnatomyQuestion
+                                            question={currentQuestion}
+                                            isSuperAdmin={isSuperAdmin}
+                                            onCompleted={() => {
+                                                setIsKumaAnatomyDone(true);
+                                                setMascotMood("streak");
+                                                setCustomSpeech("¡KIAI! ¡Completaste todos los puntos anatómicos de Kuma Sensei de pies a cabeza! 🥋🐻✨");
+                                            }}
+                                            onCheckAndNext={handleDirectKumaAnatomyCheckAndNext}
                                         />
                                     </div>
                                 )}

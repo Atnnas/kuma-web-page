@@ -600,27 +600,26 @@ export const DIDACTIC_UNITS: Unit[] = [
                 color: "red",
                 xpReward: 75,
                 theory: {
-                    title: "El Cuerpo Humano: Superpoderes y Armas Naturales de Kuma Sensei",
-                    subtitle: "¡Aprende las partes del cuerpo y alturas en japonés jugando!",
-                    quote: "El cuerpo es tu mejor amigo y tu escudo. ¡Conocer cada parte en japonés te hace más fuerte y ágil!",
+                    title: "El Cuerpo Humano: Anatomía y Biomecánica en Karate",
+                    subtitle: "Aprende los puntos anatómicos y las alturas en japonés de pies a cabeza",
+                    quote: "El cuerpo es el instrumento del karateka: la alineación y el equilibrio comienzan desde la base en los pies y ascienden hasta la mente.",
                     content: [
-                        "¡Bienvenido al mapa del cuerpo de Kuma Sensei! En Karate-Do, nuestro cuerpo tiene 3 alturas principales (pisos) y muchas herramientas secretas para defenderse:",
-                        "1. Los Tres Pisos del Cuerpo: Arriba está 上段 (JODAN), que cuida la cabeza y rostro. Al medio está 中段 (CHUDAN), donde están el pecho y la pancita. Y abajo está 下段 (GEDAN), para piernas y pies.",
-                        "2. Cabeza y Sentidos: Los ojos 目 (Me) miran todo alrededor con atención (Metsuke), los oídos 耳 (Mimi) escuchan los pasos y la cabeza 頭部 (Atama) piensa con calma.",
-                        "3. Las Manos y Brazos Mágicos: Tu mano se convierte en 正拳 (Seiken - puño cerrado), 手刀 (Shuto - mano espada) y 裏拳 (Uraken - revés rápido). ¡Y el codo 猿臂 (Empi) es durísimo como una roca!",
-                        "4. El Motor Secreto: La fuerza de tus golpes no viene del brazo, ¡viene de girar la cadera 腰 (Koshi) y respirar desde la pancita 腹 / 丹田 (Hara/Tanden)!",
-                        "5. Piernas Fuertes: La rodilla 膝 (Hiza) sube como resorte, la espinilla 脛 (Sune) es tu escudo para bloquear y el pie 足 (Ashi) se enraíza fuerte en el tatami."
+                        "1. Los Tres Niveles del Cuerpo: En Karate dividimos la altura en tres zonas fundamentales: 上段 (JODAN) para la cabeza y el cuello, 中段 (CHUDAN) para el torso y el pecho, y 下段 (GEDAN) para las piernas y los pies.",
+                        "2. Base e Inferior: Los pies 足 (Ashi) proporcionan el enraizamiento firme en el tatami, las rodillas 膝 (Hiza) flexionan para absorber impacto y la cadera 腰 (Koshi) es el eje biomecánico de rotación que genera potencia.",
+                        "3. Centro y Tronco: El abdomen 腹 / 丹田 (Hara/Tanden) estabiliza el centro de gravedad y la respiración diafragmática, mientras el pecho 胸 (Mune) mantiene la columna vertebral erguida con hombros relajados.",
+                        "4. Extremidades Superiores: Los brazos 腕 (Ude) y codos 猿臂 (Empi) forman estructuras de palanca para defensas y bloqueos, y las manos 手 (Te) se configuran en puño frontal cerrado 正拳 (Seiken) o mano espada 手刀 (Shuto).",
+                        "5. Cabeza y Sentidos: La cabeza 頭 (Atama) permanece equilibrada protegiendo el cuello, y la mirada atenta 目 (Me - Metsuke) mantiene la concentración visual sin desviar la atención."
                     ],
                     images: [
                         {
-                            src: "/images/didactic/kuma_pixar_anatomia_cuerpo.jpg",
-                            alt: "Kuma Sensei Pixar 3D: Mapa del Cuerpo Humano en Karate",
-                            caption: "Fig 1. Mapa anatómico de Kuma Sensei: Partes del cuerpo en japonés y español"
+                            src: "/images/didactic/kuma_clean_anatomy_bear.jpg",
+                            alt: "Kuma Sensei Pixar 3D: Anatomía de Karate de Pies a Cabeza",
+                            caption: "Fig 1. Mapa anatómico de Kuma Sensei: Estructura biomecánica de pies a cabeza"
                         },
                         {
                             src: "/images/didactic/kuma_pixar_alturas_karate.jpg",
                             alt: "Kuma Sensei Pixar 3D: Las 3 Alturas Jodan, Chudan y Gedan",
-                            caption: "Fig 2. Los tres pisos del cuerpo humano en Karate: Jodan (Alto), Chudan (Medio) y Gedan (Bajo)"
+                            caption: "Fig 2. Los tres niveles del cuerpo en Karate: Jodan (Alto), Chudan (Medio) y Gedan (Bajo)"
                         }
                     ],
                     bulletPoints: [
@@ -717,39 +716,36 @@ export const DIDACTIC_UNITS: Unit[] = [
                     },
                     {
                         id: "q-cuerpo-2",
-                        type: "matching",
-                        prompt: "¡La mano del karateka se transforma! Empareja cada golpe de mano:",
-                        explanation: "¡Genial! Seiken es el puño cerrado, Shuto la mano espada y Uraken el revés de puño.",
-                        hint: "Ken significa puño y To significa espada.",
-                        pairs: [
-                            { id: "p1", left: "正拳 (Seiken)", right: "Puño frontal cerrado" },
-                            { id: "p2", left: "手刀 (Shuto)", right: "Mano espada (canto abierto)" },
-                            { id: "p3", left: "裏拳 (Uraken)", right: "Dorso del puño (revés rápido)" },
-                        ],
+                        type: "kuma_anatomy",
+                        prompt: "Arma el Cuerpo de Kuma Sensei: De Pies a Cabeza",
+                        description: "Coloca cada punto anatómico en el cuerpo de Kuma Sensei, avanzando en orden biomecánico desde la base en los pies hasta la mirada en la cabeza.",
+                        image: "/images/didactic/kuma_clean_anatomy_bear.jpg",
+                        explanation: "¡Excelente dominio! Has aprendido las partes anatómicas de Karate en orden de pies a cabeza: Pies (Ashi), Rodillas (Hiza), Cadera (Koshi), Abdomen (Hara/Tanden), Pecho (Mune), Brazos y Codos (Ude/Empi), Manos (Te), Cabeza (Atama) y Mirada (Me).",
+                        hint: "Avanza por las 3 fases de abajo hacia arriba: primero la base (pies a cadera), luego el tronco y brazos, y por último la guardia alta (cabeza y sentidos).",
                         references: [
+                            {
+                                title: "Karate-Do Kyohan: The Master Text",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1973,
+                                editorial: "Kodansha International",
+                                chapter: "Capítulo III: Puntos del cuerpo humano y alineación biomecánica",
+                                note: "Tratado fundamental sobre la postura recta, las articulaciones de apoyo y la distribución del peso corporal."
+                            },
                             {
                                 title: "Karate Dinámico: Instrucción Oficial",
                                 author: "Maestro Masatoshi Nakayama",
                                 year: 1986,
                                 editorial: "Editorial Paidotribo",
-                                chapter: "Capítulo 2: Las armas de la mano: Seiken, Shuto y Uraken",
-                                note: "Explicación biomecánica de la tensión muscular y alineación ósea del radio y cúbito."
+                                chapter: "Capítulo 1: Anatomía aplicada al Karate: postura, centros de impacto y equilibrio",
+                                note: "Análisis biomecánico exhaustivo de cómo la cadera (Koshi) y el abdomen (Hara) coordinan la fuerza muscular del cuerpo entero."
                             },
                             {
-                                title: "Shotokan Karate: A Precise History",
-                                author: "Harry Cook",
-                                year: 2001,
-                                editorial: "Cook & Page",
-                                chapter: "Capítulo 4: La evolución de las técnicas de golpeo con la mano vacía",
-                                note: "Historia del desarrollo de los métodos de endurecimiento de puños y dedos en Okinawa y Japón."
-                            },
-                            {
-                                title: "Karate-Do Kyohan",
-                                author: "Maestro Gichin Funakoshi",
-                                year: 1935,
-                                editorial: "Editorial Eyras",
-                                chapter: "Capítulo II: Métodos de formación del puño (Seiken) y la mano abierta (Shuto)",
-                                note: "Tratado original ilustrado por Funakoshi sobre cómo cerrar el puño apretando el pulgar sobre el índice y medio."
+                                title: "The History of Karate: Okinawan Goju Ryu",
+                                author: "Morio Higaonna",
+                                year: 1996,
+                                editorial: "Dragon Books",
+                                chapter: "Capítulo 4: El acondicionamiento físico de pies a cabeza en la tradición de Okinawa",
+                                note: "Detalla el fortalecimiento progresivo de las extremidades inferiores, la respiración diafragmática y la concentración visual (Metsuke)."
                             }
                         ]
                     }
