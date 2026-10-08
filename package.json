@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "skills:list": "npx skills list",
+    "skills:update": "npx skills update"
   },
   "dependencies": {
     "@ark-ui/react": "^5.31.0",
