@@ -15,6 +15,7 @@ import { SundomeTimingQuestion } from "./SundomeTimingQuestion";
 import { ShodoNumbersQuestion } from "./ShodoNumbersQuestion";
 import { TatamiReiQuestion } from "./TatamiReiQuestion";
 import { KumaAnatomyQuestion } from "./KumaAnatomyQuestion";
+import { TatamiStanceAngleQuestion } from "./TatamiStanceAngleQuestion";
 import { didacticSound } from "@/lib/didacticSound";
 import { DIDACTIC_UNITS } from "@/data/didacticaData";
 import { getBeltRank } from "@/data/beltRanks";
@@ -199,6 +200,7 @@ export function LessonSessionModal({
     const [isShodoNumbersDone, setIsShodoNumbersDone] = useState(false);
     const [isTatamiReiDone, setIsTatamiReiDone] = useState(false);
     const [isKumaAnatomyDone, setIsKumaAnatomyDone] = useState(false);
+    const [isStanceAnglesDone, setIsStanceAnglesDone] = useState(false);
 
 // Fisher-Yates shuffle helper para orden aleatorio
 function shuffleArray<T>(array: T[]): T[] {
@@ -390,7 +392,25 @@ function shuffleArray<T>(array: T[]): T[] {
             ? isTatamiReiDone
             : currentQuestion.type === "kuma_anatomy"
             ? isKumaAnatomyDone
+            : currentQuestion.type === "stance_angles"
+            ? isStanceAnglesDone
             : false;
+
+    const handleDirectStanceAnglesCheckAndNext = () => {
+        didacticSound.playCorrect();
+        setCorrectCount((prev) => prev + 1);
+        setStreak((prev) => prev + 1);
+        setMascotMood("streak");
+        setCustomSpeech("¡KIAI! ¡Dominaste las huellas y los ángulos de Zenkutsu y Kokutsu! 🥋🦶⚡");
+        setIsStanceAnglesDone(false);
+        setAnswerStatus("idle");
+
+        if (currentIndex + 1 < totalQuestions) {
+            setCurrentIndex((prev) => prev + 1);
+        } else {
+            handleNextQuestion();
+        }
+    };
 
     const handleDirectKumaAnatomyCheckAndNext = () => {
         didacticSound.playCorrect();
@@ -542,6 +562,11 @@ function shuffleArray<T>(array: T[]): T[] {
         } else if (currentQuestion.type === "kuma_anatomy") {
             if (isKumaAnatomyDone) {
                 handleDirectKumaAnatomyCheckAndNext();
+                return;
+            }
+        } else if (currentQuestion.type === "stance_angles") {
+            if (isStanceAnglesDone) {
+                handleDirectStanceAnglesCheckAndNext();
                 return;
             }
         } else if (currentQuestion.type === "multiple_choice" || currentQuestion.type === "image_choice") {
@@ -734,7 +759,8 @@ function shuffleArray<T>(array: T[]): T[] {
         currentQuestion.type === "sundome_timing" ||
         currentQuestion.type === "shodo_numbers" ||
         currentQuestion.type === "tatami_rei" ||
-        currentQuestion.type === "kuma_anatomy";
+        currentQuestion.type === "kuma_anatomy" ||
+        currentQuestion.type === "stance_angles";
 
     return (
         <div className="fixed inset-0 z-[70] flex flex-col bg-[#0B132B] text-white select-none overflow-hidden">
@@ -977,7 +1003,8 @@ function shuffleArray<T>(array: T[]): T[] {
                                     currentQuestion.type !== "sundome_timing" &&
                                     currentQuestion.type !== "shodo_numbers" &&
                                     currentQuestion.type !== "tatami_rei" &&
-                                    currentQuestion.type !== "kuma_anatomy" && (
+                                    currentQuestion.type !== "kuma_anatomy" &&
+                                    currentQuestion.type !== "stance_angles" && (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.96 }}
                                         animate={{ opacity: 1, scale: 1 }}
@@ -1360,6 +1387,21 @@ function shuffleArray<T>(array: T[]): T[] {
                                                 setCustomSpeech("¡KIAI! ¡Dominaste el cuerpo humano de pies a cabeza con precisión marcial! 🥋🐻✨");
                                             }}
                                             onCheckAndNext={handleDirectKumaAnatomyCheckAndNext}
+                                        />
+                                    </div>
+                                )}
+                                {/* TATAMI STANCE ANGLES QUESTION (ZENKUTSU Y KOKUTSU) */}
+                                {currentQuestion.type === "stance_angles" && (
+                                    <div className="w-full">
+                                        <TatamiStanceAngleQuestion
+                                            question={currentQuestion}
+                                            isSuperAdmin={isSuperAdmin}
+                                            onCompleted={() => {
+                                                setIsStanceAnglesDone(true);
+                                                setMascotMood("streak");
+                                                setCustomSpeech("¡KIAI! ¡Dominaste las huellas y los ángulos de Zenkutsu y Kokutsu! 🥋🦶⚡");
+                                            }}
+                                            onCheckAndNext={handleDirectStanceAnglesCheckAndNext}
                                         />
                                     </div>
                                 )}

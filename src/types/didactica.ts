@@ -12,7 +12,8 @@ export type QuestionType =
     | 'sundome_timing'
     | 'shodo_numbers'
     | 'tatami_rei'
-    | 'kuma_anatomy';
+    | 'kuma_anatomy'
+    | 'stance_angles';
 
 export interface DragMapItem {
     id: string;

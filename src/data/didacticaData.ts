@@ -748,6 +748,32 @@ export const DIDACTIC_UNITS: Unit[] = [
                                 note: "Detalla el fortalecimiento progresivo de las extremidades inferiores, la respiración diafragmática y la concentración visual (Metsuke)."
                             }
                         ]
+                    },
+                    {
+                        id: "q-cuerpo-3",
+                        type: "stance_angles",
+                        prompt: "El Radar de Huellas: Zenkutsu vs Kokutsu",
+                        description: "¡Gira el ángulo del pie en el tatami y equilibra la balanza de peso!",
+                        explanation: "¡OSS! Has dominado las dos posturas pilares de Karate: Zenkutsu-dachi (pie trasero a 45° con 60% de peso al frente) y Kokutsu-dachi (pie trasero en escuadra a 90° con 70% de peso atrás).",
+                        hint: "En Zenkutsu-dachi apunta a 45° con 60% de peso adelante. En Kokutsu-dachi forma una 'L' a 90° con 70% de peso atrás.",
+                        references: [
+                            {
+                                title: "Karate Dinámico: Instrucción Oficial",
+                                author: "Maestro Masatoshi Nakayama (JKA)",
+                                year: 1986,
+                                editorial: "Editorial Paidotribo",
+                                chapter: "Capítulo 2: Dachi-waza: La postura adelantada Zenkutsu y la postura atrasada Kokutsu",
+                                note: "Tratado biomecánico sobre el ángulo exacto de los pies y la distribución del peso corporal para estabilidad e impacto."
+                            },
+                            {
+                                title: "Karate-Do Kyohan: The Master Text",
+                                author: "Maestro Gichin Funakoshi",
+                                year: 1973,
+                                editorial: "Kodansha International",
+                                chapter: "Capítulo IV: Posturas fundamentales y la tensión de las piernas",
+                                note: "Instrucción canónica sobre cómo el enraizamiento de los pies previene el desequilibrio en combate."
+                            }
+                        ]
                     }
                 ]
             },
