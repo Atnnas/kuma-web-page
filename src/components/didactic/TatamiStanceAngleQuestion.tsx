@@ -369,6 +369,15 @@ export function TatamiStanceAngleQuestion({
                             <span>{currentStep.name}</span>
                             <span className={currentStep.accentColor}>({currentStep.kanji})</span>
                         </div>
+
+                        {/* BADGE INFERIOR DE APOYO Y BIOMECÁNICA */}
+                        <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-xl bg-black/80 backdrop-blur-md border border-white/20 text-[11px] font-black text-white shadow-lg flex items-center gap-1.5">
+                            {currentStep.id === "zenkutsu" ? (
+                                <span className="text-amber-300">⚡ 60% Adelante • 45°</span>
+                            ) : (
+                                <span className="text-sky-300">🛡️ 70% Apoyo Atrás • 90°</span>
+                            )}
+                        </div>
                     </motion.div>
                 </div>
 
