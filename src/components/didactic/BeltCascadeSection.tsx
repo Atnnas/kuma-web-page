@@ -1019,7 +1019,7 @@ export function BeltCascadeSection({
     return (
         <div
             id={`belt-${belt.id}`}
-            className="relative w-full max-w-2xl mx-auto my-8 scroll-mt-24"
+            className="relative w-full max-w-2xl mx-auto my-8 scroll-mt-24 [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
             onMouseEnter={() => {
                 if (effectiveBeltUnlocked) onFocusBelt?.(belt.id);
             }}

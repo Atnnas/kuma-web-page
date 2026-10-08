@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -45,6 +45,7 @@ export function DidacticController() {
     const [isCloudSynced, setIsCloudSynced] = useState(false);
     const [viewMode, setViewMode] = useState<"map" | "encyclopedia">("map");
     const [activeLesson, setActiveLesson] = useState<Level | null>(null);
+    const loadedUserKeyRef = useRef<string | null>(null);
 
     // Kuma Sensei Absence Greeting & Simulation States
     const [isGreetingOpen, setIsGreetingOpen] = useState(false);
@@ -298,10 +299,14 @@ export function DidacticController() {
             }
         }
 
+        const userKey = authStatus === "authenticated" ? (session?.user?.id || session?.user?.email || "user") : "guest";
+
         if (authStatus !== "loading") {
+            if (loadedUserKeyRef.current === userKey) return;
+            loadedUserKeyRef.current = userKey;
             loadProgress();
         }
-    }, [session, authStatus]);
+    }, [authStatus, session?.user?.id, session?.user?.email]);
 
     // Dynamic Star Decay & Absence Calculations
     const { effectiveProgress, decayedCount, daysAbsent } = useMemo(() => {

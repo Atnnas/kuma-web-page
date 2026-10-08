@@ -15,8 +15,8 @@ export async function GET() {
 
         let userId = session.user.id;
         if (!userId && session.user.email) {
-            const user = await User.findOne({ email: session.user.email });
-            if (user) userId = user._id.toString();
+            const user = await User.findOne({ email: session.user.email }).select("_id").lean();
+            if (user) userId = (user as any)._id.toString();
         }
 
         if (!userId) {

@@ -2,8 +2,11 @@ import type { NextConfig } from "next";
 
 // Force Deploy: 2026-01-30 19:39
 
-const nextConfig = {
+const nextConfig: NextConfig = {
+  compress: true,
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 86400,
     remotePatterns: [
       {
         protocol: "https",
@@ -32,6 +35,14 @@ const nextConfig = {
     ],
   },
   experimental: {
+    optimizePackageImports: [
+      "@phosphor-icons/react",
+      "lucide-react",
+      "react-icons",
+      "date-fns",
+      "framer-motion",
+      "@ark-ui/react",
+    ],
     serverActions: {
       bodySizeLimit: '10mb',
     },
@@ -42,7 +53,6 @@ const nextConfig = {
     // your project has type errors.
     ignoreBuildErrors: false,
   },
-
 };
 
 export default nextConfig;
