@@ -63,6 +63,9 @@ export function DojoLingoMap({
     const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
     const [theoryLevel, setTheoryLevel] = useState<Level | null>(null);
     const [wkfColor, setWkfColor] = useState<"red" | "blue">(() => (Math.random() < 0.5 ? "red" : "blue"));
+    const [wkfSimScore, setWkfSimScore] = useState<{ aka: number; ao: number }>({ aka: 0, ao: 0 });
+    const [wkfSimSignal, setWkfSimSignal] = useState<string | null>(null);
+
     const initialBeltId: BeltRankId = (progress.activeBeltId && isBeltAvailable(progress.activeBeltId))
         ? progress.activeBeltId
         : "kyu-10";
@@ -81,6 +84,28 @@ export function DojoLingoMap({
 
     // Active path level list
     const allPathLevels = activePath === "tradicional" ? allTradLevels : allWkfLevels;
+
+    // Cálculo dinámico del Próximo Hito para motivación del estudiante
+    const whiteUnit = tradUnits.find((u) => u.beltId === "kyu-10");
+    const whiteUncompleted = whiteUnit ? whiteUnit.levels.filter((l) => !progress.completedLevelIds.includes(l.id)).length : 0;
+    const whiteExamPassed = progress.completedLevelIds.includes("exam-kyu-10");
+
+    const yellowUnit = tradUnits.find((u) => u.beltId === "kyu-9");
+    const yellowUncompleted = yellowUnit ? yellowUnit.levels.filter((l) => !progress.completedLevelIds.includes(l.id)).length : 0;
+    const yellowExamPassed = progress.completedLevelIds.includes("exam-kyu-9");
+
+    let nextMilestoneText = "";
+    if (whiteUncompleted > 0) {
+        nextMilestoneText = `A ${whiteUncompleted} ${whiteUncompleted === 1 ? "lección" : "lecciones"} del Tribunal de Examen de Cinturón Blanco`;
+    } else if (!whiteExamPassed) {
+        nextMilestoneText = "¡Tribunal de Examen de Cinturón Blanco desbloqueado! Rinde tu prueba abajo.";
+    } else if (yellowUncompleted > 0) {
+        nextMilestoneText = `A ${yellowUncompleted} ${yellowUncompleted === 1 ? "lección" : "lecciones"} del Tribunal de Examen de Cinturón Amarillo`;
+    } else if (!yellowExamPassed) {
+        nextMilestoneText = "¡Tribunal de Examen de Cinturón Amarillo desbloqueado! Demuestra tu maestría.";
+    } else {
+        nextMilestoneText = "¡Has completado todos los grados activos con honor! Continúa repasando tu racha diaria.";
+    }
 
     const isWkfLevelUnlocked = (levelIndex: number, levelId: string) => {
         if (levelIndex === 0) return true;
@@ -498,6 +523,123 @@ export function DojoLingoMap({
                             </div>
                         </div>
 
+                        {/* MINI-SIMULADOR TÁCTICO INTERACTIVO WKF (PULSADORES OFICIALES AKA / AO) */}
+                        <div className="relative z-10 w-full p-5 rounded-3xl bg-zinc-950/95 border-2 border-kuma-gold/50 my-6 shadow-2xl">
+                            <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-2">
+                                <div className="text-left">
+                                    <span className="text-[10px] font-black uppercase tracking-wider text-kuma-gold block">
+                                        Mini-Simulador de Tatami WKF
+                                    </span>
+                                    <h4 className="text-sm font-serif font-black text-white">
+                                        Puntuación Oficial de Kumite (Aka vs Ao)
+                                    </h4>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        setWkfSimScore({ aka: 0, ao: 0 });
+                                        setWkfSimSignal(null);
+                                    }}
+                                    className="text-[10px] text-zinc-400 hover:text-white uppercase font-bold tracking-wider px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 cursor-pointer"
+                                >
+                                    Reiniciar
+                                </button>
+                            </div>
+
+                            {/* Marcador Digital WKF */}
+                            <div className="grid grid-cols-2 gap-4 my-3 p-3 rounded-2xl bg-black/80 border border-white/15">
+                                <div className="flex flex-col items-center p-2 rounded-xl bg-red-950/40 border border-red-500/40">
+                                    <span className="text-xs font-black uppercase tracking-widest text-red-400">AKA (Rojo)</span>
+                                    <span className="text-3xl font-black font-mono text-white mt-1">{wkfSimScore.aka}</span>
+                                </div>
+                                <div className="flex flex-col items-center p-2 rounded-xl bg-blue-950/40 border border-blue-500/40">
+                                    <span className="text-xs font-black uppercase tracking-widest text-blue-400">AO (Azul)</span>
+                                    <span className="text-3xl font-black font-mono text-white mt-1">{wkfSimScore.ao}</span>
+                                </div>
+                            </div>
+
+                            {/* Señal de Réferi en Vivo */}
+                            {wkfSimSignal && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-400/40 text-amber-200 text-xs font-semibold my-2 text-center"
+                                >
+                                    {wkfSimSignal}
+                                </motion.div>
+                            )}
+
+                            {/* Botonera de Réferi Aka y Ao */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                                {/* Botones AKA */}
+                                <div className="space-y-1.5">
+                                    <span className="text-[10px] font-black uppercase tracking-wider text-red-400 block text-left">Puntos AKA:</span>
+                                    <div className="grid grid-cols-3 gap-1.5">
+                                        <button
+                                            onClick={() => {
+                                                setWkfSimScore(s => ({ ...s, aka: s.aka + 1 }));
+                                                setWkfSimSignal("🔴 AKA YUKO (1 pt): Chudan Tsuki — Réferi extiende brazo a 45° hacia abajo.");
+                                            }}
+                                            className="px-2 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase shadow transition-all cursor-pointer active:scale-95"
+                                        >
+                                            +1 Yuko
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setWkfSimScore(s => ({ ...s, aka: s.aka + 2 }));
+                                                setWkfSimSignal("🔴 AKA WAZA-ARI (2 pts): Chudan Geri — Réferi extiende brazo horizontal a 90°.");
+                                            }}
+                                            className="px-2 py-2 rounded-xl bg-red-700 hover:bg-red-600 text-white font-black text-xs uppercase shadow transition-all cursor-pointer active:scale-95"
+                                        >
+                                            +2 Waza
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setWkfSimScore(s => ({ ...s, aka: s.aka + 3 }));
+                                                setWkfSimSignal("🔴 AKA IPPON (3 pts): Jodan Geri / Derribo + Remate — Réferi eleva brazo a 45° arriba.");
+                                            }}
+                                            className="px-2 py-2 rounded-xl bg-red-800 hover:bg-red-700 text-white font-black text-xs uppercase shadow transition-all cursor-pointer active:scale-95"
+                                        >
+                                            +3 Ippon
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Botones AO */}
+                                <div className="space-y-1.5">
+                                    <span className="text-[10px] font-black uppercase tracking-wider text-blue-400 block text-left">Puntos AO:</span>
+                                    <div className="grid grid-cols-3 gap-1.5">
+                                        <button
+                                            onClick={() => {
+                                                setWkfSimScore(s => ({ ...s, ao: s.ao + 1 }));
+                                                setWkfSimSignal("🔵 AO YUKO (1 pt): Jodan Tsuki — Réferi extiende brazo a 45° hacia abajo.");
+                                            }}
+                                            className="px-2 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase shadow transition-all cursor-pointer active:scale-95"
+                                        >
+                                            +1 Yuko
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setWkfSimScore(s => ({ ...s, ao: s.ao + 2 }));
+                                                setWkfSimSignal("🔵 AO WAZA-ARI (2 pts): Chudan Geri — Réferi extiende brazo horizontal a 90°.");
+                                            }}
+                                            className="px-2 py-2 rounded-xl bg-blue-700 hover:bg-blue-600 text-white font-black text-xs uppercase shadow transition-all cursor-pointer active:scale-95"
+                                        >
+                                            +2 Waza
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setWkfSimScore(s => ({ ...s, ao: s.ao + 3 }));
+                                                setWkfSimSignal("🔵 AO IPPON (3 pts): Jodan Geri — Réferi eleva brazo a 45° arriba hacia Ao.");
+                                            }}
+                                            className="px-2 py-2 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-black text-xs uppercase shadow transition-all cursor-pointer active:scale-95"
+                                        >
+                                            +3 Ippon
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* CTA Action Buttons */}
                         <div className="relative z-10 flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
                             <button
@@ -581,7 +723,16 @@ export function DojoLingoMap({
                                 </span>
                             </button>
                         )}
-                        <p className="text-xs text-zinc-300 mt-2 leading-relaxed">
+
+                        {/* PRÓXIMO HITO MARCIAL DINÁMICO */}
+                        {nextMilestoneText && activePath === "tradicional" && (
+                            <div className="mt-3.5 p-3 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-amber-200 text-xs font-semibold flex items-center gap-2.5 text-left shadow-sm">
+                                <Sparkle className="w-4 h-4 text-amber-400 shrink-0" weight="fill" />
+                                <span className="leading-snug">{nextMilestoneText}</span>
+                            </div>
+                        )}
+
+                        <p className="text-xs text-zinc-300 mt-2.5 leading-relaxed">
                             {activePath === "wkf"
                                 ? '"¡El tatami oficial WKF está en preparación! Muy pronto podrás entrenar arbitraje y táctica de competición. ¡Mientras tanto, continúa forjando tu espíritu en el Camino Tradicional!"'
                                 : activeBelt

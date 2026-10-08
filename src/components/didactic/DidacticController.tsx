@@ -504,14 +504,15 @@ export function DidacticController() {
 
     return (
         <div className="w-full space-y-8 animate-in fade-in duration-700">
-            {/* VIEW MODE DUAL SELECTOR (TOP SWITCHER - SOLID DUOLINGO CLASSIC) */}
-            <div className="flex justify-center">
-                <div className="inline-flex items-center p-1.5 rounded-2xl bg-[#0F172A] border-2 border-[#334155] shadow-lg">
+            {/* UNIFIED DOJO COMMAND BAR (CABECERA CONSOLIDADA) */}
+            <div className="w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 p-2.5 md:p-3 rounded-2xl md:rounded-3xl bg-[#0F172A]/90 border-2 border-[#334155] backdrop-blur-xl shadow-xl">
+                {/* DUAL MODE SELECTOR */}
+                <div className="inline-flex items-center p-1 rounded-xl bg-slate-900 border border-slate-700/60 w-full md:w-auto justify-center">
                     <button
                         onClick={() => setViewMode("map")}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                        className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                             viewMode === "map"
-                                ? "bg-[#58CC02] border-b-4 border-[#46A302] text-white font-black shadow-md active:translate-y-0.5"
+                                ? "bg-[#58CC02] border-b-2 border-[#46A302] text-white shadow-md active:translate-y-0.5"
                                 : "text-slate-400 hover:text-white"
                         }`}
                     >
@@ -521,9 +522,9 @@ export function DidacticController() {
 
                     <button
                         onClick={() => setViewMode("encyclopedia")}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                        className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                             viewMode === "encyclopedia"
-                                ? "bg-[#58CC02] border-b-4 border-[#46A302] text-white font-black shadow-md active:translate-y-0.5"
+                                ? "bg-[#58CC02] border-b-2 border-[#46A302] text-white shadow-md active:translate-y-0.5"
                                 : "text-slate-400 hover:text-white"
                         }`}
                     >
@@ -531,75 +532,76 @@ export function DidacticController() {
                         <span>Biblioteca & Enciclopedia</span>
                     </button>
                 </div>
-            </div>
 
-            {/* SENSEI KUMA MOOD & ABSENCE QUICK BAR */}
-            <div className="flex flex-wrap items-center justify-center gap-3 -mt-3">
-                <button
-                    onClick={() => setIsGreetingOpen(true)}
-                    className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-200 shadow-sm hover:scale-105 cursor-pointer border-2 ${
-                        daysAbsent >= 14
-                            ? "border-[#1CB0F6] bg-blue-950/80 text-blue-300 animate-pulse"
-                            : daysAbsent >= 7
-                            ? "border-[#FF4B4B] bg-[#2B1313] text-[#FF4B4B]"
-                            : daysAbsent >= 4
-                            ? "border-[#FFC800] bg-[#2B230E] text-[#FFC800]"
-                            : "border-[#1CB0F6] bg-[#0E2A47] text-[#1CB0F6]"
-                    }`}
-                    title="Consultar estado de ánimo de Kuma Sensei"
-                >
-                    <span className="text-sm">
-                        {daysAbsent >= 14 ? "😭" : daysAbsent >= 4 ? "🥺" : daysAbsent >= 2 ? "🧐" : "🐻"}
-                    </span>
-                    <span>
-                        {daysAbsent === 0
-                            ? "Kuma Sensei: ¡En Forma!"
-                            : `Kuma Sensei: ${daysAbsent}d de ausencia`}
-                    </span>
-                    {decayedCount > 0 && (
-                        <span className="bg-rose-500/30 text-rose-300 px-2 py-0.5 rounded-full text-[10px] font-mono border border-rose-500/40">
-                            {decayedCount} {decayedCount === 1 ? "nivel decaído" : "niveles decaídos"}
-                        </span>
-                    )}
-                    {isSuperAdmin && (
-                        <span className="bg-amber-500/20 text-amber-300 text-[10px] px-2 py-0.5 rounded font-mono border border-amber-500/40 flex items-center gap-1">
-                            <ShieldStar className="w-3 h-3 text-amber-400" weight="fill" />
-                            {simulatedDays !== null ? `Sim: ${simulatedDays}d` : "Simulador 👑"}
-                        </span>
-                    )}
-                </button>
-
-                {/* Mobile & Desktop App Installer Button */}
-                <InstallAppButton variant="pill" />
-
-                {/* Direct super admin reset simulation pill */}
-                {isSuperAdmin && simulatedDays !== null && (
+                {/* SENSEI MOOD & SYNC STATUS */}
+                <div className="flex items-center gap-2 flex-wrap justify-center">
+                    {/* SENSEI COMPANION PILL */}
                     <button
-                        onClick={() => setSimulatedDays(null)}
-                        className="text-[11px] font-bold text-slate-400 hover:text-white underline cursor-pointer"
+                        onClick={() => setIsGreetingOpen(true)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm hover:scale-105 cursor-pointer border ${
+                            daysAbsent >= 14
+                                ? "border-[#1CB0F6] bg-blue-950/80 text-blue-300 animate-pulse"
+                                : daysAbsent >= 7
+                                ? "border-[#FF4B4B] bg-[#2B1313] text-[#FF4B4B]"
+                                : daysAbsent >= 4
+                                ? "border-[#FFC800] bg-[#2B230E] text-[#FFC800]"
+                                : "border-[#1CB0F6]/60 bg-[#0E2A47]/80 text-[#1CB0F6]"
+                        }`}
+                        title="Consultar estado de ánimo de Kuma Sensei"
                     >
-                        Restablecer tiempo real
-                    </button>
-                )}
-            </div>
-
-            {/* STUDENT CLOUD SYNC STATUS BAR */}
-            <div className="flex items-center justify-center -mt-3">
-                {session?.user && (
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-400/50 text-emerald-300 text-xs shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                        {isSyncing ? (
-                            <CloudArrowUp className="w-4 h-4 text-amber-300 animate-bounce" weight="fill" />
-                        ) : (
-                            <CloudCheck className="w-4 h-4 text-emerald-400" weight="fill" />
+                        <span className="text-sm">
+                            {daysAbsent >= 14 ? "😭" : daysAbsent >= 4 ? "🥺" : daysAbsent >= 2 ? "🧐" : "🐻"}
+                        </span>
+                        <span>
+                            {daysAbsent === 0 ? "Kuma Sensei: ¡En Forma!" : `Ausencia: ${daysAbsent}d`}
+                        </span>
+                        {decayedCount > 0 && (
+                            <span className="bg-rose-500/30 text-rose-300 px-1.5 py-0.2 rounded-full text-[9px] font-mono border border-rose-500/40">
+                                -{decayedCount}★
+                            </span>
                         )}
-                        <span className="font-medium">
-                            Estudiante Oficial: <strong className="text-white">{session.user.name || session.user.email}</strong>
-                        </span>
-                        <span className="text-[10px] text-emerald-300/80 uppercase font-black tracking-widest pl-1 border-l border-emerald-500/30">
-                            {isSyncing ? "Guardando..." : "Nube Sincronizada ☁️"}
-                        </span>
-                    </div>
-                )}
+                    </button>
+
+                    {/* CLOUD SYNC STATUS */}
+                    {session?.user && (
+                        <div
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-400/40 text-emerald-300 text-xs shadow-sm"
+                            title={`Progreso sincronizado como ${session.user.name || session.user.email}`}
+                        >
+                            {isSyncing ? (
+                                <CloudArrowUp className="w-3.5 h-3.5 text-amber-300 animate-bounce" weight="fill" />
+                            ) : (
+                                <CloudCheck className="w-3.5 h-3.5 text-emerald-400" weight="fill" />
+                            )}
+                            <span className="text-[11px] font-bold text-emerald-200 hidden sm:inline">
+                                {isSyncing ? "Guardando..." : "Sincronizado ☁️"}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* APP INSTALL BUTTON */}
+                    <InstallAppButton variant="pill" />
+
+                    {/* SUPER ADMIN SIMULATOR PILL */}
+                    {isSuperAdmin && (
+                        <button
+                            onClick={() => setIsGreetingOpen(true)}
+                            className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[10px] px-2.5 py-1.5 rounded-xl font-mono border border-amber-500/40 flex items-center gap-1 cursor-pointer"
+                        >
+                            <ShieldStar className="w-3 h-3 text-amber-400" weight="fill" />
+                            <span>{simulatedDays !== null ? `Sim: ${simulatedDays}d` : "Sim 👑"}</span>
+                        </button>
+                    )}
+
+                    {isSuperAdmin && simulatedDays !== null && (
+                        <button
+                            onClick={() => setSimulatedDays(null)}
+                            className="text-[10px] font-bold text-slate-400 hover:text-white underline cursor-pointer"
+                        >
+                            Restablecer
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* ACTIVE CONTENT VIEW */}

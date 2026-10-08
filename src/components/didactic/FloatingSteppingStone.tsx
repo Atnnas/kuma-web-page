@@ -34,75 +34,84 @@ export function FloatingSteppingStone({
     hasNewQuestions = false,
 }: FloatingSteppingStoneProps) {
     const isOkinawa = level.id === "level-karategi" || level.icon === "okinawa";
+    const isTargetLevel = isUnlocked && !isCompleted;
 
     // Variación orgánica de flotación según el nivel
     const floatDelay = ((level.number || 1) % 5) * 0.4;
     const floatDuration = 4.2 + ((level.number || 1) % 3) * 0.4;
 
-    // Kanji tradicional grabado en la piedra según el estado
-    const stoneKanji = isOkinawa
-        ? "空" // Kara (Vacío / Karate)
+    // Romaji legible y concepto pedagógico claro (sin depender de kanjis crípticos)
+    const romajiLabel = isOkinawa
+        ? "ORIGEN"
+        : level.id === "level-anatomia" || level.number === 2
+        ? "CUERPO"
+        : level.id === "level-kumite-tradicional" || level.number === 3
+        ? "KIHON"
+        : level.id === "level-kata-blanco" || level.number === 4
+        ? "KATA"
+        : level.tag
+        ? level.tag.split("&")[0].trim().toUpperCase()
+        : `NIVEL ${level.number}`;
+
+    // Kanji tradicional tenue usado exclusivamente como marca de agua de fondo
+    const watermarkKanji = isOkinawa
+        ? "空" // Kara (Vacío)
         : isCompleted
-        ? "圓" // En (Perfección / Círculo Zen)
+        ? "圓" // En (Perfección)
         : isUnlocked
-        ? "氣" // Ki (Espíritu / Energía vital)
-        : "忍"; // Shinobi (Perseverancia / Paciencia)
+        ? "氣" // Ki (Energía)
+        : "忍"; // Shinobi (Perseverancia)
 
     return (
         <div className="relative flex flex-col items-center select-none group my-4">
             {/* ========================================================= */}
             {/* 1. ONDAS PROCEDURALES DE AGUA (HAMON 波紋) EN EL ESTANQUE  */}
+            {/* Solo la piedra objetivo activa pulsa continuamente (ahorro de GPU) */}
             {/* ========================================================= */}
-            {/* Onda 1: Expansión de agua suave */}
-            <motion.div
-                animate={{
-                    scale: [0.8, 1.45, 1.85],
-                    opacity: isUnlocked ? [0.65, 0.25, 0] : [0.35, 0.1, 0],
-                }}
-                transition={{
-                    duration: isUnlocked ? 3.5 : 4.8,
-                    repeat: Infinity,
-                    ease: "easeOut",
-                    delay: floatDelay,
-                }}
-                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] pointer-events-none w-36 h-28 border ${
-                    isCompleted
-                        ? "border-emerald-400/40"
-                        : isUnlocked
-                        ? "border-amber-400/50"
-                        : "border-cyan-400/25"
-                }`}
-            />
+            {isTargetLevel && (
+                <>
+                    {/* Onda 1: Expansión de agua suave */}
+                    <motion.div
+                        animate={{
+                            scale: [0.8, 1.45, 1.85],
+                            opacity: [0.65, 0.25, 0],
+                        }}
+                        transition={{
+                            duration: 3.5,
+                            repeat: Infinity,
+                            ease: "easeOut",
+                            delay: floatDelay,
+                        }}
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] pointer-events-none w-36 h-28 border border-amber-400/50"
+                    />
 
-            {/* Onda 2: Expansión media desfasada */}
-            <motion.div
-                animate={{
-                    scale: [0.85, 1.25, 1.6],
-                    opacity: isUnlocked ? [0.6, 0.2, 0] : [0.3, 0.08, 0],
-                }}
-                transition={{
-                    duration: isUnlocked ? 3.5 : 4.8,
-                    repeat: Infinity,
-                    ease: "easeOut",
-                    delay: floatDelay + (isUnlocked ? 1.75 : 2.4),
-                }}
-                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] pointer-events-none w-32 h-24 border ${
-                    isCompleted
-                        ? "border-emerald-300/45"
-                        : isUnlocked
-                        ? "border-yellow-300/55"
-                        : "border-cyan-300/20"
-                }`}
-            />
+                    {/* Onda 2: Expansión media desfasada */}
+                    <motion.div
+                        animate={{
+                            scale: [0.85, 1.25, 1.6],
+                            opacity: [0.6, 0.2, 0],
+                        }}
+                        transition={{
+                            duration: 3.5,
+                            repeat: Infinity,
+                            ease: "easeOut",
+                            delay: floatDelay + 1.75,
+                        }}
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] pointer-events-none w-32 h-24 border border-yellow-300/55"
+                    />
+                </>
+            )}
 
             {/* Anillo de contacto y espuma superficial del agua */}
             <div
-                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-24 rounded-[48%_52%_51%_49%/53%_47%_52%_48%] pointer-events-none border blur-[0.5px] transition-all duration-500 ${
+                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-24 rounded-[48%_52%_51%_49%/53%_47%_52%_48%] pointer-events-none border blur-[0.5px] transition-all duration-300 ${
                     isCompleted
-                        ? "border-emerald-300/50 shadow-[0_0_15px_rgba(52,211,153,0.3)]"
-                        : isUnlocked
+                        ? "border-emerald-300/40 shadow-[0_0_12px_rgba(52,211,153,0.25)] group-hover:scale-105"
+                        : isTargetLevel
                         ? "border-amber-300/60 shadow-[0_0_18px_rgba(251,191,36,0.35)]"
-                        : "border-cyan-400/25 shadow-[0_0_10px_rgba(34,211,238,0.15)]"
+                        : isUnlocked
+                        ? "border-amber-400/30 group-hover:border-amber-400/60"
+                        : "border-cyan-400/20 shadow-[0_0_8px_rgba(34,211,238,0.1)]"
                 }`}
             />
 
@@ -126,8 +135,8 @@ export function FloatingSteppingStone({
             {/* ========================================================= */}
             <motion.div
                 animate={{
-                    y: isUnlocked ? [0, -7, 0] : [0, -3, 0],
-                    rotate: isUnlocked ? [-0.8, 0.8, -0.8] : [0, 0, 0],
+                    y: isUnlocked ? [0, -6, 0] : [0, -2, 0],
+                    rotate: isUnlocked ? [-0.6, 0.6, -0.6] : [0, 0, 0],
                 }}
                 transition={{
                     duration: floatDuration,
@@ -281,26 +290,53 @@ export function FloatingSteppingStone({
                         />
 
                         {/* ===================================================== */}
-                        {/* GRABADO TRADICIONAL CENTRAL SEGÚN ESTADO DE LA PIEDRA */}
+                        {/* GRABADO TRADICIONAL CENTRAL: ROMAJI CLARO + KANJI AGUA */}
                         {/* ===================================================== */}
                         {isCompleted ? (
-                            /* CÍRCULO ZEN ENSO (円相) TALLADO EN PAN DE ORO */
+                            /* CÍRCULO ZEN ENSO (円相) CON CONCEPTO ROMAJI CLARO */
                             <g transform="translate(60, 60)">
-                                {/* Resplandor aureo detrás del Enso */}
-                                <circle r="22" fill="#10b981" opacity="0.2" filter={`url(#kiGlow-${level.id})`} />
+                                {/* Resplandor áureo detrás del Enso */}
+                                <circle r="22" fill="#10b981" opacity="0.25" filter={`url(#kiGlow-${level.id})`} />
                                 {/* Trazo de pincelada Zen circular Enso */}
                                 <path
                                     d="M 0,-20 A 20,20 0 1,1 -16,12"
                                     stroke={`url(#goldCarved-${level.id})`}
-                                    strokeWidth="6"
+                                    strokeWidth="5"
                                     strokeLinecap="round"
                                     fill="none"
                                     filter={`url(#kiGlow-${level.id})`}
                                 />
-                                <circle cx="0" cy="0" r="4" fill="#FDE68A" />
+                                {/* Marca de agua sutil de Kanji al fondo */}
+                                <text
+                                    x="0"
+                                    y="8"
+                                    textAnchor="middle"
+                                    fontSize="26"
+                                    fontWeight="900"
+                                    fontFamily="'Noto Serif JP', 'Yu Mincho', serif"
+                                    fill="#FDE68A"
+                                    opacity="0.18"
+                                    className="select-none pointer-events-none"
+                                >
+                                    {watermarkKanji}
+                                </text>
+                                {/* Romaji destacado y legible */}
+                                <text
+                                    x="0"
+                                    y="4"
+                                    textAnchor="middle"
+                                    fontSize="11"
+                                    fontWeight="900"
+                                    fontFamily="system-ui, -apple-system, sans-serif"
+                                    letterSpacing="0.08em"
+                                    fill="#FFFFFF"
+                                    className="select-none pointer-events-none drop-shadow-md"
+                                >
+                                    {romajiLabel}
+                                </text>
                             </g>
                         ) : isUnlocked ? (
-                            /* KANJI DE KI (氣) / BUDO TALLADO EN BAJORRELIEVE Y EN LLAMAS DE ORO */
+                            /* PIEDRA ACTIVA: ROMAJI CLARO Y GRANDE CON KANJI DE FONDO TENUE */
                             <g>
                                 {/* Resplandor central de energía interior */}
                                 <circle
@@ -311,36 +347,92 @@ export function FloatingSteppingStone({
                                     opacity="0.22"
                                     filter={`url(#kiGlow-${level.id})`}
                                 />
-                                {/* Kanji grabado con tipografía ancestral caligráfica */}
-                                <text
-                                    x="60"
-                                    y="71"
-                                    textAnchor="middle"
-                                    fontSize="38"
-                                    fontWeight="900"
-                                    fontFamily="'Noto Serif JP', 'Yu Mincho', serif"
-                                    fill={`url(#goldCarved-${level.id})`}
-                                    filter={`url(#kiGlow-${level.id})`}
-                                    className="select-none pointer-events-none"
-                                >
-                                    {stoneKanji}
-                                </text>
-                            </g>
-                        ) : (
-                            /* KANJI DE RESISTENCIA Y CALMA (忍) EN LETARGO CELESTE */
-                            <g>
+                                {/* Kanji ancestral tenue como marca de agua */}
                                 <text
                                     x="60"
                                     y="70"
                                     textAnchor="middle"
-                                    fontSize="35"
+                                    fontSize="42"
+                                    fontWeight="900"
+                                    fontFamily="'Noto Serif JP', 'Yu Mincho', serif"
+                                    fill={`url(#goldCarved-${level.id})`}
+                                    opacity="0.22"
+                                    className="select-none pointer-events-none"
+                                >
+                                    {watermarkKanji}
+                                </text>
+                                {/* Identificación de Nivel en la parte superior del círculo */}
+                                <text
+                                    x="60"
+                                    y="48"
+                                    textAnchor="middle"
+                                    fontSize="9"
+                                    fontWeight="900"
+                                    fontFamily="system-ui, -apple-system, sans-serif"
+                                    letterSpacing="0.12em"
+                                    fill="#FDE68A"
+                                    className="select-none pointer-events-none uppercase tracking-widest drop-shadow"
+                                >
+                                    Nº {level.number}
+                                </text>
+                                {/* Romaji principal claro, grande y centrado */}
+                                <text
+                                    x="60"
+                                    y="67"
+                                    textAnchor="middle"
+                                    fontSize="13"
+                                    fontWeight="900"
+                                    fontFamily="system-ui, -apple-system, sans-serif"
+                                    letterSpacing="0.08em"
+                                    fill="#FFFFFF"
+                                    className="select-none pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]"
+                                >
+                                    {romajiLabel}
+                                </text>
+                            </g>
+                        ) : (
+                            /* PIEDRA BLOQUEADA: ROMAJI SUTILEZA CON KANJI TENUE */
+                            <g>
+                                <text
+                                    x="60"
+                                    y="68"
+                                    textAnchor="middle"
+                                    fontSize="38"
                                     fontWeight="800"
                                     fontFamily="'Noto Serif JP', 'Yu Mincho', serif"
                                     fill={`url(#cyanCarved-${level.id})`}
-                                    opacity="0.75"
+                                    opacity="0.16"
                                     className="select-none pointer-events-none"
                                 >
-                                    {stoneKanji}
+                                    {watermarkKanji}
+                                </text>
+                                <text
+                                    x="60"
+                                    y="50"
+                                    textAnchor="middle"
+                                    fontSize="9"
+                                    fontWeight="800"
+                                    fontFamily="system-ui, -apple-system, sans-serif"
+                                    letterSpacing="0.12em"
+                                    fill="#94A3B8"
+                                    opacity="0.8"
+                                    className="select-none pointer-events-none uppercase"
+                                >
+                                    Nº {level.number}
+                                </text>
+                                <text
+                                    x="60"
+                                    y="67"
+                                    textAnchor="middle"
+                                    fontSize="12"
+                                    fontWeight="800"
+                                    fontFamily="system-ui, -apple-system, sans-serif"
+                                    letterSpacing="0.06em"
+                                    fill="#CBD5E1"
+                                    opacity="0.85"
+                                    className="select-none pointer-events-none drop-shadow"
+                                >
+                                    {romajiLabel}
                                 </text>
                             </g>
                         )}

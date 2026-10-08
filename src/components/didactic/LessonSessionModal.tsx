@@ -271,24 +271,8 @@ function shuffleArray<T>(array: T[]): T[] {
         };
     }, [isOpen]);
 
-    // Listen for Escape key to trigger cancellation
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") {
-                if (isTheoryOpen) {
-                    setIsTheoryOpen(false);
-                } else if (isCancelConfirmOpen) {
-                    setIsCancelConfirmOpen(false);
-                } else if (!isCompleted && !isFailed) {
-                    handleRequestCancel();
-                } else {
-                    onClose();
-                }
-            }
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [isTheoryOpen, isCancelConfirmOpen, isCompleted, isFailed, onClose]);
+    // El listener integral de atajos de teclado (1-4, Enter, Espacio, Escape) se monta abajo junto a los handlers de acción.
+
 
     // Reset selection only when moving to a NEW question (NOT when answering)
     useEffect(() => {
@@ -572,6 +556,10 @@ function shuffleArray<T>(array: T[]): T[] {
         }
 
         if (isCorrect) {
+            // Feedback háptico sutil en dispositivos móviles (18ms)
+            if (typeof navigator !== "undefined" && navigator.vibrate) {
+                try { navigator.vibrate(18); } catch {}
+            }
             setAnswerStatus("correct");
             setCorrectCount((prev) => prev + 1);
             const newStreak = streak + 1;
@@ -599,6 +587,10 @@ function shuffleArray<T>(array: T[]): T[] {
                 });
             }
         } else {
+            // Feedback háptico de doble pulso en error en dispositivos móviles
+            if (typeof navigator !== "undefined" && navigator.vibrate) {
+                try { navigator.vibrate([35, 45, 35]); } catch {}
+            }
             setAnswerStatus("wrong");
             setStreak(0);
             setMascotMood("wrong");
@@ -662,6 +654,77 @@ function shuffleArray<T>(array: T[]): T[] {
             }
         }
     };
+
+    // ATAJOS DE TECLADO FLUIDOS (1-4 para opciones, Enter/Espacio para validar o avanzar, Escape para salir)
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+            if (e.key === "Escape") {
+                if (isTheoryOpen) {
+                    setIsTheoryOpen(false);
+                } else if (isCancelConfirmOpen) {
+                    setIsCancelConfirmOpen(false);
+                } else if (!isCompleted && !isFailed) {
+                    handleRequestCancel();
+                } else {
+                    onClose();
+                }
+                return;
+            }
+
+            // Enter o Espacio para validar respuesta o avanzar a la siguiente
+            if (e.key === "Enter" || e.key === " ") {
+                if (isCancelConfirmOpen || isTheoryOpen) return;
+                e.preventDefault();
+                if (answerStatus === "idle") {
+                    if (canCheck) {
+                        handleValidation();
+                    }
+                } else {
+                    handleNextQuestion();
+                }
+                return;
+            }
+
+            // Teclas 1, 2, 3, 4 para selección rápida de opción
+            if (answerStatus === "idle" && !isCancelConfirmOpen && !isTheoryOpen) {
+                if (["1", "2", "3", "4"].includes(e.key)) {
+                    const optIndex = parseInt(e.key, 10) - 1;
+                    if (currentQuestion.type === "multiple_choice" || currentQuestion.type === "image_choice") {
+                        const opt = currentQuestion.options?.[optIndex];
+                        if (opt) {
+                            setSelectedOptionId(opt.id);
+                            didacticSound.playClick();
+                        }
+                    } else if (currentQuestion.type === "true_false") {
+                        if (e.key === "1") {
+                            setSelectedBool(true);
+                            didacticSound.playClick();
+                        } else if (e.key === "2") {
+                            setSelectedBool(false);
+                            didacticSound.playClick();
+                        }
+                    }
+                }
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [
+        isOpen,
+        isTheoryOpen,
+        isCancelConfirmOpen,
+        isCompleted,
+        isFailed,
+        answerStatus,
+        canCheck,
+        currentQuestion,
+        onClose,
+    ]);
 
     const isWideQuestion =
         currentQuestion.type === "map_drag" ||
