@@ -85,6 +85,12 @@
       "skillPath": "skills/react-best-practices/SKILL.md",
       "computedHash": "6b526d013e28073246a36f99b529bc43745d30832ecfa8217b359c34f260ca6b"
     },
+    "shotokan-kihon-anatomy": {
+      "source": "kuma-dojo/shotokan-kihon-anatomy",
+      "sourceType": "local",
+      "skillPath": "skills/shotokan-kihon-anatomy/SKILL.md",
+      "computedHash": "952edd7f6cdd47948367044f3fced5888d3c5fbb1eb121956fa7ed84b9730506"
+    },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
