@@ -6,31 +6,44 @@ import { revalidatePath } from "next/cache";
 
 import { headers } from "next/headers";
 
+import { requireSuperAdmin } from "@/lib/auth-utils";
+
 export async function trackVisit(path: string, userAgent?: string) {
     try {
         await connectDB();
 
         // 1. Get IP Address
         const headersList = await headers();
-        const ip = headersList.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1";
+        const rawIp = headersList.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
 
-        // 2. Resolve Location (IP-API free tier)
-        // Skip localhost to avoid errors (or mock it)
+        // Anonymize IP (privacy best practice)
+        const maskedIp = rawIp.includes(":") 
+            ? rawIp.split(":").slice(0, 3).join(":") + "::xxx" 
+            : rawIp.replace(/\.\d+$/, '.xxx');
+
         let geoData = {};
-        if (ip !== "127.0.0.1" && ip !== "::1") {
+        if (rawIp !== "127.0.0.1" && rawIp !== "::1") {
             try {
-                const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`);
+                // IP lookup timeout to never block rendering
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 1500);
+
+                const response = await fetch(`http://ip-api.com/json/${rawIp}?fields=status,country,regionName,city`, {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
                 const data = await response.json();
                 if (data.status === "success") {
                     geoData = {
                         country: data.country,
                         region: data.regionName,
                         city: data.city,
-                        ip: ip // Optional: store IP or hash it for privacy
+                        ip: maskedIp
                     };
                 }
             } catch (err) {
-                console.error("Geo lookup failed:", err);
+                // Silent catch for geo lookup
             }
         }
 
@@ -40,7 +53,6 @@ export async function trackVisit(path: string, userAgent?: string) {
             geo: geoData,
             timestamp: new Date(),
         });
-        // No need to revalidate path here, it's a silent log
         return { success: true };
     } catch (error) {
         console.error("Error tracking visit:", error);
@@ -50,6 +62,7 @@ export async function trackVisit(path: string, userAgent?: string) {
 
 export async function getAnalyticsStats() {
     try {
+        await requireSuperAdmin();
         await connectDB();
 
         // 1. Total Visits
@@ -64,7 +77,6 @@ export async function getAnalyticsStats() {
         });
 
         // 3. Last 7 Days (Simple Aggregation)
-        // We want an array like: [{ date: '2025-01-15', count: 12 }, ...]
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -76,7 +88,7 @@ export async function getAnalyticsStats() {
                     count: { $sum: 1 }
                 }
             },
-            { $sort: { _id: 1 } } // Sort by date ascending
+            { $sort: { _id: 1 } }
         ]);
 
         return {
@@ -97,11 +109,11 @@ export async function getAnalyticsStats() {
 
 export async function getDetailedAnalytics(from?: Date, to?: Date) {
     try {
+        await requireSuperAdmin();
         await connectDB();
 
         const query: any = {};
         if (from && to) {
-            // Set end date to end of day
             const endOfDay = new Date(to);
             endOfDay.setHours(23, 59, 59, 999);
             query.timestamp = { $gte: from, $lte: endOfDay };
@@ -109,9 +121,8 @@ export async function getDetailedAnalytics(from?: Date, to?: Date) {
             query.timestamp = { $gte: from };
         }
 
-        const visits = await Visit.find(query).sort({ timestamp: -1 }).lean();
+        const visits = await Visit.find(query).sort({ timestamp: -1 }).limit(500).lean();
 
-        // Calculate simple stats based on the filtered data
         const uniqueVisitors = new Set(visits.map((v: any) => v.geo?.ip || v.visitorId)).size;
 
         const serializedVisits = visits.map((visit: any) => ({
@@ -137,6 +148,7 @@ export async function getDetailedAnalytics(from?: Date, to?: Date) {
 
 export async function deleteAllVisits() {
     try {
+        await requireSuperAdmin();
         await connectDB();
         await Visit.deleteMany({});
         revalidatePath("/admin/reports");

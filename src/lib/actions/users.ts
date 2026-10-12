@@ -7,6 +7,7 @@ import { requireSuperAdmin } from "@/lib/auth-utils";
 
 export async function getAllUsers() {
     try {
+        await requireSuperAdmin();
         await connectDB();
         const users = await User.find({}).populate("dojo").sort({ createdAt: -1 }).lean();
         return users.map((user) => ({

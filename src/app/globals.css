@@ -156,11 +156,63 @@ body {
   background-repeat: no-repeat;
   background-color: #000;
   color: #e4e4e7;
-  /* Zinc-200 generally better for reading on dark */
   overflow-x: hidden;
+  overscroll-behavior-y: none;
   width: 100%;
+  min-height: 100dvh;
 }
 
 html {
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
 }
+
+/* ==========================================================================
+   DIRECTRICES MOBILE-NATIVE & WEB INTERFACE GUIDELINES
+   ========================================================================== */
+
+/* 1. Eliminación del retraso de 300ms en interacción táctil */
+button, a, [role="button"], input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* 2. Prevenir selección accidental de etiquetas al presionar botones */
+button, [role="button"], .tab, .chip {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* 3. Prevenir zoom automático invasivo en iOS Safari al enfocar inputs */
+@media (pointer: coarse) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* 4. Números tabulares para cronómetros, repeticiones y tablas métricas */
+.tabular-nums, [data-tabular="true"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 5. Balance tipográfico para evitar palabras huérfanas en títulos */
+h1, h2, h3, .text-balance {
+  text-wrap: balance;
+}
+
+/* 6. Foco visible accesible con identidad Kuma Gold */
+:focus-visible {
+  outline: 2px solid #eab308;
+  outline-offset: 2px;
+}
+
+/* 7. Respetar preferencias de reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { auth } from "@/auth";
 import { Cinzel, Montserrat } from "next/font/google";
 import { Navbar } from "@/components/layout/Navbar";
@@ -22,6 +22,16 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+    { media: "(prefers-color-scheme: light)", color: "#09090b" },
+  ],
+};
 
 export const metadata: Metadata = {
   title: {
@@ -76,6 +86,12 @@ export default async function RootLayout({
       <body
         className={`${cinzel.variable} ${montserrat.variable} antialiased font-sans text-white`}
       >
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-[999] px-4 py-2.5 bg-kuma-gold text-black font-bold rounded-xl shadow-2xl focus:outline-none focus:ring-2 focus:ring-white transition-transform"
+        >
+          Saltar al contenido principal
+        </a>
         <div className="fixed inset-0 bg-black/40 z-[-1] pointer-events-none" />
         <AnalyticsTracker />
         <Providers session={session}>

@@ -10,6 +10,7 @@ import {
 import confetti from "canvas-confetti";
 import { AchievementOverlay } from "../gamification/AchievementOverlay";
 import { startRoutineLog, completeRoutineLog, deleteRoutineLog } from "@/lib/actions/routine-logs";
+import { smoothAngle, useWakeLock } from "@/lib/vision";
 
 interface SquatRevisorClientProps {
   user: any;
@@ -33,6 +34,11 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+
+  // Screen Wake Lock para prevenir apagado de pantalla en móviles durante sentadillas
+  useWakeLock(cameraActive);
+  const prevAngleRef = useRef<number | null>(null);
+  const lastUiUpdateRef = useRef<number>(0);
 
   // Stats
   const [repsCount, setRepsCount] = useState(0);
@@ -428,9 +434,10 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
       return;
     }
 
-    // Calculate Knee angle
-    const angle = calculate2DAngle(hip, knee, ankle);
-    setKneeAngle(angle);
+    // Calculate Knee angle con filtro EMA anti-jitter
+    const rawAngle = calculate2DAngle(hip, knee, ankle);
+    const angle = smoothAngle(rawAngle, prevAngleRef.current, 0.7);
+    prevAngleRef.current = angle;
 
     // Calculate back inclination angle relative to vertical axis (0 degrees is straight vertical)
     let backAngle = 0;
@@ -442,6 +449,9 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
         backAngle = Math.round(Math.acos(Math.min(1, Math.max(-1, cosTheta))) * (180 / Math.PI));
       }
     }
+
+    let nextFeedback = feedbackMsg;
+    let nextInstruction = instructionMsg;
 
     // Evaluate state machine for reps
     // Standard: Standing is > 165. Depth reached is <= 95
@@ -456,7 +466,8 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
         
         hasReachedDepthRef.current = false;
         wasBendingRef.current = false;
-        setFeedbackMsg("¡Sentadilla correcta!");
+        nextFeedback = "¡Sentadilla correcta!";
+        setFeedbackMsg(nextFeedback);
         
         if (repsCountRef.current >= targetRepsRef.current) {
           completeWorkout();
@@ -464,12 +475,13 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
       } else if (wasBendingRef.current) {
         // Stood up without reaching depth
         playWarningBeep();
-        setFeedbackMsg("¡Sentadilla incompleta!");
+        nextFeedback = "¡Sentadilla incompleta!";
+        setFeedbackMsg(nextFeedback);
         speak("Baja más");
         wasBendingRef.current = false;
       }
       isReadyToStartRef.current = true;
-      setInstructionMsg("Flexiona tus piernas para la sentadilla");
+      nextInstruction = "Flexiona tus piernas para la sentadilla";
     } else if (angle <= 95) {
       if (isReadyToStartRef.current) {
         if (!hasReachedDepthRef.current) {
@@ -477,17 +489,26 @@ export function SquatRevisorClient({ user, routine }: SquatRevisorClientProps) {
         }
         hasReachedDepthRef.current = true;
         wasBendingRef.current = true;
-        setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
-        setInstructionMsg("Regresa a la posición inicial erguido");
+        nextFeedback = "¡Profundidad lograda! Ahora sube.";
+        nextInstruction = "Regresa a la posición inicial erguido";
       }
     } else if (angle < 135) {
       if (isReadyToStartRef.current) {
         wasBendingRef.current = true;
         if (!hasReachedDepthRef.current) {
-          setFeedbackMsg("¡Baja un poco más!");
-          setInstructionMsg("Flexiona un poco más profundo...");
+          nextFeedback = "¡Baja un poco más!";
+          nextInstruction = "Flexiona un poco más profundo...";
         }
       }
+    }
+
+    // Actualizaciones de estado de React throttled para evitar thermal throttling y caídas de frames
+    const now = performance.now();
+    if (now - lastUiUpdateRef.current > 180) {
+      lastUiUpdateRef.current = now;
+      setKneeAngle(angle);
+      setFeedbackMsg(nextFeedback);
+      setInstructionMsg(nextInstruction);
     }
 
     // Colors according to angle

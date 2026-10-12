@@ -167,19 +167,30 @@ async function ensureTricepKickbackRevisorRoutine() {
     }
 }
 
-// GET /api/routines
-// Public (or protected if needed) list of active routines
+let revisorsEnsured = false;
+async function ensureAllRevisors() {
+    if (revisorsEnsured) return;
+    try {
+        await Promise.all([
+            ensureSquatRevisorRoutine(),
+            ensurePushupRevisorRoutine(),
+            ensureBurpeeRevisorRoutine(),
+            ensureBicepCurlRevisorRoutine(),
+            ensureShoulderPressRevisorRoutine(),
+            ensureTricepKickbackRevisorRoutine()
+        ]);
+        revisorsEnsured = true;
+    } catch (e) {
+        console.error("Error ensuring revisor routines:", e);
+    }
+}
+
 // GET /api/routines
 // Protected: Logged in users only
 export async function GET(req: NextRequest) {
     await connectDB();
     try {
-        await ensureSquatRevisorRoutine();
-        await ensurePushupRevisorRoutine();
-        await ensureBurpeeRevisorRoutine();
-        await ensureBicepCurlRevisorRoutine();
-        await ensureShoulderPressRevisorRoutine();
-        await ensureTricepKickbackRevisorRoutine();
+        await ensureAllRevisors();
 
         const session = await auth();
         if (!session) {

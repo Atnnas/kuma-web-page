@@ -37,13 +37,14 @@ const VisitSchema = new Schema<IVisit>(
         },
     },
     {
-        timestamps: false, // We use our own timestamp field, no need for updatedAt
-        expireAfterSeconds: 60 * 60 * 24 * 365, // Optional: Auto-delete after 1 year to save space? Let's keep it simple for now and not expire.
+        timestamps: false,
     }
 );
 
 // Define schema indexes
 VisitSchema.index({ timestamp: -1 });
+// TTL Index: Auto-delete analytics visits older than 180 days (6 months) to prevent unbounded DB growth
+VisitSchema.index({ timestamp: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 180 });
 
 // Prevent recompilation
 const Visit: Model<IVisit> = mongoose.models.Visit || mongoose.model<IVisit>("Visit", VisitSchema);

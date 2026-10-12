@@ -8,6 +8,7 @@ import { searchCountryFlag } from "@/lib/flags";
 
 export async function syncEventFlags() {
     try {
+        await requireSuperAdmin();
         await connectDB();
         const events = await Event.find({});
         let count = 0;

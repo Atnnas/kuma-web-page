@@ -28,6 +28,7 @@ import {
     startRoutineLog,
     completeRoutineLog
 } from "@/lib/actions/routine-logs";
+import { useWakeLock } from "@/lib/vision";
 
 // --- INTERFACES ---
 interface IBlock {
@@ -91,6 +92,9 @@ const getTotalSetsRecursive = (blocks: IBlock[]): number => {
 export function RoutinePlayer({ routine }: { routine: IRoutineData }) {
     const searchParams = useSearchParams();
     const [status, setStatus] = useState<"intro" | "active" | "completed">("intro");
+    
+    // Screen Wake Lock para mantener encendida la pantalla durante toda la sesión
+    useWakeLock(status === "active");
     const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
     const [currentSet, setCurrentSet] = useState(1);
     const [isResting, setIsResting] = useState(false);

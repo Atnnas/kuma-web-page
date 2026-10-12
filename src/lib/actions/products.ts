@@ -60,10 +60,13 @@ export async function getProductById(id: string) {
     }
 }
 
+import { requireSuperAdmin } from "@/lib/auth-utils";
+
 // --- ADMIN Actions ---
 
 export async function createProduct(data: any) {
     try {
+        await requireSuperAdmin();
         await connectDB();
 
         // Generate simple slug from name
@@ -89,10 +92,8 @@ export async function createProduct(data: any) {
 
 export async function updateProduct(id: string, data: any) {
     try {
+        await requireSuperAdmin();
         await connectDB();
-
-        // If name changes, we might want to update slug, but usually better to keep slug stable or handle redirects.
-        // For simplicity, we won't regenerate slug on update unless explicitly needed.
 
         await Product.findByIdAndUpdate(id, data, { new: true });
 
@@ -107,6 +108,7 @@ export async function updateProduct(id: string, data: any) {
 
 export async function deleteProduct(id: string) {
     try {
+        await requireSuperAdmin();
         await connectDB();
         await Product.findByIdAndDelete(id);
 
@@ -121,6 +123,7 @@ export async function deleteProduct(id: string) {
 
 export async function toggleProductStatus(id: string, isActive: boolean) {
     try {
+        await requireSuperAdmin();
         await connectDB();
         await Product.findByIdAndUpdate(id, { isActive });
 

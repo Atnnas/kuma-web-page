@@ -5,7 +5,7 @@ import User from "@/models/User";
 import Dojo from "@/models/Dojo";
 import AttendanceLog from "@/models/AttendanceLog";
 import { revalidatePath } from "next/cache";
-import { requireSuperAdmin } from "@/lib/auth-utils";
+import { requireSuperAdmin, getCurrentUser } from "@/lib/auth-utils";
 import { evaluateWkfCategory } from "@/lib/wkf-categories";
 
 /**
@@ -14,6 +14,9 @@ import { evaluateWkfCategory } from "@/lib/wkf-categories";
 export async function getEnrolledAthletes() {
     try {
         await connectDB();
+        const currentUser = await getCurrentUser();
+        const isAdmin = currentUser?.role === "super_admin" || currentUser?.role === "admin";
+
         const athletes = await User.find({ "athleteProfile.isEnrolled": true })
             .sort({ "athleteProfile.beltRank": -1 })
             .populate("athleteProfile.dojo")
@@ -27,7 +30,7 @@ export async function getEnrolledAthletes() {
             mvpCountsMap[uid] = (mvpCountsMap[uid] || 0) + 1;
         }
 
-        const serialized = athletes.map((user: any) => serializeAthlete(user, mvpCountsMap));
+        const serialized = athletes.map((user: any) => serializeAthlete(user, mvpCountsMap, isAdmin));
 
         return { success: true, data: serialized };
     } catch (error: any) {
@@ -41,12 +44,13 @@ export async function getEnrolledAthletes() {
  */
 export async function getAllPotentialAthletes() {
     try {
+        await requireSuperAdmin();
         await connectDB();
         const users = await User.find({})
             .sort({ name: 1 })
             .populate("athleteProfile.dojo")
             .lean();
-        return serializeAthletes(users);
+        return serializeAthletes(users, true);
     } catch (error) {
         console.error("Error fetching potential athletes:", error);
         return [];
@@ -147,12 +151,15 @@ export async function createAndEnrollAthlete(userData: { name: string, email: st
     }
 }
 
-function serializeAthlete(user: any, mvpCountsMap?: Record<string, number>) {
+function serializeAthlete(user: any, mvpCountsMap?: Record<string, number>, isAdmin: boolean = false) {
     if (!user) return null;
     
     const serializedUser = {
-        ...user,
         _id: user._id.toString(),
+        name: user.name,
+        image: user.image,
+        role: user.role,
+        email: isAdmin ? user.email : undefined,
         createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : undefined,
         updatedAt: user.updatedAt ? new Date(user.updatedAt).toISOString() : undefined,
         dojo: user.dojo ? user.dojo.toString() : null,
@@ -161,37 +168,49 @@ function serializeAthlete(user: any, mvpCountsMap?: Record<string, number>) {
         lastStreakShownDate: user.lastStreakShownDate ? new Date(user.lastStreakShownDate).toISOString() : undefined,
         lastStreakLossShownDate: user.lastStreakLossShownDate ? new Date(user.lastStreakLossShownDate).toISOString() : undefined,
         lastTrainingResetDate: user.lastTrainingResetDate ? new Date(user.lastTrainingResetDate).toISOString() : undefined,
-        emailVerified: user.emailVerified ? new Date(user.emailVerified).toISOString() : undefined,
-        verificationTokenExpires: user.verificationTokenExpires ? new Date(user.verificationTokenExpires).toISOString() : undefined,
+        emailVerified: isAdmin && user.emailVerified ? new Date(user.emailVerified).toISOString() : undefined,
         achievements: user.achievements?.map((ach: any) => ({
             ...ach,
             _id: ach._id ? ach._id.toString() : undefined,
             earnedAt: ach.earnedAt ? new Date(ach.earnedAt).toISOString() : undefined,
         })),
+        athleteProfile: undefined as any
     };
 
-    if (serializedUser.athleteProfile) {
-        const dojoPopulated = serializedUser.athleteProfile.dojo;
-        const bdate = serializedUser.athleteProfile.birthDate ? new Date(serializedUser.athleteProfile.birthDate).toISOString() : undefined;
+    if (user.athleteProfile) {
+        const dojoPopulated = user.athleteProfile.dojo;
+        const bdate = user.athleteProfile.birthDate ? new Date(user.athleteProfile.birthDate).toISOString() : undefined;
 
         // Dynamic WKF Category evaluation
         const wkfEvaluation = evaluateWkfCategory({
             birthDate: bdate,
-            currentWeight: serializedUser.athleteProfile.weight,
-            gender: serializedUser.athleteProfile.gender,
-            assignedCategory: serializedUser.athleteProfile.wkfCategory,
-            assignedWeight: serializedUser.athleteProfile.categoryWeight,
-            forceWeightReview: serializedUser.athleteProfile.weightReviewNeeded
+            currentWeight: user.athleteProfile.weight,
+            gender: user.athleteProfile.gender,
+            assignedCategory: user.athleteProfile.wkfCategory,
+            assignedWeight: user.athleteProfile.categoryWeight,
+            forceWeightReview: user.athleteProfile.weightReviewNeeded
         });
 
         serializedUser.athleteProfile = {
-            ...serializedUser.athleteProfile,
+            weight: user.athleteProfile.weight,
+            height: user.athleteProfile.height,
+            beltRank: user.athleteProfile.beltRank,
+            specialization: user.athleteProfile.specialization,
+            stats: user.athleteProfile.stats,
+            isEnrolled: user.athleteProfile.isEnrolled,
+            cc: user.athleteProfile.cc,
+            habilidadSecreta: user.athleteProfile.habilidadSecreta,
+            statsLastMonth: user.athleteProfile.statsLastMonth,
             birthDate: bdate,
-            gender: serializedUser.athleteProfile.gender,
-            wkfCategory: serializedUser.athleteProfile.wkfCategory,
-            categoryWeight: serializedUser.athleteProfile.categoryWeight,
-            weightReviewNeeded: serializedUser.athleteProfile.weightReviewNeeded,
+            gender: user.athleteProfile.gender,
+            wkfCategory: user.athleteProfile.wkfCategory,
+            categoryWeight: user.athleteProfile.categoryWeight,
+            weightReviewNeeded: user.athleteProfile.weightReviewNeeded,
             wkfEvaluation,
+            // SENSITIVE PII: Only include if admin
+            phone: isAdmin ? user.athleteProfile.phone : undefined,
+            emergencyContact: isAdmin ? user.athleteProfile.emergencyContact : undefined,
+            medicalConditions: isAdmin ? user.athleteProfile.medicalConditions : undefined,
             dojo: dojoPopulated ? (
                 typeof dojoPopulated === "object" && "_id" in dojoPopulated
                     ? {
@@ -210,8 +229,8 @@ function serializeAthlete(user: any, mvpCountsMap?: Record<string, number>) {
     return serializedUser;
 }
 
-function serializeAthletes(users: any[]) {
-    return users.map((user: any) => serializeAthlete(user));
+function serializeAthletes(users: any[], isAdmin: boolean = false) {
+    return users.map((user: any) => serializeAthlete(user, undefined, isAdmin));
 }
 
 /**

@@ -10,6 +10,7 @@ import {
 import confetti from "canvas-confetti";
 import { AchievementOverlay } from "../gamification/AchievementOverlay";
 import { startRoutineLog, completeRoutineLog, deleteRoutineLog } from "@/lib/actions/routine-logs";
+import { smoothAngle, useWakeLock } from "@/lib/vision";
 
 interface ShoulderPressRevisorClientProps {
   user: any;
@@ -33,6 +34,12 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+
+  // Screen Wake Lock para prevenir apagado de pantalla en móviles durante press militar
+  useWakeLock(cameraActive);
+  const prevAngleLRef = useRef<number | null>(null);
+  const prevAngleRRef = useRef<number | null>(null);
+  const lastUiUpdateRef = useRef<number>(0);
 
   // Stats
   const [repsCount, setRepsCount] = useState(0);
@@ -398,16 +405,17 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
       return;
     }
 
-    // 1. Calculate Left & Right Elbow angles
-    const angleL = calculate2DAngle(s_L, e_L, w_L);
-    const angleR = calculate2DAngle(s_R, e_R, w_R);
-    setLeftElbowAngle(angleL);
-    setRightElbowAngle(angleR);
+    // 1. Calculate Left & Right Elbow angles con filtro EMA anti-jitter
+    const rawAngleL = calculate2DAngle(s_L, e_L, w_L);
+    const rawAngleR = calculate2DAngle(s_R, e_R, w_R);
+    const angleL = smoothAngle(rawAngleL, prevAngleLRef.current, 0.7);
+    const angleR = smoothAngle(rawAngleR, prevAngleRRef.current, 0.7);
+    prevAngleLRef.current = angleL;
+    prevAngleRRef.current = angleR;
 
     // 2. Calculate Shoulder asymmetry (difference in shoulder height)
     const diffY = Math.abs(s_L.y - s_R.y);
     const asymmetryPercentage = Math.round(diffY * 100);
-    setShoulderAsymmetry(asymmetryPercentage);
 
     // 3. Forearm alignment check (wrist horizontal drift relative to elbow)
     // Forearms should stay vertical during the push. If wrists flare outwards or inwards, drift increases.
@@ -415,7 +423,6 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
     const driftR = Math.abs(w_R.x - e_R.x);
     const maxDrift = Math.max(driftL, driftR);
     const formattedDrift = Math.round(maxDrift * 100);
-    setForearmDrift(formattedDrift);
 
     const isSymmetrical = asymmetryPercentage <= 5;
     const isForearmVertical = maxDrift <= 0.08;
@@ -424,6 +431,9 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
     const shoulderWidth = Math.abs(s_L.x - s_R.x);
     const wristWidth = Math.abs(w_L.x - w_R.x);
     const isFistsCorrect = wristWidth <= 1.35 * shoulderWidth;
+
+    let nextFeedback = feedbackMsg;
+    let nextInstruction = instructionMsg;
 
     // State machine for shoulder press:
     // Starting position (Bottom): Both elbows bent to <= 90°
@@ -437,18 +447,20 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
         
         hasReachedTopRef.current = false;
         wasPressingRef.current = false;
-        setFeedbackMsg("¡Repetición correcta!");
+        nextFeedback = "¡Repetición correcta!";
+        setFeedbackMsg(nextFeedback);
         
         if (repsCountRef.current >= targetRepsRef.current) {
           completeWorkout();
         }
       } else if (wasPressingRef.current) {
         playWarningBeep();
-        setFeedbackMsg("¡Rango incompleto! Empuja hacia arriba.");
+        nextFeedback = "¡Rango incompleto! Empuja hacia arriba.";
+        setFeedbackMsg(nextFeedback);
         wasPressingRef.current = false;
       }
       isReadyToStartRef.current = true;
-      setInstructionMsg("Empuja las mancuernas verticalmente sobre tu cabeza");
+      nextInstruction = "Empuja las mancuernas verticalmente sobre tu cabeza";
     } else if (angleL >= 160 && angleR >= 160) {
       if (isReadyToStartRef.current) {
         if (!hasReachedTopRef.current) {
@@ -456,17 +468,29 @@ export function ShoulderPressRevisorClient({ user, routine }: ShoulderPressRevis
         }
         hasReachedTopRef.current = true;
         wasPressingRef.current = true;
-        setFeedbackMsg("¡Extensión lograda! Baja lentamente.");
-        setInstructionMsg("Regresa los codos a la altura de tus orejas");
+        nextFeedback = "¡Extensión lograda! Baja lentamente.";
+        nextInstruction = "Regresa los codos a la altura de tus orejas";
       }
     } else if (angleL > 110 || angleR > 110) {
       if (isReadyToStartRef.current) {
         wasPressingRef.current = true;
         if (!hasReachedTopRef.current) {
-          setFeedbackMsg("¡Sigue empujando hacia arriba!");
-          setInstructionMsg("Estira tus brazos por completo...");
+          nextFeedback = "¡Sigue empujando hacia arriba!";
+          nextInstruction = "Estira tus brazos por completo...";
         }
       }
+    }
+
+    // Actualizaciones de estado de React throttled a ~5 FPS para eliminar micro-stutter
+    const now = performance.now();
+    if (now - lastUiUpdateRef.current > 180) {
+      lastUiUpdateRef.current = now;
+      setLeftElbowAngle(angleL);
+      setRightElbowAngle(angleR);
+      setShoulderAsymmetry(asymmetryPercentage);
+      setForearmDrift(formattedDrift);
+      setFeedbackMsg(nextFeedback);
+      setInstructionMsg(nextInstruction);
     }
 
     // Drawing HUD

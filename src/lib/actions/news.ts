@@ -64,6 +64,7 @@ export async function getNewsBySlug(slug: string) {
 
 export async function seedNews() {
     try {
+        await requireSuperAdmin();
         await connectDB();
 
         const count = await News.countDocuments();

@@ -51,13 +51,17 @@ export function MobileMenu({
                     animate={{ x: 0 }}
                     exit={{ x: "-100%" }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="fixed top-0 left-0 h-full w-[85%] max-w-sm bg-zinc-950 border-r border-[#6F4E37]/30 shadow-2xl z-[70] p-6 flex flex-col overflow-y-auto"
+                    className="fixed top-0 left-0 h-full w-[85%] max-w-sm bg-zinc-950 border-r border-[#6F4E37]/30 shadow-2xl z-[70] p-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] flex flex-col overflow-y-auto overscroll-contain"
                 >
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-2xl font-serif font-black text-kuma-gold uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                             KUMA <span className="text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]">MENU</span>
                         </h2>
-                        <button onClick={onClose} className="text-zinc-400 hover:text-white">
+                        <button
+                            onClick={onClose}
+                            className="text-zinc-400 hover:text-white p-2 -mr-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold active:scale-95 transition-transform"
+                            aria-label="Cerrar menú"
+                        >
                             <X className="w-8 h-8" weight="bold" />
                         </button>
                     </div>
@@ -80,7 +84,9 @@ export function MobileMenu({
                                         {hasSubItems && (
                                             <button
                                                 onClick={() => onToggleExpand(isExpanded ? null : index)}
-                                                className="p-3 text-zinc-500 hover:text-white"
+                                                className="p-3 text-zinc-500 hover:text-white rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold active:scale-95 transition-transform"
+                                                aria-label={isExpanded ? `Colapsar submenú de ${item.name}` : `Expandir submenú de ${item.name}`}
+                                                aria-expanded={isExpanded}
                                             >
                                                 <CaretDown className={cn("w-4 h-4 transition-transform duration-300", isExpanded ? "rotate-180" : "")} weight="bold" />
                                             </button>

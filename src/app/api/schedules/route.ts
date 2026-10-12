@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Schedule from "@/models/Schedule";
+import { auth } from "@/auth";
 
 export const dynamic = 'force-dynamic';
 
@@ -45,6 +46,11 @@ export async function GET() {
 
 export async function POST(req: Request) {
     try {
+        const session = await auth();
+        if (!session || (session.user?.role !== "admin" && session.user?.role !== "super_admin")) {
+            return NextResponse.json({ error: "No autorizado. Se requieren permisos administrativos." }, { status: 403 });
+        }
+
         await connectDB();
         const data = await req.json();
 

@@ -9,9 +9,10 @@ export async function GET(request: Request) {
         const query = searchParams.get("query");
 
         let filter = {};
-        if (query) {
-            // Case-insensitive regex search
-            filter = { name: { $regex: query, $options: "i" } };
+        if (query && query.trim()) {
+            // Case-insensitive escaped regex search to prevent ReDoS
+            const escapedQuery = query.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            filter = { name: { $regex: escapedQuery, $options: "i" } };
         }
 
         // Limit to 20 suggestions for autocomplete performance

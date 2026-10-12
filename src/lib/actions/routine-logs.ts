@@ -50,12 +50,28 @@ export async function completeRoutineLog(logId: string, durationSeconds: number)
     try {
         if (!logId) return { success: false, error: "No log ID provided" };
 
+        const session = await auth();
+        if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+
         await connectDB();
+        const user = await User.findOne({ email: session.user.email }).select("_id role");
+        if (!user) return { success: false, error: "User not found" };
+
+        const log = await RoutineLog.findById(logId);
+        if (!log) return { success: false, error: "Log not found" };
+
+        if (log.user.toString() !== user._id.toString() && user.role !== "super_admin") {
+            return { success: false, error: "Unauthorized: not your routine log" };
+        }
+
+        const validDuration = typeof durationSeconds === "number" && !isNaN(durationSeconds) && durationSeconds > 0
+            ? Math.min(durationSeconds, 86400)
+            : 0;
 
         await RoutineLog.findByIdAndUpdate(logId, {
             $set: {
                 endTime: new Date(),
-                durationSeconds: durationSeconds,
+                durationSeconds: validDuration,
                 completed: true
             },
             $unset: { expiresAt: "" } // Stop the auto-deletion TTL
@@ -118,7 +134,20 @@ export async function updateRoutineProgress(logId: string, state: any) {
     try {
         if (!logId) return { success: false, error: "No log ID provided" };
 
+        const session = await auth();
+        if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+
         await connectDB();
+        const user = await User.findOne({ email: session.user.email }).select("_id role");
+        if (!user) return { success: false, error: "User not found" };
+
+        const log = await RoutineLog.findById(logId);
+        if (!log) return { success: false, error: "Log not found" };
+
+        if (log.user.toString() !== user._id.toString() && user.role !== "super_admin") {
+            return { success: false, error: "Unauthorized: not your routine log" };
+        }
+
         await RoutineLog.findByIdAndUpdate(logId, {
             $set: {
                 lastState: state,
@@ -138,7 +167,20 @@ export async function abandonRoutineLog(logId: string) {
     try {
         if (!logId) return { success: false, error: "No log ID provided" };
 
+        const session = await auth();
+        if (!session?.user?.email) return { success: false, error: "Unauthorized" };
+
         await connectDB();
+        const user = await User.findOne({ email: session.user.email }).select("_id role");
+        if (!user) return { success: false, error: "User not found" };
+
+        const log = await RoutineLog.findById(logId);
+        if (!log) return { success: true };
+
+        if (log.user.toString() !== user._id.toString() && user.role !== "super_admin") {
+            return { success: false, error: "Unauthorized: not your routine log" };
+        }
+
         // Expire permanently (unix epoch) so it's never found again by any recovery query
         await RoutineLog.findByIdAndUpdate(logId, {
             $set: {

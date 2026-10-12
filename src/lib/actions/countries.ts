@@ -4,6 +4,8 @@ import connectDB from "@/lib/db";
 import Country from "@/models/Country";
 import { revalidatePath } from "next/cache";
 
+import { requireSuperAdmin } from "@/lib/auth-utils";
+
 export async function getCountries() {
     try {
         await connectDB();
@@ -22,6 +24,7 @@ export async function getCountries() {
 
 export async function seedCountries() {
     try {
+        await requireSuperAdmin();
         await connectDB();
 
         // Check if we already have countries

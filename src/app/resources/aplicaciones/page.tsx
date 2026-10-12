@@ -30,75 +30,69 @@ export default function AplicacionesPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {/* Ritmo Katas Card - Luxury Minimalist */}
-                        <Link href="/resources/aplicaciones/ritmo-katas" className="contents">
-                            <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="group relative flex flex-col items-center justify-center p-12 bg-zinc-900/40 border border-white/10 rounded-[2.5rem] overflow-hidden transition-all hover:bg-zinc-900/60 hover:border-kuma-gold/50 shadow-2xl h-64 cursor-pointer"
-                            >
-                                {/* Shimmer Effect */}
-                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-kuma-gold/5 via-transparent to-transparent" />
-                                    <div className="absolute -inset-1 bg-kuma-gold/10 blur-2xl animate-pulse" />
-                                </div>
+                        <Link
+                            href="/resources/aplicaciones/ritmo-katas"
+                            aria-label="Abrir aplicación Ritmo Katas"
+                            className="group relative flex flex-col items-center justify-center p-12 bg-zinc-900/40 border border-white/10 rounded-[2.5rem] overflow-hidden transition-all duration-300 hover:bg-zinc-900/60 hover:border-kuma-gold/50 shadow-2xl h-64 cursor-pointer hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+                        >
+                            {/* Shimmer Effect */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                                <div className="absolute inset-0 bg-gradient-to-tr from-kuma-gold/5 via-transparent to-transparent" />
+                                <div className="absolute -inset-1 bg-kuma-gold/10 blur-2xl animate-pulse" />
+                            </div>
 
-                                <h3 className="text-3xl font-black uppercase tracking-[0.3em] group-hover:text-kuma-gold transition-all duration-500 font-serif drop-shadow-2xl translate-y-2 group-hover:translate-y-0 italic text-center">
-                                    Ritmo Katas
-                                </h3>
+                            <h3 className="text-3xl font-black uppercase tracking-[0.3em] group-hover:text-kuma-gold transition-all duration-500 font-serif drop-shadow-2xl translate-y-2 group-hover:translate-y-0 italic text-center">
+                                Ritmo Katas
+                            </h3>
 
-                                {/* Minimalist Decoration */}
-                                <div className="w-12 h-0.5 bg-kuma-gold/30 mt-4 group-hover:w-24 group-hover:bg-kuma-gold transition-all duration-500 rounded-full" />
+                            {/* Minimalist Decoration */}
+                            <div className="w-12 h-0.5 bg-kuma-gold/30 mt-4 group-hover:w-24 group-hover:bg-kuma-gold transition-all duration-500 rounded-full" />
 
-                                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-kuma-gold/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000" />
-                            </motion.div>
+                            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-kuma-gold/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000" />
                         </Link>
 
                         {/* Dojo Virtual Card - Luxury Minimalist */}
-                        <Link href="/resources/aplicaciones/dojo-virtual" className="contents">
-                            <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="group relative flex flex-col items-center justify-center p-12 bg-zinc-900/40 border border-white/10 rounded-[2.5rem] overflow-hidden transition-all hover:bg-zinc-900/60 hover:border-red-500/50 shadow-2xl h-64 cursor-pointer"
-                            >
-                                {/* Shimmer Effect */}
-                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-red-600/5 via-transparent to-transparent" />
-                                    <div className="absolute -inset-1 bg-red-600/10 blur-2xl animate-pulse" />
-                                </div>
+                        <Link
+                            href="/resources/aplicaciones/dojo-virtual"
+                            aria-label="Abrir aplicación Dojo Virtual"
+                            className="group relative flex flex-col items-center justify-center p-12 bg-zinc-900/40 border border-white/10 rounded-[2.5rem] overflow-hidden transition-all duration-300 hover:bg-zinc-900/60 hover:border-red-500/50 shadow-2xl h-64 cursor-pointer hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+                        >
+                            {/* Shimmer Effect */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                                <div className="absolute inset-0 bg-gradient-to-tr from-red-600/5 via-transparent to-transparent" />
+                                <div className="absolute -inset-1 bg-red-600/10 blur-2xl animate-pulse" />
+                            </div>
 
-                                <h3 className="text-3xl font-black uppercase tracking-[0.3em] group-hover:text-red-500 transition-all duration-500 font-serif drop-shadow-2xl translate-y-2 group-hover:translate-y-0 italic text-center">
-                                    Dojo Virtual
-                                </h3>
+                            <h3 className="text-3xl font-black uppercase tracking-[0.3em] group-hover:text-red-500 transition-all duration-500 font-serif drop-shadow-2xl translate-y-2 group-hover:translate-y-0 italic text-center">
+                                Dojo Virtual
+                            </h3>
 
-                                {/* Minimalist Decoration */}
-                                <div className="w-12 h-0.5 bg-red-600/30 mt-4 group-hover:w-24 group-hover:bg-red-500 transition-all duration-500 rounded-full" />
+                            {/* Minimalist Decoration */}
+                            <div className="w-12 h-0.5 bg-red-600/30 mt-4 group-hover:w-24 group-hover:bg-red-500 transition-all duration-500 rounded-full" />
 
-                                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000" />
-                            </motion.div>
+                            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000" />
                         </Link>
 
                         {/* Kuma Stances Card - Luxury Minimalist */}
-                        <Link href="/resources/aplicaciones/kuma-stances" className="contents">
-                            <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="group relative flex flex-col items-center justify-center p-12 bg-zinc-900/40 border border-white/10 rounded-[2.5rem] overflow-hidden transition-all hover:bg-zinc-900/60 hover:border-amber-500/50 shadow-2xl h-64 cursor-pointer"
-                            >
-                                {/* Shimmer Effect */}
-                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/5 via-transparent to-transparent" />
-                                    <div className="absolute -inset-1 bg-amber-500/10 blur-2xl animate-pulse" />
-                                </div>
+                        <Link
+                            href="/resources/aplicaciones/kuma-stances"
+                            aria-label="Abrir aplicación Kuma Stances"
+                            className="group relative flex flex-col items-center justify-center p-12 bg-zinc-900/40 border border-white/10 rounded-[2.5rem] overflow-hidden transition-all duration-300 hover:bg-zinc-900/60 hover:border-amber-500/50 shadow-2xl h-64 cursor-pointer hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+                        >
+                            {/* Shimmer Effect */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                                <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/5 via-transparent to-transparent" />
+                                <div className="absolute -inset-1 bg-amber-500/10 blur-2xl animate-pulse" />
+                            </div>
 
-                                <h3 className="text-3xl font-black uppercase tracking-[0.3em] group-hover:text-amber-500 transition-all duration-500 font-serif drop-shadow-2xl translate-y-2 group-hover:translate-y-0 italic text-center">
-                                    Kuma Stances
-                                </h3>
+                            <h3 className="text-3xl font-black uppercase tracking-[0.3em] group-hover:text-amber-500 transition-all duration-500 font-serif drop-shadow-2xl translate-y-2 group-hover:translate-y-0 italic text-center">
+                                Kuma Stances
+                            </h3>
 
-                                {/* Minimalist Decoration */}
-                                <div className="w-12 h-0.5 bg-amber-500/30 mt-4 group-hover:w-24 group-hover:bg-amber-500 transition-all duration-500 rounded-full" />
+                            {/* Minimalist Decoration */}
+                            <div className="w-12 h-0.5 bg-amber-500/30 mt-4 group-hover:w-24 group-hover:bg-amber-500 transition-all duration-500 rounded-full" />
 
-                                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000" />
-                            </motion.div>
+                            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-1000" />
                         </Link>
                     </div>
                 </motion.div>

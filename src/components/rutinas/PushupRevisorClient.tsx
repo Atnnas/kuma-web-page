@@ -10,6 +10,7 @@ import {
 import confetti from "canvas-confetti";
 import { AchievementOverlay } from "../gamification/AchievementOverlay";
 import { startRoutineLog, completeRoutineLog, deleteRoutineLog } from "@/lib/actions/routine-logs";
+import { smoothAngle, useWakeLock } from "@/lib/vision";
 
 interface PushupRevisorClientProps {
   user: any;
@@ -32,6 +33,11 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+
+  // Screen Wake Lock para prevenir apagado de pantalla en móviles durante flexiones
+  useWakeLock(cameraActive);
+  const prevAngleRef = useRef<number | null>(null);
+  const lastUiUpdateRef = useRef<number>(0);
 
   // Stats
   const [repsCount, setRepsCount] = useState(0);
@@ -411,9 +417,13 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
       return;
     }
 
-    // Calculate elbow angle
-    const angle = calculate2DAngle(shoulder, elbow, wrist);
-    setElbowAngle(angle);
+    // Calculate elbow angle con filtro EMA anti-jitter
+    const rawAngle = calculate2DAngle(shoulder, elbow, wrist);
+    const angle = smoothAngle(rawAngle, prevAngleRef.current, 0.7);
+    prevAngleRef.current = angle;
+
+    let nextFeedback = feedbackMsg;
+    let nextInstruction = instructionMsg;
 
     // Push Up state machine
     const depthThreshold = 110;
@@ -430,7 +440,8 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
         
         hasReachedDepthRef.current = false;
         wasBendingRef.current = false;
-        setFeedbackMsg("¡Push up correcto!");
+        nextFeedback = "¡Push up correcto!";
+        setFeedbackMsg(nextFeedback);
         
         if (repsCountRef.current >= targetRepsRef.current) {
           completeWorkout();
@@ -438,12 +449,13 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
       } else if (wasBendingRef.current) {
         // Did not go deep enough before extending
         playWarningBeep();
-        setFeedbackMsg("¡Flexión incompleta!");
+        nextFeedback = "¡Flexión incompleta!";
+        setFeedbackMsg(nextFeedback);
         speak("Baja más");
         wasBendingRef.current = false;
       }
       isReadyToStartRef.current = true;
-      setInstructionMsg("Flexiona los brazos para descender");
+      nextInstruction = "Flexiona los brazos para descender";
     } else if (angle <= depthThreshold) {
       if (isReadyToStartRef.current) {
         if (!hasReachedDepthRef.current) {
@@ -451,17 +463,26 @@ export function PushupRevisorClient({ user, routine }: PushupRevisorClientProps)
         }
         hasReachedDepthRef.current = true;
         wasBendingRef.current = true;
-        setFeedbackMsg("¡Profundidad lograda! Ahora sube.");
-        setInstructionMsg("Estira tus brazos por completo");
+        nextFeedback = "¡Profundidad lograda! Ahora sube.";
+        nextInstruction = "Estira tus brazos por completo";
       }
     } else if (angle < (depthThreshold + 40)) {
       if (isReadyToStartRef.current) {
         wasBendingRef.current = true;
         if (!hasReachedDepthRef.current) {
-          setFeedbackMsg("¡Baja un poco más!");
-          setInstructionMsg("Aproxima el pecho al suelo...");
+          nextFeedback = "¡Baja un poco más!";
+          nextInstruction = "Aproxima el pecho al suelo...";
         }
       }
+    }
+
+    // Actualizaciones de estado de React throttled para máxima fluidez y ahorro térmico
+    const now = performance.now();
+    if (now - lastUiUpdateRef.current > 180) {
+      lastUiUpdateRef.current = now;
+      setElbowAngle(angle);
+      setFeedbackMsg(nextFeedback);
+      setInstructionMsg(nextInstruction);
     }
 
     // Joint feedback color

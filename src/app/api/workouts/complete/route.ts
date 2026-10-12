@@ -56,8 +56,9 @@ export async function POST(req: NextRequest) {
         const now = new Date();
         const today = getMidnightInTimezone(now, userTimezone);
 
-        // 2. Fetch Duration (Strictly use body.duration)
-        const routineDuration = (body.duration && typeof body.duration === 'number') ? body.duration : 0;
+        // 2. Fetch Duration (Strictly validate and cap body.duration)
+        const rawDuration = typeof body.duration === 'number' && Number.isFinite(body.duration) ? body.duration : 0;
+        const routineDuration = Math.min(Math.max(0, Math.round(rawDuration)), 360);
 
         // --- STREAK LOGIC ---
         let lastWorkoutKuma = user.lastWorkoutDate ? getMidnightInTimezone(new Date(user.lastWorkoutDate), userTimezone) : null;

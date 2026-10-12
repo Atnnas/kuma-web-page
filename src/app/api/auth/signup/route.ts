@@ -68,10 +68,17 @@ export async function POST(req: Request) {
         const userFound = await User.findOne({ email });
 
         if (userFound) {
-            // Si el usuario existe pero NO está verificado, lo borramos de Users y dejamos que el flujo continúe hacia PendingUser
-            // Esto corrige el problema de usuarios atrapados en el limbo.
+            // Protección crítica: Si el usuario es un atleta inscrito por el dojo o admin, NUNCA borrar su perfil
+            if (userFound.athleteProfile?.isEnrolled || userFound.role !== "user" || userFound.isActive) {
+                return NextResponse.json(
+                    { success: false, message: "El correo electrónico ya está registrado en el dojo. Por favor inicia sesión o contacta al Sensei." },
+                    { status: 409 }
+                );
+            }
+
+            // Si el usuario existe pero no está verificado ni inscrito, se migra a PendingUser
             if (!userFound.emailVerified) {
-                console.log(`[DEBUG] Usuario ${email} existe pero no verificado. Migrando a PendingUser...`);
+                console.log(`[DEBUG] Usuario ${email} existe sin verificar ni perfil activo. Migrando a PendingUser...`);
                 await User.deleteOne({ _id: userFound._id });
             } else {
                 return NextResponse.json(

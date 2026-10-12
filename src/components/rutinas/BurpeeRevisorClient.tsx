@@ -10,6 +10,7 @@ import {
 import confetti from "canvas-confetti";
 import { AchievementOverlay } from "../gamification/AchievementOverlay";
 import { startRoutineLog, completeRoutineLog, deleteRoutineLog } from "@/lib/actions/routine-logs";
+import { smoothAngle, useWakeLock } from "@/lib/vision";
 
 interface BurpeeRevisorClientProps {
   user: any;
@@ -32,6 +33,11 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+
+  // Screen Wake Lock para prevenir apagado de pantalla en móviles durante burpees
+  useWakeLock(cameraActive);
+  const prevAngleRef = useRef<number | null>(null);
+  const lastUiUpdateRef = useRef<number>(0);
 
   // Stats
   const [repsCount, setRepsCount] = useState(0);
@@ -408,15 +414,18 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
       return;
     }
 
-    // Calculations
-    const currentElbowAngle = calculate2DAngle(shoulder, elbow, wrist);
-    setElbowAngle(currentElbowAngle);
+    // Calculations con filtro EMA anti-jitter
+    const rawElbowAngle = calculate2DAngle(shoulder, elbow, wrist);
+    const currentElbowAngle = smoothAngle(rawElbowAngle, prevAngleRef.current, 0.7);
+    prevAngleRef.current = currentElbowAngle;
 
     // Torso inclination relative to floor (horizontal)
     const dx = Math.abs(shoulder.x - hip.x);
     const dy = Math.abs(shoulder.y - hip.y);
     const currentTorsoAngle = Math.round(Math.atan2(dy, dx) * (180 / Math.PI));
-    setTorsoAngle(currentTorsoAngle);
+
+    let nextFeedback = feedbackMsg;
+    let nextInstruction = instructionMsg;
 
     // Burpee State Machine:
     // 1. Detect bottom of pushup (chest to floor): torso horizontal (< 40 deg) and elbows bent (<= 105 deg)
@@ -427,8 +436,10 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
         hasReachedBottomRef.current = true;
         setHasReachedBottom(true);
         playDepthBeep();
-        setFeedbackMsg("¡Pecho abajo logrado! Ahora levántate y SALTA.");
-        setInstructionMsg("Regresa de pie y salta con manos arriba");
+        nextFeedback = "¡Pecho abajo logrado! Ahora levántate y SALTA.";
+        setFeedbackMsg(nextFeedback);
+        nextInstruction = "Regresa de pie y salta con manos arriba";
+        setInstructionMsg(nextInstruction);
       }
     } else {
       // 2. Detect the jump: torso vertical (> 60 deg) and hands above shoulders (wrist.y < shoulder.y)
@@ -442,13 +453,25 @@ export function BurpeeRevisorClient({ user, routine }: BurpeeRevisorClientProps)
         
         hasReachedBottomRef.current = false;
         setHasReachedBottom(false);
-        setFeedbackMsg("¡Burpee correcto!");
-        setInstructionMsg("Baja al suelo para el siguiente burpee");
+        nextFeedback = "¡Burpee correcto!";
+        setFeedbackMsg(nextFeedback);
+        nextInstruction = "Baja al suelo para el siguiente burpee";
+        setInstructionMsg(nextInstruction);
 
         if (repsCountRef.current >= targetRepsRef.current) {
           completeWorkout();
         }
       }
+    }
+
+    // Actualizaciones de estado de React throttled a ~5 FPS para eliminar micro-stutter
+    const now = performance.now();
+    if (now - lastUiUpdateRef.current > 180) {
+      lastUiUpdateRef.current = now;
+      setElbowAngle(currentElbowAngle);
+      setTorsoAngle(currentTorsoAngle);
+      setFeedbackMsg(nextFeedback);
+      setInstructionMsg(nextInstruction);
     }
 
     // Feedback joint color

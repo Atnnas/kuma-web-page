@@ -92,12 +92,14 @@ export function Navbar({ user }: { user?: { name?: string | null; image?: string
                     hidden: { opacity: 0, scale: 0, rotate: -180 },
                     visible: { opacity: 1, scale: 1, rotate: 0 }
                 }}
-                className="fixed top-6 left-6 z-50 md:hidden text-white p-3 rounded-full bg-zinc-950/60 border border-white/10 backdrop-blur-xl shadow-lg"
+                className="fixed top-6 left-6 z-50 md:hidden text-white p-3 rounded-full bg-zinc-950/60 border border-white/10 backdrop-blur-xl shadow-lg focus-visible:ring-2 focus-visible:ring-kuma-gold"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label={isMobileMenuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+                aria-expanded={isMobileMenuOpen}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9, rotate: 90, color: "#EF4444" }}
             >
-                <List className="w-8 h-8" weight="bold" />
+                <List className="w-8 h-8" weight="bold" aria-hidden="true" />
             </motion.button>
 
             {/* Desktop Navigation */}

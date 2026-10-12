@@ -10,13 +10,17 @@ export async function POST(req: NextRequest) {
     try {
         await connectDB();
 
-        // Security Check: Only Admin or Secret Key
+        // Security Check: Only Admin or Valid Environment Secret Key
         const session = await auth();
         const { searchParams } = new URL(req.url);
         const secret = searchParams.get("secret");
+        const envSecret = process.env.ADMIN_SEED_SECRET;
 
-        if (secret !== "kumasecret" && session?.user?.role !== "super_admin") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const isAuthorizedSecret = envSecret && secret && secret === envSecret;
+        const isAuthorizedAdmin = session?.user?.role === "super_admin";
+
+        if (!isAuthorizedSecret && !isAuthorizedAdmin) {
+            return NextResponse.json({ error: "No autorizado" }, { status: 401 });
         }
 
         console.log("Fetching exercises from external source...");
@@ -44,30 +48,23 @@ export async function POST(req: NextRequest) {
 
         console.log(`Prepared ${validExercises.length} exercises for insertion.`);
 
-        // Batch Insert / Upsert
-        let assigned = 0;
-        let errors = 0;
-
-        for (const ex of validExercises) {
-            try {
-                // Upsert based on name
-                await Exercise.findOneAndUpdate(
-                    { name: ex.name },
-                    ex,
-                    { upsert: true, new: true, setDefaultsOnInsert: true }
-                );
-                assigned++;
-            } catch (err) {
-                console.error(`Error upserting ${ex.name}:`, err);
-                errors++;
+        // Perform fast bulk write instead of sequential waterfalls
+        const bulkOperations = validExercises.map((ex: any) => ({
+            updateOne: {
+                filter: { name: ex.name },
+                update: { $set: ex },
+                upsert: true
             }
-        }
+        }));
+
+        const result = await Exercise.bulkWrite(bulkOperations);
 
         return NextResponse.json({
             success: true,
-            message: `Seeded ${assigned} exercises.`,
-            total_source: externalExercises.length,
-            errors
+            message: `Ejercicios sincronizados correctamente (${validExercises.length}).`,
+            upsertedCount: result.upsertedCount,
+            modifiedCount: result.modifiedCount,
+            total_source: externalExercises.length
         });
 
     } catch (error) {

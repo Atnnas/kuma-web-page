@@ -107,17 +107,19 @@ function RoutinePreviewModal({
                             {/* Favorite Button */}
                             <button
                                 onClick={() => onToggleFavorite(routine._id)}
-                                className={`p-2.5 rounded-xl border transition-all ${isFavorite
+                                className={`p-2.5 rounded-xl border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold active:scale-95 ${isFavorite
                                     ? "bg-red-500/20 border-red-500/40 text-red-400"
                                     : "bg-white/5 border-white/10 text-zinc-500 hover:text-red-400 hover:border-red-500/30"
                                     }`}
                                 title={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+                                aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
                             >
                                 <Heart className="w-5 h-5" weight={isFavorite ? "fill" : "regular"} />
                             </button>
                             <button
                                 onClick={onClose}
-                                className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-white transition-colors"
+                                className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold active:scale-95"
+                                aria-label="Cerrar vista previa"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -384,7 +386,7 @@ export function RutinasTable({ data }: RutinasTableProps) {
         return (
             <button
                 onClick={onClick}
-                className={`px-4 py-2 rounded-xl border text-[11px] font-black uppercase tracking-wider transition-all
+                className={`px-4 py-2 rounded-xl border text-[11px] font-black uppercase tracking-wider transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold active:scale-95
                     ${active ? colorMap[color] : "border-white/10 text-zinc-500 hover:border-white/20 hover:text-zinc-300 bg-transparent"}`}
             >
                 {label}
@@ -471,10 +473,15 @@ export function RutinasTable({ data }: RutinasTableProps) {
                             placeholder={activeTab === "ejercicios" ? "BUSCAR EJERCICIO IA..." : "BUSCAR RUTINA..."}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-transparent border-none py-4 pl-12 pr-4 text-white font-bold placeholder:text-zinc-700 focus:ring-0 uppercase tracking-wider"
+                            aria-label={activeTab === "ejercicios" ? "Buscar ejercicio IA" : "Buscar rutina"}
+                            className="w-full bg-transparent border-none py-4 pl-12 pr-4 text-white font-bold placeholder:text-zinc-700 focus:ring-0 uppercase tracking-wider text-base"
                         />
                         {searchQuery && (
-                            <button onClick={() => setSearchQuery("")} className="absolute right-4 text-zinc-600 hover:text-white transition-colors">
+                            <button
+                                onClick={() => setSearchQuery("")}
+                                className="absolute right-4 text-zinc-600 hover:text-white transition-colors p-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+                                aria-label="Limpiar búsqueda"
+                            >
                                 <X className="w-4 h-4" />
                             </button>
                         )}
@@ -487,15 +494,17 @@ export function RutinasTable({ data }: RutinasTableProps) {
                     <div className="hidden md:flex bg-zinc-950 p-1 rounded-xl border border-white/10">
                         <button
                             onClick={() => setViewMode("list")}
-                            className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-white text-black shadow-lg" : "text-zinc-500 hover:text-white"}`}
+                            className={`p-2 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold ${viewMode === "list" ? "bg-white text-black shadow-lg" : "text-zinc-500 hover:text-white"}`}
                             title="Vista de Lista"
+                            aria-label="Cambiar a vista de lista"
                         >
                             <ArrowsDownUp className="w-5 h-5" />
                         </button>
                         <button
                             onClick={() => setViewMode("grid")}
-                            className={`p-2 rounded-lg transition-all ${viewMode === "grid" ? "bg-white text-black shadow-lg" : "text-zinc-500 hover:text-white"}`}
+                            className={`p-2 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold ${viewMode === "grid" ? "bg-white text-black shadow-lg" : "text-zinc-500 hover:text-white"}`}
                             title="Vista de Galería"
+                            aria-label="Cambiar a vista de cuadrícula"
                         >
                             <div className="grid grid-cols-2 gap-0.5 w-5 h-5">
                                 <div className="bg-current rounded-[1px]" />

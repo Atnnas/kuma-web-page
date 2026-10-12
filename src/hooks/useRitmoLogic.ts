@@ -20,11 +20,18 @@ export const useRitmoLogic = (
     const puntosRef = useRef<Punto[]>([]);
     const timerRef = useRef(0);
     const lastTriggeredTimeRef = useRef<number>(-1);
+    const lastStateUpdateRef = useRef<number>(0);
 
     const recordingLoop = (time: number) => {
         const delta = time - startTimeRef.current;
         timerRef.current = Math.floor(delta / 10);
-        setTimer(timerRef.current);
+        
+        // Throttled UI state updates to prevent 120fps React re-renders while keeping canvas at native 60/120fps
+        if (time - lastStateUpdateRef.current > 35) {
+            setTimer(timerRef.current);
+            lastStateUpdateRef.current = time;
+        }
+
         renderRadar();
         requestRef.current = requestAnimationFrame(recordingLoop);
     };
@@ -36,7 +43,12 @@ export const useRitmoLogic = (
 
         puntosRef.current.forEach(p => {
             if (p.tiempo > prevT && p.tiempo <= currentT) {
-                if (p.tipo === "pulso") playPulse();
+                if (p.tipo === "pulso") {
+                    playPulse();
+                    if (typeof navigator !== "undefined" && navigator.vibrate) {
+                        try { navigator.vibrate(20); } catch (e) {}
+                    }
+                }
                 if (p.tipo === "fluido") {
                     if (p.estado === "inicio") startContinuousTone();
                     else stopContinuousTone();
@@ -46,7 +58,13 @@ export const useRitmoLogic = (
 
         lastTriggeredTimeRef.current = currentT;
         timerRef.current = currentT;
-        setTimer(currentT);
+
+        // Throttled UI state updates
+        if (time - lastStateUpdateRef.current > 35) {
+            setTimer(currentT);
+            lastStateUpdateRef.current = time;
+        }
+
         renderRadar();
 
         const maxTime = puntosRef.current.length > 0 ? puntosRef.current[puntosRef.current.length - 1].tiempo : 0;
@@ -60,6 +78,31 @@ export const useRitmoLogic = (
         requestRef.current = requestAnimationFrame(playbackLoop);
     };
 
+    // Mobile / Touch action helpers with haptic feedback
+    const recordPulseAction = () => {
+        if (status !== "grabando") return;
+        playPulse();
+        if (typeof navigator !== "undefined" && navigator.vibrate) {
+            try { navigator.vibrate(25); } catch (e) {}
+        }
+        puntosRef.current.push({ id: Date.now(), tiempo: timerRef.current, tipo: "pulso" });
+    };
+
+    const startFluidAction = () => {
+        if (status !== "grabando") return;
+        startContinuousTone();
+        if (typeof navigator !== "undefined" && navigator.vibrate) {
+            try { navigator.vibrate(15); } catch (e) {}
+        }
+        puntosRef.current.push({ id: Date.now(), tiempo: timerRef.current, tipo: "fluido", estado: "inicio" });
+    };
+
+    const stopFluidAction = () => {
+        if (status !== "grabando") return;
+        stopContinuousTone();
+        puntosRef.current.push({ id: Date.now(), tiempo: timerRef.current, tipo: "fluido", estado: "final" });
+    };
+
     const startRecording = () => {
         initAudio();
         setStatus("grabando");
@@ -68,6 +111,7 @@ export const useRitmoLogic = (
         puntosRef.current = [];
         timerRef.current = 0;
         setTimer(0);
+        lastStateUpdateRef.current = performance.now();
         startTimeRef.current = performance.now();
         requestRef.current = requestAnimationFrame(recordingLoop);
     };
@@ -77,6 +121,7 @@ export const useRitmoLogic = (
         initAudio();
         setStatus("reproduciendo");
         lastTriggeredTimeRef.current = -1;
+        lastStateUpdateRef.current = performance.now();
         startTimeRef.current = performance.now();
         requestRef.current = requestAnimationFrame(playbackLoop);
     };
@@ -86,6 +131,7 @@ export const useRitmoLogic = (
         cancelAnimationFrame(requestRef.current);
         setStatus("listo");
         stopContinuousTone();
+        setTimer(timerRef.current);
         if (deltaData) setHasRecordedData(true);
     };
 
@@ -93,6 +139,7 @@ export const useRitmoLogic = (
         cancelAnimationFrame(requestRef.current);
         setStatus("pausado");
         stopContinuousTone();
+        setTimer(timerRef.current);
     };
 
     const clearSession = () => {
@@ -102,6 +149,24 @@ export const useRitmoLogic = (
         timerRef.current = 0;
         setHasRecordedData(false);
         setTimeout(renderRadar, 50);
+    };
+
+    useEffect(() => {
+        return () => {
+            cancelAnimationFrame(requestRef.current);
+            stopContinuousTone();
+        };
+    }, []);
+
+    const seekTo = (seekTime: number) => {
+        const safeT = Math.max(0, seekTime);
+        timerRef.current = safeT;
+        setTimer(safeT);
+        if (status === "reproduciendo") {
+            startTimeRef.current = performance.now() - (safeT * 10);
+            lastTriggeredTimeRef.current = safeT - 1;
+        }
+        renderRadar();
     };
 
     return {
@@ -116,6 +181,10 @@ export const useRitmoLogic = (
         stopAll,
         pauseAll,
         clearSession,
+        recordPulseAction,
+        startFluidAction,
+        stopFluidAction,
+        seekTo,
         setHasRecordedData,
         setCanSave,
         setTimer,

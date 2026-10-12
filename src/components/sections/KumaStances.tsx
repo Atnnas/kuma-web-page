@@ -2,16 +2,25 @@
 
 import { useState, useEffect, useRef } from "react";
 import { PrimalTitle } from "@/components/ui/PrimalTitle";
-import { ArrowLeft, Camera, RefreshCw, AlertCircle, Play, SlidersHorizontal, Maximize2, CheckCircle, HelpCircle, Volume2, VolumeX } from "lucide-react";
+import {
+  ArrowLeft, Camera, RefreshCw, AlertCircle, Play, SlidersHorizontal,
+  Maximize2, CheckCircle, HelpCircle, Volume2, VolumeX, ShieldAlert,
+  Compass, X, Sparkles, Target, RotateCcw, ChevronRight, SwitchCamera
+} from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-
-interface PoseLandmark {
-  x: number;
-  y: number;
-  z?: number;
-  visibility?: number;
-}
+import {
+  calculate3DAngle,
+  calculate2DAngle,
+  smoothAngle,
+  calculateKoshiAngle,
+  checkKneeValgus,
+  analyzeZenkutsuDachi,
+  analyzeKokutsuDachi,
+  analyzeKibaDachi,
+  useWakeLock,
+  type PoseLandmark
+} from "@/lib/vision";
 
 interface PosePreset {
   _id: string;
@@ -31,8 +40,20 @@ export default function KumaStances() {
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
   const [aspectRatio, setAspectRatio] = useState<number>(4 / 3);
   const [isMobile, setIsMobile] = useState(false);
-  const wakeLockRef = useRef<any>(null);
   
+  // Biomecánica Shotokan y feedback marcial
+  const [shotokanFeedback, setShotokanFeedback] = useState<{
+    stanceName: string;
+    feedback: string;
+    koshi?: "shomen" | "hanmi" | "indeterminado";
+    valgo?: boolean;
+    metrics?: Record<string, any>;
+  } | null>(null);
+  const shotokanFeedbackRef = useRef(shotokanFeedback);
+  useEffect(() => {
+    shotokanFeedbackRef.current = shotokanFeedback;
+  }, [shotokanFeedback]);
+
   // Local capture stance (to freeze user's own posture on screen)
   const [localCapture, setLocalCapture] = useState<{
     landmarks: PoseLandmark[];
@@ -48,9 +69,13 @@ export default function KumaStances() {
   const [isConnecting, setIsConnecting] = useState(true);
   const [connectionError, setConnectionError] = useState("");
   const [cameraActive, setCameraActive] = useState(false);
+
+  // Screen Wake Lock automático para katas y entrenamientos
+  useWakeLock(cameraActive);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [alignmentMetrics, setAlignmentMetrics] = useState({ score: 0, aligned: false });
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [checkAttempts, setCheckAttempts] = useState(0);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
   const addLog = (msg: string) => {
@@ -74,6 +99,10 @@ export default function KumaStances() {
   const poseInstanceRef = useRef<any>(null);
   const cameraInstanceRef = useRef<any>(null);
   const latestPoseLandmarksRef = useRef<PoseLandmark[] | null>(null);
+  const latestWorldLandmarksRef = useRef<PoseLandmark[] | null>(null);
+  const prevAnglesRef = useRef<{ left: number; right: number; leftKnee?: number; rightKnee?: number } | null>(null);
+  const alignmentMetricsRef = useRef({ score: 0, aligned: false });
+  const lastMetricsUpdateRef = useRef(0);
   const activeColorsRef = useRef<{
     leftColor: string;
     rightColor: string;
@@ -133,96 +162,7 @@ export default function KumaStances() {
     };
   }, [isMobile, cameraActive]);
 
-  // Screen Wake Lock API to prevent screen sleep/dimming on mobile
-  useEffect(() => {
-    let active = cameraActive;
-    const requestWakeLock = async () => {
-      if (!active || typeof window === "undefined" || !("wakeLock" in navigator)) return;
-      try {
-        wakeLockRef.current = await (navigator as any).wakeLock.request("screen");
-        console.log("Screen Wake Lock acquired");
-      } catch (err) {
-        console.error("Screen Wake Lock request failed:", err);
-      }
-    };
-
-    const releaseWakeLock = () => {
-      if (wakeLockRef.current) {
-        try {
-          wakeLockRef.current.release().then(() => {
-            wakeLockRef.current = null;
-            console.log("Screen Wake Lock released");
-          });
-        } catch (err) {
-          console.error("Screen Wake Lock release failed:", err);
-        }
-      }
-    };
-
-    if (active) {
-      requestWakeLock();
-    } else {
-      releaseWakeLock();
-    }
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible" && cameraActive) {
-        requestWakeLock();
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      releaseWakeLock();
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [cameraActive]);
-
-  // Dynamically inject mobile-only styles to shift the camera to the absolute top and override overflow
-  useEffect(() => {
-    if (!cameraActive) return;
-
-    const style = document.createElement("style");
-    style.id = "kuma-stances-mobile-active-styles";
-    style.innerHTML = `
-      @media (max-width: 1279.98px) {
-        /* Hide mobile header / menu toggle button */
-        .fixed.top-6.left-6 {
-          display: none !important;
-        }
-        /* Hide navbar and general header components */
-        header, nav, [class*="Navbar"], #main-header {
-          display: none !important;
-        }
-        /* Remove top and bottom padding from page main wrapper, force overflow visible for scrolling */
-        main {
-          padding-top: 0 !important;
-          padding-bottom: 0 !important;
-          overflow: visible !important;
-        }
-        /* Remove any body margin/padding spacing */
-        body {
-          padding-top: 0 !important;
-        }
-         /* Canvas wrapper overrides for active mobile fullscreen view */
-         .canvas-wrapper-mobile-active {
-           width: 100vw !important;
-           height: calc(50vh - env(safe-area-inset-top, 24px)) !important;
-           margin-top: env(safe-area-inset-top, 24px) !important;
-           aspect-ratio: auto !important;
-           max-width: none !important;
-         }
-      }
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      const existing = document.getElementById("kuma-stances-mobile-active-styles");
-      if (existing) {
-        existing.remove();
-      }
-    };
-  }, [cameraActive]);
+  // Clean mobile layout handled via responsive Tailwind zero-scroll classes
 
   // Load presets list from database on mount
   useEffect(() => {
@@ -287,6 +227,34 @@ export default function KumaStances() {
     }
   };
 
+  // Cycle Tolerance for Mobile One-Tap Chip (10 -> 15 -> 25 -> 10)
+  const cycleTolerance = () => {
+    setTolerance((prev) => {
+      let next = 15;
+      if (prev <= 10) next = 15;
+      else if (prev <= 18) next = 25;
+      else next = 10;
+      speak(`Tolerancia ${next === 10 ? "estricta diez grados" : next === 15 ? "estándar quince grados" : "permisiva veinticinco grados"}`);
+      return next;
+    });
+  };
+
+  // Toggle Camera Front / Back
+  const toggleFacingMode = () => {
+    if (videoRef.current) {
+      try {
+        videoRef.current.defaultMuted = true;
+        videoRef.current.muted = true;
+        const p = videoRef.current.play();
+        if (p !== undefined) p.catch(() => {});
+        videoRef.current.pause();
+      } catch (e) {}
+    }
+    const next = facingMode === "user" ? "environment" : "user";
+    setFacingMode(next);
+    speak(`Cambiando a cámara ${next === "user" ? "frontal" : "trasera"}`);
+  };
+
   // Trigger alignment beep sound
   const playBeep = () => {
     try {
@@ -333,39 +301,44 @@ export default function KumaStances() {
       });
   }, []);
 
-  // Geometry calculations
-  const calculateAngle = (ptA: PoseLandmark, ptB: PoseLandmark, ptC: PoseLandmark) => {
-    if (!ptA || !ptB || !ptC) return 0;
-    const vecAB = { x: ptA.x - ptB.x, y: ptA.y - ptB.y, z: (ptA.z || 0) - (ptB.z || 0) };
-    const vecCB = { x: ptC.x - ptB.x, y: ptC.y - ptB.y, z: (ptC.z || 0) - (ptB.z || 0) };
+  // Geometry calculations con soporte 3D métrico y filtro EMA anti-jitter
+  const calculateCurrentAngles = (
+    landmarks: PoseLandmark[], 
+    mode: "superior" | "inferior" | "completo",
+    worldLandmarks?: PoseLandmark[] | null
+  ) => {
+    // Si worldLandmarks está disponible, usamos coordenadas métricas 3D invariantes a perspectiva
+    const lms = worldLandmarks && worldLandmarks.length >= 33 ? worldLandmarks : landmarks;
+    const calcFn = worldLandmarks && worldLandmarks.length >= 33 ? calculate3DAngle : calculate2DAngle;
 
-    const dot = vecAB.x * vecCB.x + vecAB.y * vecCB.y + vecAB.z * vecCB.z;
-    const lenA = Math.sqrt(vecAB.x * vecAB.x + vecAB.y * vecAB.y + vecAB.z * vecAB.z);
-    const lenC = Math.sqrt(vecCB.x * vecCB.x + vecCB.y * vecCB.y + vecCB.z * vecCB.z);
+    let raw: { left: number; right: number; leftKnee?: number; rightKnee?: number };
 
-    if (lenA === 0 || lenC === 0) return 0;
-
-    const cosTheta = Math.min(1, Math.max(-1, dot / (lenA * lenC)));
-    const angle = Math.acos(cosTheta) * (180.0 / Math.PI);
-    return Math.round(angle);
-  };
-
-  const calculateCurrentAngles = (landmarks: PoseLandmark[], mode: "superior" | "inferior" | "completo") => {
     if (mode === "completo") {
-      const leftElbow = calculateAngle(landmarks[11], landmarks[13], landmarks[15]);
-      const rightElbow = calculateAngle(landmarks[12], landmarks[14], landmarks[16]);
-      const leftKnee = calculateAngle(landmarks[23], landmarks[25], landmarks[27]);
-      const rightKnee = calculateAngle(landmarks[24], landmarks[26], landmarks[28]);
-      return { left: leftElbow, right: rightElbow, leftKnee, rightKnee };
+      const leftElbow = calcFn(lms[11], lms[13], lms[15]);
+      const rightElbow = calcFn(lms[12], lms[14], lms[16]);
+      const leftKnee = calcFn(lms[23], lms[25], lms[27]);
+      const rightKnee = calcFn(lms[24], lms[26], lms[28]);
+      raw = { left: leftElbow, right: rightElbow, leftKnee, rightKnee };
     } else if (mode === "superior") {
-      const leftElbow = calculateAngle(landmarks[11], landmarks[13], landmarks[15]);
-      const rightElbow = calculateAngle(landmarks[12], landmarks[14], landmarks[16]);
-      return { left: leftElbow, right: rightElbow };
+      const leftElbow = calcFn(lms[11], lms[13], lms[15]);
+      const rightElbow = calcFn(lms[12], lms[14], lms[16]);
+      raw = { left: leftElbow, right: rightElbow };
     } else {
-      const leftKnee = calculateAngle(landmarks[23], landmarks[25], landmarks[27]);
-      const rightKnee = calculateAngle(landmarks[24], landmarks[26], landmarks[28]);
-      return { left: leftKnee, right: rightKnee };
+      const leftKnee = calcFn(lms[23], lms[25], lms[27]);
+      const rightKnee = calcFn(lms[24], lms[26], lms[28]);
+      raw = { left: leftKnee, right: rightKnee };
     }
+
+    // Filtro EMA anti-jitter (alpha 0.70) para estabilizar fluctuaciones de sensor o karategi
+    const prev = prevAnglesRef.current;
+    const smoothed = {
+      left: smoothAngle(raw.left, prev?.left ?? null, 0.7),
+      right: smoothAngle(raw.right, prev?.right ?? null, 0.7),
+      leftKnee: raw.leftKnee !== undefined ? smoothAngle(raw.leftKnee, prev?.leftKnee ?? null, 0.7) : undefined,
+      rightKnee: raw.rightKnee !== undefined ? smoothAngle(raw.rightKnee, prev?.rightKnee ?? null, 0.7) : undefined
+    };
+    prevAnglesRef.current = smoothed;
+    return smoothed;
   };
 
   const normalizeReferenceLandmarks = (current: PoseLandmark[], reference: PoseLandmark[]): PoseLandmark[] => {
@@ -663,16 +636,23 @@ export default function KumaStances() {
   // Main evaluation logic called by MediaPipe loop
   const handlePoseResults = (results: any) => {
     const landmarks = results.poseLandmarks;
+    const worldLandmarks = results.poseWorldLandmarks;
     if (!landmarks) {
       latestPoseLandmarksRef.current = null;
-      setAlignmentMetrics({ score: 0, aligned: false });
+      latestWorldLandmarksRef.current = null;
+      if (alignmentMetricsRef.current.score !== 0) {
+        alignmentMetricsRef.current = { score: 0, aligned: false };
+        setAlignmentMetrics({ score: 0, aligned: false });
+        setShotokanFeedback(null);
+      }
       return;
     }
 
     latestPoseLandmarksRef.current = landmarks;
+    latestWorldLandmarksRef.current = worldLandmarks || null;
 
     const mode = analysisModeRef.current || "completo";
-    const currentAngles = calculateCurrentAngles(landmarks, mode);
+    const currentAngles = calculateCurrentAngles(landmarks, mode, worldLandmarks);
 
     let targetLeft: number | null = null;
     let targetRight: number | null = null;
@@ -710,8 +690,40 @@ export default function KumaStances() {
     let score = 0;
     let aligned = false;
 
-    if (referenceLandmarks && targetLeft !== null && targetRight !== null) {
-      // Evaluation
+    // Evaluación Canónica Shotokan (JKA Kihon Anatomy)
+    const presetNameLower = (activePreset?.name || "").toLowerCase();
+    let canonicalResult: any = null;
+
+    if (!cap && activePreset) {
+      if (presetNameLower.includes("zenkutsu") || presetNameLower.includes("adelantada")) {
+        canonicalResult = analyzeZenkutsuDachi(landmarks, worldLandmarks);
+      } else if (presetNameLower.includes("kokutsu") || presetNameLower.includes("atrasada")) {
+        canonicalResult = analyzeKokutsuDachi(landmarks, worldLandmarks);
+      } else if (presetNameLower.includes("kiba") || presetNameLower.includes("jinete")) {
+        canonicalResult = analyzeKibaDachi(landmarks, worldLandmarks);
+      }
+    }
+
+    if (canonicalResult) {
+      score = canonicalResult.score;
+      aligned = canonicalResult.isValid;
+
+      // Colores de articulaciones basados en análisis biomecánico
+      const goodColor = "rgba(34, 197, 94, 0.85)";
+      const warnColor = "rgba(239, 68, 68, 0.8)";
+      if (canonicalResult.isValid) {
+        leftColor = goodColor;
+        rightColor = goodColor;
+        leftKneeColor = goodColor;
+        rightKneeColor = goodColor;
+      } else {
+        leftColor = score >= 70 ? goodColor : warnColor;
+        rightColor = score >= 70 ? goodColor : warnColor;
+        leftKneeColor = score >= 75 ? goodColor : warnColor;
+        rightKneeColor = score >= 75 ? goodColor : warnColor;
+      }
+    } else if (referenceLandmarks && targetLeft !== null && targetRight !== null) {
+      // Evaluation genérica contra preset de ángulos
       const diffL = Math.abs(currentAngles.left - targetLeft);
       const diffR = Math.abs(currentAngles.right - targetRight);
 
@@ -738,19 +750,49 @@ export default function KumaStances() {
       const averageDiff = totalDiff / count;
       const maxDiff = 50; // threshold for 0 score
       score = Math.round(Math.max(0, 100 - (averageDiff / maxDiff) * 100));
+    }
 
+    // Desacople de alta frecuencia: actualizar estado de React throttled a ~5 FPS
+    // o inmediatamente si hubo transición de estado (aligned toggle para audio)
+    const now = performance.now();
+    const hasAlignmentTransition = aligned !== alignmentMetricsRef.current.aligned;
+    const isTimeToUpdateReact = (now - lastMetricsUpdateRef.current) > 200;
+
+    if (hasAlignmentTransition || isTimeToUpdateReact) {
+      lastMetricsUpdateRef.current = now;
+      alignmentMetricsRef.current = { score, aligned };
       setAlignmentMetrics({ score, aligned });
 
-      // Audio alerts
-      if (aligned && !hasTriggeredAlignRef.current) {
-        hasTriggeredAlignRef.current = true;
-        playBeep();
-        speak("¡Alineación correcta!");
-      } else if (score < 75) {
-        hasTriggeredAlignRef.current = false;
+      if (canonicalResult) {
+        setShotokanFeedback({
+          stanceName: canonicalResult.stanceName,
+          feedback: canonicalResult.feedback,
+          koshi: canonicalResult.metrics?.orientacionKoshi,
+          valgo: Boolean(canonicalResult.metrics?.valgoDetectado),
+          metrics: canonicalResult.metrics
+        });
+      } else {
+        const koshi = calculateKoshiAngle(landmarks);
+        setShotokanFeedback({
+          stanceName: activePreset?.name || "Captura Personalizada",
+          feedback: aligned ? "Alineación óptima mantenida" : "Ajusta tus articulaciones a la silueta",
+          koshi: koshi.mode !== "indeterminado" ? koshi.mode : undefined,
+          valgo: false
+        });
       }
-    } else {
-      setAlignmentMetrics({ score: 0, aligned: false });
+    }
+
+    // Audio alerts
+    if (aligned && !hasTriggeredAlignRef.current) {
+      hasTriggeredAlignRef.current = true;
+      playBeep();
+      if (canonicalResult?.feedback) {
+        speak(canonicalResult.feedback);
+      } else {
+        speak("¡Alineación correcta!");
+      }
+    } else if (score < 75) {
+      hasTriggeredAlignRef.current = false;
     }
 
     activeColorsRef.current = { leftColor, rightColor, leftKneeColor, rightKneeColor };
@@ -933,7 +975,7 @@ export default function KumaStances() {
                   
                   drawCenterOfGravity(ctx, landmarks, width, height, isMirrored);
                   
-                  const currentAngles = calculateCurrentAngles(landmarks, mode);
+                  const currentAngles = calculateCurrentAngles(landmarks, mode, latestWorldLandmarksRef.current);
                   drawAnglesOnSkeleton(ctx, landmarks, width, height, currentAngles, mode, isMirrored);
                 }
                 
@@ -1008,374 +1050,256 @@ export default function KumaStances() {
   };
 
   return (
-    <section className={`relative w-full flex flex-col justify-start items-center overflow-x-hidden bg-zinc-950 text-white transition-all duration-300 ${
-      cameraActive ? "max-xl:pt-0 max-xl:pb-0 max-xl:min-h-0" : "min-h-[calc(100vh-80px)] pt-6 sm:pt-12 pb-12 sm:pb-20"
-    }`}>
-      
-      {/* Decorative Watermark */}
-      <div className="absolute right-10 top-[12%] text-[24vw] md:text-[14vw] font-black text-white/[0.03] select-none pointer-events-none leading-none z-0 font-serif hidden sm:block">
+    <section className="relative w-full min-h-[calc(100dvh-5rem)] sm:h-[calc(100dvh-5rem)] flex flex-col justify-between overflow-x-hidden overflow-y-auto sm:overflow-hidden bg-zinc-950 text-white select-none">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-kuma-gold/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-red-600/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute right-10 top-[15%] text-[20vw] font-black text-white/[0.02] select-none pointer-events-none leading-none z-0 font-serif hidden sm:block">
         姿勢
       </div>
 
-      <div className={`relative z-20 w-full mx-auto flex flex-col justify-start items-center pt-0 transition-all duration-300 ${
-        cameraActive ? "max-xl:max-w-none max-xl:px-0" : "max-w-[99vw] px-1.5 sm:px-4 md:px-6 lg:px-8"
-      }`}>
-        
-        {/* Navigation / Header */}
-        <div className={`w-full flex justify-between items-center mb-4 sm:mb-8 border-b border-white/5 pb-4 ${
-          cameraActive ? "max-xl:hidden" : ""
-        }`}>
+      {/* Top Header Bar */}
+      <header className="w-full flex items-center justify-between pl-16 sm:pl-8 pr-3 sm:pr-8 py-2.5 sm:py-3 border-b border-white/5 bg-zinc-950/80 backdrop-blur-xl z-30 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/resources/aplicaciones"
-            className="flex items-center gap-2 text-zinc-500 hover:text-kuma-gold transition-all duration-300 group px-3 py-2 rounded-xl hover:bg-white/5 active:scale-95"
+            className="flex items-center gap-1.5 text-zinc-400 hover:text-kuma-gold transition-colors py-1.5 px-2.5 sm:px-3 rounded-xl hover:bg-white/5 active:scale-95 text-xs font-bold uppercase tracking-wider focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+            aria-label="Volver a Aplicaciones"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span className="hidden sm:inline font-black uppercase tracking-widest text-[10px]">Volver a Aplicaciones</span>
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Aplicaciones</span>
           </Link>
-          <span className="hidden sm:flex text-kuma-gold font-bold uppercase tracking-[0.2em] text-xs drop-shadow-md items-center gap-2 font-serif">
-            姿勢 <span className="text-white/60">KUMA STANCES</span>
-          </span>
+          <div className="h-4 w-px bg-white/10 hidden sm:block" />
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="text-kuma-gold font-serif text-sm font-bold tracking-widest">姿勢</span>
+            <span className="text-white font-black text-xs sm:text-sm tracking-wider uppercase font-serif">Kuma Stances</span>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-kuma-gold border border-amber-500/30 uppercase tracking-widest hidden md:inline">
+              Visión IA 3D
+            </span>
+          </div>
         </div>
 
+        {/* Quick Header Controls */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Voice toggle */}
+          <button
+            type="button"
+            onClick={() => toggleVoice()}
+            className={`p-2 sm:p-2.5 rounded-xl border transition-all active:scale-95 flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold ${
+              voiceEnabled 
+                ? "bg-amber-500/15 border-kuma-gold/50 text-kuma-gold shadow-[0_0_15px_rgba(234,179,8,0.2)]" 
+                : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"
+            }`}
+            title={voiceEnabled ? "Desactivar ayuda por voz" : "Activar ayuda por voz"}
+            aria-label={voiceEnabled ? "Desactivar voz" : "Activar voz"}
+          >
+            {voiceEnabled ? <Volume2 className="w-4 h-4 text-kuma-gold" /> : <VolumeX className="w-4 h-4" />}
+            <span className="text-[10px] sm:text-[11px] font-bold hidden xs:inline">{voiceEnabled ? "Voz Activa" : "Silencio"}</span>
+          </button>
+
+          {/* Settings Drawer Button */}
+          <button
+            type="button"
+            onClick={() => setIsSettingsOpen(true)}
+            className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition-all active:scale-95 flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+            title="Ajustes de análisis"
+            aria-label="Abrir ajustes de análisis"
+          >
+            <SlidersHorizontal className="w-4 h-4 text-kuma-gold" />
+            <span className="text-[11px] font-bold inline">Ajustes</span>
+          </button>
+
+          {/* Camera Stop button if active */}
+          {cameraActive && (
+            <button
+              type="button"
+              onClick={() => setCameraActive(false)}
+              className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-red-600/20 hover:bg-red-600 border border-red-500/40 text-red-300 hover:text-white transition-all active:scale-95 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(220,38,38,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+            >
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span>Detener</span>
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* Main Arena Stage */}
+      <main className="flex-1 w-full relative flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 overflow-hidden">
         {isConnecting ? (
-          <div className="w-full max-w-md bg-zinc-900/40 border border-white/10 rounded-[2.5rem] p-8 text-center backdrop-blur-md flex flex-col items-center justify-center space-y-4 shadow-2xl min-h-[250px]">
-            <RefreshCw className="w-8 h-8 text-kuma-gold animate-spin" />
-            <p className="font-body text-sm text-zinc-400">Cargando catálogo oficial de posturas...</p>
+          <div className="m-auto flex flex-col items-center justify-center p-8 sm:p-12 bg-zinc-900/60 border border-white/10 rounded-3xl backdrop-blur-xl shadow-2xl space-y-4">
+            <RefreshCw className="w-8 sm:w-10 h-8 sm:h-10 text-kuma-gold animate-spin" />
+            <p className="text-xs sm:text-sm font-bold uppercase tracking-widest text-zinc-400">Cargando catálogo oficial de posturas...</p>
           </div>
-        ) : (
-          <div className={`w-full flex flex-col xl:flex-row gap-4 sm:gap-8 bg-zinc-900/40 border border-white/10 shadow-2xl rounded-[2rem] p-3 sm:p-8 md:p-10 min-h-[580px] backdrop-blur-md transition-all duration-300 ${
-            cameraActive ? "max-xl:p-0 max-xl:border-none max-xl:rounded-none max-xl:min-h-0" : ""
-          }`}>
-            
-            {/* Camera Evaluation Window */}
-            <div className={`flex-1 flex flex-col items-center justify-center bg-black/95 relative transition-all duration-300 ${
-              cameraActive 
-                ? "max-xl:fixed max-xl:top-0 max-xl:left-0 max-xl:w-screen max-xl:h-[50vh] max-xl:z-[60] max-xl:bg-black max-xl:bottom-auto" 
-                : "border border-neutral-850 p-2 sm:p-4 rounded-xl min-h-[480px]"
-            }`}>
-              
-              <div 
-                className={`relative w-full max-w-[960px] bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 ${
-                  cameraActive ? "max-xl:rounded-none max-xl:border-none max-xl:w-full max-xl:h-full max-xl:max-w-none canvas-wrapper-mobile-active" : ""
-                }`}
-                style={(cameraActive && isMobile) ? { width: "100vw", height: "50vh" } : { aspectRatio: aspectRatio }}
-              >
-                <video 
-                  ref={videoRef}
-                  style={{ 
-                    position: "absolute", 
-                    top: 0, 
-                    left: 0, 
-                    width: "100%", 
-                    height: "100%", 
-                    opacity: 0.01, 
-                    pointerEvents: "none", 
-                    zIndex: 0, 
-                    objectFit: "contain",
-                    transform: facingMode === "user" ? "scaleX(-1)" : "none"
-                  }}
-                  width="640"
-                  height="480"
-                  playsInline
-                  muted
-                  autoPlay
-                />
+        ) : !cameraActive ? (
+          /* DOJO LOBBY: Centrado, responsivo, protegido contra cortes en móvil */
+          <div className="w-full max-w-4xl mx-auto my-auto flex flex-col items-center justify-center space-y-4 sm:space-y-6 md:space-y-8 py-2">
+            {/* Hero Header */}
+            <div className="text-center space-y-2 sm:space-y-3 max-w-2xl mx-auto px-2">
+              <div className="inline-flex items-center gap-2 px-3 py-0.5 sm:py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-kuma-gold text-[10px] sm:text-xs font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(234,179,8,0.15)]">
+                <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Laboratorio de Biomecánica Shotokan
+              </div>
+              <PrimalTitle className="text-2xl sm:text-4xl md:text-5xl uppercase tracking-widest text-white drop-shadow-[0_2px_15px_rgba(0,0,0,0.8)]">
+                Kuma Stances
+              </PrimalTitle>
+              <p className="text-zinc-400 text-xs sm:text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+                Ponte a 2-3 metros frente a la cámara. Detección en tiempo real de ángulos articulares, rotación pélvica (<strong className="text-kuma-gold font-bold">Koshi</strong>) y prevención de valgo articular.
+              </p>
+            </div>
 
-                <canvas 
-                  ref={canvasRef}
-                  width="640"
-                  height="480"
-                  className={`relative w-full h-full z-10 ${cameraActive ? "max-xl:object-cover object-contain bg-black" : ""}`}
-                />
+            {/* Stance Selector Cards */}
+            <div className="w-full space-y-2 sm:space-y-3 px-1 sm:px-0">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-kuma-gold">
+                  Selecciona tu Postura a Evaluar
+                </span>
+                <span className="text-[10px] sm:text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
+                  {presets.length} Oficiales
+                </span>
+              </div>
 
-                {/* Debug console removed from screen as requested */}
-
-                {/* Mobile Camera Overlays */}
-                {cameraActive && isMobile && (
-                  <>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+                {presets.map((preset) => {
+                  const isSelected = selectedPresetId === preset._id && !localCapture;
+                  return (
                     <button
+                      key={preset._id}
                       type="button"
-                      onClick={() => {
-                        if (videoRef.current) {
-                          try {
-                            videoRef.current.defaultMuted = true;
-                            videoRef.current.muted = true;
-                            const playPromise = videoRef.current.play();
-                            if (playPromise !== undefined) {
-                              playPromise.catch(() => {});
-                            }
-                            videoRef.current.pause();
-                          } catch (e) {}
-                        }
-                        const nextMode = facingMode === "user" ? "environment" : "user";
-                        setFacingMode(nextMode);
-                        speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
-                      }}
-                      className="absolute top-4 left-4 p-3.5 bg-zinc-950 border-2 border-kuma-gold hover:bg-zinc-900 rounded-2xl pointer-events-auto active:scale-95 shadow-[0_0_15px_rgba(245,158,11,0.4)] flex items-center justify-center z-[70] cursor-pointer text-zinc-300 hover:text-white"
-                      title="Cambiar Cámara"
-                    >
-                      <RefreshCw className="w-6 h-6 text-kuma-gold" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => toggleVoice()}
-                      className={`absolute top-4 left-20 p-3.5 bg-zinc-950 border-2 rounded-2xl pointer-events-auto active:scale-95 flex items-center justify-center z-[70] cursor-pointer transition-all ${
-                        voiceEnabled
-                          ? "border-kuma-gold text-kuma-gold shadow-[0_0_15px_rgba(245,158,11,0.4)]"
-                          : "border-white/20 text-zinc-500 hover:text-zinc-300"
+                      onClick={() => handlePresetChange(preset._id)}
+                      className={`group relative p-3 sm:p-4 rounded-xl sm:rounded-2xl border text-left transition-all duration-300 active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold flex flex-col justify-between h-24 sm:h-32 ${
+                        isSelected
+                          ? "bg-gradient-to-b from-amber-500/20 to-zinc-900 border-kuma-gold shadow-[0_0_25px_rgba(234,179,8,0.25)] ring-1 ring-kuma-gold"
+                          : "bg-zinc-900/40 hover:bg-zinc-900/80 border-white/10 hover:border-white/20"
                       }`}
-                      title={voiceEnabled ? "Desactivar ayuda por voz" : "Activar ayuda por voz"}
                     >
-                      {voiceEnabled ? <Volume2 className="w-6 h-6 text-kuma-gold" /> : <VolumeX className="w-6 h-6 text-zinc-500" />}
-                    </button>
-                  </>
-                )}
-
-                {/* Desktop/Default camera active overlays (visible on desktop only) */}
-                {(!isMobile || !cameraActive) && (
-                  <>
-                    {cameraActive && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (videoRef.current) {
-                              try {
-                                videoRef.current.defaultMuted = true;
-                                videoRef.current.muted = true;
-                                const playPromise = videoRef.current.play();
-                                if (playPromise !== undefined) {
-                                  playPromise.catch(() => {});
-                                }
-                                videoRef.current.pause();
-                              } catch (e) {}
-                            }
-                            const nextMode = facingMode === "user" ? "environment" : "user";
-                            setFacingMode(nextMode);
-                            speak(`Cambiando a cámara ${nextMode === "user" ? "frontal" : "trasera"}`);
-                          }}
-                          className="absolute top-4 left-4 p-3 bg-zinc-950/80 hover:bg-zinc-900 border border-white/15 rounded-xl transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 group z-20 cursor-pointer"
-                          title="Cambiar Cámara"
-                        >
-                          <RefreshCw className="w-4 h-4 text-kuma-gold group-hover:rotate-180 transition-transform duration-500" />
-                          <span className="text-[10px] uppercase font-bold tracking-wider text-white">
-                            Cámara: {facingMode === "user" ? "Frontal" : "Trasera"}
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                            isSelected 
+                              ? "bg-kuma-gold/20 text-kuma-gold border-kuma-gold/40" 
+                              : "bg-white/5 text-zinc-400 border-white/10"
+                          }`}>
+                            {preset.category || "Completo"}
                           </span>
-                        </button>
+                          <h4 className="text-sm sm:text-base md:text-lg font-black uppercase tracking-wide text-white font-serif mt-1 sm:mt-1.5 group-hover:text-kuma-gold transition-colors">
+                            {preset.name}
+                          </h4>
+                        </div>
+                        <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border transition-all ${
+                          isSelected ? "bg-kuma-gold border-kuma-gold text-black" : "border-white/20 text-transparent"
+                        }`}>
+                          <CheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                        </div>
+                      </div>
 
-                        <button
-                          type="button"
-                          onClick={() => toggleVoice()}
-                          className={`absolute top-4 left-56 p-3 bg-zinc-950/80 hover:bg-zinc-900 border rounded-xl transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 group z-20 cursor-pointer ${
-                            voiceEnabled
-                              ? "border-kuma-gold/50 text-kuma-gold"
-                              : "border-white/15 text-zinc-400"
-                          }`}
-                          title={voiceEnabled ? "Desactivar ayuda por voz" : "Activar ayuda por voz"}
-                        >
-                          {voiceEnabled ? <Volume2 className="w-4 h-4 text-kuma-gold" /> : <VolumeX className="w-4 h-4 text-zinc-500" />}
-                          <span className="text-[10px] uppercase font-bold tracking-wider text-white">
-                            Voz: {voiceEnabled ? "Activada" : "Desactivada"}
-                          </span>
-                        </button>
-
-                        <Link
-                          href="/resources/aplicaciones"
-                          className="absolute top-4 right-4 p-3 bg-zinc-950/80 hover:bg-zinc-900 border border-white/15 rounded-xl transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 group z-20 cursor-pointer text-zinc-400 hover:text-kuma-gold"
-                          title="Volver a Aplicaciones"
-                        >
-                          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                          <span className="text-[10px] uppercase font-bold tracking-wider text-white">
-                            Volver
-                          </span>
-                        </Link>
-                      </>
-                    )}
-                  </>
-                )}
-
-                {!cameraActive && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-950/95 text-center p-6 space-y-4 z-20">
-                    <Camera className="w-12 h-12 text-zinc-400 animate-pulse" />
-                    <div>
-                      <p className="font-body text-sm font-semibold text-white">Práctica de Espejo Local</p>
-                      <p className="font-body text-xs text-zinc-500 max-w-sm mt-1.5 leading-relaxed">
-                        Kuma Stances procesa tu video localmente. Enciende tu cámara web para comenzar a evaluar tus posturas.
-                      </p>
-                    </div>
-                    
-                    <button
-                      disabled={!scriptsLoaded}
-                      onClick={() => {
-                        if (videoRef.current) {
-                          try {
-                            videoRef.current.defaultMuted = true;
-                            videoRef.current.muted = true;
-                            const playPromise = videoRef.current.play();
-                            if (playPromise !== undefined) {
-                              playPromise.catch(() => {});
-                            }
-                            videoRef.current.pause();
-                          } catch (e) {}
-                        }
-                        setCameraActive(true);
-                      }}
-                      className="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-white rounded-xl text-xs font-bold tracking-widest px-8 py-3.5 hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all cursor-pointer"
-                    >
-                      {scriptsLoaded ? "ACTIVAR EVALUADOR EN VIVO" : "CARGANDO LIBRERÍAS..."}
+                      <div className="text-[10px] sm:text-[11px] text-zinc-400 flex items-center gap-1.5 sm:gap-2 pt-1.5 border-t border-white/5">
+                        <span>L: <strong className="text-zinc-200 tabular-nums">{preset.angles?.left}°</strong></span>
+                        <span>•</span>
+                        <span>R: <strong className="text-zinc-200 tabular-nums">{preset.angles?.right}°</strong></span>
+                        {preset.angles?.leftKnee !== undefined && (
+                          <>
+                            <span>•</span>
+                            <span>K: <strong className="text-zinc-200 tabular-nums">{preset.angles?.leftKnee}°</strong></span>
+                          </>
+                        )}
+                      </div>
                     </button>
-                  </div>
-                )}
-
-                {connectionError && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/95 text-center p-6 space-y-4 z-[80] pointer-events-auto">
-                    <AlertCircle className="w-12 h-12 text-red-500 animate-pulse" />
-                    <div className="space-y-2">
-                      <p className="font-body text-sm font-semibold text-white">Error de Visión Artificial</p>
-                      <p className="font-body text-xs text-red-400 max-w-sm leading-relaxed">
-                        {connectionError}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setConnectionError("");
-                        setCameraActive(false);
-                      }}
-                      className="px-6 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-xl text-xs font-bold tracking-wider text-white active:scale-95 transition-all cursor-pointer"
-                    >
-                      Volver
-                    </button>
-                  </div>
-                )}
-
-                {/* Live HUD Feedback Overlay - Bottom Right of the video wrapper */}
-                {cameraActive && alignmentMetrics.score > 0 && (
-                  <div className={`absolute bottom-4 right-4 bg-zinc-950/85 border border-white/15 p-3 rounded-xl space-y-1 font-body text-[10px] sm:text-xs z-20 backdrop-blur-md shadow-lg flex flex-col ${
-                    isMobile ? "max-sm:bottom-32 max-sm:right-6" : ""
-                  }`}>
-                    <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold">ALINEACIÓN</span>
-                    <div className="flex justify-between gap-4 pt-1 border-t border-white/5">
-                      <span className="text-zinc-400">Coincidencia:</span>
-                      <span className={`font-bold ${alignmentMetrics.aligned ? "text-emerald-500" : "text-amber-500"}`}>
-                        {alignmentMetrics.score}%
-                      </span>
-                    </div>
-                  </div>
-                )}
+                  );
+                })}
               </div>
             </div>
 
-            {/* Sidebar Controls */}
-            <div className={`w-full xl:w-[360px] shrink-0 border border-white/10 bg-zinc-900/40 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between space-y-6 backdrop-blur-md shadow-2xl transition-all duration-300 ${
-              cameraActive ? "max-xl:block max-xl:pt-[50vh] max-xl:rounded-none max-xl:border-none max-xl:bg-zinc-950 max-xl:w-full max-xl:px-4 max-xl:pb-8 max-xl:flex-1 max-xl:space-y-4 max-xl:shadow-none" : ""
-            }`}>
-              
-              <div className="space-y-6">
-                
-                {/* Header */}
-                <div className={`border-b border-white/5 pb-4 flex items-center justify-between ${cameraActive ? "max-xl:hidden" : ""}`}>
-                  <div className="max-xl:hidden">
-                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 border border-amber-500/30 text-amber-400 bg-amber-950/30 rounded-lg">
-                      PRÁCTICA INDIVIDUAL
-                    </span>
-                    <h2 className="font-impact-condensed text-xl text-white tracking-wide mt-1">
-                      KUMA STANCES
-                    </h2>
+            {/* Main Call to Action Button */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1 sm:pt-2 w-full sm:w-auto px-2">
+              <button
+                disabled={!scriptsLoaded}
+                onClick={() => {
+                  if (videoRef.current) {
+                    try {
+                      videoRef.current.defaultMuted = true;
+                      videoRef.current.muted = true;
+                      const playPromise = videoRef.current.play();
+                      if (playPromise !== undefined) playPromise.catch(() => {});
+                      videoRef.current.pause();
+                    } catch (e) {}
+                  }
+                  setCameraActive(true);
+                }}
+                className="w-full sm:w-auto group relative px-6 sm:px-10 py-3.5 sm:py-4.5 rounded-2xl bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-black text-xs sm:text-sm md:text-base uppercase tracking-widest shadow-[0_0_35px_rgba(245,158,11,0.4)] hover:shadow-[0_0_50px_rgba(245,158,11,0.6)] transition-all duration-300 active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Camera className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform text-white shrink-0" />
+                <span>{scriptsLoaded ? "ENCENDER CÁMARA Y EVALUAR" : "CARGANDO MODELO IA..."}</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* SMART MIRROR ARENA: Cámara Activa a pantalla completa y adaptada a móvil */
+          <div className="relative w-full h-full max-w-[1400px] mx-auto flex items-center justify-center overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 bg-black shadow-2xl">
+            {/* The video and canvas */}
+            <video
+              ref={videoRef}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                opacity: 0.01,
+                pointerEvents: "none",
+                zIndex: 0,
+                objectFit: "contain",
+                transform: facingMode === "user" ? "scaleX(-1)" : "none"
+              }}
+              width="640"
+              height="480"
+              playsInline
+              muted
+              autoPlay
+            />
+
+            <canvas
+              ref={canvasRef}
+              width="640"
+              height="480"
+              className="relative w-full h-full z-10 object-contain bg-black"
+            />
+
+            {/* Dojo Crosshair Accents */}
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 w-5 h-5 sm:w-6 sm:h-6 border-t-2 border-l-2 border-kuma-gold/50 pointer-events-none z-20" />
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 w-5 h-5 sm:w-6 sm:h-6 border-t-2 border-r-2 border-kuma-gold/50 pointer-events-none z-20" />
+            <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 w-5 h-5 sm:w-6 sm:h-6 border-b-2 border-l-2 border-kuma-gold/50 pointer-events-none z-20" />
+            <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 w-5 h-5 sm:w-6 sm:h-6 border-b-2 border-r-2 border-kuma-gold/50 pointer-events-none z-20" />
+
+            {/* UNIFIED RESPONSIVE TOP HUD BAR: Diseñado para evitar CUALQUIER colisión en pantallas móviles */}
+            <div className="absolute top-2.5 inset-x-2.5 sm:top-5 sm:inset-x-5 flex flex-col gap-1.5 sm:gap-2 z-30 pointer-events-none">
+              {/* Row 1: Stance Pill + Controls (Left) and Alignment Score (Right) in a flex row */}
+              <div className="flex items-center justify-between gap-2 w-full">
+                {/* Left: Stance badge and quick controls */}
+                <div className="flex items-center gap-1 sm:gap-1.5 pointer-events-auto shrink-0 flex-wrap">
+                  <div className="bg-zinc-950/90 backdrop-blur-xl border border-white/15 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl flex items-center gap-2 shadow-xl">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <div className="flex flex-col">
+                      <span className="text-[8px] sm:text-[9px] text-zinc-400 font-bold uppercase tracking-widest hidden xs:inline">Guía</span>
+                      <span className="text-xs sm:text-sm font-black text-white font-serif uppercase tracking-wide truncate max-w-[80px] sm:max-w-[180px]">
+                        {localCapture ? "Local" : (currentPreset?.name || "Kihon")}
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Audio / Voice Toggle button */}
+                  {/* Botón Modo Espejo / Cámara Móvil con Texto Descriptivo */}
                   <button
                     type="button"
-                    onClick={() => toggleVoice()}
-                    className={`p-2 border rounded-xl transition-all hover:bg-white/5 cursor-pointer ${
-                      voiceEnabled ? 'text-kuma-gold border-kuma-gold/30 bg-amber-500/10' : 'text-zinc-500 border-white/10'
-                    }`}
-                    title={voiceEnabled ? "Desactivar ayuda por voz" : "Activar ayuda por voz"}
+                    onClick={toggleFacingMode}
+                    className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-zinc-950/90 hover:bg-zinc-900 border border-white/15 text-white active:scale-95 transition-all shadow-md flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+                    title={facingMode === "user" ? "Modo Espejo (Frontal) - Toca para cambiar" : "Cámara Trasera - Toca para modo espejo"}
+                    aria-label="Modo Espejo"
                   >
-                    {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                    <SwitchCamera className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-kuma-gold shrink-0" />
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-zinc-200">
+                      {facingMode === "user" ? "Espejo" : "Trasera"}
+                    </span>
                   </button>
-                </div>
 
-                {/* Mobile Active Camera Controls removed from sidebar controls space */}
-
-                {/* Stance Selector */}
-                <div className={`space-y-2 ${cameraActive ? "max-xl:hidden" : ""}`}>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-kuma-gold block">
-                    Selecciona una Postura
-                  </label>
-                  {presets.length > 0 ? (
-                    <select
-                      value={selectedPresetId}
-                      onChange={(e) => handlePresetChange(e.target.value)}
-                      className="w-full px-4 py-3 border border-white/10 rounded-2xl bg-zinc-950 font-body text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-kuma-gold/50 transition-all cursor-pointer"
-                      style={{ color: "#ffffff", backgroundColor: "#09090b" }}
-                    >
-                      {presets.map((preset) => (
-                        <option key={preset._id} value={preset._id}>
-                          {preset.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <p className="font-body text-xs text-zinc-500 italic">No hay posturas en el catálogo oficial.</p>
-                  )}
-                </div>
-
-                {/* Active Stance Description card */}
-                <div className={`bg-zinc-950/60 border border-white/5 p-4 rounded-2xl space-y-3 ${cameraActive ? "max-xl:hidden" : ""}`}>
-                  <h3 className="text-[10px] font-bold uppercase text-kuma-gold tracking-wider">
-                    Postura Seleccionada
-                  </h3>
-                  {currentPreset ? (
-                    <div className="space-y-2">
-                      <p className="font-impact-condensed text-base text-white tracking-wide">
-                        {currentPreset.name}
-                      </p>
-                      <p className="font-body text-[11px] text-zinc-400 font-light leading-relaxed">
-                        Colócate en el campo de visión de tu cámara a una distancia aproximada de 2 a 3 metros. La silueta fantasma en color cian indica la posición guía.
-                      </p>
-                      {currentPreset.angles && (
-                        <div className="text-[10px] font-body text-zinc-500 pt-1 border-t border-white/5 flex flex-wrap gap-2">
-                          <span>Modo: <strong className="text-zinc-300 uppercase">{currentPreset.category || "Cuerpo completo"}</strong></span>
-                          <span>•</span>
-                          <span>L: <strong className="text-zinc-300">{currentPreset.angles.left}°</strong></span>
-                          <span>•</span>
-                          <span>R: <strong className="text-zinc-300">{currentPreset.angles.right}°</strong></span>
-                          {currentPreset.angles.leftKnee !== undefined && (
-                            <>
-                              <span>•</span>
-                              <span>LK: <strong className="text-zinc-300">{currentPreset.angles.leftKnee}°</strong></span>
-                              <span>•</span>
-                              <span>RK: <strong className="text-zinc-300">{currentPreset.angles.rightKnee}°</strong></span>
-                            </>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ) : localCapture ? (
-                    <div className="space-y-2">
-                      <p className="font-impact-condensed text-base text-amber-500 tracking-wide">
-                        Captura Local Activa
-                      </p>
-                      <p className="font-body text-[11px] text-amber-500/80 font-light leading-relaxed">
-                        Has congelado tu propia postura como referencia. Intenta replicar la silueta dorada en pantalla.
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="font-body text-[11px] text-zinc-500 italic">Selecciona una postura del catálogo superior para comenzar.</p>
-                  )}
-                </div>
-
-                {/* Local Capture Section */}
-                <div className={`bg-zinc-950/60 border border-white/5 p-4 rounded-2xl space-y-3 ${cameraActive ? "max-xl:p-0 max-xl:bg-transparent max-xl:border-none max-xl:space-y-0" : ""}`}>
-                  <h3 className={`text-[10px] font-bold uppercase text-kuma-gold tracking-wider ${cameraActive ? "max-xl:hidden" : ""}`}>
-                    Capturar Posición
-                  </h3>
-                  <p className={`font-body text-[11px] text-zinc-400 font-light leading-relaxed ${cameraActive ? "max-xl:hidden" : ""}`}>
-                    Congela tu postura actual detectada en la cámara como silueta guía dorada.
-                  </p>
-                  
+                  {/* Botón de Capturar o Liberar Posición: Altamente Descriptivo */}
                   {localCapture ? (
                     <button
                       type="button"
@@ -1383,16 +1307,21 @@ export default function KumaStances() {
                         localCaptureRef.current = null;
                         setLocalCapture(null);
                         hasTriggeredAlignRef.current = false;
-                        speak("Captura de referencia limpia.");
+                        speak("Captura de referencia liberada.");
                       }}
-                      className="w-full bg-zinc-800 text-white border border-white/10 rounded-xl text-xs font-bold tracking-widest py-3 flex items-center justify-center gap-2 hover:bg-zinc-700 transition-all cursor-pointer"
+                      className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/60 text-amber-300 hover:text-white active:scale-95 transition-all shadow-md flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+                      title="Liberar postura congelada y volver al catálogo"
+                      aria-label="Liberar posición"
                     >
-                      Limpiar Captura
+                      <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
+                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+                        Liberar <span className="hidden sm:inline">Posición</span>
+                      </span>
                     </button>
                   ) : (
                     <button
                       type="button"
-                      disabled={!cameraActive || !latestPoseLandmarksRef.current}
+                      disabled={!latestPoseLandmarksRef.current}
                       onClick={() => {
                         if (latestPoseLandmarksRef.current && latestPoseLandmarksRef.current.length > 0) {
                           const mode = analysisMode;
@@ -1408,132 +1337,298 @@ export default function KumaStances() {
                           localCaptureRef.current = captured;
                           setLocalCapture(captured);
                           hasTriggeredAlignRef.current = false;
-                          speak("Posición capturada. Intenta replicar la silueta dorada.");
+                          speak("Posición capturada.");
                         }
                       }}
-                      className="w-full bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-white rounded-xl text-xs font-bold tracking-widest py-3 flex items-center justify-center gap-2 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)] cursor-pointer"
+                      className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-amber-500/20 to-yellow-500/20 hover:from-amber-500/30 hover:to-yellow-500/30 border border-amber-500/50 text-kuma-gold hover:text-white active:scale-95 transition-all shadow-md flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+                      title="Capturar tu postura actual como guía"
+                      aria-label="Capturar posición"
                     >
-                      CAPTURAR POSICIÓN
+                      <Target className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-kuma-gold shrink-0" />
+                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+                        Capturar <span className="hidden sm:inline">Posición</span>
+                      </span>
                     </button>
                   )}
                 </div>
 
-                {/* Voice Guidance Toggle Switch Card */}
-                <div className="bg-zinc-950/60 border border-white/5 p-4 rounded-2xl flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2.5 rounded-xl border transition-colors ${
-                      voiceEnabled 
-                        ? "bg-amber-500/10 border-amber-500/30 text-kuma-gold" 
-                        : "bg-zinc-900/80 border-white/10 text-zinc-500"
+                {/* Right: Score Pill (flex-aligned, will NEVER collide with the left side) */}
+                <div className="bg-zinc-950/90 backdrop-blur-2xl border border-white/20 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-3 shadow-2xl pointer-events-auto shrink-0">
+                  <div className="flex flex-col text-right">
+                    <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-zinc-400">Score</span>
+                    <span className={`text-xl sm:text-3xl md:text-4xl font-black font-mono tabular-nums leading-none ${
+                      alignmentMetrics.aligned ? "text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.6)]" : "text-amber-400"
                     }`}>
-                      {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-bold uppercase text-white tracking-wider">
-                        Ayuda por Voz
-                      </h3>
-                      <p className="font-body text-[10px] text-zinc-400">
-                        {voiceEnabled ? "Instrucciones de voz activadas" : "Modo silencioso (sin voz)"}
-                      </p>
-                    </div>
+                      {alignmentMetrics.score}%
+                    </span>
                   </div>
+                </div>
+              </div>
 
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={voiceEnabled}
-                    onClick={() => toggleVoice()}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      voiceEnabled ? "bg-amber-500" : "bg-zinc-800"
-                    }`}
-                    title={voiceEnabled ? "Desactivar ayuda por voz" : "Activar ayuda por voz"}
-                  >
-                    <span
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow-lg ring-0 transition duration-200 ease-in-out ${
-                        voiceEnabled ? "translate-x-5 bg-zinc-950" : "translate-x-0 bg-zinc-400"
+              {/* Row 2: Biomechanical feedback badges (below row 1, zero overlap) */}
+              {shotokanFeedback && (
+                <div className="flex items-center gap-1.5 pointer-events-auto flex-wrap">
+                  {shotokanFeedback.koshi && (
+                    <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-zinc-950/85 backdrop-blur-md border border-white/10 flex items-center gap-1 text-[10px] sm:text-xs font-bold text-zinc-300 shadow-md">
+                      <Compass className="w-3 h-3 text-kuma-gold" />
+                      <span className="text-zinc-500 text-[9px] uppercase">Koshi:</span>
+                      <span className="text-white uppercase">{shotokanFeedback.koshi}</span>
+                    </div>
+                  )}
+                  {shotokanFeedback.valgo && (
+                    <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-red-950/85 backdrop-blur-md border border-red-500/40 flex items-center gap-1 text-[10px] sm:text-xs font-bold text-red-400 animate-pulse shadow-md">
+                      <ShieldAlert className="w-3 h-3 text-red-500" />
+                      <span>Valgo</span>
+                    </div>
+                  )}
+                  {shotokanFeedback.feedback && (
+                    <div className="px-2 py-0.5 rounded-lg bg-zinc-950/85 backdrop-blur-md border border-white/10 text-[10px] sm:text-[11px] font-medium text-zinc-300 italic shadow-md max-w-[220px] sm:max-w-xs truncate">
+                      {shotokanFeedback.feedback}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* HUD BOTTOM DOCK: Floating Stances Bar con soporte a la barra de gestos de Android */}
+            <div className="absolute bottom-[max(0.75rem,env(safe-area-inset-bottom))] inset-x-2 sm:inset-x-4 max-w-2xl mx-auto bg-zinc-950/90 backdrop-blur-2xl border border-white/15 rounded-2xl p-1.5 sm:p-2 flex items-center justify-between gap-1.5 sm:gap-2 shadow-2xl z-30">
+              <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 w-full">
+                {presets.map((preset) => {
+                  const isSelected = selectedPresetId === preset._id && !localCapture;
+                  return (
+                    <button
+                      key={preset._id}
+                      type="button"
+                      onClick={() => handlePresetChange(preset._id)}
+                      className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all shrink-0 active:scale-95 flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold ${
+                        isSelected
+                          ? "bg-kuma-gold text-black font-black shadow-[0_0_15px_rgba(234,179,8,0.5)]"
+                          : "bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/10"
                       }`}
-                    />
-                  </button>
-                </div>
-
-                {/* Analysis Mode Selector */}
-                <div className="space-y-3">
-                  <h3 className="text-xs font-bold uppercase text-[#E52B34] tracking-wider flex items-center gap-1.5 font-serif">
-                    <Maximize2 className="w-4 h-4" /> Zona de Análisis
-                  </h3>
-                  <div className="flex border border-white/10 divide-x divide-white/10 bg-zinc-950 rounded-xl overflow-hidden">
-                    {([
-                      { value: "superior" as const, label: "Tren Superior", desc: "Codos" },
-                      { value: "inferior" as const, label: "Tren Inferior", desc: "Rodillas" },
-                      { value: "completo" as const, label: "Completo", desc: "Todo" }
-                    ]).map((opt) => (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => setAnalysisMode(opt.value)}
-                        className={`flex-1 px-1 py-2 text-center transition-all cursor-pointer ${
-                          analysisMode === opt.value
-                            ? "bg-[#E52B34] text-white"
-                            : "bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-                        }`}
-                      >
-                        <span className="block text-[9px] font-bold uppercase tracking-wider">
-                          {opt.label}
-                        </span>
-                        <span className={`block text-[8px] mt-0.5 ${
-                          analysisMode === opt.value ? "text-white/70" : "text-zinc-400"
-                        }`}>
-                          {opt.desc}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Tolerance range slider */}
-                <div className="space-y-3">
-                  <h3 className="text-xs font-bold uppercase text-[#E52B34] tracking-wider flex items-center gap-1.5 font-serif">
-                    <SlidersHorizontal className="w-4 h-4" /> Tolerancia: {tolerance}°
-                  </h3>
-                  <input 
-                    type="range"
-                    min={5}
-                    max={35}
-                    step={1}
-                    value={tolerance}
-                    onChange={(e) => setTolerance(parseInt(e.target.value))}
-                    className="w-full h-1.5 bg-zinc-850 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                  />
-                  <div className="flex justify-between text-[9px] font-body text-zinc-500">
-                    <span>Exigente (5°)</span>
-                    <span>Permisivo (35°)</span>
-                  </div>
-                </div>
-
+                    >
+                      <span>{preset.name}</span>
+                    </button>
+                  );
+                })}
               </div>
 
-              {/* Instructions and tips */}
-              <div className="space-y-4 pt-6 border-t border-white/5">
-                {connectionError && (
-                  <div className="bg-red-950/20 border border-red-500/20 text-red-400 px-3.5 py-2.5 rounded-xl font-body text-xs flex gap-2 items-center">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    <span>{connectionError}</span>
-                  </div>
-                )}
+              <button
+                type="button"
+                onClick={() => setIsSettingsOpen(true)}
+                className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-zinc-300 hover:text-white text-[11px] sm:text-xs font-bold uppercase tracking-wider shrink-0 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+                title="Ajustes de Biomecánica"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-kuma-gold shrink-0" />
+                <span>Ajustes</span>
+              </button>
 
-                <div className="text-[10px] font-body text-zinc-500 leading-relaxed flex gap-2 items-start">
-                  <HelpCircle className="w-3.5 h-3.5 shrink-0 text-zinc-400 mt-0.5" />
-                  <span>
-                    El evaluador utiliza la distancia entre tus hombros para redimensionar la silueta a tu estatura actual. Asegúrate de que tu cuerpo completo sea visible para que MediaPipe funcione correctamente.
-                  </span>
-                </div>
-              </div>
-
+              <button
+                type="button"
+                onClick={() => setCameraActive(false)}
+                className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white border border-red-500/30 text-[11px] sm:text-xs font-bold uppercase tracking-wider shrink-0 active:scale-95 transition-all flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+                title="Salir de la cámara"
+              >
+                <X className="w-3.5 h-3.5 shrink-0" />
+                <span>Salir</span>
+              </button>
             </div>
           </div>
         )}
 
-      </div>
+        {/* Connection Error Banner */}
+        {connectionError && (
+          <div className="absolute bottom-6 inset-x-4 max-w-md mx-auto bg-red-950/90 border border-red-500/40 text-red-200 px-4 py-3 rounded-2xl shadow-2xl flex items-center justify-between gap-3 z-50">
+            <div className="flex items-center gap-2 text-xs font-bold">
+              <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+              <span>{connectionError}</span>
+            </div>
+            <button
+              onClick={() => setConnectionError("")}
+              className="p-1 rounded-lg text-red-400 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </main>
+
+      {/* Settings Modal Drawer - Responsive Bottom Sheet para móviles y centrado en pantallas grandes */}
+      <AnimatePresence>
+        {isSettingsOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSettingsOpen(false)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed inset-x-3 sm:inset-x-4 bottom-2 sm:bottom-auto sm:top-[8%] max-w-lg mx-auto bg-zinc-950 border border-white/15 rounded-3xl p-5 sm:p-7 shadow-2xl z-50 space-y-4 sm:space-y-5 max-h-[88dvh] overflow-y-auto overscroll-contain pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+            >
+              <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  <SlidersHorizontal className="w-5 h-5 text-kuma-gold" />
+                  <h3 className="text-base sm:text-lg font-black uppercase tracking-wider text-white font-serif">
+                    Ajustes de Biomecánica
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setIsSettingsOpen(false)}
+                  className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+                  aria-label="Cerrar ajustes"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Tolerance slider */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-wider text-zinc-300">
+                    Tolerancia Articular
+                  </label>
+                  <span className="text-xs font-black text-kuma-gold tabular-nums px-2.5 py-0.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                    ±{tolerance}°
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={5}
+                  max={35}
+                  step={1}
+                  value={tolerance}
+                  onChange={(e) => setTolerance(parseInt(e.target.value))}
+                  className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                />
+                <div className="grid grid-cols-3 gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setTolerance(10)}
+                    className={`py-2 px-1.5 rounded-xl border text-center transition-all cursor-pointer active:scale-95 ${
+                      tolerance === 10
+                        ? "bg-amber-500/20 border-kuma-gold text-kuma-gold font-bold shadow-[0_0_10px_rgba(234,179,8,0.2)]"
+                        : "bg-zinc-950/60 border-white/10 text-zinc-400 hover:text-white"
+                    }`}
+                  >
+                    <span className="block text-[11px] font-bold uppercase">10° Dan</span>
+                    <span className="block text-[9px] text-zinc-500">Estricto</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTolerance(15)}
+                    className={`py-2 px-1.5 rounded-xl border text-center transition-all cursor-pointer active:scale-95 ${
+                      tolerance === 15
+                        ? "bg-amber-500/20 border-kuma-gold text-kuma-gold font-bold shadow-[0_0_10px_rgba(234,179,8,0.2)]"
+                        : "bg-zinc-950/60 border-white/10 text-zinc-400 hover:text-white"
+                    }`}
+                  >
+                    <span className="block text-[11px] font-bold uppercase">15° Dojo</span>
+                    <span className="block text-[9px] text-zinc-500">Estándar</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTolerance(25)}
+                    className={`py-2 px-1.5 rounded-xl border text-center transition-all cursor-pointer active:scale-95 ${
+                      tolerance === 25
+                        ? "bg-amber-500/20 border-kuma-gold text-kuma-gold font-bold shadow-[0_0_10px_rgba(234,179,8,0.2)]"
+                        : "bg-zinc-950/60 border-white/10 text-zinc-400 hover:text-white"
+                    }`}
+                  >
+                    <span className="block text-[11px] font-bold uppercase">25° Inic</span>
+                    <span className="block text-[9px] text-zinc-500">Permisivo</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Analysis Mode */}
+              <div className="space-y-2.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-zinc-300">
+                  Segmentos de Detección
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {([
+                    { value: "superior" as const, label: "Superior", desc: "Brazos" },
+                    { value: "inferior" as const, label: "Inferior", desc: "Piernas" },
+                    { value: "completo" as const, label: "Completo", desc: "Todo" }
+                  ]).map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setAnalysisMode(opt.value)}
+                      className={`py-2.5 px-2 rounded-xl border text-center transition-all cursor-pointer active:scale-95 flex flex-col items-center justify-center min-h-[50px] ${
+                        analysisMode === opt.value
+                          ? "bg-amber-500/20 border-kuma-gold text-kuma-gold font-bold shadow-[0_0_15px_rgba(234,179,8,0.25)] ring-1 ring-kuma-gold/50"
+                          : "bg-zinc-950/60 border-white/10 text-zinc-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <span className="block text-xs font-black uppercase tracking-wider">{opt.label}</span>
+                      <span className={`block text-[10px] mt-0.5 ${analysisMode === opt.value ? "text-amber-300 font-semibold" : "text-zinc-500"}`}>{opt.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Voice and Camera toggles */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => toggleVoice()}
+                  className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between ${
+                    voiceEnabled
+                      ? "bg-amber-500/15 border-kuma-gold/50 text-white"
+                      : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-[10px] font-bold uppercase text-zinc-400">Guía Vocal</span>
+                    {voiceEnabled ? <Volume2 className="w-4 h-4 text-kuma-gold" /> : <VolumeX className="w-4 h-4" />}
+                  </div>
+                  <span className="text-xs font-bold mt-1 text-kuma-gold">
+                    {voiceEnabled ? "Voz Activa" : "Silenciado"}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const nextMode = facingMode === "user" ? "environment" : "user";
+                    setFacingMode(nextMode);
+                    speak(nextMode === "user" ? "Modo espejo frontal activado" : "Cámara trasera activada");
+                  }}
+                  className="p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-left transition-all flex flex-col justify-between"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-[10px] font-bold uppercase text-zinc-400">Modo Espejo</span>
+                    <SwitchCamera className="w-4 h-4 text-kuma-gold" />
+                  </div>
+                  <span className="text-xs font-bold mt-1 text-white">
+                    {facingMode === "user" ? "Espejo (Frontal)" : "Trasera"}
+                  </span>
+                </button>
+              </div>
+
+              {/* Tips Box */}
+              <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 flex gap-2.5 items-start text-xs text-zinc-400 leading-relaxed">
+                <HelpCircle className="w-4 h-4 text-kuma-gold shrink-0 mt-0.5" />
+                <span>
+                  Colócate a 2-3 metros para que tu silueta completa sea capturada. La IA calibra automáticamente tu estatura y calcula vectores articulares en tiempo real.
+                </span>
+              </div>
+
+              <button
+                onClick={() => setIsSettingsOpen(false)}
+                className="w-full py-3.5 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:opacity-95 active:scale-95 transition-all shadow-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kuma-gold"
+              >
+                Guardar y Volver al Dojo
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

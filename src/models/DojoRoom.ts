@@ -82,6 +82,9 @@ const DojoRoomSchema: Schema = new Schema({
   }
 });
 
+// TTL Index: Auto-cleanup inactive virtual dojo rooms after 24 hours
+DojoRoomSchema.index({ lastActive: 1 }, { expireAfterSeconds: 86400 });
+
 const DojoRoom: Model<IDojoRoom> =
   mongoose.models.DojoRoom || mongoose.model<IDojoRoom>("DojoRoom", DojoRoomSchema);
 

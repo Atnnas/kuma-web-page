@@ -10,6 +10,7 @@ import {
 import confetti from "canvas-confetti";
 import { AchievementOverlay } from "../gamification/AchievementOverlay";
 import { startRoutineLog, completeRoutineLog, deleteRoutineLog } from "@/lib/actions/routine-logs";
+import { smoothAngle, useWakeLock } from "@/lib/vision";
 
 interface TricepKickbackRevisorClientProps {
   user: any;
@@ -33,6 +34,11 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+
+  // Screen Wake Lock para prevenir apagado de pantalla en móviles durante patada de tríceps
+  useWakeLock(cameraActive);
+  const prevAngleRef = useRef<number | null>(null);
+  const lastUiUpdateRef = useRef<number>(0);
 
   // Stats
   const [repsCount, setRepsCount] = useState(0);
@@ -492,16 +498,15 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
     const dx = Math.abs(shoulder.x - hip.x);
     const dy = Math.abs(shoulder.y - hip.y);
     const torsoAngle = Math.round(Math.atan2(dy, dx) * (180 / Math.PI));
-    setTorsoAngleVal(torsoAngle);
 
     // 2. Upper arm alignment (Angle between shoulder-hip torso line and shoulder-elbow upper arm)
     // In kickbacks, upper arm should stay nearly parallel to torso (angle <= 30°)
     const upperArmTorsoAngle = calculate2DAngle(hip, shoulder, elbow);
-    setElbowDriftVal(upperArmTorsoAngle);
 
-    // 3. Elbow Flexion/Extension angle (shoulder-elbow-wrist)
-    const angle = calculate2DAngle(shoulder, elbow, wrist);
-    setElbowAngle(angle);
+    // 3. Elbow Flexion/Extension angle (shoulder-elbow-wrist) con filtro EMA anti-jitter
+    const rawAngle = calculate2DAngle(shoulder, elbow, wrist);
+    const angle = smoothAngle(rawAngle, prevAngleRef.current, 0.7);
+    prevAngleRef.current = angle;
 
     const isTorsoInclined = torsoAngle <= 50; // Bending forward enough
     const dx_hs = hip.x - shoulder.x;
@@ -509,6 +514,9 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
       ? shoulder.y + (hip.y - shoulder.y) * ((elbow.x - shoulder.x) / dx_hs)
       : shoulder.y;
     const isElbowElevated = elbow.y <= y_back_at_elbow + 0.03; // Elbow is at or above the back line
+
+    let nextFeedback = feedbackMsg;
+    let nextInstruction = instructionMsg;
 
     // State machine for Tricep Kickback repetitions:
     // Starting position (Flexed): Elbow bent to <= 90°
@@ -522,56 +530,69 @@ export function TricepKickbackRevisorClient({ user, routine }: TricepKickbackRev
         
         hasReachedTopRef.current = false;
         wasBendingRef.current = false;
-        setFeedbackMsg("¡Repetición correcta!");
+        nextFeedback = "¡Repetición correcta!";
+        setFeedbackMsg(nextFeedback);
         
         if (repsCountRef.current >= targetRepsRef.current) {
           completeWorkout();
         }
       } else if (wasBendingRef.current) {
         playWarningBeep();
-        setFeedbackMsg("¡Extensión incompleta! Estira el brazo.");
+        nextFeedback = "¡Extensión incompleta! Estira el brazo.";
+        setFeedbackMsg(nextFeedback);
         wasBendingRef.current = false;
       }
       isReadyToStartRef.current = true;
-      setInstructionMsg("Extiende tu codo completamente hacia atrás");
+      nextInstruction = "Extiende tu codo completamente hacia atrás";
     } else if (angle >= 155) {
       if (isReadyToStartRef.current) {
         if (!isTorsoInclined) {
           if (hasReachedTopRef.current) playWarningBeep();
           hasReachedTopRef.current = false;
-          setFeedbackMsg("¡Inclina tu torso! Mantén la espalda plana");
-          setInstructionMsg("Inclina tu cuerpo hacia adelante para trabajar tríceps");
+          nextFeedback = "¡Inclina tu torso! Mantén la espalda plana";
+          nextInstruction = "Inclina tu cuerpo hacia adelante para trabajar tríceps";
         } else if (!isElbowElevated) {
           if (hasReachedTopRef.current) playWarningBeep();
           hasReachedTopRef.current = false;
-          setFeedbackMsg("¡Eleva tu codo! Mantenlo arriba");
-          setInstructionMsg("Mantén tu brazo pegado y paralelo a tu torso");
+          nextFeedback = "¡Eleva tu codo! Mantenlo arriba";
+          nextInstruction = "Mantén tu brazo pegado y paralelo a tu torso";
         } else {
           if (!hasReachedTopRef.current) {
             playDepthBeep();
           }
           hasReachedTopRef.current = true;
           wasBendingRef.current = true;
-          setFeedbackMsg("¡Extensión lograda! Regresa lento.");
-          setInstructionMsg("Flexiona tu codo controladamente de vuelta a 90°");
+          nextFeedback = "¡Extensión lograda! Regresa lento.";
+          nextInstruction = "Flexiona tu codo controladamente de vuelta a 90°";
         }
       }
     } else if (angle > 110) {
       if (isReadyToStartRef.current) {
         if (!isTorsoInclined) {
           hasReachedTopRef.current = false;
-          setFeedbackMsg("¡Inclina más tu torso hacia adelante!");
+          nextFeedback = "¡Inclina más tu torso hacia adelante!";
         } else if (!isElbowElevated) {
           hasReachedTopRef.current = false;
-          setFeedbackMsg("¡Sube el codo! No lo dejes caer");
+          nextFeedback = "¡Sube el codo! No lo dejes caer";
         } else {
           wasBendingRef.current = true;
           if (!hasReachedTopRef.current) {
-            setFeedbackMsg("¡Empuja hacia atrás!");
-            setInstructionMsg("Extiende tu brazo por completo...");
+            nextFeedback = "¡Empuja hacia atrás!";
+            nextInstruction = "Extiende tu brazo por completo...";
           }
         }
       }
+    }
+
+    // Actualizaciones de estado de React throttled a ~5 FPS para eliminar micro-stutter
+    const now = performance.now();
+    if (now - lastUiUpdateRef.current > 180) {
+      lastUiUpdateRef.current = now;
+      setElbowAngle(angle);
+      setTorsoAngleVal(torsoAngle);
+      setElbowDriftVal(upperArmTorsoAngle);
+      setFeedbackMsg(nextFeedback);
+      setInstructionMsg(nextInstruction);
     }
 
     // Drawing HUD
