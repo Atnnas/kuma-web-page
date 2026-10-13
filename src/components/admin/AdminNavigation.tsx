@@ -20,17 +20,29 @@ export function AdminBackButton({ label = "Volver", href = "/admin" }: { label?:
     );
 }
 
-// Wrapper for Swipe-to-Go-Back functionality on mobile
+import { useState, useEffect } from "react";
+
+// Wrapper for Swipe-to-Go-Back functionality on mobile touch devices
 export function SwipeBackWrapper({ children, target = "/admin" }: { children: React.ReactNode, target?: string }) {
     const router = useRouter();
     const x = useMotionValue(0);
     const opacity = useTransform(x, [0, 100], [1, 0.5]);
+    const [isTouch, setIsTouch] = useState(false);
+
+    useEffect(() => {
+        setIsTouch(typeof window !== "undefined" && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
+    }, []);
 
     const handleDragEnd = (event: any, info: any) => {
         if (info.offset.x > 100) { // Swipe right threshold
             router.push(target);
         }
     };
+
+    // On desktop / non-touch with mouse, render plain div to never capture mouse drag/wheel events
+    if (!isTouch) {
+        return <div className="w-full">{children}</div>;
+    }
 
     return (
         <motion.div
@@ -39,7 +51,7 @@ export function SwipeBackWrapper({ children, target = "/admin" }: { children: Re
             dragElastic={0.2} // Feeling of resistance
             onDragEnd={handleDragEnd}
             style={{ x, opacity }}
-            className="touch-pan-y" // Allow vertical scrolling, only capture horizontal
+            className="touch-pan-y w-full"
         >
             {children}
         </motion.div>

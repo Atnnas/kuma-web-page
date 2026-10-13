@@ -41,7 +41,7 @@ export default async function KumaCardsPage() {
   }
 
   return (
-    <main className="min-h-screen relative overflow-hidden bg-zinc-950">
+    <main className="min-h-screen relative overflow-x-clip bg-zinc-950">
       {/* Fixed Parallax Background */}
       <div
         className="fixed inset-0 z-0"

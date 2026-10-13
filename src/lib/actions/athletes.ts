@@ -7,6 +7,8 @@ import AttendanceLog from "@/models/AttendanceLog";
 import { revalidatePath } from "next/cache";
 import { requireSuperAdmin, getCurrentUser } from "@/lib/auth-utils";
 import { evaluateWkfCategory } from "@/lib/wkf-categories";
+import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 
 /**
  * Fetch all users that are enrolled as athletes
@@ -40,13 +42,14 @@ export async function getEnrolledAthletes() {
 }
 
 /**
- * Fetch all users to allow enrolling them
+ * Fetch all users to allow enrolling them (optimized field projection)
  */
 export async function getAllPotentialAthletes() {
     try {
         await requireSuperAdmin();
         await connectDB();
         const users = await User.find({})
+            .select("name email image role athleteProfile dojo createdAt")
             .sort({ name: 1 })
             .populate("athleteProfile.dojo")
             .lean();
@@ -58,45 +61,159 @@ export async function getAllPotentialAthletes() {
 }
 
 /**
- * Update or Create an athlete profile for a user
+ * Update or Create an athlete profile for a user with strict field sanitization
  */
 export async function updateAthleteProfile(userId: string, profileData: any) {
     try {
         await requireSuperAdmin();
+
+        if (!userId || !mongoose.isValidObjectId(userId)) {
+            return { success: false, error: "Identificador de usuario no válido" };
+        }
+
         await connectDB();
 
         const user = await User.findById(userId);
-        const userObj = user ? user.toObject() : null;
+        if (!user) {
+            return { success: false, error: "Usuario no encontrado" };
+        }
+
+        const userObj = user.toObject();
         const existingProfile: any = userObj?.athleteProfile || {};
 
-        // Ensure OVR is calculated if not provided
-        if (profileData.stats && !profileData.stats.ovr) {
-            const s = profileData.stats;
-            profileData.stats.ovr = Math.round((s.vel + s.pot + s.tec + s.res + s.esp) / 5);
+        // Sanitize and whitelist profile inputs to prevent prototype pollution or unauthorized field modifications
+        const rawStats = profileData.stats || existingProfile.stats || {};
+        const vel = Math.min(99, Math.max(1, Number(rawStats.vel) || 50));
+        const pot = Math.min(99, Math.max(1, Number(rawStats.pot) || 50));
+        const tec = Math.min(99, Math.max(1, Number(rawStats.tec) || 50));
+        const res = Math.min(99, Math.max(1, Number(rawStats.res) || 50));
+        const esp = Math.min(99, Math.max(1, Number(rawStats.esp) || 50));
+        const ovr = Math.round((vel + pot + tec + res + esp) / 5);
+
+        const sanitizedStats = { vel, pot, tec, res, esp, ovr };
+
+        // Sanitize specialization enum
+        const allowedSpecs = ["Kata", "Kumite", "Ambos"];
+        const specialization = allowedSpecs.includes(profileData.specialization) 
+            ? profileData.specialization 
+            : (existingProfile.specialization || "Ambos");
+
+        // Validate Dojo ObjectId if provided
+        let dojoId = profileData.dojo || existingProfile.dojo || "6a10ba00936f06f14847fd05";
+        if (typeof dojoId === "object" && dojoId?._id) {
+            dojoId = dojoId._id.toString();
+        }
+        if (!mongoose.isValidObjectId(dojoId)) {
+            dojoId = "6a10ba00936f06f14847fd05";
         }
 
-        const { image, ...profileFields } = profileData;
-        
-        if (!profileFields.dojo) {
-            profileFields.dojo = "6a10ba00936f06f14847fd05";
+        // Validate image if provided (limit max 2.5MB payload & avoid dangerous schemes)
+        let imageToSave: string | undefined = undefined;
+        if (profileData.image !== undefined) {
+            if (typeof profileData.image === "string") {
+                const trimmed = profileData.image.trim();
+                if (trimmed.length > 2.5 * 1024 * 1024) {
+                    return { success: false, error: "La imagen excede el límite de 2.5MB. Por favor sube una imagen optimizada." };
+                }
+                if (trimmed.startsWith("javascript:") || trimmed.includes("<script>")) {
+                    return { success: false, error: "Formato de imagen no permitido" };
+                }
+                imageToSave = trimmed;
+            } else if (profileData.image === null || profileData.image === "") {
+                imageToSave = "";
+            }
         }
 
-        // If category is assigned or changed, sync the baseline weight and clear review flag
-        if (profileFields.wkfCategory && profileFields.wkfCategory !== existingProfile.wkfCategory) {
-            profileFields.categoryWeight = profileFields.weight ?? existingProfile.weight;
-            profileFields.weightReviewNeeded = false;
+        const weight = profileData.weight !== undefined 
+            ? Math.min(250, Math.max(15, Number(profileData.weight) || 70)) 
+            : existingProfile.weight;
+
+        const height = profileData.height !== undefined 
+            ? Math.min(250, Math.max(50, Number(profileData.height) || 170)) 
+            : existingProfile.height;
+
+        const beltRank = typeof profileData.beltRank === "string" 
+            ? profileData.beltRank.slice(0, 50).trim() 
+            : existingProfile.beltRank || "Blanco";
+
+        const cc = typeof profileData.cc === "string" 
+            ? profileData.cc.slice(0, 60).trim() 
+            : existingProfile.cc || "";
+
+        const habilidadSecreta = typeof profileData.habilidadSecreta === "string" 
+            ? profileData.habilidadSecreta.slice(0, 80).trim() 
+            : existingProfile.habilidadSecreta || "";
+
+        const wkfCategory = typeof profileData.wkfCategory === "string" 
+            ? profileData.wkfCategory.slice(0, 60).trim() 
+            : existingProfile.wkfCategory || "";
+
+        let categoryWeight = profileData.categoryWeight !== undefined 
+            ? Number(profileData.categoryWeight) 
+            : existingProfile.categoryWeight;
+
+        let weightReviewNeeded = profileData.weightReviewNeeded !== undefined 
+            ? Boolean(profileData.weightReviewNeeded) 
+            : Boolean(existingProfile.weightReviewNeeded);
+
+        // If category is assigned or changed, sync baseline weight and clear review flag
+        if (wkfCategory && wkfCategory !== existingProfile.wkfCategory) {
+            categoryWeight = weight ?? existingProfile.weight;
+            weightReviewNeeded = false;
         }
+
+        const isEnrolled = profileData.isEnrolled !== undefined 
+            ? Boolean(profileData.isEnrolled) 
+            : true;
+
+        const phone = typeof profileData.phone === "string" 
+            ? profileData.phone.slice(0, 30).trim() 
+            : existingProfile.phone || "";
+
+        const emergencyContact = {
+            name: typeof profileData.emergencyContact?.name === "string" 
+                ? profileData.emergencyContact.name.slice(0, 60).trim() 
+                : existingProfile.emergencyContact?.name || "",
+            phone: typeof profileData.emergencyContact?.phone === "string" 
+                ? profileData.emergencyContact.phone.slice(0, 30).trim() 
+                : existingProfile.emergencyContact?.phone || ""
+        };
+
+        const medicalConditions = typeof profileData.medicalConditions === "string" 
+            ? profileData.medicalConditions.slice(0, 500).trim() 
+            : existingProfile.medicalConditions || "";
+
+        const gender = ["Masculino", "Femenino"].includes(profileData.gender) 
+            ? profileData.gender 
+            : existingProfile.gender;
+
+        const birthDate = profileData.birthDate ? new Date(profileData.birthDate) : existingProfile.birthDate;
 
         const updateFields: any = {
             athleteProfile: {
                 ...existingProfile,
-                ...profileFields,
-                isEnrolled: profileData.isEnrolled !== undefined ? profileData.isEnrolled : true
+                weight,
+                height,
+                beltRank,
+                specialization,
+                stats: sanitizedStats,
+                isEnrolled,
+                cc,
+                habilidadSecreta,
+                dojo: dojoId,
+                gender,
+                birthDate,
+                wkfCategory,
+                categoryWeight,
+                weightReviewNeeded,
+                phone,
+                emergencyContact,
+                medicalConditions
             }
         };
 
-        if (image !== undefined) {
-            updateFields.image = image;
+        if (imageToSave !== undefined) {
+            updateFields.image = imageToSave;
         }
 
         await User.findByIdAndUpdate(userId, updateFields);
@@ -111,12 +228,16 @@ export async function updateAthleteProfile(userId: string, profileData: any) {
 }
 
 /**
- * Create a new user and immediately enroll them as an athlete
+ * Create a new user and immediately enroll them as an athlete (safe hashed temporary password)
  */
 export async function createAndEnrollAthlete(userData: { name: string, email: string }) {
     try {
         await requireSuperAdmin();
         await connectDB();
+
+        if (!userData.name || !userData.name.trim()) {
+            return { success: false, error: "Por favor proporciona un nombre para el Kuma" };
+        }
 
         let email = userData.email?.trim().toLowerCase();
         if (!email) {
@@ -130,15 +251,20 @@ export async function createAndEnrollAthlete(userData: { name: string, email: st
             return { success: false, error: "Ya existe un usuario con este correo electrónico" };
         }
 
+        // Security: Hash the temporary password so no plaintext is stored in the database
+        const randomTempSecret = `kuma_${crypto.randomUUID()}`;
+        const hashedPassword = await bcrypt.hash(randomTempSecret, 12);
+
         const newUser = await User.create({
-            ...userData,
+            name: userData.name.trim(),
             email: email,
-            password: "temp_password_kuma", // Simple placeholder, user should reset
+            password: hashedPassword,
             isActive: true,
             athleteProfile: {
                 isEnrolled: true,
                 beltRank: "Blanco",
                 dojo: "6a10ba00936f06f14847fd05",
+                specialization: "Ambos",
                 stats: { vel: 50, pot: 50, tec: 50, res: 50, esp: 50, ovr: 50 }
             }
         }) as any;
@@ -238,6 +364,23 @@ function serializeAthletes(users: any[], isAdmin: boolean = false) {
  */
 export async function updateAthletePhotoSelf(athleteId: string, email: string, image: string) {
     try {
+        if (!athleteId || !mongoose.isValidObjectId(athleteId)) {
+            return { success: false, error: "Identificador de atleta inválido" };
+        }
+
+        if (!image || typeof image !== "string") {
+            return { success: false, error: "Fotografía requerida" };
+        }
+
+        const trimmedImage = image.trim();
+        if (trimmedImage.length > 2.5 * 1024 * 1024) {
+            return { success: false, error: "La imagen excede el límite máximo de 2.5MB" };
+        }
+
+        if (trimmedImage.startsWith("javascript:") || trimmedImage.includes("<script>")) {
+            return { success: false, error: "Formato de imagen no permitido" };
+        }
+
         await connectDB();
 
         // 1. Fetch user to verify their status and email
@@ -252,13 +395,13 @@ export async function updateAthletePhotoSelf(athleteId: string, email: string, i
         }
 
         // 3. Strict verification: email match (case-insensitive)
-        if (user.email.toLowerCase().trim() !== email.toLowerCase().trim()) {
+        if (!user.email || user.email.toLowerCase().trim() !== email.toLowerCase().trim()) {
             return { success: false, error: "Verificación de correo fallida. El correo ingresado no coincide con el registrado." };
         }
 
         // 4. Update ONLY the image field! No stats, belt, or admin fields.
         await User.findByIdAndUpdate(athleteId, {
-            $set: { image: image }
+            $set: { image: trimmedImage }
         });
 
         revalidatePath("/admin/athletes");
