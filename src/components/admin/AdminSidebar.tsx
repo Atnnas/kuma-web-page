@@ -160,7 +160,7 @@ export function AdminSidebar({ user }: { user?: User }) {
                 "fixed top-0 z-[50] flex flex-col transition-transform duration-300 pt-20 lg:pt-0 h-full w-64 bg-zinc-950",
                 // Mobile/Tablet: Left side, slide from left
                 "left-0 border-r border-white/10",
-                isMobileOpen ? "translate-x-0" : "-translate-x-full",
+                isMobileOpen ? "translate-x-0 pointer-events-auto" : "-translate-x-full pointer-events-none lg:pointer-events-auto",
                 // Desktop (LG+): Left side, always visible
                 "lg:translate-x-0"
             )}>

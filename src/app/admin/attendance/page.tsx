@@ -497,7 +497,7 @@ export default function AdminAttendancePage() {
                 </div>
 
                 {/* Filtros de Sesión y Configuración */}
-                <div className="bg-zinc-950/60 backdrop-blur-xl border border-white/5 rounded-2xl p-6 mb-8 shadow-2xl relative overflow-hidden">
+                <div className="bg-zinc-950/60 backdrop-blur-xl border border-white/5 rounded-2xl p-6 mb-8 shadow-2xl relative overflow-clip">
                     <div className="absolute top-0 right-0 w-48 h-48 bg-red-600/5 rounded-full blur-3xl pointer-events-none" />
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
@@ -708,7 +708,7 @@ export default function AdminAttendancePage() {
                                     onTouchEnd={handleTouchEnd}
                                     onTouchCancel={handleTouchEnd}
                                     className={cn(
-                                        "relative flex flex-col bg-zinc-950 rounded-2xl overflow-hidden border transition-all duration-300 select-none cursor-pointer",
+                                        "relative flex flex-col bg-zinc-950 rounded-2xl overflow-clip border transition-all duration-300 select-none cursor-pointer",
                                         currentStatus === "Ausente"
                                             ? "border-zinc-800/50 opacity-45 grayscale"
                                             : currentStatus === "Presente"
@@ -847,8 +847,6 @@ export default function AdminAttendancePage() {
                                                                 onClick={() => handleSessionToggle(ath._id, sess)}
                                                                 onDoubleClick={(e) => e.stopPropagation()}
                                                                 onTouchStart={(e) => e.stopPropagation()}
-                                                                onTouchMove={(e) => e.stopPropagation()}
-                                                                onTouchEnd={(e) => e.stopPropagation()}
                                                                 className={cn(
                                                                     "px-2 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer leading-none min-h-[22px]",
                                                                     isChecked
@@ -895,8 +893,6 @@ export default function AdminAttendancePage() {
                                                                     onClick={() => handlePerformanceChange(ath._id, starStr as any)}
                                                                     onDoubleClick={(e) => e.stopPropagation()}
                                                                     onTouchStart={(e) => e.stopPropagation()}
-                                                                    onTouchMove={(e) => e.stopPropagation()}
-                                                                    onTouchEnd={(e) => e.stopPropagation()}
                                                                     className="transition-transform active:scale-95 hover:scale-125 focus:outline-none cursor-pointer"
                                                                     title={labels[starVal - 1]}
                                                                 >
@@ -934,8 +930,6 @@ export default function AdminAttendancePage() {
                                                         onClick={() => handleMVPToggle(ath._id)}
                                                         onDoubleClick={(e) => e.stopPropagation()}
                                                         onTouchStart={(e) => e.stopPropagation()}
-                                                        onTouchMove={(e) => e.stopPropagation()}
-                                                        onTouchEnd={(e) => e.stopPropagation()}
                                                         className={cn(
                                                             "px-2.5 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer flex items-center gap-1 leading-none min-h-[22px]",
                                                             athleteState.isMVP
@@ -957,8 +951,6 @@ export default function AdminAttendancePage() {
                                             onClick={() => handleStatusChange(ath._id, "Ausente")}
                                             onDoubleClick={(e) => e.stopPropagation()}
                                             onTouchStart={(e) => e.stopPropagation()}
-                                            onTouchMove={(e) => e.stopPropagation()}
-                                            onTouchEnd={(e) => e.stopPropagation()}
                                             className={cn(
                                                 "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
                                                 currentStatus === "Ausente"
@@ -973,8 +965,6 @@ export default function AdminAttendancePage() {
                                             onClick={() => handleStatusChange(ath._id, "Tarde")}
                                             onDoubleClick={(e) => e.stopPropagation()}
                                             onTouchStart={(e) => e.stopPropagation()}
-                                            onTouchMove={(e) => e.stopPropagation()}
-                                            onTouchEnd={(e) => e.stopPropagation()}
                                             className={cn(
                                                 "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
                                                 currentStatus === "Tarde"
@@ -989,8 +979,6 @@ export default function AdminAttendancePage() {
                                             onClick={() => handleStatusChange(ath._id, "Presente")}
                                             onDoubleClick={(e) => e.stopPropagation()}
                                             onTouchStart={(e) => e.stopPropagation()}
-                                            onTouchMove={(e) => e.stopPropagation()}
-                                            onTouchEnd={(e) => e.stopPropagation()}
                                             className={cn(
                                                 "py-1.5 px-1 text-[8px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer",
                                                 currentStatus === "Presente"
