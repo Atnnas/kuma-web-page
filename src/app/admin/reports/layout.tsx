@@ -14,7 +14,7 @@ export default async function ReportsLayout({
     }
 
     return (
-        <div>
+        <div className="w-full min-w-0">
             {children}
         </div>
     );

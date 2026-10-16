@@ -92,25 +92,25 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
     };
 
     return (
-        <form id="product-form" onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-8 pb-32">
+        <form id="product-form" onSubmit={handleSubmit} className="w-full min-w-0 max-w-4xl mx-auto space-y-6 sm:space-y-8 pb-32">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
                     <Link
                         href="/admin/shop"
                         className="p-2 hover:bg-white/10 rounded-full transition-colors text-zinc-400 hover:text-white"
                     >
-                        <ArrowLeft className="w-6 h-6" />
+                        <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                     </Link>
-                    <h1 className="text-2xl font-black text-white uppercase tracking-tight">
+                    <h1 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
                         {isEdit ? "Editar Producto" : "Nuevo Producto"}
                     </h1>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
                 {/* Left Column: Details */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-zinc-900/50 border border-white/10 p-6 rounded-xl space-y-4">
+                    <div className="bg-zinc-900/50 border border-white/10 p-4 sm:p-6 rounded-xl space-y-4">
                         <h2 className="font-bold text-white uppercase text-sm tracking-wider mb-4 border-b border-white/5 pb-2">Información General</h2>
 
                         <div>
@@ -225,16 +225,16 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
                 </div>
             </div>
             {/* Floating Action Buttons */}
-            <div className="fixed bottom-6 right-6 flex flex-col gap-4 z-50">
+            <div className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-4 sm:right-6 md:bottom-8 md:right-8 flex flex-col gap-3 sm:gap-4 z-40">
                 {isEdit && (
                     <button
                         type="button"
                         onClick={handleDelete}
                         disabled={loading}
-                        className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-zinc-800 text-red-500 border border-red-500/50 shadow-lg hover:bg-red-950 hover:border-red-500 flex items-center justify-center transition-all hover:scale-105"
+                        className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-zinc-800 text-red-500 border border-red-500/50 shadow-lg hover:bg-red-950 hover:border-red-500 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
                         title="Eliminar Producto"
                     >
-                        <Trash2 className="w-6 h-6 md:w-8 md:h-8" />
+                        <Trash2 className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />
                     </button>
                 )}
 
@@ -242,10 +242,10 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
                     type="submit"
                     form="product-form"
                     disabled={loading}
-                    className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.5)] hover:bg-red-500 hover:scale-110 transition-all flex items-center justify-center"
+                    className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.5)] hover:bg-red-500 hover:scale-105 active:scale-95 transition-all flex items-center justify-center"
                     title="Guardar Cambios"
                 >
-                    {loading ? <Loader2 className="w-8 h-8 animate-spin" /> : <Save className="w-8 h-8" />}
+                    {loading ? <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin" /> : <Save className="w-6 h-6 sm:w-8 sm:h-8" />}
                 </button>
             </div>
         </form>

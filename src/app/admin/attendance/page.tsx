@@ -503,25 +503,25 @@ export default function AdminAttendancePage() {
 
     return (
         <SwipeBackWrapper>
-            <div className="max-w-7xl mx-auto py-8 px-4 pb-32">
+            <div className="max-w-7xl mx-auto py-4 sm:py-8 px-0 sm:px-4 pb-36 min-w-0">
                 
                 {/* Cabecera */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-10">
                     <div>
-                        <h1 className="text-3xl md:text-5xl font-serif font-black uppercase tracking-widest mb-1 text-kuma-gold drop-shadow-lg flex items-center gap-3">
+                        <h1 className="text-2xl sm:text-3xl md:text-5xl font-serif font-black uppercase tracking-wider sm:tracking-widest mb-1 text-kuma-gold drop-shadow-lg flex flex-wrap items-center gap-2 sm:gap-3">
                             KUMA <span className="text-red-600">ASISTENCIA</span>
                         </h1>
-                        <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest flex items-center gap-2">
-                            <ClipboardCheck className="w-4 h-4 text-kuma-gold" /> Pase de Lista Express (Kaizen Training)
+                        <p className="text-zinc-500 text-xs sm:text-sm font-bold uppercase tracking-wider sm:tracking-widest flex items-center gap-2">
+                            <ClipboardCheck className="w-4 h-4 text-kuma-gold shrink-0" /> Pase de Lista Express (Kaizen Training)
                         </p>
                     </div>
                 </div>
 
                 {/* Filtros de Sesión y Configuración */}
-                <div className="bg-zinc-950/60 backdrop-blur-xl border border-white/5 rounded-2xl p-6 mb-8 shadow-2xl relative overflow-clip">
+                <div className="bg-zinc-950/60 backdrop-blur-xl border border-white/5 rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-2xl relative overflow-clip">
                     <div className="absolute top-0 right-0 w-48 h-48 bg-red-600/5 rounded-full blur-3xl pointer-events-none" />
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 items-end">
                         {/* Selector de Fecha */}
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
@@ -568,7 +568,7 @@ export default function AdminAttendancePage() {
                             </label>
                             <div className="flex flex-col sm:flex-row gap-3">
                                 {/* Combo Box Selector */}
-                                <div className="relative flex-1">
+                                <div className="relative flex-1 min-w-0">
                                     <select
                                         value={selectedDojo}
                                         onChange={(e) => setSelectedDojo(e.target.value)}
@@ -592,13 +592,13 @@ export default function AdminAttendancePage() {
                                 {/* Resumen del Dojo Seleccionado */}
                                 <div className="flex items-center gap-2 bg-zinc-900/65 border border-zinc-800/80 rounded-xl px-3 py-2 text-xs font-bold min-h-[46px] sm:min-w-[170px] justify-center sm:justify-start">
                                     {selectedDojo === "Todos" ? (
-                                        <div className="flex items-center gap-2 w-full">
-                                            <div className="w-6 h-6 rounded-full bg-kuma-gold/10 flex items-center justify-center border border-kuma-gold/20 text-kuma-gold font-serif font-black text-[10px]">
+                                        <div className="flex items-center gap-2 w-full min-w-0">
+                                            <div className="w-6 h-6 rounded-full bg-kuma-gold/10 flex items-center justify-center border border-kuma-gold/20 text-kuma-gold font-serif font-black text-[10px] shrink-0">
                                                 K
                                             </div>
-                                            <div className="flex flex-col flex-1">
+                                            <div className="flex flex-col flex-1 min-w-0">
                                                 <span className="text-[8px] text-zinc-400 uppercase tracking-widest font-black leading-none">Global</span>
-                                                <div className="flex items-center gap-1.5 mt-0.5 text-[11px] font-extrabold leading-none">
+                                                <div className="flex items-center gap-1.5 mt-0.5 text-[11px] font-extrabold leading-none truncate">
                                                     <span className="text-emerald-500" title="Presentes">
                                                         {athletes.filter(a => (attendanceMap[a._id]?.status || "Ausente") === "Presente").length} OK
                                                     </span>
@@ -618,17 +618,17 @@ export default function AdminAttendancePage() {
                                             const ds = dojoSummary.find(d => d._id === selectedDojo);
                                             if (!ds) return null;
                                             return (
-                                                <div className="flex items-center gap-2 w-full">
+                                                <div className="flex items-center gap-2 w-full min-w-0">
                                                     <img 
                                                         src={ds.logo || "/images/kuma-logo.jpg"} 
                                                         alt={ds.name} 
-                                                        className="w-6 h-6 rounded-full object-cover border border-zinc-800" 
+                                                        className="w-6 h-6 rounded-full object-cover border border-zinc-800 shrink-0" 
                                                     />
-                                                    <div className="flex flex-col flex-1">
+                                                    <div className="flex flex-col flex-1 min-w-0">
                                                         <span className="text-[8px] text-zinc-400 uppercase tracking-widest font-black leading-none truncate max-w-[100px]" title={ds.name}>
                                                             {ds.name}
                                                         </span>
-                                                        <div className="flex items-center gap-1.5 mt-0.5 text-[11px] font-extrabold leading-none">
+                                                        <div className="flex items-center gap-1.5 mt-0.5 text-[11px] font-extrabold leading-none truncate">
                                                             <span className="text-emerald-500" title="Presentes">{ds.present} OK</span>
                                                             <span className="text-zinc-650">/</span>
                                                             <span className="text-amber-500" title="Tardes">{ds.tarde} T</span>
@@ -646,119 +646,122 @@ export default function AdminAttendancePage() {
                     </div>
                 </div>
 
-                {/* Buscador y Filtros por Especialidad */}
-                <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
-                    <div className="relative w-full md:w-96">
+                {/* Buscador y Controles de Filtros */}
+                <div className="flex flex-col gap-3.5 mb-6 sm:mb-8">
+                    {/* Fila 1: Buscador */}
+                    <div className="relative w-full">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 w-5 h-5" />
                         <input
                             type="text"
-                            placeholder="Buscar atleta por nombre..."
+                            placeholder="Buscar atleta por nombre o correo..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-zinc-900 border border-zinc-800 rounded-full py-3.5 pl-12 pr-6 text-white text-sm focus:border-red-500 focus:outline-none transition-all shadow-xl"
+                            className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl py-3.5 pl-12 pr-6 text-white text-sm focus:border-red-500 focus:outline-none transition-all shadow-xl"
                         />
                     </div>
 
-                    <div className="flex gap-2 items-center w-full md:w-auto overflow-x-auto no-scrollbar py-1">
-                        {/* Filtros por Estado de Asistencia en la Fecha */}
-                        <button
-                            onClick={() => setStatusFilter("Todos")}
-                            className={cn(
-                                "px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5",
-                                statusFilter === "Todos"
-                                    ? "bg-zinc-100 text-black border-white shadow-md shadow-white/10"
-                                    : "bg-zinc-900/60 text-zinc-400 border-zinc-800/80 hover:text-white hover:border-zinc-700"
-                            )}
-                        >
-                            <span>Todos</span>
-                            <span className={cn(
-                                "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
-                                statusFilter === "Todos" ? "bg-black/20 text-black" : "bg-zinc-800 text-zinc-400"
-                            )}>
-                                {baseAthletes.length}
-                            </span>
-                        </button>
-
-                        <button
-                            onClick={() => setStatusFilter("Presentes")}
-                            className={cn(
-                                "px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5",
-                                statusFilter === "Presentes"
-                                    ? "bg-emerald-500 text-black border-emerald-400 shadow-lg shadow-emerald-500/25 font-black"
-                                    : "bg-zinc-900/60 text-emerald-400 border-emerald-500/30 hover:bg-emerald-950/20"
-                            )}
-                            title="Mostrar atletas que asistieron en la fecha seleccionada"
-                        >
-                            <Check className="w-3 h-3 stroke-[3]" />
-                            <span>Presentes</span>
-                            <span className={cn(
-                                "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
-                                statusFilter === "Presentes" ? "bg-black/20 text-black" : "bg-emerald-950/60 text-emerald-300 border border-emerald-500/30"
-                            )}>
-                                {presentCount}
-                            </span>
-                        </button>
-
-                        {tardeCount > 0 && (
+                    {/* Fila 2: Filtros de Estado & Acciones en Bloque */}
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                        {/* Status Pills */}
+                        <div className="flex gap-1.5 sm:gap-2 items-center overflow-x-auto no-scrollbar py-1 overscroll-contain">
                             <button
-                                onClick={() => setStatusFilter("Tardes")}
+                                onClick={() => setStatusFilter("Todos")}
                                 className={cn(
-                                    "px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5",
-                                    statusFilter === "Tardes"
-                                        ? "bg-amber-500 text-black border-amber-400 shadow-lg shadow-amber-500/25 font-black"
-                                        : "bg-zinc-900/60 text-amber-400 border-amber-500/30 hover:bg-amber-950/20"
+                                    "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 active:scale-95",
+                                    statusFilter === "Todos"
+                                        ? "bg-zinc-100 text-black border-white shadow-md shadow-white/10"
+                                        : "bg-zinc-900/60 text-zinc-400 border-zinc-800/80 hover:text-white hover:border-zinc-700"
                                 )}
-                                title="Mostrar atletas que llegaron tarde"
                             >
-                                <Clock className="w-3 h-3 stroke-[2.5]" />
-                                <span>Tardes</span>
+                                <span>Todos</span>
                                 <span className={cn(
                                     "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
-                                    statusFilter === "Tardes" ? "bg-black/20 text-black" : "bg-amber-950/60 text-amber-300 border border-amber-500/30"
+                                    statusFilter === "Todos" ? "bg-black/20 text-black" : "bg-zinc-800 text-zinc-400"
                                 )}>
-                                    {tardeCount}
+                                    {baseAthletes.length}
                                 </span>
                             </button>
-                        )}
 
-                        <button
-                            onClick={() => setStatusFilter("Ausentes")}
-                            className={cn(
-                                "px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5",
-                                statusFilter === "Ausentes"
-                                    ? "bg-zinc-700 text-white border-zinc-500 shadow-md shadow-zinc-700/20"
-                                    : "bg-zinc-900/60 text-zinc-500 border-zinc-800/80 hover:text-zinc-300"
+                            <button
+                                onClick={() => setStatusFilter("Presentes")}
+                                className={cn(
+                                    "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 active:scale-95",
+                                    statusFilter === "Presentes"
+                                        ? "bg-emerald-500 text-black border-emerald-400 shadow-lg shadow-emerald-500/25 font-black"
+                                        : "bg-zinc-900/60 text-emerald-400 border-emerald-500/30 hover:bg-emerald-950/20"
+                                )}
+                                title="Mostrar atletas que asistieron en la fecha seleccionada"
+                            >
+                                <Check className="w-3 h-3 stroke-[3]" />
+                                <span>Presentes</span>
+                                <span className={cn(
+                                    "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
+                                    statusFilter === "Presentes" ? "bg-black/20 text-black" : "bg-emerald-950/60 text-emerald-300 border border-emerald-500/30"
+                                )}>
+                                    {presentCount}
+                                </span>
+                            </button>
+
+                            {tardeCount > 0 && (
+                                <button
+                                    onClick={() => setStatusFilter("Tardes")}
+                                    className={cn(
+                                        "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 active:scale-95",
+                                        statusFilter === "Tardes"
+                                            ? "bg-amber-500 text-black border-amber-400 shadow-lg shadow-amber-500/25 font-black"
+                                            : "bg-zinc-900/60 text-amber-400 border-amber-500/30 hover:bg-amber-950/20"
+                                    )}
+                                    title="Mostrar atletas que llegaron tarde"
+                                >
+                                    <Clock className="w-3 h-3 stroke-[2.5]" />
+                                    <span>Tardes</span>
+                                    <span className={cn(
+                                        "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
+                                        statusFilter === "Tardes" ? "bg-black/20 text-black" : "bg-amber-950/60 text-amber-300 border border-amber-500/30"
+                                    )}>
+                                        {tardeCount}
+                                    </span>
+                                </button>
                             )}
-                            title="Mostrar atletas ausentes / faltas"
-                        >
-                            <UserX className="w-3 h-3" />
-                            <span>Faltas</span>
-                            <span className={cn(
-                                "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
-                                statusFilter === "Ausentes" ? "bg-black/30 text-white" : "bg-zinc-850 text-zinc-400"
-                            )}>
-                                {absentCount}
-                            </span>
-                        </button>
-                        
-                        <div className="h-6 w-px bg-zinc-800 mx-2 hidden md:block" />
 
-                        <div className="flex gap-1.5">
+                            <button
+                                onClick={() => setStatusFilter("Ausentes")}
+                                className={cn(
+                                    "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 shrink-0 active:scale-95",
+                                    statusFilter === "Ausentes"
+                                        ? "bg-zinc-700 text-white border-zinc-500 shadow-md shadow-zinc-700/20"
+                                        : "bg-zinc-900/60 text-zinc-500 border-zinc-800/80 hover:text-zinc-300"
+                                )}
+                                title="Mostrar atletas ausentes / faltas"
+                            >
+                                <UserX className="w-3 h-3" />
+                                <span>Faltas</span>
+                                <span className={cn(
+                                    "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
+                                    statusFilter === "Ausentes" ? "bg-black/30 text-white" : "bg-zinc-850 text-zinc-400"
+                                )}>
+                                    {absentCount}
+                                </span>
+                            </button>
+                        </div>
+
+                        {/* Bulk Action Buttons (Marcar Todos Presentes / Faltas) */}
+                        <div className="flex items-center gap-2 shrink-0">
                             <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={markAllPresent}
-                                className="text-[9px] font-black uppercase tracking-widest border-emerald-500/20 text-emerald-500 bg-emerald-950/10 hover:bg-emerald-950/30 cursor-pointer"
+                                className="flex-1 sm:flex-none text-[9px] sm:text-[10px] font-black uppercase tracking-widest border-emerald-500/30 text-emerald-400 bg-emerald-950/20 hover:bg-emerald-950/40 cursor-pointer h-9 px-3 rounded-xl shadow-sm active:scale-95"
                             >
-                                <Check className="w-3 h-3 mr-1" /> Todos Presentes
+                                <Check className="w-3.5 h-3.5 mr-1" /> Todos Presentes
                             </Button>
                             <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={markAllAbsent}
-                                className="text-[9px] font-black uppercase tracking-widest border-zinc-700 text-zinc-400 bg-zinc-800/30 hover:bg-zinc-800/50 cursor-pointer"
+                                className="flex-1 sm:flex-none text-[9px] sm:text-[10px] font-black uppercase tracking-widest border-zinc-700 text-zinc-400 bg-zinc-850/40 hover:bg-zinc-800/60 cursor-pointer h-9 px-3 rounded-xl shadow-sm active:scale-95"
                             >
-                                <UserX className="w-3 h-3 mr-1" /> Todos Ausentes
+                                <UserX className="w-3.5 h-3.5 mr-1" /> Todos Ausentes
                             </Button>
                         </div>
                     </div>
@@ -1102,10 +1105,10 @@ export default function AdminAttendancePage() {
                 )}
 
                 {/* Floating/Sticky Save Panel */}
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-full max-w-lg px-4">
-                    <div className="bg-zinc-950/90 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-between gap-4">
-                        <div className="hidden sm:flex flex-col gap-1 flex-1">
-                            <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">
+                <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2 z-40 w-full max-w-lg px-3.5 sm:px-4">
+                    <div className="bg-zinc-950/95 backdrop-blur-xl border border-white/10 rounded-2xl p-3 sm:p-4 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-between gap-3 sm:gap-4">
+                        <div className="hidden sm:flex flex-col gap-1 flex-1 min-w-0">
+                            <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest truncate">
                                 {selectedDojo === "Todos" ? "Resumen por Dojo" : "Resumen Dojo Seleccionado"}
                             </p>
                             <div className="flex flex-col gap-1 max-h-[50px] overflow-y-auto no-scrollbar">
@@ -1116,7 +1119,7 @@ export default function AdminAttendancePage() {
                                             <img 
                                                 src={ds.logo || "/images/kuma-logo.jpg"} 
                                                 alt={ds.name} 
-                                                className="w-3.5 h-3.5 rounded-full object-cover border border-zinc-800/80" 
+                                                className="w-3.5 h-3.5 rounded-full object-cover border border-zinc-800/80 shrink-0" 
                                             />
                                             <span className="text-zinc-300 truncate max-w-[80px]" title={ds.name}>{ds.name}:</span>
                                             <span className="text-emerald-500">{ds.present} OK</span>
@@ -1132,15 +1135,15 @@ export default function AdminAttendancePage() {
                         <Button
                             onClick={handleSaveAttendance}
                             disabled={isSaving || athletes.length === 0}
-                            className="w-full sm:w-auto bg-red-600 text-white hover:bg-red-700 font-black uppercase text-xs tracking-widest px-8 py-3.5 shadow-lg shadow-red-600/20 rounded-xl cursor-pointer"
+                            className="w-full sm:w-auto bg-red-600 text-white hover:bg-red-700 font-black uppercase text-xs tracking-widest px-6 sm:px-8 py-3.5 sm:py-4 min-h-[48px] shadow-lg shadow-red-600/30 rounded-xl cursor-pointer active:scale-98 flex items-center justify-center"
                         >
                             {isSaving ? (
                                 <>
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin animate-infinite" /> Guardando...
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin animate-infinite shrink-0" /> Guardando...
                                 </>
                             ) : (
                                 <>
-                                    <CheckCircle className="w-4 h-4 mr-2" /> Guardar Lista de Asistencia
+                                    <CheckCircle className="w-4 h-4 mr-2 shrink-0" /> Guardar Lista de Asistencia
                                 </>
                             )}
                         </Button>

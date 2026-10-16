@@ -101,7 +101,7 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass border border-white/5 rounded-xl p-6 md:p-8 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar backdrop-blur-xl"
+            className="glass border border-white/5 rounded-xl p-4 sm:p-6 md:p-8 shadow-2xl max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto overscroll-contain custom-scrollbar backdrop-blur-xl min-w-0"
         >
             <div className="mb-8 border-b border-white/10 pb-4">
                 <h2 className="text-3xl font-serif font-black text-kuma-gold uppercase tracking-widest mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
@@ -672,18 +672,18 @@ export function EventEditor({ initialData, onSave, onCancel }: EventEditorProps)
 
 
                 {/* Actions */}
-                <div className="flex justify-end gap-4 pt-6 mt-8 border-t border-zinc-800">
+                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 pt-6 mt-8 border-t border-zinc-800">
                     <Button
                         type="button"
                         onClick={onCancel}
-                        className="bg-zinc-800 text-zinc-300 hover:bg-zinc-700 px-6"
+                        className="w-full sm:w-auto min-h-[44px] bg-zinc-800 text-zinc-300 hover:bg-zinc-700 px-6 active:scale-95"
                     >
                         Cancelar
                     </Button>
                     <Button
                         type="submit"
                         disabled={isLoading}
-                        className="bg-red-600 text-white hover:bg-red-700 font-bold tracking-wider px-8"
+                        className="w-full sm:w-auto min-h-[44px] bg-red-600 text-white hover:bg-red-700 font-bold tracking-wider px-8 active:scale-95"
                     >
                         {isLoading ? (
                             <>

@@ -56,13 +56,13 @@ export default function AdminRutinasPage() {
     };
 
     return (
-        <div className="min-h-screen text-white space-y-8 pb-32">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-6">
+        <div className="w-full min-w-0 text-white space-y-6 sm:space-y-8 pb-32">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 sm:gap-6">
                 <div>
-                    <h1 className="text-3xl font-serif font-black text-white uppercase italic">
+                    <h1 className="text-2xl sm:text-3xl font-serif font-black text-white uppercase italic">
                         Gestión de Rutinas
                     </h1>
-                    <p className="text-zinc-500 text-sm">Administra el catálogo de entrenamiento.</p>
+                    <p className="text-zinc-500 text-xs sm:text-sm">Administra el catálogo de entrenamiento.</p>
                 </div>
 
                 {/* New Rutina Button */}

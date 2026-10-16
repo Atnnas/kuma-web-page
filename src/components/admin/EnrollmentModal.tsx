@@ -57,24 +57,24 @@ export function EnrollmentModal({ isOpen, onClose, potentialUsers, onEnrollExist
                         initial={{ scale: 0.9, opacity: 0, y: 20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        className="relative w-full max-w-2xl bg-zinc-950 border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+                        className="relative w-full max-w-2xl bg-zinc-950 border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[88dvh] sm:max-h-[80vh]"
                     >
                         {/* Header with Tabs */}
                         <div className="bg-zinc-900/50 border-b border-white/5">
-                            <div className="p-6 flex items-center justify-between">
-                                <h2 className="text-xl font-black text-white uppercase tracking-widest flex items-center gap-3">
-                                    <UserPlus className="w-6 h-6 text-kuma-gold" /> Inscripción Kuma
+                            <div className="p-4 sm:p-6 flex items-center justify-between">
+                                <h2 className="text-lg sm:text-xl font-black text-white uppercase tracking-widest flex items-center gap-2.5 sm:gap-3">
+                                    <UserPlus className="w-5 h-5 sm:w-6 sm:h-6 text-kuma-gold shrink-0" /> Inscripción Kuma
                                 </h2>
                                 <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full text-zinc-500 hover:text-white transition-colors">
-                                    <X className="w-6 h-6" />
+                                    <X className="w-5 h-5 sm:w-6 sm:h-6" />
                                 </button>
                             </div>
                             
-                            <div className="flex px-6 gap-8">
+                            <div className="flex px-4 sm:px-6 gap-4 sm:gap-8">
                                 <button 
                                     onClick={() => setActiveTab("existing")}
                                     className={cn(
-                                        "pb-4 text-xs font-black uppercase tracking-widest transition-all relative",
+                                        "pb-3 sm:pb-4 text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all relative",
                                         activeTab === "existing" ? "text-kuma-gold" : "text-zinc-500 hover:text-zinc-300"
                                     )}
                                 >
@@ -84,7 +84,7 @@ export function EnrollmentModal({ isOpen, onClose, potentialUsers, onEnrollExist
                                 <button 
                                     onClick={() => setActiveTab("new")}
                                     className={cn(
-                                        "pb-4 text-xs font-black uppercase tracking-widest transition-all relative",
+                                        "pb-3 sm:pb-4 text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all relative",
                                         activeTab === "new" ? "text-red-500" : "text-zinc-500 hover:text-zinc-300"
                                     )}
                                 >
@@ -94,7 +94,7 @@ export function EnrollmentModal({ isOpen, onClose, potentialUsers, onEnrollExist
                             </div>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                        <div className="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar overscroll-contain">
                             {activeTab === "existing" ? (
                                 <div className="space-y-6">
                                     <div className="relative">

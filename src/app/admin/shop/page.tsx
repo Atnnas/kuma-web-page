@@ -10,14 +10,14 @@ export default async function AdminStorePage() {
     const products = await getProducts("all");
 
     return (
-        <div className="space-y-8 pb-32">
+        <div className="w-full min-w-0 space-y-6 sm:space-y-8 pb-32">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter drop-shadow-xl">
+                    <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-white uppercase tracking-tighter drop-shadow-xl">
                         Gestión de <span className="text-kuma-gold">Tienda</span>
                     </h1>
-                    <p className="text-zinc-300 mt-2 text-base md:text-lg font-medium max-w-xl drop-shadow-md">
+                    <p className="text-zinc-300 mt-2 text-sm sm:text-base md:text-lg font-medium max-w-xl drop-shadow-md">
                         Administra el catálogo de productos, inventario y visibilidad de forma visual.
                     </p>
                 </div>
@@ -26,7 +26,7 @@ export default async function AdminStorePage() {
             <StoreFloatingButton />
 
             {/* Products Grid - Replaces Table for Mobile UX */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {products.length === 0 ? (
                     <div className="col-span-full py-24 bg-zinc-900/40 border border-white/10 rounded-3xl backdrop-blur flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500">
                         <div className="w-24 h-24 bg-zinc-800 rounded-full flex items-center justify-center mb-6 shadow-inner border border-white/5">
@@ -85,40 +85,39 @@ export default async function AdminStorePage() {
                         </div>
 
                         {/* Content Body */}
-                        <div className="p-6 flex flex-col gap-6">
+                        <div className="p-4 sm:p-6 flex flex-col gap-4 sm:gap-6">
                             <div>
-                                <h3 className="text-2xl font-black text-white uppercase leading-tight line-clamp-2 min-h-[4rem] flex items-center group-hover:text-blue-400 transition-colors drop-shadow-md">
+                                <h3 className="text-lg sm:text-2xl font-black text-white uppercase leading-tight line-clamp-2 min-h-[2.5rem] sm:min-h-[4rem] flex items-center group-hover:text-blue-400 transition-colors drop-shadow-md">
                                     {product.name}
                                 </h3>
-                                <div className="flex items-end gap-3 mt-4 border-b border-white/10 pb-4">
-                                    <p className="text-4xl font-mono text-kuma-gold tracking-tighter leading-none drop-shadow-sm">
-                                        <span className="text-xl text-zinc-400 align-top mr-1 font-bold">₡</span>
+                                <div className="flex items-end gap-3 mt-3 sm:mt-4 border-b border-white/10 pb-3 sm:pb-4">
+                                    <p className="text-3xl sm:text-4xl font-mono text-kuma-gold tracking-tighter leading-none drop-shadow-sm">
+                                        <span className="text-lg sm:text-xl text-zinc-400 align-top mr-1 font-bold">₡</span>
                                         {product.price.toLocaleString()}
                                     </p>
-
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between text-sm text-zinc-300 uppercase font-bold tracking-wider">
+                            <div className="flex items-center justify-between text-xs sm:text-sm text-zinc-300 uppercase font-bold tracking-wider">
                                 <div className="flex items-center gap-2">
-                                    <div className={`w-3 h-3 rounded-full shadow-lg ${product.stock > 5 ? "bg-green-500 shadow-green-500/50" : (product.stock > 0 ? "bg-yellow-500 shadow-yellow-500/50" : "bg-red-500 shadow-red-500/50 animate-pulse")}`} />
-                                    <span>Stock: <span className="text-white text-base">{product.stock}</span></span>
+                                    <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full shadow-lg ${product.stock > 5 ? "bg-green-500 shadow-green-500/50" : (product.stock > 0 ? "bg-yellow-500 shadow-yellow-500/50" : "bg-red-500 shadow-red-500/50 animate-pulse")}`} />
+                                    <span>Stock: <span className="text-white text-sm sm:text-base">{product.stock}</span></span>
                                 </div>
                                 {product.stock <= 5 && product.stock > 0 && (
-                                    <span className="text-red-400 font-black animate-pulse bg-red-900/30 px-2 py-1 rounded">¡Bajo!</span>
+                                    <span className="text-red-400 font-black animate-pulse bg-red-900/30 px-2 py-0.5 sm:py-1 rounded text-xs">¡Bajo!</span>
                                 )}
                                 {product.stock === 0 && (
-                                    <span className="text-red-500 font-black bg-red-900/20 px-2 py-1 rounded">Agotado</span>
+                                    <span className="text-red-500 font-black bg-red-900/20 px-2 py-0.5 sm:py-1 rounded text-xs">Agotado</span>
                                 )}
                             </div>
 
                             {/* Actions Footer - Big Buttons for Touch */}
-                            <div className="grid grid-cols-2 gap-4 mt-auto">
+                            <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-auto">
                                 <Link
                                     href={`/admin/shop/${product._id}`}
-                                    className="flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white hover:text-white py-4 rounded-2xl font-black uppercase text-sm tracking-widest transition-all border border-white/10 group-hover:border-white/30 active:scale-95 shadow-lg"
+                                    className="flex items-center justify-center gap-1.5 sm:gap-2 min-h-[44px] bg-zinc-800 hover:bg-zinc-700 text-white hover:text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl font-black uppercase text-xs sm:text-sm tracking-wider sm:tracking-widest transition-all border border-white/10 group-hover:border-white/30 active:scale-95 shadow-lg"
                                 >
-                                    <Pencil className="w-5 h-5" /> Editar
+                                    <Pencil className="w-4 h-4 sm:w-5 sm:h-5" /> Editar
                                 </Link>
 
                                 <form action={async () => {
@@ -126,9 +125,9 @@ export default async function AdminStorePage() {
                                     await deleteProduct(product._id);
                                 }} className="contents">
                                     <button
-                                        className="flex items-center justify-center gap-2 bg-red-950/40 hover:bg-red-900/60 text-red-500 hover:text-red-400 border border-red-900/30 group-hover:border-red-500/50 py-4 rounded-2xl font-black uppercase text-sm tracking-widest transition-all active:scale-95 shadow-lg"
+                                        className="flex items-center justify-center gap-1.5 sm:gap-2 min-h-[44px] bg-red-950/40 hover:bg-red-900/60 text-red-500 hover:text-red-400 border border-red-900/30 group-hover:border-red-500/50 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-black uppercase text-xs sm:text-sm tracking-wider sm:tracking-widest transition-all active:scale-95 shadow-lg"
                                     >
-                                        <Trash2 className="w-5 h-5" /> Borrar
+                                        <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" /> Borrar
                                     </button>
                                 </form>
                             </div>

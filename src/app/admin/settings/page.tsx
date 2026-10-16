@@ -31,12 +31,12 @@ export default async function SettingsPage() {
 
     // 3. Render Settings (Placeholder for now)
     return (
-        <div className="space-y-8">
-            <header className="border-b border-white/10 pb-6">
-                <h1 className="text-3xl font-serif font-black text-kuma-gold uppercase tracking-widest drop-shadow-md">
+        <div className="w-full min-w-0 space-y-6 sm:space-y-8 pb-24">
+            <header className="border-b border-white/10 pb-4 sm:pb-6">
+                <h1 className="text-2xl sm:text-3xl font-serif font-black text-kuma-gold uppercase tracking-widest drop-shadow-md">
                     Configuración del Sistema
                 </h1>
-                <p className="text-zinc-400 mt-2">
+                <p className="text-zinc-400 mt-2 text-xs sm:text-sm">
                     Administra las variables globales y permisos del Dojo.
                 </p>
             </header>

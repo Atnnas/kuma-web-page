@@ -182,14 +182,14 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass border border-white/5 rounded-xl shadow-2xl backdrop-blur-xl bg-zinc-900/80 relative flex flex-col min-h-screen md:min-h-0"
+            className="glass border border-white/5 rounded-xl shadow-2xl backdrop-blur-xl bg-zinc-900/80 relative flex flex-col min-h-screen md:min-h-0 min-w-0"
         >
-            <div className="p-6 md:p-8 pb-32"> {/* Added padding bottom for sticky footer */}
-                <div className="mb-8 border-b border-white/10 pb-4">
-                    <h2 className="text-3xl font-serif font-black text-kuma-gold uppercase tracking-widest mb-2">
+            <div className="p-4 sm:p-6 md:p-8 pb-40"> {/* Added padding bottom for sticky footer */}
+                <div className="mb-6 sm:mb-8 border-b border-white/10 pb-4">
+                    <h2 className="text-2xl sm:text-3xl font-serif font-black text-kuma-gold uppercase tracking-widest mb-2">
                         {initialData?._id ? "Editar Rutina" : "Nueva Rutina"}
                     </h2>
-                    <p className="text-zinc-400 text-sm">Diseña el entrenamiento paso a paso.</p>
+                    <p className="text-zinc-400 text-xs sm:text-sm">Diseña el entrenamiento paso a paso.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
@@ -558,49 +558,49 @@ export function RoutineEditor({ initialData, onSave, onCancel }: RoutineEditorPr
             </div >
 
             {/* --- FLOATING ACTIONS FOOTER --- */}
-            < div className="fixed md:sticky bottom-0 inset-x-0 p-4 bg-zinc-900/90 backdrop-blur-xl border-t border-white/10 flex flex-wrap justify-between items-center gap-4 z-50 rounded-b-xl" >
-                <div className="flex flex-wrap gap-2">
+            <div className="fixed md:sticky bottom-0 inset-x-0 p-3 sm:p-4 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] md:pb-4 bg-zinc-900/95 backdrop-blur-xl border-t border-white/10 flex flex-wrap justify-between items-center gap-3 sm:gap-4 z-40 rounded-b-xl">
+                <div className="flex flex-wrap gap-2 w-full md:w-auto">
                     <Button
                         type="button"
                         onClick={addLoopStart}
-                        className="bg-amber-600/20 hover:bg-amber-600/40 text-amber-500 text-[10px] h-10 border border-amber-600/30"
+                        className="flex-1 sm:flex-none min-h-[38px] bg-amber-600/20 hover:bg-amber-600/40 text-amber-500 text-[10px] sm:text-xs h-9 sm:h-10 border border-amber-600/30 active:scale-95"
                     >
                         <Plus className="w-3 h-3 mr-1" weight="bold" /> Iniciar Loop
                     </Button>
                     <Button
                         type="button"
                         onClick={addLoopEnd}
-                        className="bg-amber-900/20 hover:bg-amber-900/40 text-amber-700 text-[10px] h-10 border border-amber-900/30"
+                        className="flex-1 sm:flex-none min-h-[38px] bg-amber-900/20 hover:bg-amber-900/40 text-amber-700 text-[10px] sm:text-xs h-9 sm:h-10 border border-amber-900/30 active:scale-95"
                     >
                         <Plus className="w-3 h-3 mr-1" weight="bold" /> Fin Loop
                     </Button>
                     <Button
                         type="button"
                         onClick={addBlock}
-                        className="bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] h-10 px-4 shadow-lg border border-white/5"
+                        className="w-full sm:w-auto min-h-[38px] bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] sm:text-xs h-9 sm:h-10 px-4 shadow-lg border border-white/5 active:scale-95"
                     >
                         <Plus className="w-4 h-4 mr-2" weight="bold" /> Agregar Ejercicio
                     </Button>
                 </div>
 
-                <div className="flex gap-4 ml-auto">
+                <div className="flex gap-2 sm:gap-4 w-full md:w-auto justify-end">
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="px-6 py-3 rounded-xl bg-gradient-to-b from-zinc-700 to-zinc-800 text-white font-bold border-b-4 border-zinc-950 hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all text-sm"
+                        className="flex-1 md:flex-none px-4 sm:px-6 py-2.5 sm:py-3 min-h-[44px] rounded-xl bg-gradient-to-b from-zinc-700 to-zinc-800 text-white font-bold border-b-4 border-zinc-950 hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all text-xs sm:text-sm"
                     >
                         Cancelar
                     </button>
                     <button
                         onClick={(e: React.MouseEvent) => handleSubmit(e as any)}
                         disabled={isLoading}
-                        className="px-8 py-3 rounded-xl bg-gradient-to-b from-kuma-gold to-amber-500 text-black font-black uppercase tracking-wider border-b-4 border-amber-700 shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2 text-sm"
+                        className="flex-1 md:flex-none px-4 sm:px-8 py-2.5 sm:py-3 min-h-[44px] rounded-xl bg-gradient-to-b from-kuma-gold to-amber-500 text-black font-black uppercase tracking-wider border-b-4 border-amber-700 shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] hover:brightness-110 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
                     >
                         {isLoading ? <Spinner className="mr-2 h-5 w-5 animate-spin" weight="bold" /> : <FloppyDisk className="mr-2 h-5 w-5" weight="duotone" />}
                         {initialData?._id ? "Guardar Cambios" : "Crear Rutina"}
                     </button>
                 </div>
-            </div >
+            </div>
         </motion.div >
     );
 }

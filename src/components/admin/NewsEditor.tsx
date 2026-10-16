@@ -65,7 +65,7 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass border border-white/5 rounded-xl p-6 md:p-8 shadow-2xl backdrop-blur-xl"
+            className="glass border border-white/5 rounded-xl p-4 sm:p-6 md:p-8 shadow-2xl backdrop-blur-xl min-w-0 max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto overscroll-contain custom-scrollbar"
         >
             <div className="mb-8 border-b border-white/10 pb-4">
                 <h2 className="text-3xl font-serif font-black text-kuma-gold uppercase tracking-widest mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
@@ -362,18 +362,18 @@ export function NewsEditor({ initialData, onSave, onCancel }: NewsEditorProps) {
 
                 {/* Is Premium Toggle - Optional, can be added if needed, but keeping simple for now based on request */}
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-zinc-800">
+                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-zinc-800">
                     <Button
                         type="button"
                         onClick={onCancel}
-                        className="bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
+                        className="w-full sm:w-auto min-h-[44px] bg-zinc-800 text-zinc-300 hover:bg-zinc-700 active:scale-95"
                     >
                         Cancelar
                     </Button>
                     <Button
                         type="submit"
                         disabled={isLoading}
-                        className="bg-red-600 text-white hover:bg-red-700 font-bold tracking-wider"
+                        className="w-full sm:w-auto min-h-[44px] bg-red-600 text-white hover:bg-red-700 font-bold tracking-wider active:scale-95"
                     >
                         {isLoading ? (
                             <>

@@ -141,52 +141,54 @@ export default function ReportsClient({ initialData, initialStats, from, to }: R
             )}
 
             {/* --- CONTROLS BAR --- */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-900/50 border border-white/5 p-4 rounded-2xl backdrop-blur-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900/50 border border-white/5 p-3.5 sm:p-4 rounded-2xl backdrop-blur-xl min-w-0">
                 <div>
-                    <h2 className="text-lg font-bold text-white mb-1 uppercase tracking-tight flex items-center gap-2">
-                        <ChartLineUp className="w-5 h-5 text-kuma-gold" weight="duotone" />
+                    <h2 className="text-base sm:text-lg font-bold text-white mb-0.5 sm:mb-1 uppercase tracking-tight flex items-center gap-2">
+                        <ChartLineUp className="w-4 h-4 sm:w-5 sm:h-5 text-kuma-gold" weight="duotone" />
                         Filtros de Datos
                     </h2>
-                    <p className="text-xs text-zinc-500 font-mono">Selecciona rango de fechas</p>
+                    <p className="text-[11px] sm:text-xs text-zinc-500 font-mono">Selecciona rango de fechas</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                     <button
                         onClick={() => setIsDeleteModalOpen(true)}
-                        className="p-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 hover:border-red-500 rounded-xl transition-all active:scale-95 group"
+                        className="p-2 sm:p-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 hover:border-red-500 rounded-xl transition-all active:scale-95 group shrink-0"
                         title="Limpiar Datos"
                     >
-                        <Trash className="w-5 h-5" weight="duotone" />
+                        <Trash className="w-4 h-4 sm:w-5 sm:h-5" weight="duotone" />
                     </button>
-                    <div className="h-8 w-[1px] bg-white/10 mx-1" />
-                    <NeonDatePicker date={date} setDate={setDate} />
-                    {isLoading && <CircleNotch className="w-5 h-5 animate-spin text-kuma-gold ml-2" weight="bold" />}
+                    <div className="h-6 sm:h-8 w-[1px] bg-white/10 mx-0.5 sm:mx-1" />
+                    <div className="min-w-0 flex-1 sm:flex-none">
+                        <NeonDatePicker date={date} setDate={setDate} />
+                    </div>
+                    {isLoading && <CircleNotch className="w-5 h-5 animate-spin text-kuma-gold ml-1 sm:ml-2 shrink-0" weight="bold" />}
                 </div>
             </div>
 
             {/* --- STAT CARDS --- */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-zinc-900/30 border border-white/5 p-8 rounded-3xl flex items-center justify-between hover:bg-zinc-900/50 transition-all group relative overflow-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="bg-zinc-900/30 border border-white/5 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl flex items-center justify-between hover:bg-zinc-900/50 transition-all group relative overflow-hidden min-w-0">
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Globe className="w-32 h-32 text-kuma-gold" weight="duotone" />
+                        <Globe className="w-24 h-24 sm:w-32 sm:h-32 text-kuma-gold" weight="duotone" />
                     </div>
-                    <div>
-                        <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Total Visitas</p>
-                        <p className="text-5xl font-black text-white tracking-tighter group-hover:text-kuma-gold transition-colors">{initialStats.total}</p>
+                    <div className="min-w-0">
+                        <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mb-1 sm:mb-2">Total Visitas</p>
+                        <p className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter group-hover:text-kuma-gold transition-colors">{initialStats.total}</p>
                     </div>
-                    <div className="h-14 w-14 rounded-2xl bg-kuma-gold/10 border border-kuma-gold/20 flex items-center justify-center group-hover:scale-110 transition-transform relative z-10">
-                        <Globe className="w-7 h-7 text-kuma-gold" weight="duotone" />
+                    <div className="h-11 w-11 sm:h-14 sm:w-14 rounded-xl sm:rounded-2xl bg-kuma-gold/10 border border-kuma-gold/20 flex items-center justify-center group-hover:scale-110 transition-transform relative z-10 shrink-0">
+                        <Globe className="w-5 h-5 sm:w-7 sm:h-7 text-kuma-gold" weight="duotone" />
                     </div>
                 </div>
-                <div className="bg-zinc-900/30 border border-white/5 p-8 rounded-3xl flex items-center justify-between hover:bg-zinc-900/50 transition-all group relative overflow-hidden">
+                <div className="bg-zinc-900/30 border border-white/5 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl flex items-center justify-between hover:bg-zinc-900/50 transition-all group relative overflow-hidden min-w-0">
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Users className="w-32 h-32 text-blue-500" weight="duotone" />
+                        <Users className="w-24 h-24 sm:w-32 sm:h-32 text-blue-500" weight="duotone" />
                     </div>
-                    <div>
-                        <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Visitantes Únicos</p>
-                        <p className="text-5xl font-black text-white tracking-tighter group-hover:text-blue-400 transition-colors">{initialStats.unique}</p>
+                    <div className="min-w-0">
+                        <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mb-1 sm:mb-2">Visitantes Únicos</p>
+                        <p className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter group-hover:text-blue-400 transition-colors">{initialStats.unique}</p>
                     </div>
-                    <div className="h-14 w-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform relative z-10">
-                        <Users className="w-7 h-7 text-blue-500" weight="duotone" />
+                    <div className="h-11 w-11 sm:h-14 sm:w-14 rounded-xl sm:rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform relative z-10 shrink-0">
+                        <Users className="w-5 h-5 sm:w-7 sm:h-7 text-blue-500" weight="duotone" />
                     </div>
                 </div>
             </div>

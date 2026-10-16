@@ -57,15 +57,15 @@ export function UserEditModal({ isOpen, onClose, user, onSave, dojos }: UserEdit
                         exit={{ scale: 0.9, opacity: 0 }}
                         className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none"
                     >
-                        <div className="bg-zinc-950 border border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl pointer-events-auto overflow-hidden">
-                            <div className="flex items-center justify-between p-6 border-b border-zinc-900 bg-zinc-900/50">
-                                <h3 className="text-xl font-bold text-white uppercase tracking-wider">Editar Usuario</h3>
-                                <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors">
+                        <div className="bg-zinc-950 border border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl pointer-events-auto overflow-hidden flex flex-col max-h-[90dvh]">
+                            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-zinc-900 bg-zinc-900/50 shrink-0">
+                                <h3 className="text-lg sm:text-xl font-bold text-white uppercase tracking-wider">Editar Usuario</h3>
+                                <button onClick={onClose} className="p-2 text-zinc-500 hover:text-white transition-colors">
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto overscroll-contain">
                                 {/* Name */}
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-zinc-500 uppercase flex items-center gap-2">

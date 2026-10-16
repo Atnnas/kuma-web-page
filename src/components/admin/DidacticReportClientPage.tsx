@@ -246,13 +246,13 @@ export function DidacticReportClientPage() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="w-full min-w-0 space-y-6 sm:space-y-8 animate-in fade-in duration-500 pb-24">
             {/* --- HEADER --- */}
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border-b border-zinc-800 pb-6">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 sm:gap-6 border-b border-zinc-800 pb-6">
+                <div className="flex items-center gap-3 sm:gap-4">
                     <Link
                         href="/admin/reports"
-                        className="p-3 hover:bg-zinc-800 rounded-2xl transition-all hover:scale-105 text-zinc-400 hover:text-white group border border-white/5"
+                        className="p-2.5 sm:p-3 hover:bg-zinc-800 rounded-2xl transition-all hover:scale-105 text-zinc-400 hover:text-white group border border-white/5 shrink-0"
                     >
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     </Link>
@@ -263,21 +263,21 @@ export function DidacticReportClientPage() {
                             </span>
                             <span className="text-xs text-zinc-500 font-bold">• Kuma Dojo Telemetría</span>
                         </div>
-                        <h1 className="text-3xl md:text-5xl font-serif font-black uppercase tracking-tight text-white mt-1">
+                        <h1 className="text-2xl sm:text-3xl md:text-5xl font-serif font-black uppercase tracking-tight text-white mt-1">
                             Auditoría de <span className="text-kuma-gold">Progreso Didáctico</span>
                         </h1>
-                        <p className="text-zinc-400 text-xs md:text-sm mt-1 max-w-2xl">
+                        <p className="text-zinc-400 text-xs sm:text-sm mt-1 max-w-2xl">
                             Supervisión en vivo de alumnos en el tatami interactivo: frecuencia de entrada, días de inactividad y avance hacia el siguiente cinturón.
                         </p>
                     </div>
                 </div>
 
                 {/* Header Actions */}
-                <div className="flex items-center gap-3 w-full lg:w-auto">
+                <div className="flex items-center gap-2 sm:gap-3 w-full lg:w-auto flex-wrap sm:flex-nowrap">
                     <button
                         onClick={loadReport}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-black uppercase tracking-wider transition-all border border-white/10 cursor-pointer disabled:opacity-50"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 min-h-[42px] rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-black uppercase tracking-wider transition-all border border-white/10 cursor-pointer disabled:opacity-50 active:scale-95"
                     >
                         <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin text-kuma-gold" : ""}`} />
                         <span>Actualizar</span>
@@ -286,10 +286,10 @@ export function DidacticReportClientPage() {
                     <button
                         onClick={exportToCSV}
                         disabled={!filteredData.length}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-kuma-gold to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black text-xs font-serif font-black uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:scale-[1.02] cursor-pointer disabled:opacity-50"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 min-h-[42px] rounded-2xl bg-gradient-to-r from-amber-500 via-kuma-gold to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black text-xs font-serif font-black uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:scale-[1.02] active:scale-95 cursor-pointer disabled:opacity-50"
                     >
                         <Download className="w-4 h-4" />
-                        <span>Exportar Excel (CSV)</span>
+                        <span>Exportar CSV</span>
                     </button>
                 </div>
             </div>

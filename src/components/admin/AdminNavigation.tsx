@@ -57,7 +57,7 @@ export function SwipeBackWrapper({ children, target = "/admin" }: { children: Re
         <div
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className="w-full"
+            className="w-full min-w-0"
         >
             {children}
         </div>

@@ -90,7 +90,7 @@ export default function OrganizersClientPage() {
     };
 
     return (
-        <div className="min-h-screen text-white space-y-8">
+        <div className="w-full min-w-0 text-white space-y-6 sm:space-y-8 pb-32">
             {/* List */}
             {!isModalOpen && (
                 <AdminFloatingButton onClick={handlePrepareCreate} label="Nuevo Organizador" />
@@ -159,15 +159,15 @@ export default function OrganizersClientPage() {
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}
-                            className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
+                            className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg max-h-[92dvh] overflow-y-auto overscroll-contain shadow-2xl flex flex-col"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <form onSubmit={handleSave}>
-                                <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
-                                    <h3 className="text-xl font-serif font-bold text-white uppercase tracking-wider">
+                            <form onSubmit={handleSave} className="flex flex-col h-full">
+                                <div className="p-4 sm:p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/50">
+                                    <h3 className="text-lg sm:text-xl font-serif font-bold text-white uppercase tracking-wider">
                                         {editingId ? "Editar Organizador" : "Nuevo Organizador"}
                                     </h3>
-                                    <button type="button" onClick={() => setIsModalOpen(false)} className="text-zinc-400 hover:text-white">
+                                    <button type="button" onClick={() => setIsModalOpen(false)} className="text-zinc-400 hover:text-white p-1">
                                         <X className="w-6 h-6" />
                                     </button>
                                 </div>
@@ -228,11 +228,11 @@ export default function OrganizersClientPage() {
                                     </div>
                                 </div>
 
-                                <div className="p-6 border-t border-zinc-800 flex justify-end gap-3 bg-zinc-950/30">
-                                    <Button type="button" onClick={() => setIsModalOpen(false)} className="bg-transparent hover:bg-white/5 text-zinc-400">
+                                <div className="p-4 sm:p-6 border-t border-zinc-800 flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 bg-zinc-950/30">
+                                    <Button type="button" onClick={() => setIsModalOpen(false)} className="w-full sm:w-auto min-h-[44px] bg-transparent hover:bg-white/5 text-zinc-400 active:scale-95">
                                         Cancelar
                                     </Button>
-                                    <Button type="submit" disabled={isSaving || !formData.logo || !formData.name} className="bg-red-600 hover:bg-red-700 text-white min-w-[120px]">
+                                    <Button type="submit" disabled={isSaving || !formData.logo || !formData.name} className="w-full sm:w-auto min-h-[44px] bg-red-600 hover:bg-red-700 text-white min-w-[120px] active:scale-95 font-bold">
                                         {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4 mr-2" /> Guardar</>}
                                     </Button>
                                 </div>

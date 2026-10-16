@@ -60,7 +60,7 @@ export default function AdminNewsPage() {
 
     return (
         <SwipeBackWrapper>
-            <div className="">
+            <div className="w-full min-w-0 pb-24">
                 <div className="max-w-6xl mx-auto">
                     {/* Header */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 md:mb-12">

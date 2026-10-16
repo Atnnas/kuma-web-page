@@ -87,29 +87,29 @@ export default async function RoutineLogsPage({
     }));
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 min-h-screen pb-20">
+        <div className="w-full min-w-0 space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-24">
             {/* Header */}
-            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 border-b border-zinc-800 pb-6">
-                <div className="flex items-center gap-4">
-                    <Link href="/admin/reports" className="group p-3 bg-zinc-900 border border-white/5 rounded-xl hover:bg-white hover:text-black transition-all hover:scale-105 text-zinc-400">
+            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 sm:gap-6 border-b border-zinc-800 pb-6">
+                <div className="flex items-center gap-3 sm:gap-4">
+                    <Link href="/admin/reports" className="group p-2.5 sm:p-3 bg-zinc-900 border border-white/5 rounded-xl hover:bg-white hover:text-black transition-all hover:scale-105 text-zinc-400 shrink-0">
                         <CaretLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" weight="bold" />
                     </Link>
                     <div>
-                        <div className="flex items-center gap-3 mb-1">
-                            <div className="p-2 bg-kuma-gold/10 rounded-lg text-kuma-gold">
-                                <Clock className="w-6 h-6" weight="duotone" />
+                        <div className="flex items-center gap-2 sm:gap-3 mb-1">
+                            <div className="p-1.5 sm:p-2 bg-kuma-gold/10 rounded-lg text-kuma-gold">
+                                <Clock className="w-5 h-5 sm:w-6 sm:h-6" weight="duotone" />
                             </div>
-                            <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-white">
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-tighter text-white">
                                 Registro de <span className="text-kuma-gold">Ejecuciones</span>
                             </h1>
                         </div>
-                        <p className="text-zinc-500 font-medium pl-14">
+                        <p className="text-zinc-500 text-xs sm:text-sm font-medium">
                             Auditoría de rendimiento y tiempos reales.
                         </p>
                     </div>
                 </div>
 
-                <div className="px-4 py-2 bg-zinc-900 rounded-lg border border-white/5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                <div className="px-3.5 py-1.5 sm:px-4 sm:py-2 bg-zinc-900 rounded-lg border border-white/5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                     {logs.length} Registros Encontrados
                 </div>
             </div>

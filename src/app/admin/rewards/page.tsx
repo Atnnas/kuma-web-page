@@ -81,7 +81,7 @@ export default function RecompensasPage() {
     };
 
     return (
-        <div className="p-8 text-white min-h-screen relative">
+        <div className="py-4 sm:py-8 px-0 sm:px-4 text-white min-h-screen relative min-w-0">
             <AchievementOverlay
                 show={showPreview}
                 trophy={previewTrophy}
@@ -100,10 +100,10 @@ export default function RecompensasPage() {
             />
 
             {/* STREAK TESTING SECTION */}
-            <div className="mb-12">
+            <div className="mb-8 sm:mb-12">
                 <PrimalTitle title="Sistema de Rachas" subtitle="Evolución de la Llama y Celebraciones (Previews)" size="lg" className="md:text-left text-center mb-6" />
 
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-6">
                     {[
                         { days: 0, label: "Inactivo (0 Días)" },
                         { days: 10, label: "Fase 1 (10 Días)" },
@@ -111,17 +111,17 @@ export default function RecompensasPage() {
                         { days: 30, label: "Fase 2 (30 Días)" },
                         { days: 60, label: "Fase 3 (60 Días)" },
                     ].map((item) => (
-                        <div key={item.days} className="bg-zinc-900/50 border border-white/5 rounded-xl p-6 flex flex-col items-center gap-4 hover:bg-white/5 transition-colors group">
-                            <span className="text-xs uppercase tracking-widest text-zinc-500 font-bold">{item.label}</span>
+                        <div key={item.days} className="bg-zinc-900/50 border border-white/5 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-3 sm:gap-4 hover:bg-white/5 transition-colors group">
+                            <span className="text-[10px] sm:text-xs uppercase tracking-wider sm:tracking-widest text-zinc-500 font-bold text-center">{item.label}</span>
 
                             {/* Visual Preview */}
-                            <div className="scale-150 transform p-4">
+                            <div className="scale-125 sm:scale-150 transform p-3 sm:p-4">
                                 <StreakFlame overrideStreak={item.days} />
                             </div>
 
                             <button
                                 onClick={() => handleTestStreak(item.days)}
-                                className="mt-2 text-xs font-bold text-orange-500 uppercase tracking-wider hover:text-orange-400 flex items-center gap-2"
+                                className="mt-1 sm:mt-2 text-xs font-bold text-orange-500 uppercase tracking-wider hover:text-orange-400 flex items-center gap-1.5 active:scale-95 transition-transform"
                             >
                                 <Play weight="fill" /> Probar
                             </button>
@@ -129,17 +129,17 @@ export default function RecompensasPage() {
                     ))}
 
                     {/* STREAK LOSS TEST CASE - Standardized to match above */}
-                    <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6 flex flex-col items-center gap-4 hover:bg-white/5 transition-colors group">
-                        <span className="text-xs uppercase tracking-widest text-red-500 font-bold">CASO DE DOLOR</span>
+                    <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-3 sm:gap-4 hover:bg-white/5 transition-colors group">
+                        <span className="text-[10px] sm:text-xs uppercase tracking-wider sm:tracking-widest text-red-500 font-bold text-center">CASO DE DOLOR</span>
 
                         {/* Visual Preview for Loss (Grey flame) */}
-                        <div className="scale-150 transform p-4 grayscale">
+                        <div className="scale-125 sm:scale-150 transform p-3 sm:p-4 grayscale">
                             <StreakFlame overrideStreak={0} />
                         </div>
 
                         <button
                             onClick={() => setShowLossPreview(true)}
-                            className="mt-2 text-xs font-bold text-red-500 uppercase tracking-wider hover:text-red-400 flex items-center gap-2"
+                            className="mt-1 sm:mt-2 text-xs font-bold text-red-500 uppercase tracking-wider hover:text-red-400 flex items-center gap-1.5 active:scale-95 transition-transform"
                         >
                             <Play weight="fill" /> Probar
                         </button>

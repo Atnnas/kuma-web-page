@@ -60,7 +60,7 @@ export default function AdminEventsPage() {
     };
 
     return (
-        <div className="min-h-screen text-white space-y-8">
+        <div className="w-full min-w-0 text-white space-y-6 sm:space-y-8 pb-24">
             <div className="flex flex-col md:flex-row justify-end items-center mb-6 gap-6">
                 {/* New Event Button - Full Width on Mobile */}
                 {!isEditorOpen && (

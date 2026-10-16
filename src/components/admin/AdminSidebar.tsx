@@ -89,33 +89,46 @@ export function AdminSidebar({ user }: { user?: User }) {
     return (
         <>
             {/* --- MOBILE HEADER (PHONES < 768px) --- */}
-            {/* Simple Layout: Title Left, Menu Right, No User Card */}
-            <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-zinc-950 border-b border-white/10 flex items-center justify-between px-4 z-50">
-                <span className="font-serif font-black text-kuma-gold tracking-widest text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                    KUMA ADMIN
-                </span>
+            <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-zinc-950/95 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-4 z-40">
+                <div className="flex items-center gap-2.5">
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden border border-kuma-gold/40 shadow-sm shrink-0">
+                        <img
+                            src="/images/kuma-logo.jpg"
+                            alt="Kuma Logo"
+                            className="object-cover w-full h-full"
+                        />
+                    </div>
+                    <span className="font-serif font-black text-kuma-gold tracking-widest text-base drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                        KUMA ADMIN
+                    </span>
+                </div>
                 <button
                     onClick={() => setIsMobileOpen(!isMobileOpen)}
-                    className="p-2 text-zinc-400 hover:text-white"
+                    className="p-2.5 text-zinc-300 hover:text-white bg-zinc-900/80 rounded-xl border border-zinc-800 active:scale-95 transition-all"
+                    aria-label={isMobileOpen ? "Cerrar menú" : "Abrir menú"}
                 >
-                    {isMobileOpen ? <X /> : <Menu />}
+                    {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
             </div>
 
             {/* --- TABLET HEADER (768px - 1024px) --- */}
-            {/* Elegant Layout: Menu Left, User Card Right */}
-            <div className="hidden md:flex lg:hidden fixed top-0 left-0 right-0 h-20 bg-zinc-950 border-b border-white/10 items-center justify-between px-6 z-50">
-                {/* LEFT: Menu Trigger */}
-                <button
-                    onClick={() => setIsMobileOpen(!isMobileOpen)}
-                    className="p-2 text-zinc-400 hover:text-white bg-zinc-900/50 rounded-lg border border-zinc-800"
-                >
-                    {isMobileOpen ? <X /> : <Menu />}
-                </button>
+            <div className="hidden md:flex lg:hidden fixed top-0 left-0 right-0 h-20 bg-zinc-950/95 backdrop-blur-md border-b border-white/10 items-center justify-between px-6 z-40">
+                {/* LEFT: Menu Trigger & Logo */}
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setIsMobileOpen(!isMobileOpen)}
+                        className="p-2.5 text-zinc-300 hover:text-white bg-zinc-900/60 rounded-xl border border-zinc-800 active:scale-95 transition-all"
+                        aria-label={isMobileOpen ? "Cerrar menú" : "Abrir menú"}
+                    >
+                        {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                    </button>
+                    <span className="font-serif font-black text-kuma-gold tracking-widest text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                        KUMA ADMIN
+                    </span>
+                </div>
 
                 {/* RIGHT: User & Back Button */}
                 <div className="flex items-center gap-4">
-                    {/* Back to Home 'Portal' */}
                     <Link href="/" className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-900/20 border border-red-500/20 hover:bg-red-900/40 hover:border-red-500/50 transition-all">
                         <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest group-hover:text-red-400">
                             Volver
@@ -123,7 +136,6 @@ export function AdminSidebar({ user }: { user?: User }) {
                         <LogOut className="w-3.5 h-3.5 text-red-500 rotate-180 group-hover:-translate-x-1 transition-transform" />
                     </Link>
 
-                    {/* Elegant User Profile */}
                     <div className="flex items-center gap-3 pl-4 border-l border-white/10">
                         <div className="text-right hidden sm:block">
                             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Kuma Admin</p>
@@ -144,30 +156,25 @@ export function AdminSidebar({ user }: { user?: User }) {
 
             {/* Sidebar Container - Desktop (Static) & Mobile (Fixed/Drawer) */}
             <AnimatePresence>
-                {/* Overlay for Mobile */}
+                {/* Overlay for Mobile & Tablet */}
                 {isMobileOpen && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setIsMobileOpen(false)}
-                        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[45] md:hidden"
+                        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[45] lg:hidden"
                     />
                 )}
             </AnimatePresence>
 
             <div className={cn(
-                "fixed top-0 z-[50] flex flex-col transition-transform duration-300 pt-20 lg:pt-0 h-full w-64 bg-zinc-950",
-                // Mobile/Tablet: Left side, slide from left
-                "left-0 border-r border-white/10",
+                "fixed top-0 bottom-0 z-[50] flex flex-col transition-transform duration-300 h-full h-dvh w-72 max-w-[85vw] bg-zinc-950 border-r border-white/10 left-0 shadow-2xl",
                 isMobileOpen ? "translate-x-0 pointer-events-auto" : "-translate-x-full pointer-events-none lg:pointer-events-auto",
-                // Desktop (LG+): Left side, always visible
-                "lg:translate-x-0"
+                "lg:translate-x-0 lg:w-64"
             )}>
-                {/* Desktop Brand */}
                 {/* Desktop Brand / User Profile Header */}
                 <div className="hidden lg:flex h-auto py-6 flex-col items-center justify-center px-4 border-b border-white/10 gap-4 bg-zinc-900/30">
-                    {/* User & Avatar */}
                     <div className="flex flex-col items-center gap-2">
                         <div className="relative h-16 w-16 rounded-full border-2 border-[#6F4E37] overflow-hidden shadow-[0_0_15px_rgba(111,78,55,0.5)] group hover:scale-105 transition-transform duration-300">
                             {user?.image ? (
@@ -184,7 +191,6 @@ export function AdminSidebar({ user }: { user?: User }) {
                         </div>
                     </div>
 
-                    {/* Back Button */}
                     <Link href="/" className="w-full group flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-900/10 border border-red-500/10 hover:bg-red-900/30 hover:border-red-500/40 transition-all">
                         <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest group-hover:text-red-400">
                             Volver al Inicio
@@ -193,25 +199,34 @@ export function AdminSidebar({ user }: { user?: User }) {
                     </Link>
                 </div>
 
-                {/* Mobile Brand / Logo - Smart & Cool */}
-                <div className="lg:hidden flex flex-col items-center justify-center py-6 border-b border-white/10 bg-zinc-900/50">
-                    <Link href="/" className="group flex flex-col items-center gap-3">
-                        <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-zinc-800 group-hover:border-red-600 transition-colors shadow-lg shadow-black/50">
-                            {/* Assuming you want to use the logo found or a placeholder if consistent */}
+                {/* Mobile & Tablet Drawer Top Header with Close Button */}
+                <div className="lg:hidden flex items-center justify-between p-4 border-b border-white/10 bg-zinc-900/60">
+                    <div className="flex items-center gap-3">
+                        <div className="relative w-10 h-10 rounded-full overflow-hidden border border-kuma-gold/50 shadow-md">
                             <img
                                 src="/images/kuma-logo.jpg"
                                 alt="Kuma Logo"
                                 className="object-cover w-full h-full"
                             />
                         </div>
-                        <span className="text-xs font-bold text-zinc-500 group-hover:text-white transition-colors uppercase tracking-widest flex items-center gap-1">
-                            <LogOut className="w-3 h-3 rotate-180" /> Ir al Inicio
-                        </span>
-                    </Link>
+                        <div>
+                            <p className="font-serif font-black text-kuma-gold text-sm tracking-widest leading-none">KUMA DOJO</p>
+                            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">
+                                {user?.name ? `Admin: ${user.name.split(" ")[0]}` : "Panel de Mando"}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setIsMobileOpen(false)}
+                        className="p-2 text-zinc-400 hover:text-white rounded-xl bg-zinc-900 border border-zinc-800 active:scale-95 transition-all"
+                        title="Cerrar Menú"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
                 </div>
 
-                {/* Navigation */}
-                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+                {/* Navigation Menu */}
+                <nav className="flex-1 p-3 sm:p-4 space-y-1 sm:space-y-1.5 overflow-y-auto overscroll-contain">
                     {menuItems.map((item) => {
                         const isActive = pathname === item.href;
                         return (
@@ -220,28 +235,45 @@ export function AdminSidebar({ user }: { user?: User }) {
                                 href={item.href}
                                 onClick={() => setIsMobileOpen(false)}
                                 className={cn(
-                                    "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                                    "flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-colors",
                                     isActive
-                                        ? "bg-gradient-to-r from-red-900/40 to-transparent text-white border-l-2 border-red-500 shadow-[0_0_15px_rgba(220,38,38,0.2)]"
+                                        ? "bg-gradient-to-r from-red-900/40 to-transparent text-white border-l-2 border-red-500 shadow-[0_0_15px_rgba(220,38,38,0.2)] font-bold"
                                         : "text-zinc-400 hover:text-white hover:bg-white/5"
                                 )}>
-                                <item.icon className="h-5 w-5" />
-                                {item.label}
+                                <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-red-500" : "text-zinc-500")} />
+                                <span className="truncate">{item.label}</span>
                             </Link>
                         );
                     })}
                 </nav>
 
-                {/* Footer / User Info */}
-                <div className="p-4 border-t border-white/10 bg-zinc-900/50 flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Sesión Activa</span>
+                {/* Mobile "Volver al Inicio" Link */}
+                <div className="lg:hidden px-4 py-2 border-t border-white/5 bg-zinc-900/30">
+                    <Link
+                        href="/"
+                        onClick={() => setIsMobileOpen(false)}
+                        className="w-full group flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-900/10 border border-red-500/10 hover:bg-red-900/30 hover:border-red-500/40 transition-all"
+                    >
+                        <LogOut className="w-3.5 h-3.5 text-red-500 rotate-180 group-hover:-translate-x-1 transition-transform" />
+                        <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest group-hover:text-red-400">
+                            Volver al Sitio Web
+                        </span>
+                    </Link>
+                </div>
+
+                {/* Footer / User Info with Safe Area Margin */}
+                <div className="p-4 border-t border-white/10 bg-zinc-900/50 flex justify-between items-center pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Sesión Activa</span>
+                        <span className="text-xs font-bold text-zinc-300 truncate max-w-[150px]">{user?.name || "Kuma"}</span>
+                    </div>
                     <form action={handleSignOut}>
-                        <button className="p-2 text-zinc-500 hover:text-red-500 transition-colors hover:bg-zinc-800 rounded-lg" title="Cerrar Sesión">
+                        <button className="p-2.5 text-zinc-400 hover:text-red-500 transition-colors bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-xl" title="Cerrar Sesión">
                             <LogOut className="h-4 w-4" />
                         </button>
                     </form>
                 </div>
-            </div >
+            </div>
         </>
     );
 }

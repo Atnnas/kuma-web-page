@@ -71,18 +71,18 @@ export function ReportsClientPage() {
     );
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="w-full min-w-0 space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-24">
             {/* --- HEADER --- */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-zinc-800 pb-6">
-                <div className="flex items-center gap-4">
-                    <Link href="/admin" className="p-3 hover:bg-zinc-800 rounded-xl transition-all hover:scale-105 text-zinc-400 hover:text-white group">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 sm:gap-6 border-b border-zinc-800 pb-6">
+                <div className="flex items-center gap-3 sm:gap-4">
+                    <Link href="/admin" className="p-2.5 sm:p-3 hover:bg-zinc-800 rounded-xl transition-all hover:scale-105 text-zinc-400 hover:text-white group">
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     </Link>
                     <div>
-                        <h1 className="text-4xl font-black uppercase tracking-tighter text-white">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-tighter text-white">
                             Centro de <span className="text-zinc-500">Reportes</span>
                         </h1>
-                        <p className="text-zinc-400 mt-1">Selecciona el tipo de reporte que deseas visualizar.</p>
+                        <p className="text-zinc-400 mt-1 text-xs sm:text-sm">Selecciona el tipo de reporte que deseas visualizar.</p>
                     </div>
                 </div>
 

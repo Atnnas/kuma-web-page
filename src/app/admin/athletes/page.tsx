@@ -1114,7 +1114,7 @@ export default function AdminAthletesPage() {
 
     return (
         <SwipeBackWrapper>
-            <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 relative min-h-screen pb-28">
+            <div className="max-w-7xl mx-auto py-4 sm:py-8 px-0 sm:px-4 md:px-6 relative min-h-screen pb-32 min-w-0">
                 
                 {/* Floating Toast Notification */}
                 <AnimatePresence>
@@ -1141,13 +1141,13 @@ export default function AdminAthletesPage() {
                 </AnimatePresence>
 
                 {/* Standard Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 mb-6 sm:mb-8">
                     <div>
                         <div className="flex items-center gap-2 text-zinc-500 text-xs font-black uppercase tracking-widest mb-1.5">
                             <Shield className="w-3.5 h-3.5 text-kuma-gold" />
                             <span>Panel Administrativo Pro</span>
                         </div>
-                        <h1 className="text-3xl md:text-5xl font-serif font-black uppercase tracking-widest text-kuma-gold drop-shadow-lg">
+                        <h1 className="text-2xl sm:text-3xl md:text-5xl font-serif font-black uppercase tracking-wider sm:tracking-widest text-kuma-gold drop-shadow-lg">
                             KUMA <span className="text-red-600">MANAGER</span>
                         </h1>
                         <p className="text-zinc-400 text-xs sm:text-sm font-bold uppercase tracking-wider mt-1">
@@ -1156,13 +1156,13 @@ export default function AdminAthletesPage() {
                     </div>
 
                     {/* View Switcher, Export & Action buttons */}
-                    <div className="flex items-center gap-2.5 self-start md:self-auto flex-wrap">
+                    <div className="flex items-center gap-2 sm:gap-2.5 self-stretch sm:self-auto flex-wrap">
                         {/* View Switcher: Cards vs List */}
                         <div className="flex items-center bg-zinc-950 p-1 rounded-2xl border border-white/5">
                             <button
                                 onClick={() => setViewMode("cards")}
                                 className={cn(
-                                    "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
+                                    "flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
                                     viewMode === "cards" 
                                         ? "bg-zinc-800 text-white shadow-md" 
                                         : "text-zinc-500 hover:text-zinc-300"
@@ -1175,7 +1175,7 @@ export default function AdminAthletesPage() {
                             <button
                                 onClick={() => setViewMode("list")}
                                 className={cn(
-                                    "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
+                                    "flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
                                     viewMode === "list" 
                                         ? "bg-zinc-800 text-white shadow-md" 
                                         : "text-zinc-500 hover:text-zinc-300"
@@ -1191,7 +1191,7 @@ export default function AdminAthletesPage() {
                         <Button
                             variant="outline"
                             onClick={handleExportCSV}
-                            className="bg-zinc-950 hover:bg-zinc-900 border-zinc-800 text-zinc-300 text-xs font-bold uppercase tracking-wider rounded-2xl px-3.5 py-2 flex items-center gap-2 active:scale-95"
+                            className="bg-zinc-950 hover:bg-zinc-900 border-zinc-800 text-zinc-300 text-xs font-bold uppercase tracking-wider rounded-2xl px-3.5 py-2 flex items-center gap-2 active:scale-95 min-h-[38px]"
                             title="Descargar nómina de atletas filtrados en formato CSV para Excel"
                         >
                             <Download className="w-3.5 h-3.5 text-kuma-gold" />
@@ -1201,7 +1201,7 @@ export default function AdminAthletesPage() {
                         {/* Enroll Button */}
                         <Button 
                             onClick={() => setIsEnrollModalOpen(true)}
-                            className="bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase tracking-widest rounded-2xl px-4 py-2 flex items-center gap-2 shadow-[0_0_20px_rgba(220,38,38,0.3)] active:scale-95"
+                            className="bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase tracking-widest rounded-2xl px-4 py-2 flex items-center gap-2 shadow-[0_0_20px_rgba(220,38,38,0.3)] active:scale-95 min-h-[38px]"
                         >
                             <UserPlus className="w-4 h-4" />
                             <span>Inscribir</span>
@@ -1210,47 +1210,47 @@ export default function AdminAthletesPage() {
                 </div>
 
                 {/* Dashboard KPI Bar */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-                    <div className="bg-zinc-950/70 border border-white/5 rounded-2xl p-4 flex flex-col justify-between">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8">
+                    <div className="bg-zinc-950/70 border border-white/5 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between min-w-0">
                         <div className="flex items-center justify-between text-zinc-500">
-                            <span className="text-[10px] font-black uppercase tracking-widest">
+                            <span className="text-[10px] font-black uppercase tracking-widest truncate">
                                 {kpis.isFiltered ? "Kumas Dojo" : "Total Kumas"}
                             </span>
-                            <Users className="w-4 h-4" />
+                            <Users className="w-4 h-4 shrink-0" />
                         </div>
-                        <div className="text-2xl sm:text-3xl font-black text-white mt-2">
+                        <div className="text-xl sm:text-2xl md:text-3xl font-black text-white mt-1.5 sm:mt-2 truncate">
                             {kpis.total}
                         </div>
                         <span className="text-[9px] text-zinc-500 uppercase tracking-wider mt-1 truncate" title={kpis.scopeName}>
-                            {kpis.isFiltered ? kpis.scopeName : `${dojos.length} Dojos Registrados`}
+                            {kpis.isFiltered ? kpis.scopeName : `${dojos.length} Dojos`}
                         </span>
                     </div>
 
-                    <div className="bg-zinc-950/70 border border-white/5 rounded-2xl p-4 flex flex-col justify-between">
+                    <div className="bg-zinc-950/70 border border-white/5 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between min-w-0">
                         <div className="flex items-center justify-between text-zinc-500">
-                            <span className="text-[10px] font-black uppercase tracking-widest">Inscritos Activos</span>
-                            <Trophy className="w-4 h-4 text-kuma-gold" />
+                            <span className="text-[10px] font-black uppercase tracking-widest truncate">Inscritos Activos</span>
+                            <Trophy className="w-4 h-4 text-kuma-gold shrink-0" />
                         </div>
-                        <div className="text-2xl sm:text-3xl font-black text-kuma-gold mt-2">
+                        <div className="text-xl sm:text-2xl md:text-3xl font-black text-kuma-gold mt-1.5 sm:mt-2 truncate">
                             {kpis.enrolledCount}
                         </div>
-                        <span className="text-[9px] text-zinc-500 uppercase tracking-wider mt-1">
-                            {kpis.isFiltered ? `Activos en ${kpis.scopeName}` : "Con Karate Card activa"}
+                        <span className="text-[9px] text-zinc-500 uppercase tracking-wider mt-1 truncate">
+                            {kpis.isFiltered ? `Activos en dojo` : "Con Karate Card activa"}
                         </span>
                     </div>
 
-                    <div className="bg-zinc-950/70 border border-white/5 rounded-2xl p-4 flex flex-col justify-between">
+                    <div className="bg-zinc-950/70 border border-white/5 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between min-w-0">
                         <div className="flex items-center justify-between text-zinc-500">
-                            <span className="text-[10px] font-black uppercase tracking-widest">
+                            <span className="text-[10px] font-black uppercase tracking-widest truncate">
                                 {kpis.isFiltered ? "Promedio Dojo" : "Promedio General"}
                             </span>
-                            <Sparkles className="w-4 h-4 text-amber-400" />
+                            <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
                         </div>
-                        <div className="text-2xl sm:text-3xl font-serif font-black text-white mt-2">
+                        <div className="text-xl sm:text-2xl md:text-3xl font-serif font-black text-white mt-1.5 sm:mt-2 truncate">
                             OVR {kpis.avgOvr}
                         </div>
-                        <span className="text-[9px] text-zinc-500 uppercase tracking-wider mt-1">
-                            {kpis.isFiltered ? `Nivel en ${kpis.scopeName}` : "Nivel general del tatami"}
+                        <span className="text-[9px] text-zinc-500 uppercase tracking-wider mt-1 truncate">
+                            {kpis.isFiltered ? `Nivel dojo` : "Nivel general del tatami"}
                         </span>
                     </div>
 
@@ -1261,20 +1261,20 @@ export default function AdminAthletesPage() {
                             }
                         }}
                         className={cn(
-                            "rounded-2xl p-4 flex flex-col justify-between transition-all",
+                            "rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between transition-all min-w-0",
                             kpis.wkfAlertsCount > 0 
                                 ? "bg-amber-500/10 border border-amber-500/30 cursor-pointer hover:bg-amber-500/15" 
                                 : "bg-zinc-950/70 border border-white/5"
                         )}
                     >
                         <div className="flex items-center justify-between text-zinc-500">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-inherit">Alertas WKF</span>
-                            <AlertTriangle className={cn("w-4 h-4", kpis.wkfAlertsCount > 0 ? "text-amber-400 animate-pulse" : "text-zinc-600")} />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-inherit truncate">Alertas WKF</span>
+                            <AlertTriangle className={cn("w-4 h-4 shrink-0", kpis.wkfAlertsCount > 0 ? "text-amber-400 animate-pulse" : "text-zinc-600")} />
                         </div>
-                        <div className={cn("text-2xl sm:text-3xl font-black mt-2", kpis.wkfAlertsCount > 0 ? "text-amber-400" : "text-zinc-600")}>
+                        <div className={cn("text-xl sm:text-2xl md:text-3xl font-black mt-1.5 sm:mt-2 truncate", kpis.wkfAlertsCount > 0 ? "text-amber-400" : "text-zinc-600")}>
                             {kpis.wkfAlertsCount}
                         </div>
-                        <span className="text-[9px] text-zinc-400 uppercase tracking-wider mt-1">
+                        <span className="text-[9px] text-zinc-400 uppercase tracking-wider mt-1 truncate">
                             {kpis.wkfAlertsCount > 0 ? "⚠️ Clic para filtrar pesos" : "Todos al día en peso"}
                         </span>
                     </div>

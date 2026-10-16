@@ -436,7 +436,7 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                         initial={{ scale: 0.95, opacity: 0, y: 20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                        className="relative w-full max-w-5xl bg-zinc-950 border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+                        className="relative w-full max-w-5xl bg-zinc-950 border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] sm:max-h-[90vh]"
                     >
                         {/* Header */}
                         <div className="p-4 sm:p-6 border-b border-white/5 flex items-center justify-between bg-zinc-900/60">
@@ -1001,26 +1001,26 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                         </div>
 
                         {/* Footer Actions */}
-                        <div className="p-4 sm:p-6 border-t border-white/5 bg-zinc-900/60 flex items-center justify-between gap-4">
+                        <div className="p-3.5 sm:p-6 border-t border-white/5 bg-zinc-900/60 flex items-center justify-between gap-3 sm:gap-4 pb-[calc(0.875rem+env(safe-area-inset-bottom,0px))] sm:pb-6">
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] text-zinc-500 uppercase tracking-wider hidden sm:inline">
                                     Atleta ID: {user._id?.slice(-6)}
                                 </span>
                             </div>
 
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 sm:gap-3">
                                 <Button 
                                     variant="ghost" 
                                     onClick={onClose} 
                                     disabled={isSaving}
-                                    className="text-xs uppercase tracking-wider text-zinc-400 hover:text-white"
+                                    className="text-xs uppercase tracking-wider text-zinc-400 hover:text-white h-10 px-3.5"
                                 >
                                     Cancelar
                                 </Button>
                                 <Button 
                                     onClick={handleSubmit} 
                                     loading={isSaving}
-                                    className="bg-red-600 hover:bg-red-700 text-white min-w-[140px] rounded-xl text-xs font-black uppercase tracking-wider shadow-lg shadow-red-600/20 active:scale-95"
+                                    className="bg-red-600 hover:bg-red-700 text-white min-w-[130px] sm:min-w-[140px] rounded-xl text-xs font-black uppercase tracking-wider shadow-lg shadow-red-600/20 active:scale-95 h-10"
                                 >
                                     <Save className="w-4 h-4 mr-2" />
                                     Guardar Perfil

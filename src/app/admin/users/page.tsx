@@ -62,16 +62,16 @@ export default function AdminUsersPage() {
 
     return (
         <SwipeBackWrapper>
-            <div className="w-full md:w-[98%] max-w-[1600px] mx-auto md:pr-4 py-8">
+            <div className="w-full max-w-[1600px] mx-auto py-4 sm:py-8 min-w-0">
                 {/* Search */}
-                <div className="relative mb-8">
+                <div className="relative mb-6 sm:mb-8">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 w-5 h-5" />
                     <input
                         type="text"
                         placeholder="Buscar por nombre o correo..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-full py-4 pl-12 pr-6 text-white focus:border-red-500 focus:outline-none transition-colors"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-full py-3.5 sm:py-4 pl-12 pr-6 text-white text-sm sm:text-base focus:border-red-500 focus:outline-none transition-colors"
                     />
                 </div>
 
@@ -225,18 +225,20 @@ export default function AdminUsersPage() {
                                             )}
                                         </div>
 
-                                        <div className="flex gap-3">
+                                        <div className="flex gap-2.5 pt-1">
                                             <Button
                                                 onClick={() => setEditingUser(user)}
-                                                className="flex-1 bg-zinc-800 hover:bg-white hover:text-black text-white py-6 px-4 rounded-lg flex items-center justify-center transition-colors"
+                                                className="flex-1 min-h-[44px] bg-zinc-800 hover:bg-white hover:text-black text-white text-xs font-semibold py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                                             >
-                                                <Pencil className="w-5 h-5" />
+                                                <Pencil className="w-4 h-4" />
+                                                <span>Editar</span>
                                             </Button>
                                             <Button
                                                 onClick={() => handleDeleteUser(user._id, user.name)}
-                                                className="flex-1 bg-red-900/20 hover:bg-red-600 text-red-500 hover:text-white py-6 px-4 rounded-lg border border-red-900/50 flex items-center justify-center transition-colors"
+                                                className="flex-1 min-h-[44px] bg-red-950/40 hover:bg-red-600 text-red-400 hover:text-white py-2.5 px-3 rounded-lg border border-red-900/50 flex items-center justify-center gap-2 text-xs font-semibold transition-all active:scale-[0.98]"
                                             >
-                                                <Trash2 className="w-5 h-5" />
+                                                <Trash2 className="w-4 h-4" />
+                                                <span>Eliminar</span>
                                             </Button>
                                         </div>
                                     </div>
