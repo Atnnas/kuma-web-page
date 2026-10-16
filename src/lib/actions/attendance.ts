@@ -445,12 +445,95 @@ export async function getLatestMvp() {
 /**
  * Get the Weekly MVP (Guerrero de la Semana)
  * Returns the athlete(s) with the highest check-ins in the current calendar week.
+/**
+ * Get the Weekly MVP and Latest Daily MVP
+ * Returns:
+ * 1. The most recent class's Daily MVP (el Kuma del último MVP)
+ * 2. The athlete(s) with the highest attendance in the previous week (la semana anterior)
  */
-export async function getWeeklyMVP() {
+export async function getWeeklyMVP(dojoId?: string) {
     try {
         await connectDB();
 
-        // 1. Get current date in America/Costa_Rica timezone
+        const isDojoFiltered = !!(dojoId && dojoId !== "Todos");
+        let dojoAthleteIds: any[] | null = null;
+        if (isDojoFiltered) {
+            dojoAthleteIds = await User.find({
+                "athleteProfile.isEnrolled": true,
+                "athleteProfile.dojo": dojoId
+            }).distinct("_id");
+        }
+
+        // --- 1. FETCH LATEST DAILY MVP ---
+        let lastDailyMvp: { date: string; athletes: any[] } | null = null;
+        const mvpQuery: any = { isMVP: true };
+        if (isDojoFiltered && dojoAthleteIds) {
+            mvpQuery.user = { $in: dojoAthleteIds };
+        }
+
+        const latestMvpLog = await AttendanceLog.findOne(mvpQuery)
+            .sort({ date: -1 })
+            .lean();
+
+        if (latestMvpLog) {
+            const targetMvpDate = latestMvpLog.date;
+            const targetMvpQuery: any = { date: targetMvpDate, isMVP: true };
+            if (isDojoFiltered && dojoAthleteIds) {
+                targetMvpQuery.user = { $in: dojoAthleteIds };
+            }
+
+            const mvpLogs = await AttendanceLog.find(targetMvpQuery)
+                .populate({
+                    path: "user",
+                    populate: { path: "athleteProfile.dojo" }
+                })
+                .lean();
+
+            const allMvpLogs = await AttendanceLog.find({ isMVP: true }).lean();
+            const mvpCountsMap: Record<string, number> = {};
+            for (const log of allMvpLogs) {
+                const uid = log.user.toString();
+                mvpCountsMap[uid] = (mvpCountsMap[uid] || 0) + 1;
+            }
+
+            const formattedMvpAthletes = mvpLogs
+                .map((log: any) => {
+                    const user = log.user;
+                    if (!user) return null;
+                    return {
+                        _id: user._id.toString(),
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                        athleteProfile: {
+                            weight: user.athleteProfile?.weight || 0,
+                            height: user.athleteProfile?.height || 0,
+                            beltRank: user.athleteProfile?.beltRank || "Blanco",
+                            specialization: user.athleteProfile?.specialization || "Ambos",
+                            stats: user.athleteProfile?.stats || { vel: 50, pot: 50, tec: 50, res: 50, esp: 50, ovr: 50 },
+                            cc: user.athleteProfile?.cc || "",
+                            habilidadSecreta: user.athleteProfile?.habilidadSecreta || "",
+                            statsLastMonth: user.athleteProfile?.statsLastMonth || user.athleteProfile?.stats,
+                            mvpCount: mvpCountsMap[user._id.toString()] || 0,
+                            dojo: user.athleteProfile?.dojo ? {
+                                _id: user.athleteProfile.dojo._id ? user.athleteProfile.dojo._id.toString() : user.athleteProfile.dojo.toString(),
+                                name: user.athleteProfile.dojo.name || "DOJO KUMA",
+                                logo: user.athleteProfile.dojo.logo || "/images/kuma-logo.jpg",
+                            } : null
+                        }
+                    };
+                })
+                .filter(Boolean);
+
+            if (formattedMvpAthletes.length > 0) {
+                lastDailyMvp = {
+                    date: targetMvpDate,
+                    athletes: formattedMvpAthletes
+                };
+            }
+        }
+
+        // --- 2. FETCH PREVIOUS WEEK'S TOP ATTENDANCE WARRIORS ---
         const formatter = new Intl.DateTimeFormat('en-US', {
             timeZone: 'America/Costa_Rica',
             year: 'numeric',
@@ -466,11 +549,14 @@ export async function getWeeklyMVP() {
         const dayOfWeek = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
         const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
         
-        const monday = new Date(today);
-        monday.setDate(today.getDate() + diffToMonday);
-        
-        const sunday = new Date(monday);
-        sunday.setDate(monday.getDate() + 6);
+        const currentMonday = new Date(today);
+        currentMonday.setDate(today.getDate() + diffToMonday);
+
+        const prevMonday = new Date(currentMonday);
+        prevMonday.setDate(currentMonday.getDate() - 7);
+
+        const prevSunday = new Date(prevMonday);
+        prevSunday.setDate(prevMonday.getDate() + 6);
         
         const formatDateString = (d: Date) => {
             const y = d.getFullYear();
@@ -479,31 +565,65 @@ export async function getWeeklyMVP() {
             return `${y}-${m}-${dy}`;
         };
         
-        const mondayStr = formatDateString(monday);
-        const sundayStr = formatDateString(sunday);
+        const prevMondayStr = formatDateString(prevMonday);
+        const prevSundayStr = formatDateString(prevSunday);
+        const currentMondayStr = formatDateString(currentMonday);
+        const currentSundayStr = formatDateString(new Date(currentMonday.getTime() + 6 * 86400000));
 
-        // 2. Fetch all present/tarde logs in the date range
-        const weeklyLogs = await AttendanceLog.find({
-            date: { $gte: mondayStr, $lte: sundayStr },
-            status: { $in: ["Presente", "Tarde"] }
-        }).lean();
-
-        if (weeklyLogs.length === 0) {
-            return {
-                athletes: [],
-                count: 0,
-                weekRange: { start: mondayStr, end: sundayStr }
+        const buildWeeklyQuery = (startDate: string, endDate: string) => {
+            const q: any = {
+                date: { $gte: startDate, $lte: endDate },
+                status: { $in: ["Presente", "Tarde"] }
             };
+            if (isDojoFiltered && dojoAthleteIds) {
+                q.user = { $in: dojoAthleteIds };
+            }
+            return q;
+        };
+
+        // Prioritize previous week's attendance logs
+        let targetMondayStr = prevMondayStr;
+        let targetSundayStr = prevSundayStr;
+        let weeklyLogs = await AttendanceLog.find(buildWeeklyQuery(prevMondayStr, prevSundayStr)).lean();
+
+        // If previous week had 0 logs, try current week
+        if (weeklyLogs.length === 0) {
+            weeklyLogs = await AttendanceLog.find(buildWeeklyQuery(currentMondayStr, currentSundayStr)).lean();
+            if (weeklyLogs.length > 0) {
+                targetMondayStr = currentMondayStr;
+                targetSundayStr = currentSundayStr;
+            } else {
+                // If neither has logs, fallback to the latest week with attendance for that dojo
+                const latestAttendanceQuery: any = { status: { $in: ["Presente", "Tarde"] } };
+                if (isDojoFiltered && dojoAthleteIds) {
+                    latestAttendanceQuery.user = { $in: dojoAthleteIds };
+                }
+                const latestAttendanceLog = await AttendanceLog.findOne(latestAttendanceQuery)
+                    .sort({ date: -1 })
+                    .lean();
+
+                if (latestAttendanceLog) {
+                    const lDate = new Date(`${latestAttendanceLog.date}T12:00:00`);
+                    const lDay = lDate.getDay();
+                    const lDiff = lDay === 0 ? -6 : 1 - lDay;
+                    const lMon = new Date(lDate);
+                    lMon.setDate(lDate.getDate() + lDiff);
+                    const lSun = new Date(lMon);
+                    lSun.setDate(lMon.getDate() + 6);
+                    targetMondayStr = formatDateString(lMon);
+                    targetSundayStr = formatDateString(lSun);
+                    weeklyLogs = await AttendanceLog.find(buildWeeklyQuery(targetMondayStr, targetSundayStr)).lean();
+                }
+            }
         }
 
-        // 3. Count check-ins per user
+        // Count check-ins per user
         const counts: Record<string, number> = {};
         for (const log of weeklyLogs) {
             const uid = log.user.toString();
             counts[uid] = (counts[uid] || 0) + 1;
         }
 
-        // 4. Find the maximum count
         let maxCount = 0;
         for (const uid in counts) {
             if (counts[uid] > maxCount) {
@@ -511,61 +631,73 @@ export async function getWeeklyMVP() {
             }
         }
 
-        if (maxCount === 0) {
-            return {
-                athletes: [],
-                count: 0,
-                weekRange: { start: mondayStr, end: sundayStr }
+        let formattedWeeklyAthletes: any[] = [];
+        if (maxCount > 0) {
+            const mvpUserIds = Object.keys(counts).filter(uid => counts[uid] === maxCount);
+            const userFilterQuery: any = {
+                _id: { $in: mvpUserIds },
+                "athleteProfile.isEnrolled": true
             };
-        }
-
-        // 5. Get all user IDs with the maximum count
-        const mvpUserIds = Object.keys(counts).filter(uid => counts[uid] === maxCount);
-
-        // 6. Fetch user details for these MVPs
-        const mvpUsers = await User.find({
-            _id: { $in: mvpUserIds },
-            "athleteProfile.isEnrolled": true
-        }).lean();
-
-        // Find all MVP logs in total to attach mvpCount
-        const mvpLogs = await AttendanceLog.find({ isMVP: true }).lean();
-        const mvpCountsMap: Record<string, number> = {};
-        for (const log of mvpLogs) {
-            const uid = log.user.toString();
-            mvpCountsMap[uid] = (mvpCountsMap[uid] || 0) + 1;
-        }
-
-        const formattedAthletes = mvpUsers.map((user: any) => ({
-            _id: user._id.toString(),
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            athleteProfile: {
-                weight: user.athleteProfile?.weight || 0,
-                height: user.athleteProfile?.height || 0,
-                beltRank: user.athleteProfile?.beltRank || "Blanco",
-                specialization: user.athleteProfile?.specialization || "Ambos",
-                stats: user.athleteProfile?.stats || { vel: 10, pot: 10, tec: 10, res: 10, esp: 10, ovr: 10 },
-                cc: user.athleteProfile?.cc || "",
-                habilidadSecreta: user.athleteProfile?.habilidadSecreta || "",
-                statsLastMonth: user.athleteProfile?.statsLastMonth || user.athleteProfile?.stats,
-                mvpCount: mvpCountsMap[user._id.toString()] || 0
+            if (isDojoFiltered) {
+                userFilterQuery["athleteProfile.dojo"] = dojoId;
             }
-        }));
+            const mvpUsers = await User.find(userFilterQuery).populate("athleteProfile.dojo").lean();
+
+            const allMvpLogs = await AttendanceLog.find({ isMVP: true }).lean();
+            const mvpCountsMap: Record<string, number> = {};
+            for (const log of allMvpLogs) {
+                const uid = log.user.toString();
+                mvpCountsMap[uid] = (mvpCountsMap[uid] || 0) + 1;
+            }
+
+            formattedWeeklyAthletes = mvpUsers.map((user: any) => ({
+                _id: user._id.toString(),
+                name: user.name,
+                email: user.email,
+                image: user.image,
+                athleteProfile: {
+                    weight: user.athleteProfile?.weight || 0,
+                    height: user.athleteProfile?.height || 0,
+                    beltRank: user.athleteProfile?.beltRank || "Blanco",
+                    specialization: user.athleteProfile?.specialization || "Ambos",
+                    stats: user.athleteProfile?.stats || { vel: 10, pot: 10, tec: 10, res: 10, esp: 10, ovr: 10 },
+                    cc: user.athleteProfile?.cc || "",
+                    habilidadSecreta: user.athleteProfile?.habilidadSecreta || "",
+                    statsLastMonth: user.athleteProfile?.statsLastMonth || user.athleteProfile?.stats,
+                    mvpCount: mvpCountsMap[user._id.toString()] || 0,
+                    dojo: user.athleteProfile?.dojo ? {
+                        _id: user.athleteProfile.dojo._id ? user.athleteProfile.dojo._id.toString() : user.athleteProfile.dojo.toString(),
+                        name: user.athleteProfile.dojo.name || "DOJO KUMA",
+                        logo: user.athleteProfile.dojo.logo || "/images/kuma-logo.jpg",
+                    } : null
+                }
+            }));
+        }
 
         return {
-            athletes: formattedAthletes,
+            lastDailyMvp,
+            weeklyAttendance: {
+                athletes: formattedWeeklyAthletes,
+                count: maxCount,
+                weekRange: { start: targetMondayStr, end: targetSundayStr }
+            },
+            // Backwards compatibility aliases
+            athletes: formattedWeeklyAthletes,
             count: maxCount,
-            weekRange: { start: mondayStr, end: sundayStr }
+            weekRange: { start: targetMondayStr, end: targetSundayStr }
         };
     } catch (error) {
         console.error("Error in getWeeklyMVP:", error);
         return {
+            lastDailyMvp: null,
+            weeklyAttendance: {
+                athletes: [],
+                count: 0,
+                weekRange: { start: "", end: "" }
+            },
             athletes: [],
             count: 0,
-            weekRange: { start: "", end: "" },
-            error: "Error al calcular el Guerrero de la Semana"
+            weekRange: { start: "", end: "" }
         };
     }
 }

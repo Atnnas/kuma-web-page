@@ -68,7 +68,8 @@ export default function AdminAttendancePage() {
         const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 200);
         return () => clearTimeout(timer);
     }, [searchTerm]);
-    const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite" | "Ambos">("Todos");
+
+    const [statusFilter, setStatusFilter] = useState<"Todos" | "Presentes" | "Tardes" | "Ausentes">("Todos");
     const [selectedDojo, setSelectedDojo] = useState<string>("Todos");
 
     // Force select dojo if logged in user is a Dojo admin
@@ -381,19 +382,39 @@ export default function AdminAttendancePage() {
     };
 
     // Filter athletes in client side
+    const baseAthletes = athletes.filter((ath) => {
+        const dojo = ath.athleteProfile?.dojo;
+        const dojoId = dojo?._id || "6a10ba00936f06f14847fd05";
+        return selectedDojo === "Todos" || dojoId === selectedDojo;
+    });
+
+    const presentCount = baseAthletes.filter((a) => {
+        const st = attendanceMap[a._id]?.status || "Ausente";
+        return st === "Presente" || st === "Tarde";
+    }).length;
+
+    const tardeCount = baseAthletes.filter((a) => (attendanceMap[a._id]?.status || "Ausente") === "Tarde").length;
+    const absentCount = baseAthletes.filter((a) => (attendanceMap[a._id]?.status || "Ausente") === "Ausente").length;
+
     const filteredAthletes = athletes.filter((ath) => {
         const matchesSearch = ath.name?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) || 
                               ath.email?.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
         
-        const matchesSpec = selectedSpec === "Todos" ||
-                            ath.athleteProfile.specialization === selectedSpec ||
-                            ath.athleteProfile.specialization === "Ambos";
-
         const dojo = ath.athleteProfile?.dojo;
         const dojoId = dojo?._id || "6a10ba00936f06f14847fd05";
         const matchesDojo = selectedDojo === "Todos" || dojoId === selectedDojo;
+
+        const currentStatus = attendanceMap[ath._id]?.status || "Ausente";
+        let matchesStatus = true;
+        if (statusFilter === "Presentes") {
+            matchesStatus = currentStatus === "Presente" || currentStatus === "Tarde";
+        } else if (statusFilter === "Tardes") {
+            matchesStatus = currentStatus === "Tarde";
+        } else if (statusFilter === "Ausentes") {
+            matchesStatus = currentStatus === "Ausente";
+        }
                             
-        return matchesSearch && matchesSpec && matchesDojo;
+        return matchesSearch && matchesStatus && matchesDojo;
     });
 
     // Helper for OVR Card color themes
@@ -639,20 +660,86 @@ export default function AdminAttendancePage() {
                     </div>
 
                     <div className="flex gap-2 items-center w-full md:w-auto overflow-x-auto no-scrollbar py-1">
-                        {["Todos", "Kata", "Kumite"].map((spec) => (
+                        {/* Filtros por Estado de Asistencia en la Fecha */}
+                        <button
+                            onClick={() => setStatusFilter("Todos")}
+                            className={cn(
+                                "px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5",
+                                statusFilter === "Todos"
+                                    ? "bg-zinc-100 text-black border-white shadow-md shadow-white/10"
+                                    : "bg-zinc-900/60 text-zinc-400 border-zinc-800/80 hover:text-white hover:border-zinc-700"
+                            )}
+                        >
+                            <span>Todos</span>
+                            <span className={cn(
+                                "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
+                                statusFilter === "Todos" ? "bg-black/20 text-black" : "bg-zinc-800 text-zinc-400"
+                            )}>
+                                {baseAthletes.length}
+                            </span>
+                        </button>
+
+                        <button
+                            onClick={() => setStatusFilter("Presentes")}
+                            className={cn(
+                                "px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5",
+                                statusFilter === "Presentes"
+                                    ? "bg-emerald-500 text-black border-emerald-400 shadow-lg shadow-emerald-500/25 font-black"
+                                    : "bg-zinc-900/60 text-emerald-400 border-emerald-500/30 hover:bg-emerald-950/20"
+                            )}
+                            title="Mostrar atletas que asistieron en la fecha seleccionada"
+                        >
+                            <Check className="w-3 h-3 stroke-[3]" />
+                            <span>Presentes</span>
+                            <span className={cn(
+                                "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
+                                statusFilter === "Presentes" ? "bg-black/20 text-black" : "bg-emerald-950/60 text-emerald-300 border border-emerald-500/30"
+                            )}>
+                                {presentCount}
+                            </span>
+                        </button>
+
+                        {tardeCount > 0 && (
                             <button
-                                key={spec}
-                                onClick={() => setSelectedSpec(spec as any)}
+                                onClick={() => setStatusFilter("Tardes")}
                                 className={cn(
-                                    "px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer whitespace-nowrap",
-                                    selectedSpec === spec
-                                        ? "bg-kuma-gold text-black border-kuma-gold shadow-lg shadow-kuma-gold/20"
-                                        : "bg-zinc-900/60 text-zinc-400 border-zinc-800/80 hover:text-white"
+                                    "px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5",
+                                    statusFilter === "Tardes"
+                                        ? "bg-amber-500 text-black border-amber-400 shadow-lg shadow-amber-500/25 font-black"
+                                        : "bg-zinc-900/60 text-amber-400 border-amber-500/30 hover:bg-amber-950/20"
                                 )}
+                                title="Mostrar atletas que llegaron tarde"
                             >
-                                {spec}
+                                <Clock className="w-3 h-3 stroke-[2.5]" />
+                                <span>Tardes</span>
+                                <span className={cn(
+                                    "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
+                                    statusFilter === "Tardes" ? "bg-black/20 text-black" : "bg-amber-950/60 text-amber-300 border border-amber-500/30"
+                                )}>
+                                    {tardeCount}
+                                </span>
                             </button>
-                        ))}
+                        )}
+
+                        <button
+                            onClick={() => setStatusFilter("Ausentes")}
+                            className={cn(
+                                "px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5",
+                                statusFilter === "Ausentes"
+                                    ? "bg-zinc-700 text-white border-zinc-500 shadow-md shadow-zinc-700/20"
+                                    : "bg-zinc-900/60 text-zinc-500 border-zinc-800/80 hover:text-zinc-300"
+                            )}
+                            title="Mostrar atletas ausentes / faltas"
+                        >
+                            <UserX className="w-3 h-3" />
+                            <span>Faltas</span>
+                            <span className={cn(
+                                "px-1.5 py-0.5 rounded-full text-[9px] font-black leading-none",
+                                statusFilter === "Ausentes" ? "bg-black/30 text-white" : "bg-zinc-850 text-zinc-400"
+                            )}>
+                                {absentCount}
+                            </span>
+                        </button>
                         
                         <div className="h-6 w-px bg-zinc-800 mx-2 hidden md:block" />
 
@@ -686,8 +773,27 @@ export default function AdminAttendancePage() {
                 ) : filteredAthletes.length === 0 ? (
                     <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-2xl p-16 text-center shadow-inner">
                         <UserX className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-                        <p className="text-zinc-400 text-sm font-bold uppercase tracking-wider">No se encontraron atletas inscritos</p>
-                        <p className="text-zinc-600 text-xs mt-1">Verifica la búsqueda o comprueba que estén inscritos en el Kuma Manager.</p>
+                        <p className="text-zinc-400 text-sm font-bold uppercase tracking-wider">
+                            {statusFilter === "Presentes" 
+                                ? `No hay atletas presentes registrados para el ${selectedDate}`
+                                : statusFilter === "Tardes"
+                                ? `No hay atletas con llegada tardía para el ${selectedDate}`
+                                : statusFilter === "Ausentes"
+                                ? `No hay atletas ausentes para el ${selectedDate}`
+                                : "No se encontraron atletas inscritos"}
+                        </p>
+                        <p className="text-zinc-600 text-xs mt-2">
+                            {statusFilter !== "Todos" ? (
+                                <button
+                                    onClick={() => setStatusFilter("Todos")}
+                                    className="text-kuma-gold hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
+                                >
+                                    Ver todos los atletas del dojo ({baseAthletes.length})
+                                </button>
+                            ) : (
+                                "Verifica la búsqueda o comprueba que estén inscritos en el Kuma Manager."
+                            )}
+                        </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

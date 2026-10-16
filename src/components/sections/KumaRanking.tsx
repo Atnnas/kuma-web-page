@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { getEnrolledAthletes, updateAthletePhotoSelf } from "@/lib/actions/athletes";
-import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid, AlertTriangle, GraduationCap, ArrowUpRight, BarChart3 } from "lucide-react";
+import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid, AlertTriangle, GraduationCap, ArrowUpRight, BarChart3, Building2, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -67,21 +67,37 @@ interface Athlete {
 export function KumaRanking({ 
   currentUser, 
   initialAthletes,
-  weeklyMvp
+  weeklyMvp,
+  dojos = []
 }: { 
   currentUser?: any; 
   initialAthletes?: Athlete[];
   weeklyMvp?: {
-    athletes: any[];
-    count: number;
-    weekRange: { start: string; end: string };
-  };
+    athletes?: any[];
+    count?: number;
+    weekRange?: { start: string; end: string };
+    lastDailyMvp?: {
+      date: string;
+      athletes: any[];
+    } | null;
+    weeklyAttendance?: {
+      athletes: any[];
+      count: number;
+      weekRange: { start: string; end: string };
+    };
+  } | null;
+  dojos?: {
+    _id: string;
+    name: string;
+    logo?: string;
+  }[];
 }) {
   const [athletes, setAthletes] = useState<Athlete[]>(initialAthletes || []);
   const [isLoading, setIsLoading] = useState(!initialAthletes || initialAthletes.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpec, setSelectedSpec] = useState<"Todos" | "Kata" | "Kumite">("Todos");
+  const [selectedDojo, setSelectedDojo] = useState<string>("Todos");
   const [editingPhotoAthlete, setEditingPhotoAthlete] = useState<Athlete | null>(null);
   const [celebratingAthlete, setCelebratingAthlete] = useState<Athlete | null>(null);
   const [auditAthlete, setAuditAthlete] = useState<Athlete | null>(null);
@@ -127,14 +143,43 @@ export function KumaRanking({
 
 
 
+    // Helper to match an athlete against the selected dojo
+    const isDojoMatch = (athleteDojo: any, targetDojoId: string, dojosList: { _id: string; name: string }[]) => {
+        if (targetDojoId === "Todos") return true;
+        
+        const targetObj = dojosList.find(d => d._id === targetDojoId);
+        const targetName = targetObj?.name?.trim().toUpperCase();
+
+        if (!athleteDojo) {
+            // Default to DOJO KUMA if unassigned
+            return targetName === "DOJO KUMA" || targetDojoId === "6a10ba00936f06f14847fd05";
+        }
+
+        if (typeof athleteDojo === "object") {
+            const athDojoId = athleteDojo._id?.toString();
+            const athDojoName = athleteDojo.name?.trim().toUpperCase();
+            if (athDojoId && athDojoId === targetDojoId) return true;
+            if (athDojoName && targetName && athDojoName === targetName) return true;
+            return false;
+        }
+
+        if (typeof athleteDojo === "string") {
+            return athleteDojo === targetDojoId;
+        }
+
+        return false;
+    };
+
     // Filter and Sort athletes
     const filteredAthletes = (athletes || [])
         .filter(ath => {
             if (!ath || !ath.name || !ath.athleteProfile) return false;
-            const matchesSearch = ath.name.toLowerCase().includes((searchTerm || "").toLowerCase());
+            const matchesSearch = ath.name.toLowerCase().includes((searchTerm || "").toLowerCase()) ||
+                (ath.athleteProfile.cc && ath.athleteProfile.cc.toLowerCase().includes((searchTerm || "").toLowerCase()));
             const specialization = ath.athleteProfile.specialization || "Ambos";
             const matchesSpec = selectedSpec === "Todos" || specialization === selectedSpec || specialization === "Ambos";
-            return matchesSearch && matchesSpec;
+            const matchesDojo = isDojoMatch(ath.athleteProfile.dojo, selectedDojo, dojos);
+            return matchesSearch && matchesSpec && matchesDojo;
         })
         // Sort by OVR desc, then by name alphabetically
         .sort((a, b) => {
@@ -149,6 +194,7 @@ export function KumaRanking({
     console.log("KumaRanking render state:", {
         athletesLength: athletes.length,
         filteredLength: filteredAthletes.length,
+        selectedDojo,
         isLoading,
         error,
         athletesList: athletes.map(a => ({ name: a.name }))
@@ -177,9 +223,15 @@ export function KumaRanking({
             {/* Top decorative element */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Weekly MVP Section */}
-            {weeklyMvp && weeklyMvp.athletes && weeklyMvp.athletes.length > 0 && (
-                <WeeklyMVPSection data={weeklyMvp as any} onClickCard={setCelebratingAthlete} />
+            {/* Weekly MVP Section / Salón de Honor Kuma */}
+            {weeklyMvp && (
+                <WeeklyMVPSection 
+                    data={weeklyMvp as any} 
+                    dojos={dojos}
+                    selectedDojoId={selectedDojo}
+                    onDojoChange={setSelectedDojo}
+                    onClickCard={(athlete) => setCelebratingAthlete(athlete as any)} 
+                />
             )}
 
             {/* SUPER ADMIN QUICK BANNER: REPORTE DIDÁCTICO */}
@@ -216,7 +268,7 @@ export function KumaRanking({
             )}
 
             {/* Search and Filters */}
-            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-16 relative z-10">
+            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-8 relative z-10">
                 <div className="relative w-full lg:w-96">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 w-5 h-5" />
                     <input
@@ -228,7 +280,30 @@ export function KumaRanking({
                     />
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto items-center sm:justify-end">
+                <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-center sm:justify-end">
+                    {/* Dojo filter combobox */}
+                    {dojos && dojos.length > 0 && (
+                        <div className="relative w-full sm:w-auto">
+                            <div className="flex items-center bg-zinc-900/60 backdrop-blur-md border border-white/10 hover:border-kuma-gold/50 rounded-full pl-3.5 pr-2 py-2 shadow-xl transition-all">
+                                <Building2 className="w-3.5 h-3.5 text-kuma-gold shrink-0 mr-1.5" />
+                                <select
+                                    value={selectedDojo}
+                                    onChange={(e) => setSelectedDojo(e.target.value)}
+                                    aria-label="Filtrar Kumas por Dojo"
+                                    className="bg-transparent text-white text-xs font-serif font-black uppercase tracking-wider focus:outline-none cursor-pointer pr-4 appearance-none"
+                                >
+                                    <option value="Todos" className="bg-zinc-950 text-white">Todos los Dojos</option>
+                                    {dojos.map((d) => (
+                                        <option key={d._id} value={d._id} className="bg-zinc-950 text-white">
+                                            {d.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="w-3.5 h-3.5 text-zinc-400 pointer-events-none -ml-3" />
+                            </div>
+                        </div>
+                    )}
+
                     {/* Specialty filters */}
                     <div className="flex gap-2 w-full sm:w-auto overflow-x-auto no-scrollbar justify-center sm:justify-start">
                         {["Todos", "Kata", "Kumite"].map((spec) => (
@@ -236,7 +311,7 @@ export function KumaRanking({
                                 key={spec}
                                 onClick={() => setSelectedSpec(spec as any)}
                                 className={cn(
-                                    "px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest border transition-all duration-300 shrink-0",
+                                    "px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest border transition-all duration-300 shrink-0 cursor-pointer",
                                     selectedSpec === spec
                                         ? "bg-kuma-gold border-kuma-gold text-black shadow-[0_0_20px_rgba(212,175,55,0.3)]"
                                         : "bg-zinc-900/40 border-white/5 text-zinc-400 hover:border-zinc-700"
@@ -248,6 +323,24 @@ export function KumaRanking({
                     </div>
                 </div>
             </div>
+
+            {/* Active Dojo Filter Notification Banner */}
+            {selectedDojo !== "Todos" && (
+                <div className="flex items-center justify-between bg-amber-500/10 border border-amber-500/25 rounded-2xl px-4 py-2.5 mb-8 text-xs relative z-10 shadow-lg">
+                    <div className="flex items-center gap-2 text-kuma-gold font-bold">
+                        <Building2 className="w-4 h-4 shrink-0 text-kuma-gold" />
+                        <span>
+                            Mostrando tarjetas de: <strong className="text-white uppercase">{dojos.find(d => d._id === selectedDojo)?.name || "Dojo Seleccionado"}</strong> ({filteredAthletes.length} {filteredAthletes.length === 1 ? "Kuma" : "Kumas"})
+                        </span>
+                    </div>
+                    <button
+                        onClick={() => setSelectedDojo("Todos")}
+                        className="text-[11px] font-black uppercase tracking-wider text-zinc-400 hover:text-white underline cursor-pointer"
+                    >
+                        Mostrar Todos los Dojos
+                    </button>
+                </div>
+            )}
 
             {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-32">
@@ -262,7 +355,15 @@ export function KumaRanking({
                 </div>
             ) : filteredAthletes.length === 0 ? (
                 <div className="text-center py-20 bg-zinc-900/20 rounded-3xl border border-dashed border-white/5 backdrop-blur-sm">
-                    <p className="text-zinc-500 text-sm">No se encontraron Kumas en esta categoría.</p>
+                    <p className="text-zinc-400 text-sm">No se encontraron Kumas con los filtros seleccionados.</p>
+                    {selectedDojo !== "Todos" && (
+                        <button
+                            onClick={() => setSelectedDojo("Todos")}
+                            className="mt-3 px-4 py-1.5 rounded-full bg-zinc-800 hover:bg-zinc-700 text-kuma-gold text-xs font-black uppercase tracking-wider cursor-pointer transition-all"
+                        >
+                            Ver Todos los Dojos
+                        </button>
+                    )}
                 </div>
             ) : (
                  <div className="space-y-20 relative z-10">

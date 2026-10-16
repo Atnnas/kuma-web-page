@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { KumaRanking } from "@/components/sections/KumaRanking";
 import { getWeeklyMVP } from "@/lib/actions/attendance";
+import { getDojos } from "@/lib/actions/dojos";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,17 @@ export default async function KumaCardsPage() {
     }
   } catch (e) {
     console.error("Failed to fetch athletes:", e);
+  }
+
+  // Fetch dojos list
+  let dojos: any[] = [];
+  try {
+    const dojosRes = await getDojos();
+    if (dojosRes?.success && Array.isArray(dojosRes.data)) {
+      dojos = dojosRes.data;
+    }
+  } catch (e) {
+    console.error("Failed to fetch dojos:", e);
   }
 
   // Fetch weekly MVP
@@ -63,16 +75,13 @@ export default async function KumaCardsPage() {
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase text-white font-serif">
             KUMA <span className="text-kuma-gold bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(212,175,55,0.2)]">CARDS</span>
           </h1>
-          <p className="text-zinc-400 text-xs md:text-sm font-black uppercase tracking-widest mt-4 max-w-lg mx-auto">
-            Tarjetas de Honor Oficiales de los Atletas del Dojo
-          </p>
           <div className="w-24 h-1 bg-gradient-to-r from-transparent via-kuma-gold to-transparent mx-auto mt-4 rounded-full" />
         </div>
 
 
 
         {/* Kuma Ranking Component (Renders the Athlete Cards beautifully) */}
-        <KumaRanking currentUser={user} initialAthletes={athletes || undefined} weeklyMvp={weeklyMvp || undefined} />
+        <KumaRanking currentUser={user} initialAthletes={athletes || undefined} weeklyMvp={weeklyMvp || undefined} dojos={dojos} />
       </div>
     </main>
   );
