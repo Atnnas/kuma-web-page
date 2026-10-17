@@ -625,7 +625,7 @@ export function WeeklyMVPSection({
                 isOpen={!!sharingAthlete}
                 onClose={() => setSharingAthlete(null)}
                 athlete={sharingAthlete}
-                mode="mvp"
+                mode={activeTab === "daily" ? "daily_mvp" : "weekly_mvp"}
             />
         </div>
     );

@@ -1249,7 +1249,7 @@ export default function AdminAttendancePage() {
                     isOpen={!!sharingAthlete}
                     onClose={() => setSharingAthlete(null)}
                     athlete={sharingAthlete}
-                    mode="mvp"
+                    mode="daily_mvp"
                 />
 
             </div>
