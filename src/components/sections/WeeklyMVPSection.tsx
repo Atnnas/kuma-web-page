@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crown, Sparkles, Trophy, Calendar, Flame, RotateCcw, Building2, ChevronDown, Loader2 } from "lucide-react";
+import { Crown, Sparkles, Trophy, Calendar, Flame, RotateCcw, Building2, ChevronDown, Loader2, Share2 } from "lucide-react";
 import Image from "next/image";
 import { BeltSquare, getBeltColor } from "@/components/admin/AthleteEditModal";
 import { getWeeklyMVP } from "@/lib/actions/attendance";
+import { ShareCardModal } from "@/components/share/ShareCardModal";
 
 interface Athlete {
     _id: string;
@@ -83,6 +84,7 @@ export function WeeklyMVPSection({
     const [mvpData, setMvpData] = useState(data);
     const [internalDojoId, setInternalDojoId] = useState<string>(propSelectedDojoId || "Todos");
     const [isLoadingDojo, setIsLoadingDojo] = useState(false);
+    const [sharingAthlete, setSharingAthlete] = useState<Athlete | null>(null);
 
     const currentDojoId = propSelectedDojoId !== undefined ? propSelectedDojoId : internalDojoId;
 
@@ -579,6 +581,20 @@ export function WeeklyMVPSection({
                                                             <span className="text-[8px] font-black text-zinc-400 uppercase tracking-widest leading-none mb-0.5">OVR</span>
                                                             <span className="text-lg font-serif font-black text-kuma-gold italic leading-none">{ovr}</span>
                                                         </div>
+
+                                                        {/* Quick Share to Social Button */}
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setSharingAthlete(athlete);
+                                                            }}
+                                                            className="flex flex-col items-center justify-center p-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 border border-amber-500/35 text-amber-300 hover:text-white transition-all cursor-pointer shrink-0 shadow-sm active:scale-95"
+                                                            title="Compartir MVP en Estados de WhatsApp, Instagram, TikTok o Facebook"
+                                                        >
+                                                            <Share2 className="w-4 h-4" />
+                                                            <span className="text-[7px] font-black uppercase tracking-wider mt-0.5">Share</span>
+                                                        </button>
                                                     </motion.div>
                                                 );
                                             })}
@@ -603,6 +619,14 @@ export function WeeklyMVPSection({
                     )}
                 </AnimatePresence>
             </div>
+
+            {/* Share Modal for MVP */}
+            <ShareCardModal
+                isOpen={!!sharingAthlete}
+                onClose={() => setSharingAthlete(null)}
+                athlete={sharingAthlete}
+                mode="mvp"
+            />
         </div>
     );
 }

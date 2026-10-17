@@ -33,8 +33,10 @@ import {
     Download,
     FileSpreadsheet,
     Command,
-    Building2
+    Building2,
+    Share2
 } from "lucide-react";
+import { ShareCardModal } from "@/components/share/ShareCardModal";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -143,13 +145,15 @@ const AthleteFutCard = React.memo(function AthleteFutCard({
     onEdit,
     onUnenroll,
     onDelete,
-    onCelebrate
+    onCelebrate,
+    onShare
 }: {
     user: any;
     onEdit: (user: any) => void;
     onUnenroll: (user: any) => void;
     onDelete: (user: any) => void;
     onCelebrate: (user: any) => void;
+    onShare?: (user: any) => void;
 }) {
     const isEnrolled = !!user.athleteProfile?.isEnrolled;
     const ovr = Math.round(user.athleteProfile?.stats?.ovr || 0);
@@ -424,6 +428,15 @@ const AthleteFutCard = React.memo(function AthleteFutCard({
                     {isEnrolled ? (
                         <>
                             <Button
+                                onClick={() => onShare?.(user)}
+                                variant="ghost"
+                                size="sm"
+                                className="h-9 w-9 p-0 text-amber-400 hover:text-white hover:bg-amber-500/20 rounded-xl active:scale-95 transition-all"
+                                title="Publicar en WhatsApp, Instagram, TikTok o Facebook"
+                            >
+                                <Share2 className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
                                 onClick={() => onUnenroll(user)}
                                 variant="ghost"
                                 size="sm"
@@ -481,13 +494,15 @@ const AthleteListRow = React.memo(function AthleteListRow({
     onEdit,
     onUnenroll,
     onDelete,
-    onCelebrate
+    onCelebrate,
+    onShare
 }: {
     user: any;
     onEdit: (user: any) => void;
     onUnenroll: (user: any) => void;
     onDelete: (user: any) => void;
     onCelebrate: (user: any) => void;
+    onShare?: (user: any) => void;
 }) {
     const isEnrolled = !!user.athleteProfile?.isEnrolled;
     const ovr = Math.round(user.athleteProfile?.stats?.ovr || 0);
@@ -583,15 +598,26 @@ const AthleteListRow = React.memo(function AthleteListRow({
                 {/* Buttons */}
                 <div className="flex items-center gap-1.5">
                     {isEnrolled && (
-                        <Button
-                            onClick={() => onCelebrate(user)}
-                            variant="ghost"
-                            size="sm"
-                            className="h-9 w-9 p-0 text-zinc-400 hover:text-kuma-gold hover:bg-kuma-gold/10 rounded-xl active:scale-95"
-                            title="Celebrar en 3D"
-                        >
-                            <Sparkles className="w-4 h-4" />
-                        </Button>
+                        <>
+                            <Button
+                                onClick={() => onShare?.(user)}
+                                variant="ghost"
+                                size="sm"
+                                className="h-9 w-9 p-0 text-amber-400 hover:text-white hover:bg-amber-500/20 rounded-xl active:scale-95 transition-all"
+                                title="Publicar en WhatsApp, Instagram, TikTok o Facebook"
+                            >
+                                <Share2 className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                                onClick={() => onCelebrate(user)}
+                                variant="ghost"
+                                size="sm"
+                                className="h-9 w-9 p-0 text-zinc-400 hover:text-kuma-gold hover:bg-kuma-gold/10 rounded-xl active:scale-95"
+                                title="Celebrar en 3D"
+                            >
+                                <Sparkles className="w-4 h-4" />
+                            </Button>
+                        </>
                     )}
                     {isEnrolled ? (
                         <Button
@@ -746,6 +772,7 @@ export default function AdminAthletesPage() {
     // Modals state
     const [editingUser, setEditingUser] = useState<any | null>(null);
     const [celebratingAthlete, setCelebratingAthlete] = useState<any | null>(null);
+    const [sharingAthlete, setSharingAthlete] = useState<any | null>(null);
     const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
 
     // Confirmation & Toast state
@@ -1514,6 +1541,7 @@ export default function AdminAthletesPage() {
                                         isProcessing: false
                                     })}
                                     onCelebrate={(u) => setCelebratingAthlete(u)}
+                                    onShare={(u) => setSharingAthlete(u)}
                                 />
                             ))}
                         </div>
@@ -1555,6 +1583,7 @@ export default function AdminAthletesPage() {
                                         isProcessing: false
                                     })}
                                     onCelebrate={(u) => setCelebratingAthlete(u)}
+                                    onShare={(u) => setSharingAthlete(u)}
                                 />
                             ))}
                         </div>
@@ -1600,6 +1629,14 @@ export default function AdminAthletesPage() {
                     isOpen={!!celebratingAthlete}
                     onClose={() => setCelebratingAthlete(null)}
                     athlete={celebratingAthlete}
+                />
+
+                {/* Share Card Modal for Super Admin */}
+                <ShareCardModal
+                    isOpen={!!sharingAthlete}
+                    onClose={() => setSharingAthlete(null)}
+                    athlete={sharingAthlete}
+                    mode={sharingAthlete?.athleteProfile?.mvpCount ? "mvp" : "card"}
                 />
 
                 {/* Modern Confirmation Modal */}

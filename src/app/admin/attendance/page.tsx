@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { SwipeBackWrapper } from "@/components/admin/AdminNavigation";
 import { Button } from "@/components/ui/Button";
-import { Loader2, Search, User, ClipboardCheck, Calendar, Info, Check, Clock, UserX, Sparkles, CheckCircle, ChevronDown } from "lucide-react";
+import { Loader2, Search, User, ClipboardCheck, Calendar, Info, Check, Clock, UserX, Sparkles, CheckCircle, ChevronDown, Share2 } from "lucide-react";
+import { ShareCardModal } from "@/components/share/ShareCardModal";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -35,6 +36,7 @@ export default function AdminAttendancePage() {
     const isLoading = isLoadingAthletes || isLoadingAttendance;
     const [isSaving, setIsSaving] = useState(false);
     const [pressingUserId, setPressingUserId] = useState<string | null>(null);
+    const [sharingAthlete, setSharingAthlete] = useState<any | null>(null);
     const [alertModal, setAlertModal] = useState<{
         isOpen: boolean;
         type: "success" | "error";
@@ -1034,21 +1036,38 @@ export default function AdminAttendancePage() {
                                                     <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">
                                                         MVP de la Clase (Bono):
                                                     </span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleMVPToggle(ath._id)}
-                                                        onDoubleClick={(e) => e.stopPropagation()}
-                                                        onTouchStart={(e) => e.stopPropagation()}
-                                                        className={cn(
-                                                            "px-2.5 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer flex items-center gap-1 leading-none min-h-[22px]",
-                                                            athleteState.isMVP
-                                                                ? "bg-gradient-to-r from-yellow-400 to-amber-500 text-black border-yellow-300 shadow-[0_0_10px_rgba(250,204,21,0.4)]"
-                                                                : "bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-350"
+                                                    <div className="flex items-center gap-1.5">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleMVPToggle(ath._id)}
+                                                            onDoubleClick={(e) => e.stopPropagation()}
+                                                            onTouchStart={(e) => e.stopPropagation()}
+                                                            className={cn(
+                                                                "px-2.5 py-1 text-[8px] font-black uppercase tracking-wider rounded-md transition-all border cursor-pointer flex items-center gap-1 leading-none min-h-[22px]",
+                                                                athleteState.isMVP
+                                                                    ? "bg-gradient-to-r from-yellow-400 to-amber-500 text-black border-yellow-300 shadow-[0_0_10px_rgba(250,204,21,0.4)]"
+                                                                    : "bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-350"
+                                                            )}
+                                                        >
+                                                            <span>👑</span>
+                                                            <span>{athleteState.isMVP ? "MVP Activo" : "Marcar MVP"}</span>
+                                                        </button>
+
+                                                        {athleteState.isMVP && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setSharingAthlete(ath);
+                                                                }}
+                                                                className="px-2 py-1 text-[8px] font-black uppercase tracking-wider rounded-md bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/40 cursor-pointer flex items-center gap-1 leading-none min-h-[22px] active:scale-95 transition-all shadow-sm"
+                                                                title="Publicar este MVP en WhatsApp / Redes Sociales del Dojo"
+                                                            >
+                                                                <Share2 className="w-3 h-3" />
+                                                                <span>Publicar</span>
+                                                            </button>
                                                         )}
-                                                    >
-                                                        <span>👑</span>
-                                                        <span>{athleteState.isMVP ? "MVP Activo" : "Marcar MVP"}</span>
-                                                    </button>
+                                                    </div>
                                                 </div>
                                             </motion.div>
                                         )}
@@ -1224,6 +1243,14 @@ export default function AdminAttendancePage() {
                         </div>
                     )}
                 </AnimatePresence>
+
+                {/* Share Modal for Attendance MVP */}
+                <ShareCardModal
+                    isOpen={!!sharingAthlete}
+                    onClose={() => setSharingAthlete(null)}
+                    athlete={sharingAthlete}
+                    mode="mvp"
+                />
 
             </div>
         </SwipeBackWrapper>

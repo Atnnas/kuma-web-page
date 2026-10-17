@@ -24,8 +24,10 @@ import {
     EyeOff, 
     User as UserIcon,
     Dumbbell,
-    Sliders
+    Sliders,
+    Share2
 } from "lucide-react";
+import { ShareCardModal } from "@/components/share/ShareCardModal";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { getDojos } from "@/lib/actions/dojos";
@@ -291,6 +293,7 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
     const [isLoadingDojos, setIsLoadingDojos] = useState(false);
     const [activeTab, setActiveTab] = useState<"perfil" | "wkf" | "stats" | "salud">("perfil");
     const [showMobilePreview, setShowMobilePreview] = useState(false);
+    const [isShareOpen, setIsShareOpen] = useState(false);
 
     useEffect(() => {
         const loadDojos = async () => {
@@ -1006,6 +1009,18 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                                 <span className="text-[10px] text-zinc-500 uppercase tracking-wider hidden sm:inline">
                                     Atleta ID: {user._id?.slice(-6)}
                                 </span>
+                                {user?.athleteProfile?.isEnrolled && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setIsShareOpen(true)}
+                                        className="bg-amber-500/10 hover:bg-amber-500/20 text-kuma-gold border-amber-500/30 text-xs font-bold uppercase tracking-wider h-10 px-3.5 flex items-center gap-1.5 cursor-pointer shadow-sm"
+                                        title="Publicar en WhatsApp, Instagram, TikTok o Facebook"
+                                    >
+                                        <Share2 className="w-3.5 h-3.5" />
+                                        <span>Compartir Ficha</span>
+                                    </Button>
+                                )}
                             </div>
 
                             <div className="flex items-center gap-2 sm:gap-3">
@@ -1029,6 +1044,13 @@ export function AthleteEditModal({ isOpen, onClose, user, onSave }: AthleteEditM
                         </div>
 
                     </motion.div>
+
+                    {/* Share Card Modal for Admin Edit View */}
+                    <ShareCardModal
+                        isOpen={isShareOpen}
+                        onClose={() => setIsShareOpen(false)}
+                        athlete={user}
+                    />
                 </div>
             )}
         </AnimatePresence>

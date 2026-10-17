@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { getEnrolledAthletes, updateAthletePhotoSelf } from "@/lib/actions/athletes";
-import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid, AlertTriangle, GraduationCap, ArrowUpRight, BarChart3, Building2, ChevronDown } from "lucide-react";
+import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid, AlertTriangle, GraduationCap, ArrowUpRight, BarChart3, Building2, ChevronDown, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ import { BeltSquare, MartialArtsBeltIcon, getBeltColor } from "@/components/admi
 import { WeeklyMVPSection } from "./WeeklyMVPSection";
 import { evaluateWkfCategory } from "@/lib/wkf-categories";
 import { AthleteDidacticAuditModal } from "@/components/didactic/AthleteDidacticAuditModal";
+import { ShareCardModal } from "@/components/share/ShareCardModal";
 
 interface Athlete {
     _id: string;
@@ -1363,6 +1364,7 @@ export function KumaCelebrationModal({
     customSubtitle
 }: KumaCelebrationModalProps) {
     const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, glossX: 50, glossY: 50, scale: 1 });
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     // Bloquear scroll de la página de fondo y capturar tecla Escape
     useEffect(() => {
@@ -1771,13 +1773,25 @@ export function KumaCelebrationModal({
                             )}
                         </div>
 
-                        {/* Botón de acción táctil inferior para móviles */}
-                        <button
-                            onClick={onClose}
-                            className="md:hidden w-full max-w-md py-3 px-6 rounded-xl bg-gradient-to-b from-kuma-gold to-amber-500 text-black font-black uppercase text-xs tracking-wider shadow-[0_4px_12px_rgba(212,175,55,0.2)] active:scale-98 hover:brightness-110 active:translate-y-0.5 transition-all cursor-pointer"
-                        >
-                            Entendido
-                        </button>
+                        {/* Botones de acción: Compartir en Redes & Cerrar */}
+                        <div className="w-full max-w-md flex flex-col sm:flex-row gap-2.5">
+                            <button
+                                type="button"
+                                onClick={() => setIsShareModalOpen(true)}
+                                className="flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-black font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(212,175,55,0.35)] active:scale-98 transition-all cursor-pointer"
+                            >
+                                <Share2 className="w-4 h-4" />
+                                <span>Compartir en WhatsApp y Redes</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="sm:w-28 py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white font-black uppercase text-xs tracking-wider transition-all cursor-pointer text-center"
+                            >
+                                Cerrar
+                            </button>
+                        </div>
 
                         <div className="text-[10px] text-zinc-600 flex items-center gap-1.5 justify-center md:justify-start">
                             <Sparkles className="w-3.5 h-3.5 text-kuma-gold" />
@@ -1785,6 +1799,15 @@ export function KumaCelebrationModal({
                         </div>
                     </div>
                 </motion.div>
+
+                {/* Share Modal for Athlete Card / MVP */}
+                <ShareCardModal
+                    isOpen={isShareModalOpen}
+                    onClose={() => setIsShareModalOpen(false)}
+                    athlete={athlete}
+                    mode={athlete.athleteProfile?.mvpCount ? "mvp" : "card"}
+                    customTitle={customTitle as any}
+                />
             </div>
         </AnimatePresence>
     );
