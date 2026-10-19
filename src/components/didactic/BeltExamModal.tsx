@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     CheckCircle,
@@ -13,7 +13,7 @@ import {
     GraduationCap,
 } from "@phosphor-icons/react";
 import { BeltExamConfig } from "@/data/beltExamData";
-import { BeltRank } from "@/types/didactica";
+import { BeltRank, Question } from "@/types/didactica";
 import { didacticSound } from "@/lib/didacticSound";
 import { isBeltAvailable } from "@/data/beltRanks";
 
@@ -26,6 +26,25 @@ interface BeltExamModalProps {
     onExamPassed: (earnedBeltId: string, earnedXp: number, examId?: string) => void;
 }
 
+function shuffleArray<T>(array: T[]): T[] {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function normalizeText(text: string): string {
+    return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // remove accents
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
 export function BeltExamModal({
     isOpen,
     onClose,
@@ -34,17 +53,49 @@ export function BeltExamModal({
     targetBelt,
     onExamPassed,
 }: BeltExamModalProps) {
-    const questions = examConfig.questions;
+    const [examQuestions, setExamQuestions] = useState<Question[]>(() => {
+        return examConfig.questions.map((q) => {
+            if (q.options && q.options.length > 0) {
+                return { ...q, options: shuffleArray(q.options) };
+            }
+            return { ...q };
+        });
+    });
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
+    const [writtenAnswer, setWrittenAnswer] = useState("");
+    const [isWrittenCorrect, setIsWrittenCorrect] = useState<boolean | null>(null);
     const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
     const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
     const [isFinished, setIsFinished] = useState(false);
 
+    // Re-initialize and shuffle on open or examConfig change
+    useEffect(() => {
+        if (isOpen) {
+            setExamQuestions(
+                examConfig.questions.map((q) => {
+                    if (q.options && q.options.length > 0) {
+                        return { ...q, options: shuffleArray(q.options) };
+                    }
+                    return { ...q };
+                })
+            );
+            setCurrentIndex(0);
+            setSelectedOptionId(null);
+            setWrittenAnswer("");
+            setIsWrittenCorrect(null);
+            setIsAnswerSubmitted(false);
+            setCorrectAnswersCount(0);
+            setIsFinished(false);
+        }
+    }, [isOpen, examConfig]);
+
     if (!isOpen) return null;
 
+    const questions = examQuestions;
     const isTargetAvailable = targetBelt ? isBeltAvailable(targetBelt.id) : false;
-    const currentQuestion = questions[currentIndex];
+    const currentQuestion = questions[currentIndex] || examConfig.questions[0];
     const isLastQuestion = currentIndex === questions.length - 1;
     const isPassing = correctAnswersCount >= examConfig.passingScore;
     const isSpecialExamBelt = ["kyu-4", "kyu-3", "kyu-2"].includes(currentBelt.id);
@@ -56,7 +107,36 @@ export function BeltExamModal({
     };
 
     const handleConfirmAnswer = () => {
-        if (!selectedOptionId || isAnswerSubmitted) return;
+        if (isAnswerSubmitted) return;
+
+        // Written question logic
+        if (currentQuestion.type === "written") {
+            if (!writtenAnswer.trim()) return;
+            setIsAnswerSubmitted(true);
+
+            let isCorrect = false;
+            if (currentQuestion.isEssay) {
+                // Desarrollo / Ensayo: Requiere respuesta honesta de al menos 3 palabras y 10 caracteres
+                const words = writtenAnswer.trim().split(/\s+/).filter(Boolean);
+                isCorrect = words.length >= 3 && writtenAnswer.trim().length >= 10;
+            } else {
+                const normalizedInput = normalizeText(writtenAnswer);
+                const keywords = currentQuestion.acceptedKeywords || [];
+                isCorrect = keywords.some((kw) => normalizedInput.includes(normalizeText(kw)));
+            }
+
+            setIsWrittenCorrect(isCorrect);
+            if (isCorrect) {
+                didacticSound.playCorrect();
+                setCorrectAnswersCount((prev) => prev + 1);
+            } else {
+                didacticSound.playWrong();
+            }
+            return;
+        }
+
+        // Multiple choice logic
+        if (!selectedOptionId) return;
         setIsAnswerSubmitted(true);
 
         const chosenOption = currentQuestion.options?.find((o) => o.id === selectedOptionId);
@@ -74,20 +154,32 @@ export function BeltExamModal({
         didacticSound.playClick();
         if (isLastQuestion) {
             setIsFinished(true);
-            if (correctAnswersCount + (currentQuestion.options?.find((o) => o.id === selectedOptionId)?.isCorrect ? 0 : 0) >= examConfig.passingScore) {
+            if (correctAnswersCount >= examConfig.passingScore) {
                 didacticSound.playBeltWon();
             }
         } else {
             setCurrentIndex((prev) => prev + 1);
             setSelectedOptionId(null);
+            setWrittenAnswer("");
+            setIsWrittenCorrect(null);
             setIsAnswerSubmitted(false);
         }
     };
 
     const handleRestartExam = () => {
         didacticSound.playClick();
+        setExamQuestions(
+            examConfig.questions.map((q) => {
+                if (q.options && q.options.length > 0) {
+                    return { ...q, options: shuffleArray(q.options) };
+                }
+                return { ...q };
+            })
+        );
         setCurrentIndex(0);
         setSelectedOptionId(null);
+        setWrittenAnswer("");
+        setIsWrittenCorrect(null);
         setIsAnswerSubmitted(false);
         setCorrectAnswersCount(0);
         setIsFinished(false);
@@ -100,6 +192,13 @@ export function BeltExamModal({
     };
 
     const progressPercentage = Math.round(((currentIndex + (isAnswerSubmitted ? 1 : 0)) / questions.length) * 100);
+
+    const chosenOption = currentQuestion.options?.find((o) => o.id === selectedOptionId);
+    const userIsCorrect = currentQuestion.type === "written" ? Boolean(isWrittenCorrect) : Boolean(chosenOption?.isCorrect);
+
+    const isConfirmDisabled = currentQuestion.type === "written"
+        ? !writtenAnswer.trim()
+        : !selectedOptionId;
 
     return (
         <AnimatePresence>
@@ -204,82 +303,180 @@ export function BeltExamModal({
                                     </div>
                                 )}
 
-                                {/* OPCIONES DE RESPUESTA */}
-                                <div className="space-y-2.5 mb-5">
-                                    {currentQuestion.options?.map((option, idx) => {
-                                        const isSelected = selectedOptionId === option.id;
-                                        const isCorrect = option.isCorrect;
+                                {/* RENDERIZADO: PREGUNTA ESCRITA (COMPLETE O DESARROLLO) */}
+                                {currentQuestion.type === "written" ? (
+                                    <div className="space-y-3 mb-5">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[11px] font-black uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
+                                                <Sparkle className="w-3.5 h-3.5 text-amber-400" weight="fill" />
+                                                <span>{currentQuestion.isEssay ? "Desarrollo • Escriba su Respuesta" : "Complete • Escriba su Respuesta"}</span>
+                                            </span>
+                                            {isAnswerSubmitted && (
+                                                <span
+                                                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${
+                                                        isWrittenCorrect
+                                                            ? "bg-emerald-500/20 border-emerald-400 text-emerald-300"
+                                                            : "bg-red-500/20 border-red-400 text-red-300"
+                                                    }`}
+                                                >
+                                                    {isWrittenCorrect ? "✓ Aceptada" : "✗ Incompleta"}
+                                                </span>
+                                            )}
+                                        </div>
 
-                                        let optionStyle =
-                                            "bg-zinc-900/80 hover:bg-zinc-800/90 border-zinc-700/80 text-zinc-200";
-
-                                        if (isSelected && !isAnswerSubmitted) {
-                                            optionStyle =
-                                                "bg-amber-950/60 border-amber-400 text-yellow-200 shadow-[0_0_12px_rgba(245,158,11,0.3)]";
-                                        }
-
-                                        if (isAnswerSubmitted) {
-                                            if (isCorrect) {
-                                                optionStyle =
-                                                    "bg-emerald-950/90 border-emerald-400 text-emerald-100 shadow-[0_0_18px_rgba(16,185,129,0.5)] ring-2 ring-emerald-500/60";
-                                            } else if (isSelected && !isCorrect) {
-                                                optionStyle =
-                                                    "bg-red-950/90 border-red-500 text-red-200 shadow-[0_0_14px_rgba(239,68,68,0.4)]";
-                                            } else {
-                                                optionStyle = "bg-zinc-950/60 border-zinc-800/60 text-zinc-500 opacity-60";
-                                            }
-                                        }
-
-                                        const letter = String.fromCharCode(65 + idx);
-
-                                        return (
-                                            <button
-                                                key={option.id}
-                                                type="button"
-                                                onClick={() => handleSelectOption(option.id)}
+                                        {currentQuestion.isEssay ? (
+                                            <textarea
+                                                value={writtenAnswer}
+                                                onChange={(e) => setWrittenAnswer(e.target.value)}
                                                 disabled={isAnswerSubmitted}
-                                                className={`w-full p-3 sm:p-3.5 rounded-2xl border-2 text-left text-xs sm:text-sm font-semibold transition-all flex items-center justify-between gap-3 cursor-pointer disabled:cursor-default ${optionStyle}`}
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <span
-                                                        className={`w-6 h-6 rounded-lg text-xs font-black flex items-center justify-center shrink-0 border ${
-                                                            isAnswerSubmitted && isCorrect
-                                                                ? "bg-emerald-500 text-black border-emerald-300 font-black"
-                                                                : isAnswerSubmitted && isSelected && !isCorrect
-                                                                ? "bg-red-500 text-white border-red-400 font-black"
-                                                                : isSelected
-                                                                ? "bg-amber-400 text-black border-amber-300"
-                                                                : "bg-zinc-800 text-zinc-400 border-zinc-700"
-                                                        }`}
-                                                    >
-                                                        {letter}
-                                                    </span>
-                                                    <span className="font-medium">{option.text}</span>
-                                                </div>
+                                                rows={4}
+                                                placeholder="Escriba aquí su reflexión o criterio marcial..."
+                                                className={`w-full p-4 rounded-2xl border-2 text-sm text-white placeholder:text-zinc-500 transition-all outline-none resize-none ${
+                                                    isAnswerSubmitted
+                                                        ? isWrittenCorrect
+                                                            ? "bg-emerald-950/30 border-emerald-400 ring-2 ring-emerald-500/40 text-emerald-100"
+                                                            : "bg-red-950/30 border-red-500 ring-2 ring-red-500/40 text-red-100"
+                                                        : "bg-zinc-900/90 border-zinc-700/80 focus:border-amber-400"
+                                                }`}
+                                            />
+                                        ) : (
+                                            <input
+                                                type="text"
+                                                value={writtenAnswer}
+                                                onChange={(e) => setWrittenAnswer(e.target.value)}
+                                                disabled={isAnswerSubmitted}
+                                                placeholder="Escriba su respuesta aquí..."
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Enter" && !isAnswerSubmitted && writtenAnswer.trim()) {
+                                                        handleConfirmAnswer();
+                                                    }
+                                                }}
+                                                className={`w-full p-3.5 sm:p-4 rounded-2xl border-2 text-sm text-white placeholder:text-zinc-500 transition-all outline-none ${
+                                                    isAnswerSubmitted
+                                                        ? isWrittenCorrect
+                                                            ? "bg-emerald-950/30 border-emerald-400 ring-2 ring-emerald-500/40 text-emerald-100"
+                                                            : "bg-red-950/30 border-red-500 ring-2 ring-red-500/40 text-red-100"
+                                                        : "bg-zinc-900/90 border-zinc-700/80 focus:border-amber-400"
+                                                }`}
+                                            />
+                                        )}
+                                    </div>
+                                ) : (
+                                    /* RENDERIZADO: OPCIONES MULTIPLE CHOICE */
+                                    <div className="space-y-2.5 mb-5">
+                                        {currentQuestion.options?.map((option, idx) => {
+                                            const isSelected = selectedOptionId === option.id;
+                                            const isCorrect = option.isCorrect;
 
-                                                {/* BADGES E ICONOS DE IDENTIFICACIÓN */}
-                                                <div className="flex items-center gap-2 shrink-0 ml-2">
-                                                    {isAnswerSubmitted && isSpecialExamBelt && isCorrect && (
-                                                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-400 text-[10px] font-black uppercase text-emerald-300 tracking-wider shadow-sm animate-pulse">
-                                                            ✓ Respuesta Correcta
+                                            let optionStyle =
+                                                "bg-zinc-900/80 hover:bg-zinc-800/90 border-zinc-700/80 text-zinc-200";
+
+                                            if (isSelected && !isAnswerSubmitted) {
+                                                optionStyle =
+                                                    "bg-amber-950/60 border-amber-400 text-yellow-200 shadow-[0_0_12px_rgba(245,158,11,0.3)]";
+                                            }
+
+                                            if (isAnswerSubmitted) {
+                                                if (isSpecialExamBelt) {
+                                                    // REGLA PARA 4, 3 Y 2 KYU:
+                                                    // "la respuesta se marcará cuando se conteste y no es la correcta"
+                                                    if (userIsCorrect) {
+                                                        // Acierto: solo se marca en verde la que contestó el usuario
+                                                        if (isSelected) {
+                                                            optionStyle =
+                                                                "bg-emerald-950/90 border-emerald-400 text-emerald-100 shadow-[0_0_18px_rgba(16,185,129,0.5)] ring-2 ring-emerald-500/60";
+                                                        } else {
+                                                            optionStyle = "bg-zinc-950/60 border-zinc-800/60 text-zinc-500 opacity-60";
+                                                        }
+                                                    } else {
+                                                        // Fallo ("no es la correcta"):
+                                                        // Se marca en rojo la incorrecta seleccionada Y en verde la respuesta oficial
+                                                        if (isSelected) {
+                                                            optionStyle =
+                                                                "bg-red-950/90 border-red-500 text-red-200 shadow-[0_0_14px_rgba(239,68,68,0.4)] ring-2 ring-red-500/60";
+                                                        } else if (isCorrect) {
+                                                            optionStyle =
+                                                                "bg-emerald-950/90 border-emerald-400 text-emerald-100 shadow-[0_0_18px_rgba(16,185,129,0.5)] ring-2 ring-emerald-500/60";
+                                                        } else {
+                                                            optionStyle = "bg-zinc-950/60 border-zinc-800/60 text-zinc-500 opacity-60";
+                                                        }
+                                                    }
+                                                } else {
+                                                    // Modo estándar (10° Kyu):
+                                                    if (isCorrect) {
+                                                        optionStyle =
+                                                            "bg-emerald-950/90 border-emerald-400 text-emerald-100 shadow-[0_0_18px_rgba(16,185,129,0.5)] ring-2 ring-emerald-500/60";
+                                                    } else if (isSelected && !isCorrect) {
+                                                        optionStyle =
+                                                            "bg-red-950/90 border-red-500 text-red-200 shadow-[0_0_14px_rgba(239,68,68,0.4)]";
+                                                    } else {
+                                                        optionStyle = "bg-zinc-950/60 border-zinc-800/60 text-zinc-500 opacity-60";
+                                                    }
+                                                }
+                                            }
+
+                                            const letter = String.fromCharCode(65 + idx);
+
+                                            return (
+                                                <button
+                                                    key={option.id}
+                                                    type="button"
+                                                    onClick={() => handleSelectOption(option.id)}
+                                                    disabled={isAnswerSubmitted}
+                                                    className={`w-full p-3 sm:p-3.5 rounded-2xl border-2 text-left text-xs sm:text-sm font-semibold transition-all flex items-center justify-between gap-3 cursor-pointer disabled:cursor-default ${optionStyle}`}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <span
+                                                            className={`w-6 h-6 rounded-lg text-xs font-black flex items-center justify-center shrink-0 border ${
+                                                                isAnswerSubmitted && isSpecialExamBelt && userIsCorrect && isSelected
+                                                                    ? "bg-emerald-500 text-black border-emerald-300 font-black"
+                                                                    : isAnswerSubmitted && isSpecialExamBelt && !userIsCorrect && isSelected
+                                                                    ? "bg-red-500 text-white border-red-400 font-black"
+                                                                    : isAnswerSubmitted && isSpecialExamBelt && !userIsCorrect && isCorrect
+                                                                    ? "bg-emerald-500 text-black border-emerald-300 font-black"
+                                                                    : isAnswerSubmitted && !isSpecialExamBelt && isCorrect
+                                                                    ? "bg-emerald-500 text-black border-emerald-300 font-black"
+                                                                    : isAnswerSubmitted && !isSpecialExamBelt && isSelected && !isCorrect
+                                                                    ? "bg-red-500 text-white border-red-400 font-black"
+                                                                    : isSelected
+                                                                    ? "bg-amber-400 text-black border-amber-300"
+                                                                    : "bg-zinc-800 text-zinc-400 border-zinc-700"
+                                                            }`}
+                                                        >
+                                                            {letter}
                                                         </span>
-                                                    )}
-                                                    {isAnswerSubmitted && isSpecialExamBelt && isSelected && !isCorrect && (
-                                                        <span className="px-2.5 py-0.5 rounded-full bg-red-500/25 border border-red-400 text-[10px] font-black uppercase text-red-300 tracking-wider">
-                                                            ✗ Tu Selección
-                                                        </span>
-                                                    )}
-                                                    {isAnswerSubmitted && isCorrect && (
-                                                        <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" weight="fill" />
-                                                    )}
-                                                    {isAnswerSubmitted && isSelected && !isCorrect && (
-                                                        <XCircle className="w-5 h-5 text-red-400 shrink-0" weight="fill" />
-                                                    )}
-                                                </div>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
+                                                        <span className="font-medium">{option.text}</span>
+                                                    </div>
+
+                                                    {/* BADGES E ICONOS DE IDENTIFICACIÓN */}
+                                                    <div className="flex items-center gap-2 shrink-0 ml-2">
+                                                        {isAnswerSubmitted && isSpecialExamBelt && userIsCorrect && isSelected && (
+                                                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-400 text-[10px] font-black uppercase text-emerald-300 tracking-wider shadow-sm">
+                                                                ✓ Correcto
+                                                            </span>
+                                                        )}
+                                                        {isAnswerSubmitted && isSpecialExamBelt && !userIsCorrect && isSelected && (
+                                                            <span className="px-2.5 py-0.5 rounded-full bg-red-500/25 border border-red-400 text-[10px] font-black uppercase text-red-300 tracking-wider">
+                                                                ✗ Tu Selección
+                                                            </span>
+                                                        )}
+                                                        {isAnswerSubmitted && isSpecialExamBelt && !userIsCorrect && isCorrect && (
+                                                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-400 text-[10px] font-black uppercase text-emerald-300 tracking-wider shadow-sm animate-pulse">
+                                                                ✓ Respuesta Correcta
+                                                            </span>
+                                                        )}
+                                                        {isAnswerSubmitted && !isSpecialExamBelt && isCorrect && (
+                                                            <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" weight="fill" />
+                                                        )}
+                                                        {isAnswerSubmitted && !isSpecialExamBelt && isSelected && !isCorrect && (
+                                                            <XCircle className="w-5 h-5 text-red-400 shrink-0" weight="fill" />
+                                                        )}
+                                                    </div>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
 
                                 {/* EXPLICACIÓN PEDAGÓGICA TRAS ENVIAR */}
                                 <AnimatePresence>
@@ -288,19 +485,22 @@ export function BeltExamModal({
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             className={`p-4 rounded-2xl border text-xs mb-5 ${
-                                                isSpecialExamBelt
-                                                    ? "bg-zinc-900/95 border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.15)] text-zinc-200"
+                                                isSpecialExamBelt && !userIsCorrect
+                                                    ? "bg-red-950/30 border-red-500/40 text-zinc-200"
+                                                    : isSpecialExamBelt && userIsCorrect
+                                                    ? "bg-emerald-950/30 border-emerald-500/40 text-zinc-200"
                                                     : "bg-zinc-900/90 border-zinc-800 text-zinc-300"
                                             }`}
                                         >
-                                            {isSpecialExamBelt && (
+                                            {/* Si contestó y NO es la correcta en examen especial, marcar la respuesta oficial */}
+                                            {isSpecialExamBelt && !userIsCorrect && currentQuestion.type !== "written" && (
                                                 <div className="mb-3 pb-2.5 border-b border-zinc-800 flex items-start gap-2.5">
                                                     <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center shrink-0 mt-0.5">
                                                         <CheckCircle className="w-4 h-4 text-emerald-400" weight="fill" />
                                                     </div>
                                                     <div>
                                                         <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 block font-bold">
-                                                            Respuesta Oficial Identificada:
+                                                            Respuesta Oficial Canónica:
                                                         </span>
                                                         <p className="text-xs sm:text-sm font-black text-white mt-0.5">
                                                             {currentQuestion.options?.find((o) => o.isCorrect)?.text}
@@ -308,11 +508,47 @@ export function BeltExamModal({
                                                     </div>
                                                 </div>
                                             )}
+
+                                            {/* Si es pregunta escrita (Complete o Desarrollo), mostrar el modelo oficial */}
+                                            {currentQuestion.type === "written" && (
+                                                <div className="mb-3 pb-2.5 border-b border-zinc-800 flex items-start gap-2.5">
+                                                    <div
+                                                        className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border ${
+                                                            isWrittenCorrect
+                                                                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                                                                : "bg-amber-500/20 border-amber-500/50 text-amber-400"
+                                                        }`}
+                                                    >
+                                                        {isWrittenCorrect ? (
+                                                            <CheckCircle className="w-4 h-4" weight="fill" />
+                                                        ) : (
+                                                            <Lightbulb className="w-4 h-4" weight="fill" />
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <span
+                                                            className={`text-[10px] font-black uppercase tracking-wider block font-bold ${
+                                                                isWrittenCorrect ? "text-emerald-400" : "text-amber-400"
+                                                            }`}
+                                                        >
+                                                            {currentQuestion.isEssay
+                                                                ? "Criterio de Evaluación del Tribunal:"
+                                                                : "Respuesta Oficial Canónica:"}
+                                                        </span>
+                                                        <p className="text-xs sm:text-sm font-black text-white mt-0.5">
+                                                            {currentQuestion.sampleAnswer}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             <div className="flex items-start gap-2.5">
                                                 <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" weight="duotone" />
                                                 <div>
                                                     <strong className="text-amber-300 block mb-0.5">
-                                                        {isSpecialExamBelt ? "Criterio Técnico del Tribunal Examinador:" : "Veredicto de los Árbitros WKF:"}
+                                                        {isSpecialExamBelt
+                                                            ? "Criterio Técnico del Tribunal Examinador:"
+                                                            : "Veredicto de los Árbitros WKF:"}
                                                     </strong>
                                                     <span className="leading-relaxed">{currentQuestion.explanation}</span>
                                                 </div>
@@ -327,9 +563,9 @@ export function BeltExamModal({
                                         <button
                                             type="button"
                                             onClick={handleConfirmAnswer}
-                                            disabled={!selectedOptionId}
+                                            disabled={isConfirmDisabled}
                                             className={`px-6 py-2.5 rounded-2xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
-                                                selectedOptionId
+                                                !isConfirmDisabled
                                                     ? "bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-black shadow-lg shadow-amber-500/30 cursor-pointer active:scale-95"
                                                     : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
                                             }`}
@@ -371,7 +607,7 @@ export function BeltExamModal({
                                         <p className="text-xs sm:text-sm text-zinc-300 max-w-md mx-auto mb-6">
                                             Has superado con honor las {questions.length} preguntas marciales con{" "}
                                             <strong className="text-amber-300 font-black">
-                                                {correctAnswersCount}/{questions.length} aciertos
+                                                 {correctAnswersCount}/{questions.length} aciertos
                                             </strong>
                                             . El panel de árbitros y examinadores avala formalmente tu nuevo rango.
                                         </p>

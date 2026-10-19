@@ -5,6 +5,7 @@ export type QuestionType =
     | 'image_choice' 
     | 'matching' 
     | 'true_false'
+    | 'written'
     | 'kanji_draw'
     | 'map_drag'
     | 'tree_pillars'
@@ -72,6 +73,9 @@ export interface Question {
         isCorrect: boolean;
     }[];
     correctAnswerId?: string; // for multiple_choice / image_choice
+    acceptedKeywords?: string[]; // for written / complete questions
+    sampleAnswer?: string; // canonical model answer for written questions
+    isEssay?: boolean; // true for desarrollo / reflective essay
     pairs?: MatchingPair[]; // for matching questions
     correctBool?: boolean; // for true_false
     kanjiList?: KanjiCharDef[]; // for kanji_draw questions

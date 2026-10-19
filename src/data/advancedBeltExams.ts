@@ -1,166 +1,116 @@
-import type { BeltExamConfig } from "./beltExamData";
+import { BeltExamConfig } from "./beltExamData";
 
 // ====================================================================
-// EXAMEN OFICIAL: 5° KYU A 4° KYU (MORADO A MORADO CON BLANCO)
+// EXAMEN OFICIAL: 5° KYU A 4° KYU (MORADO A MORADO BLANCO)
 // ====================================================================
 export const EXAM_KYU_5_TO_4: BeltExamConfig = {
-    beltId: "kyu-5",
-    targetBeltId: "kyu-4",
-    beltName: "Cinturón Morado (5° Kyu)",
-    targetBeltName: "Cinturón Morado con Blanco (4° Kyu)",
-    targetBeltColor: "#9333EA",
-    passingScore: 7,
-    xpReward: 320,
-    title: "Examen de Ascenso a Cinturón Morado con Blanco (4° Kyu)",
-    subtitle: "Tribunal Examinador Oficial de Grado • Kuma Sensei Dojo",
-    description: "Evaluación de transición hacia los rangos superiores: combinaciones Renraku-Waza, Heian Godan, salto en Kosa-dachi y principios de Hikite.",
-    questions: [
+    "beltId": "kyu-5",
+    "targetBeltId": "kyu-4",
+    "beltName": "Cinturón Morado (5° Kyu)",
+    "targetBeltName": "Cinturón Morado con Blanco (4° Kyu)",
+    "targetBeltColor": "#9333EA",
+    "passingScore": 7,
+    "xpReward": 320,
+    "title": "Examen de Ascenso a Cinturón Morado con Blanco (4° Kyu)",
+    "subtitle": "Tribunal Examinador Oficial de Grado • Kuma Sensei Dojo",
+    "description": "Evaluación de transición hacia los rangos superiores: combinaciones Renraku-Waza, Heian Godan, salto en Kosa-dachi y principios de Hikite.",
+    "questions": [
         {
-            id: "exam-k5-q1",
-            type: "multiple_choice",
-            prompt: "1. HISTORIA: ¿Quién fue el creador pedagógico de la serie de Katas Heian (Pinan)?",
-            description: "Maestro reformador de Okinawa que introdujo el Karate en las escuelas públicas.",
-            options: [
-                { id: "o1", text: "Maestro Yasutsune (Anko) Itosu (1831–1915)", isCorrect: true },
-                { id: "o2", text: "El guerrero Miyamoto Musashi en Kioto", isCorrect: false },
-                { id: "o3", text: "El monje Bodhidharma en Henan", isCorrect: false },
-                { id: "o4", text: "Jigoro Kano en el Kodokan", isCorrect: false },
+            "id": "exam-k5-q1",
+            "type": "multiple_choice",
+            "prompt": "1. HISTORIA: ¿Quién fue el creador pedagógico de la serie de Katas Heian (Pinan)?",
+            "description": "Maestro reformador de Okinawa que introdujo el Karate en las escuelas públicas.",
+            "options": [
+                {
+                    "id": "o1",
+                    "text": "Maestro Yasutsune (Anko) Itosu (1831–1915)",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o2",
+                    "text": "El guerrero Miyamoto Musashi en Kioto",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o4",
+                    "text": "Jigoro Kano en el Kodokan",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "El monje Bodhidharma en Henan",
+                    "isCorrect": false
+                }
             ],
-            correctAnswerId: "o1",
-            explanation: "Anko Itosu sintetizó las formas antiguas (Channan/Passai) en 5 katas educativos para enseñar a niños y jóvenes la autoprotección y la paz.",
+            "correctAnswerId": "o1",
+            "explanation": "Anko Itosu sintetizó las formas antiguas en 5 katas educativos para enseñar la autoprotección y la paz."
         },
         {
-            id: "exam-k5-q2",
-            type: "multiple_choice",
-            prompt: "2. FILOSOFÍA: ¿Qué significado tiene el nombre de los Katas 'HEIAN'?",
-            description: "El propósito espiritual detrás de los 5 katas básicos.",
-            options: [
-                { id: "o1", text: "Paz, tranquilidad y mente en calma", isCorrect: true },
-                { id: "o2", text: "Guerra y destrucción total", isCorrect: false },
-                { id: "o3", text: "Fuerza bruta sobre el débil", isCorrect: false },
-                { id: "o4", text: "Velocidad de relámpago", isCorrect: false },
+            "id": "exam-k5-q2",
+            "type": "multiple_choice",
+            "prompt": "2. FILOSOFÍA: ¿Qué significado tiene el nombre de los Katas 'HEIAN'?",
+            "description": "El propósito espiritual detrás de los 5 katas básicos.",
+            "options": [
+                {
+                    "id": "o3",
+                    "text": "Fuerza bruta sobre el débil",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o4",
+                    "text": "Velocidad de relámpago",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Paz, tranquilidad y mente en calma",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o2",
+                    "text": "Guerra y destrucción total",
+                    "isCorrect": false
+                }
             ],
-            correctAnswerId: "o1",
-            explanation: "Heian (Hei = calma, An = paz) simboliza que quien domina estas técnicas adquiere la serenidad interior para no recurrir a la violencia innecesaria.",
+            "correctAnswerId": "o1",
+            "explanation": "Heian (Hei = calma, An = paz) simboliza serenidad interior para no recurrir a la violencia."
         },
         {
-            id: "exam-k5-q3",
-            type: "multiple_choice",
-            prompt: "3. BIOMECÁNICA: En el salto característico de Heian Godan, ¿en qué postura se aterriza para amortiguar el impacto?",
-            description: "Postura de cruce de piernas sobre los metatarsos.",
-            options: [
-                { id: "o1", text: "Kosa-Dachi (postura de piernas cruzadas)", isCorrect: true },
-                { id: "o2", text: "Zenkutsu-Dachi", isCorrect: false },
-                { id: "o3", text: "Kiba-Dachi", isCorrect: false },
-                { id: "o4", text: "Heiko-Dachi", isCorrect: false },
+            "id": "exam-k5-q3",
+            "type": "multiple_choice",
+            "prompt": "3. BIOMECÁNICA: En el salto característico de Heian Godan, ¿en qué postura se aterriza para amortiguar el impacto?",
+            "description": "Postura de cruce de piernas sobre los metatarsos.",
+            "options": [
+                {
+                    "id": "o3",
+                    "text": "Kiba-Dachi",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o4",
+                    "text": "Heiko-Dachi",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Zenkutsu-Dachi",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Kosa-Dachi (postura de piernas cruzadas)",
+                    "isCorrect": true
+                }
             ],
-            correctAnswerId: "o1",
-            explanation: "Kosa-dachi absorbe la energía cinética del salto flexionando ambas rodillas y bajando el centro de gravedad sin perder la verticalidad.",
-        },
-        {
-            id: "exam-k5-q4",
-            type: "multiple_choice",
-            prompt: "4. KIHON: ¿Qué bloqueo reforzado en Heian Godan protege la línea media con el apoyo del segundo puño?",
-            description: "Bloqueo asistido a nivel medio.",
-            options: [
-                { id: "o1", text: "Morote-Uke", isCorrect: true },
-                { id: "o2", text: "Age-Uke", isCorrect: false },
-                { id: "o3", text: "Gedan-Barai", isCorrect: false },
-                { id: "o4", text: "Nukite", isCorrect: false },
-            ],
-            correctAnswerId: "o1",
-            explanation: "Morote-Uke ubica el puño libre cerca del codo del brazo que defiende, multiplicando la resistencia ósea y articular ante impactos pesados.",
-        },
-        {
-            id: "exam-k5-q5",
-            type: "multiple_choice",
-            prompt: "5. BUNKAI: Tras el salto en Heian Godan, ¿cuál es la técnica de contraataque decisiva?",
-            description: "Bloqueo simultáneo en Kokutsu-dachi o Kosa-dachi.",
-            options: [
-                { id: "o1", text: "Juji-Uke Gedan (bloqueo en X bajo) atrapando la patada del oponente", isCorrect: true },
-                { id: "o2", text: "Un empujón con ambas palmas", isCorrect: false },
-                { id: "o3", text: "Dar la espalda y retroceder", isCorrect: false },
-                { id: "o4", text: "Un saludo Ritsurei", isCorrect: false },
-            ],
-            correctAnswerId: "o1",
-            explanation: "El salto evade un barrido bajo o ataque con arma a los tobillos, cayendo en Kosa-dachi para atrapar con Juji-uke el miembro invasor.",
-        },
-        {
-            id: "exam-k5-q6",
-            type: "multiple_choice",
-            prompt: "6. BIOMECÁNICA: ¿Cuál es la función del 'Hikite' al ejecutar un golpe o bloqueo?",
-            description: "La mano de retroceso a la cadera o costillas.",
-            options: [
-                { id: "o1", text: "Acelerar la torsión pélvica por Tercera Ley de Newton (acción-reacción) y proteger el costado", isCorrect: true },
-                { id: "o2", text: "Dejar descansar el brazo mientras el otro trabaja", isCorrect: false },
-                { id: "o3", text: "Indicar al árbitro que se terminó la técnica", isCorrect: false },
-                { id: "o4", text: "Secar el sudor de la cara", isCorrect: false },
-            ],
-            correctAnswerId: "o1",
-            explanation: "Al traccionar con velocidad la mano hacia la cresta ilíaca, se activan dorsal ancho y romboides, duplicando la potencia del golpe que avanza.",
-        },
-        {
-            id: "exam-k5-q7",
-            type: "multiple_choice",
-            prompt: "7. CUERPO HUMANO: En el bloqueo Shuto-Uke, ¿qué zona anatómica actúa como superficie de contacto?",
-            description: "Canto cubital de la mano.",
-            options: [
-                { id: "o1", text: "El borde cubital carnoso de la mano abierta con dedos unidos y pulgar flexionado", isCorrect: true },
-                { id: "o2", text: "La punta de las uñas", isCorrect: false },
-                { id: "o3", text: "El dorso de la muñeca", isCorrect: false },
-                { id: "o4", text: "La palma plana relajada", isCorrect: false },
-            ],
-            correctAnswerId: "o1",
-            explanation: "La mano espada (Shuto) concentra la fuerza sobre el borde externo (cúbito) mientras el pulgar flexionado hacia adentro tensa la faja muscular palmar.",
-        },
-        {
-            id: "exam-k5-q8",
-            type: "multiple_choice",
-            prompt: "8. KIHON: ¿Cómo se denomina el encadenamiento fluido de múltiples técnicas consecutivas?",
-            description: "Combinaciones de ataque y defensa.",
-            options: [
-                { id: "o1", text: "Renraku-Waza", isCorrect: true },
-                { id: "o2", text: "Mokuso", isCorrect: false },
-                { id: "o3", text: "Seiretsu", isCorrect: false },
-                { id: "o4", text: "Tatami", isCorrect: false },
-            ],
-            correctAnswerId: "o1",
-            explanation: "Renraku-Waza entrena la continuidad motriz sin pausas muertas entre defensas y contragolpes.",
-        },
-        {
-            id: "exam-k5-q9",
-            type: "multiple_choice",
-            prompt: "9. TÁCTICA: En combate convencional Yakusoku Kumite, ¿qué principio es primordial al atacar?",
-            description: "Distancia, timing y control.",
-            options: [
-                { id: "o1", text: "Declarar la diana con precisión, avanzar con Kime y respetar la distancia de seguridad (Sundome)", isCorrect: true },
-                { id: "o2", text: "Golpear con toda la fuerza al rostro del compañero sin frenar", isCorrect: false },
-                { id: "o3", text: "Cerrar los ojos al avanzar", isCorrect: false },
-                { id: "o4", text: "Retroceder sin responder", isCorrect: false },
-            ],
-            correctAnswerId: "o1",
-            explanation: "Yakusoku Kumite es un acuerdo técnico donde la precisión milimétrica (Sundome) demuestra maestría y respeto inquebrantable.",
-        },
-        {
-            id: "exam-k5-q10",
-            type: "multiple_choice",
-            prompt: "10. BUDO: ¿Qué simboliza la franja blanca sobre el cinturón morado en el 4° Kyu?",
-            description: "Transición hacia los cinturones café.",
-            options: [
-                { id: "o1", text: "La dualidad entre la fuerza física y el inicio de la comprensión interna hacia los grados avanzados", isCorrect: true },
-                { id: "o2", text: "Un adorno estético sin significado tradicional", isCorrect: false },
-                { id: "o3", text: "Que el alumno aún no sabe hacer posturas básicas", isCorrect: false },
-                { id: "o4", text: "Que solo puede practicar defensa y no ataque", isCorrect: false },
-            ],
-            correctAnswerId: "o1",
-            explanation: "La línea blanca marca el umbral donde el estudiante deja atrás las técnicas básicas y se prepara para el estudio profundo de los Katas Superiores y el Bunkai.",
-        },
-    ],
+            "correctAnswerId": "o1",
+            "explanation": "Kosa-dachi absorbe la energía cinética del salto flexionando ambas rodillas y bajando el centro de gravedad."
+        }
+    ]
 };
 
 // ====================================================================
 // EXAMEN OFICIAL: 4° KYU A 3° KYU (MORADO CON BLANCO A CAFÉ 3 LÍNEAS)
-// Fuente: "I EXAMEN ESCRITO DE 4 KYU A 3 KYU.pdf" (38 Preguntas)
+// Fuente Oficial: "I EXAMEN ESCRITO DE 4 KYU A 3 KYU.pdf" (38 Preguntas)
 // ====================================================================
 export const EXAM_KYU_4_TO_3: BeltExamConfig = {
     "beltId": "kyu-4",
@@ -172,14 +122,19 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
     "xpReward": 350,
     "title": "I Examen Escrito Oficial: 4° Kyu a 3° Kyu",
     "subtitle": "Tribunal Examinador Oficial de Grado • Kuma Sensei Dojo",
-    "description": "Evaluación oficial de ascenso a Cinturón Café: Terminología marcial, Complete histórico/técnico, reconocimiento visual de Dachi-waza y ensayo formativo.",
+    "description": "Evaluación oficial canónica de ascenso a Cinturón Café: Asocie de terminología marcial, Complete técnico/histórico escrito, reconocimiento visual de Dachi-waza y ensayo formativo de Budo.",
     "questions": [
         {
-            "id": "exam-4k-q1",
+            "id": "e4k-q1",
             "type": "multiple_choice",
             "prompt": "1. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SHIHAN'?",
-            "description": "Asocie de terminología marcial (Jerarquía)",
+            "description": "Jerarquía marcial",
             "options": [
+                {
+                    "id": "o4",
+                    "text": "Ponerse de pie",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "Maestro de un rango superior",
@@ -194,11 +149,6 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                     "id": "o3",
                     "text": "Ponerse en fila",
                     "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Ponerse de pie",
-                    "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
@@ -206,15 +156,15 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
             "hint": "Rango honorífico de maestro senior."
         },
         {
-            "id": "exam-4k-q2",
+            "id": "e4k-q2",
             "type": "multiple_choice",
             "prompt": "2. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KOHAI'?",
-            "description": "Asocie de terminología marcial (Jerarquía)",
+            "description": "Jerarquía marcial",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "De menor antigüedad",
-                    "isCorrect": true
+                    "id": "o4",
+                    "text": "Ponerse de pie",
+                    "isCorrect": false
                 },
                 {
                     "id": "o2",
@@ -222,13 +172,13 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                     "isCorrect": false
                 },
                 {
-                    "id": "o3",
-                    "text": "Detenerse",
-                    "isCorrect": false
+                    "id": "o1",
+                    "text": "De menor antigüedad",
+                    "isCorrect": true
                 },
                 {
-                    "id": "o4",
-                    "text": "Ponerse de pie",
+                    "id": "o3",
+                    "text": "Detenerse",
                     "isCorrect": false
                 }
             ],
@@ -237,10 +187,10 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
             "hint": "El compañero que ingresó después al camino."
         },
         {
-            "id": "exam-4k-q3",
+            "id": "e4k-q3",
             "type": "multiple_choice",
             "prompt": "3. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SEIRETSU'?",
-            "description": "Asocie de terminología marcial (Comandos)",
+            "description": "Comandos de formación",
             "options": [
                 {
                     "id": "o1",
@@ -268,10 +218,10 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
             "hint": "Alineación ordenada en el tatami."
         },
         {
-            "id": "exam-4k-q4",
+            "id": "e4k-q4",
             "type": "multiple_choice",
             "prompt": "4. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KIRITSU'?",
-            "description": "Asocie de terminología marcial (Comandos)",
+            "description": "Comandos del tatami",
             "options": [
                 {
                     "id": "o1",
@@ -279,8 +229,8 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Ponerse en fila",
+                    "id": "o4",
+                    "text": "Maestro de rango superior",
                     "isCorrect": false
                 },
                 {
@@ -289,8 +239,8 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
-                    "text": "Maestro de rango superior",
+                    "id": "o2",
+                    "text": "Ponerse en fila",
                     "isCorrect": false
                 }
             ],
@@ -299,11 +249,16 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
             "hint": "Ponerse de pie tras el saludo o meditación."
         },
         {
-            "id": "exam-4k-q5",
+            "id": "e4k-q5",
             "type": "multiple_choice",
             "prompt": "5. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'YAME'?",
-            "description": "Asocie de terminología marcial (Comandos)",
+            "description": "Comandos de combate",
             "options": [
+                {
+                    "id": "o4",
+                    "text": "De menor antigüedad",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "Detenerse",
@@ -318,11 +273,6 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                     "id": "o3",
                     "text": "Ponerse en fila",
                     "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "De menor antigüedad",
-                    "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
@@ -330,15 +280,15 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
             "hint": "Alto o detenerse."
         },
         {
-            "id": "exam-4k-q6",
+            "id": "e4k-q6",
             "type": "multiple_choice",
             "prompt": "6. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'TE'?",
-            "description": "Asocie de terminología marcial (Cuerpo y Fundamentos)",
+            "description": "Cuerpo y fundamentos",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Mano",
-                    "isCorrect": true
+                    "id": "o4",
+                    "text": "Forma",
+                    "isCorrect": false
                 },
                 {
                     "id": "o2",
@@ -346,150 +296,155 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                     "isCorrect": false
                 },
                 {
-                    "id": "o3",
-                    "text": "Derecha",
-                    "isCorrect": false
+                    "id": "o1",
+                    "text": "Mano",
+                    "isCorrect": true
                 },
                 {
-                    "id": "o4",
-                    "text": "Forma",
+                    "id": "o3",
+                    "text": "Saludo",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Te (手) significa mano en japonés, raíz del arte autóctono okinawense 'Okinawa-Te'.",
-            "hint": "Extremidad superior clave en Karate."
+            "explanation": "Te (手) significa mano; raíz original del arte de combate okinawense.",
+            "hint": "Parte anatómica que golpea o bloquea."
         },
         {
-            "id": "exam-4k-q7",
+            "id": "e4k-q7",
             "type": "multiple_choice",
             "prompt": "7. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'MIGI'?",
-            "description": "Asocie de terminología marcial (Direcciones)",
+            "description": "Direccionales en el dojo",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Derecha",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "Mano",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Forma",
+                    "text": "Izquierda",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Saludo",
+                    "text": "Atrás",
                     "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "Adelante",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Derecha",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Migi (右) significa derecha (ej. Migi Zenkutsu-dachi = postura adelantada derecha).",
-            "hint": "Lado derecho."
+            "explanation": "Migi (右) es el lado o dirección derecha.",
+            "hint": "Dirección opuesta a Hidari."
         },
         {
-            "id": "exam-4k-q8",
+            "id": "e4k-q8",
             "type": "multiple_choice",
             "prompt": "8. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'REI'?",
-            "description": "Asocie de terminología marcial (Etiqueta)",
+            "description": "Etiqueta marcial (Reigi)",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Saludo",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "Forma",
+                    "text": "Pelea",
                     "isCorrect": false
                 },
                 {
+                    "id": "o1",
+                    "text": "Saludo / Cortesía",
+                    "isCorrect": true
+                },
+                {
                     "id": "o3",
-                    "text": "Vacío",
+                    "text": "Victoria",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Derecha",
+                    "text": "Desplazamiento",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Rei (礼) representa el saludo, respeto, reverencia y cortesía marcial fundamental.",
-            "hint": "Cortesía o reverencia tradicional."
+            "explanation": "Rei (礼) representa el saludo sincero, la etiqueta, reverencia y respeto mutuo.",
+            "hint": "El principio con el que comienza y termina el Karate."
         },
         {
-            "id": "exam-4k-q9",
+            "id": "e4k-q9",
             "type": "multiple_choice",
             "prompt": "9. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KATA'?",
-            "description": "Asocie de terminología marcial (Pilares)",
+            "description": "Pilares del Karate",
             "options": [
+                {
+                    "id": "o4",
+                    "text": "Cinturón",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "Forma",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Vacío",
-                    "isCorrect": false
-                },
-                {
                     "id": "o3",
-                    "text": "Mano",
+                    "text": "Fuerza bruta",
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
-                    "text": "Saludo",
+                    "id": "o2",
+                    "text": "Combate libre",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Kata (型 / 形) significa forma o molde; secuencia coreografiada de técnicas de defensa y ataque.",
-            "hint": "Forma tradicional preestablecida."
+            "explanation": "Kata (形 / 型) es la secuencia formal coreografiada de combate simulado contra múltiples oponentes.",
+            "hint": "Las formas tradicionales legadas por los antiguos maestros."
         },
         {
-            "id": "exam-4k-q10",
+            "id": "e4k-q10",
             "type": "multiple_choice",
             "prompt": "10. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KARA'?",
-            "description": "Asocie de terminología marcial (Filosofía)",
+            "description": "Filosofía del vacío",
             "options": [
+                {
+                    "id": "o4",
+                    "text": "Camino",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Lleno",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "Mano",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "Vacío",
                     "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Forma",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Saludo",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Mano",
-                    "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Kara (空) significa vacío en sentido Zen: mente desprovista de ego y manos sin armas.",
-            "hint": "Vacío, sin armas."
+            "explanation": "Kara (空) significa vacío en el sentido zen: desprovisto de armas y libre de egoísmos.",
+            "hint": "Vacío de mente y sin armas en la mano."
         },
         {
-            "id": "exam-4k-q11",
+            "id": "e4k-q11",
             "type": "multiple_choice",
             "prompt": "11. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SHOTOKAN'?",
-            "description": "Asocie de terminología marcial (Estilo)",
+            "description": "Escuela de Funakoshi",
             "options": [
+                {
+                    "id": "o3",
+                    "text": "Templo Shaolin",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "Escuela de Shoto",
@@ -497,60 +452,55 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                 },
                 {
                     "id": "o2",
-                    "text": "Lugar de la vía",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Fundamento básico",
+                    "text": "Escuela de la fuerza",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Meditación",
+                    "text": "Castillo de Shuri",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Shotokan (松濤館): 'La casa o escuela de Shoto' (Shoto era el seudónimo literario de Funakoshi).",
-            "hint": "La casa o escuela del maestro Shoto."
+            "explanation": "Shotokan (松濤館): Shoto era el seudónimo poético de Funakoshi ('ondas de pinos') y Kan significa casa/escuela.",
+            "hint": "La casa o escuela fundada con el seudónimo del maestro."
         },
         {
-            "id": "exam-4k-q12",
+            "id": "e4k-q12",
             "type": "multiple_choice",
             "prompt": "12. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'DOJO'?",
-            "description": "Asocie de terminología marcial (Lugar Sagrado)",
+            "description": "Espacio sagrado marcial",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Lugar de la vía",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "Escuela de Shoto",
+                    "text": "Gimnasio deportivo",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Fundamento básico",
+                    "text": "Sala de descanso",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Sentarse con la espalda erguida",
+                    "text": "Patio de armas",
                     "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Lugar del camino",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Dojo (道場): 'Lugar del despertar o de la vía' donde se entrena el cuerpo y se forja el espíritu.",
-            "hint": "Lugar donde se practica el camino."
+            "explanation": "Dojo (道場) se traduce como el lugar donde se practica y busca el camino (Do).",
+            "hint": "El recinto sagrado de entrenamiento espiritual y físico."
         },
         {
-            "id": "exam-4k-q13",
+            "id": "e4k-q13",
             "type": "multiple_choice",
             "prompt": "13. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KIHON'?",
-            "description": "Asocie de terminología marcial (Pilares)",
+            "description": "Pilares del entrenamiento",
             "options": [
                 {
                     "id": "o1",
@@ -559,216 +509,221 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                 },
                 {
                     "id": "o2",
-                    "text": "Lugar de la vía",
+                    "text": "Combate final",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Meditación",
+                    "text": "Forma artística",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Escuela de Shoto",
+                    "text": "Meditación",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Kihon (基本) se traduce como fundamentos o técnicas básicas esenciales de Karate.",
-            "hint": "La raíz y base técnica."
+            "explanation": "Kihon (基本) comprende las técnicas fundamentales de posiciones, bloqueos y golpes repetidos metódicamente.",
+            "hint": "Los cimientos técnicos indispensables."
         },
         {
-            "id": "exam-4k-q14",
+            "id": "e4k-q14",
             "type": "multiple_choice",
             "prompt": "14. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SEIZA'?",
-            "description": "Asocie de terminología marcial (Postura tradicional)",
+            "description": "Etiqueta y postura",
             "options": [
+                {
+                    "id": "o3",
+                    "text": "Acostarse",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Estar de pie",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o4",
+                    "text": "Caminar despacio",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "Sentarse con la espalda erguida",
                     "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Meditación",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Lugar de la vía",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Fundamento básico",
-                    "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Seiza (正座): Postura formal de rodillas, sentado correctamente sobre los talones con la espalda recta.",
-            "hint": "Postura formal sentado en el suelo."
+            "explanation": "Seiza (正座) es la postura formal tradicional sentada sobre los talones con la columna vertical.",
+            "hint": "Sentarse formalmente de rodillas sobre los talones."
         },
         {
-            "id": "exam-4k-q15",
+            "id": "e4k-q15",
             "type": "multiple_choice",
             "prompt": "15. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'MOKUSO'?",
-            "description": "Asocie de terminología marcial (Mente y Respiración)",
+            "description": "Concentración zen",
             "options": [
+                {
+                    "id": "o2",
+                    "text": "Grito de combate",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "Meditación",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Escuela de Shoto",
-                    "isCorrect": false
-                },
-                {
                     "id": "o3",
-                    "text": "Fundamento básico",
+                    "text": "Calentamiento muscular",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Lugar de la vía",
+                    "text": "Flexión de brazos",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Mokuso (黙想): Meditación silenciosa con respiración abdominal para serenar la mente.",
-            "hint": "Meditación en silencio."
+            "explanation": "Mokuso (黙想) es el momento de introspección silenciosa antes y después de la clase para calmar la mente.",
+            "hint": "Cerrar los ojos y serenar el espíritu."
         },
         {
-            "id": "exam-4k-q16",
+            "id": "e4k-q16",
             "type": "multiple_choice",
             "prompt": "16. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'DO'?",
-            "description": "Asocie de terminología marcial (Camino)",
+            "description": "Filosofía del Budo",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Camino o vía",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "Instructor",
+                    "text": "Técnica física",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Cinturón",
+                    "text": "Competencia",
                     "isCorrect": false
                 },
                 {
+                    "id": "o1",
+                    "text": "Camino o vía de vida",
+                    "isCorrect": true
+                },
+                {
                     "id": "o4",
-                    "text": "Palabra de palabras",
+                    "text": "Victoria",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Do (道): La vía, sendero o filosofía de vida que busca el perfeccionamiento del ser humano.",
-            "hint": "El camino espiritual."
+            "explanation": "Do (道) designa la senda filosófica de autorrealización ética y espiritual que dura toda la vida.",
+            "hint": "La senda ética y de constante evolución."
         },
         {
-            "id": "exam-4k-q17",
+            "id": "e4k-q17",
             "type": "multiple_choice",
             "prompt": "17. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'OSS'?",
-            "description": "Asocie de terminología marcial (Saludo universal)",
+            "description": "Espíritu marcial",
             "options": [
                 {
+                    "id": "o3",
+                    "text": "Orden de atacar",
+                    "isCorrect": false
+                },
+                {
                     "id": "o1",
-                    "text": "Palabra de palabras",
+                    "text": "Palabra de palabras / cortesía y perseverancia",
                     "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "Cinturón",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Instructor",
+                    "text": "Grito de enojo",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "De mayor antigüedad",
+                    "text": "Despedida final",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Oss (押忍): Definida en el examen como 'palabra de palabras'; encierra perseverancia, paciencia y respeto absoluto.",
-            "hint": "La expresión y saludo universal del karateka."
+            "explanation": "Oss (Osu / 押忍) es la expresión marcial que denota respeto, paciencia y perseverancia bajo cualquier presión.",
+            "hint": "Condensa perseverar, empujar y soportar con honor."
         },
         {
-            "id": "exam-4k-q18",
+            "id": "e4k-q18",
             "type": "multiple_choice",
             "prompt": "18. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SENSEI'?",
-            "description": "Asocie de terminología marcial (Jerarquía)",
+            "description": "Jerarquía del Dojo",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Instructor",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "Cinturón",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Camino o vía",
+                    "text": "Estudiante novato",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Palabra de palabras",
+                    "text": "Árbitro lateral",
                     "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "Compañero de fila",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Instructor / Maestro ('El nacido antes')",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Sensei (先生): Maestro o instructor; literalmente 'aquel que ha nacido antes' y guía en la vía.",
-            "hint": "El guía o instructor del Dojo."
+            "explanation": "Sensei (先生) significa literalmente 'el que nació antes' o el guía experimentado en la senda.",
+            "hint": "El maestro que guía a los estudiantes."
         },
         {
-            "id": "exam-4k-q19",
+            "id": "e4k-q19",
             "type": "multiple_choice",
             "prompt": "19. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'OBI'?",
-            "description": "Asocie de terminología marcial (Indumentaria)",
+            "description": "Indumentaria",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Cinturón",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "Instructor",
+                    "text": "Uniforme",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Camino o vía",
+                    "text": "Zapatos",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "De mayor antigüedad",
+                    "text": "Protector de puño",
                     "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Cinturón",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Obi (帯): El cinturón de Karate que sujeta el Karategi y refleja el grado y madurez marcial.",
-            "hint": "Cinta o fajín de grado."
+            "explanation": "Obi (帯) es la cinta o cinturón que ajusta el karategi y representa el grado y la madurez marcial.",
+            "hint": "La faja o cinta que ata el traje."
         },
         {
-            "id": "exam-4k-q20",
+            "id": "e4k-q20",
             "type": "multiple_choice",
             "prompt": "20. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SEMPAI'?",
-            "description": "Asocie de terminología marcial (Jerarquía)",
+            "description": "Jerarquía del Dojo",
             "options": [
+                {
+                    "id": "o4",
+                    "text": "Público espectador",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "De mayor antigüedad",
@@ -776,383 +731,248 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                 },
                 {
                     "id": "o2",
-                    "text": "Instructor",
+                    "text": "De menor antigüedad",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Cinturón",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Camino o vía",
+                    "text": "Cinturón blanco nuevo",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Sempai (先輩): Compañero estudiante de mayor antigüedad o experiencia en el Dojo.",
-            "hint": "El alumno avanzado de mayor tiempo."
+            "explanation": "Sempai (先輩) es el alumno más antiguo o avanzado respecto a otro, con la responsabilidad de ser ejemplo.",
+            "hint": "El estudiante mayor o más veterano."
         },
         {
-            "id": "exam-4k-q21",
-            "type": "multiple_choice",
-            "prompt": "21. COMPLETE: ¿Cuál es el significado literal de 'KARATE DO'?",
-            "description": "Complete (1 Punto)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "El camino de la mano vacía",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "El arte de luchar con espada",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "El método de golpear primero",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "El camino de la fuerza bruta",
-                    "isCorrect": false
-                }
+            "id": "e4k-q21",
+            "type": "written",
+            "prompt": "21. COMPLETE: Escriba el significado de 'KARATEDO':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "mano vacia",
+                "camino de la mano vacia",
+                "mano vacía",
+                "camino mano vacia"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Kara (vacía), Te (mano), Do (camino o vía): El camino formativo y defensivo de la mano desarmada.",
-            "hint": "Mano vacía."
+            "sampleAnswer": "El camino de la mano vacía (Kara = Vacío, Te = Mano, Do = Camino o senda de vida).",
+            "isEssay": false,
+            "explanation": "Karate-Do (空手道): 'Kara' (vacío de armas y libre de ego), 'Te' (mano) y 'Do' (camino ético y formativo de vida).",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-4k-q22",
-            "type": "multiple_choice",
-            "prompt": "22. COMPLETE: ¿Cuál es el significado del Kata 'BASSAI DAI'?",
-            "description": "Complete (1 Punto)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Romper o penetrar la fortaleza (Dai: mayor)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Mirar hacia el cielo",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "La calma del estanque",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "El vuelo de la grulla",
-                    "isCorrect": false
-                }
+            "id": "e4k-q22",
+            "type": "written",
+            "prompt": "22. COMPLETE: Escriba el significado del Kata 'BASSAI DAI':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "penetrar en la fortaleza",
+                "romper la fortaleza",
+                "penetrar la fortaleza",
+                "romper fortaleza",
+                "penetrar fortaleza",
+                "atravesar la fortaleza",
+                "quebrar la fortaleza"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Bassai Dai (披砦大) significa 'Asaltar o penetrar la fortaleza' con determinación y potencia inquebrantable.",
-            "hint": "Penetrar o romper la fortaleza."
+            "sampleAnswer": "Penetrar en la fortaleza (Dai = Grande o mayor).",
+            "isEssay": false,
+            "explanation": "Bassai (披塞) simboliza la potencia, coraje y resolución implacable para penetrar o romper una fortaleza enemiga.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-4k-q23",
-            "type": "multiple_choice",
-            "prompt": "23. COMPLETE: ¿Cuál es el significado del Kata 'KANKU DAI'?",
-            "description": "Complete (1 Punto)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Mirar o contemplar el cielo (Dai: mayor)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Romper la fortaleza",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Paso de hierro en el puente",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "La casa del tigre",
-                    "isCorrect": false
-                }
+            "id": "e4k-q23",
+            "type": "written",
+            "prompt": "23. COMPLETE: Escriba el significado del Kata 'KANKU DAI':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "mirar al cielo",
+                "mirando al cielo",
+                "contemplar el cielo",
+                "observar el cielo",
+                "mirar cielo",
+                "mirar el cielo"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Kanku Dai (観空大) significa 'Mirar o contemplar el cielo/el vacío', apertura clásica con manos elevadas.",
-            "hint": "Contemplar el cielo."
+            "sampleAnswer": "Mirar hacia el cielo (Dai = Grande).",
+            "isEssay": false,
+            "explanation": "Kanku (観空): 'Kan' (mirar/observar) y 'Ku' (cielo/vacío/universo), evocado en su postura inicial de manos trianguladas elevadas al firmamento.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-4k-q24",
-            "type": "multiple_choice",
-            "prompt": "24. COMPLETE: ¿Cuál de las siguientes es una oración oficial del 'DOJO KUN'?",
-            "description": "Complete (1 Punto) - Los 5 preceptos del Dojo",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Hitotsu, Jinkaku kansei ni tsutomuru koto (Intentar perfeccionar el carácter)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Buscar la victoria a toda costa en cada combate",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Demostrar superioridad física ante los demás",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Atacar primero sin dudar ante el enemigo",
-                    "isCorrect": false
-                }
+            "id": "e4k-q24",
+            "type": "written",
+            "prompt": "24. COMPLETE: Escriba una de las 5 oraciones oficiales del 'DOJO KUN':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "perfeccionar",
+                "caracter",
+                "leal",
+                "fidelidad",
+                "constante",
+                "esfuerzo",
+                "respetar",
+                "respeto",
+                "violentos",
+                "violencia",
+                "abstenerse",
+                "jinkaku",
+                "makoto",
+                "doryoku",
+                "reigi",
+                "keki"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Los 5 principios del Dojo Kun inician siempre con 'Hitotsu' (Primero) destacando el perfeccionamiento del carácter.",
-            "hint": "Perfeccionar el carácter."
+            "sampleAnswer": "Cualquiera de los 5 preceptos: 'Intentar perfeccionar el carácter' (Jinkaku kansei ni tsutomuru koto), 'Ser leal', 'Ser constante', 'Respetar a los demás', o 'Abstenerse de comportamientos violentos'.",
+            "isEssay": false,
+            "explanation": "El Dojo Kun son los cinco principios éticos proclamados por Sakukawa y Funakoshi para cultivar virtudes en el karateka.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-4k-q25",
-            "type": "multiple_choice",
+            "id": "e4k-q25",
+            "type": "written",
             "prompt": "25. COMPLETE: ¿Cuántos Katas oficiales tiene el estilo Shotokan?",
-            "description": "Complete (1 Punto) - Catálogo tradicional",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "26 Katas oficiales",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "15 Katas oficiales",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "35 Katas oficiales",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "10 Katas oficiales",
-                    "isCorrect": false
-                }
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "26",
+                "veintiseis",
+                "veintiséis"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "El estilo Shotokan formalizó oficialmente 26 katas (desde Heian Shodan hasta Meikyo/Wankan/Gojushiho).",
-            "hint": "Son exactamente veintiséis."
+            "sampleAnswer": "26 Katas oficiales.",
+            "isEssay": false,
+            "explanation": "El canon tradicional Shotokan JKA/WKF consta exactamente de 26 katas (Heian 1-5, Tekki 1-3, Bassai Dai/Sho, Kanku Dai/Sho, Jion, Enpi, Hangetsu, Jitte, Gankaku, Kanku Sho, Chinte, Sochin, Meikyo, Jiin, Gojushiho Dai/Sho, Nijushiho, Wankan y Unsu).",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-4k-q26",
-            "type": "multiple_choice",
-            "prompt": "26. COMPLETE: ¿Cuál es el nombre del padre fundador del estilo Shotokan?",
-            "description": "Complete (1 Punto) - Historia moderna",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Gichin Funakoshi",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Kenwa Mabuni",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Chojun Miyagi",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Hironori Otsuka",
-                    "isCorrect": false
-                }
+            "id": "e4k-q26",
+            "type": "written",
+            "prompt": "26. COMPLETE: Escriba el nombre del Padre Fundador del estilo Shotokan:",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "gichin funakoshi",
+                "funakoshi",
+                "maestro funakoshi",
+                "gichin"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "El Maestro Gichin Funakoshi (1868–1957) es considerado el padre del Karate-Do moderno y fundador del Shotokan.",
-            "hint": "Maestro Funakoshi."
+            "sampleAnswer": "Maestro Gichin Funakoshi (1868–1957).",
+            "isEssay": false,
+            "explanation": "El Maestro Gichin Funakoshi es universalmente reverenciado como el padre del Karate-Do moderno por difundirlo desde Okinawa a Japón continental y al mundo.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-4k-q27",
-            "type": "multiple_choice",
-            "prompt": "27. COMPLETE: ¿Cuál es el origen geográfico e histórico del Karate Do Shotokan?",
-            "description": "Complete (1 Punto) - Geografía e Historia",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Okinawa / Japón",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Seúl / Corea del Sur",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Pekín / China continental",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Bangkok / Tailandia",
-                    "isCorrect": false
-                }
+            "id": "e4k-q27",
+            "type": "written",
+            "prompt": "27. COMPLETE: Escriba el origen geográfico e histórico del Karate Do Shotokan:",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "okinawa",
+                "japon",
+                "isla de okinawa",
+                "okinawa japon",
+                "shuri"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "El Karate nació en la isla de Okinawa (Reino de Ryukyu) y se expandió por todo el territorio de Japón.",
-            "hint": "Isla de Okinawa y su desarrollo en Japón."
+            "sampleAnswer": "Isla de Okinawa (Reino de Ryukyu, Japón).",
+            "isEssay": false,
+            "explanation": "El Karate se gestó en Okinawa por la confluencia del Te autóctono con el Quanfa chino de Fujian, antes de su establecimiento en Tokio en los años 1920.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-4k-q28",
-            "type": "multiple_choice",
-            "prompt": "28. COMPLETE: ¿Cuál es el significado de 'JIYU IPPON KUMITE'?",
-            "description": "Complete (1 Punto) - Modalidad de combate",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Combate semilibre a un solo ataque / paso convenido",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Combate libre continuo sin arbitraje",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Combate a tres pasos básicos",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Lucha con bastones largos",
-                    "isCorrect": false
-                }
+            "id": "e4k-q28",
+            "type": "written",
+            "prompt": "28. COMPLETE: Escriba el significado de 'JIYU IPPON KUMITE':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "semi libre",
+                "semi-libre",
+                "un paso",
+                "ataque anunciado",
+                "un solo ataque",
+                "libre a un paso",
+                "combate semi libre"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Jiyu Ippon Kumite combina la guardia y distancia libre con la ejecución de un único ataque declarado previamente.",
-            "hint": "Semilibre a un paso."
+            "sampleAnswer": "Combate semi-libre a un solo ataque predeterminado y anunciado.",
+            "isEssay": false,
+            "explanation": "Jiyu Ippon Kumite combina la distancia dinámica y movimiento libre de combate con un ataque declarado a máxima potencia y control.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-4k-q29",
-            "type": "multiple_choice",
-            "prompt": "29. COMPLETE: ¿Cuál es una de las áreas en las que se divide el Kihon?",
-            "description": "Complete (1 Punto) - Metodología de entrenamiento",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Kihon estático y Kihon con desplazamientos (Ido Kihon)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Natación y carreras de velocidad",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Lanzamientos de dardos",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Solo meditación sin movimiento",
-                    "isCorrect": false
-                }
+            "id": "e4k-q29",
+            "type": "written",
+            "prompt": "29. COMPLETE: Escriba una de las áreas técnicas en las que se divide el Kihon:",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "posiciones",
+                "dachi",
+                "bloqueos",
+                "defensas",
+                "uke",
+                "golpes",
+                "tsuki",
+                "zuki",
+                "patadas",
+                "geri",
+                "uchi",
+                "kihon ido",
+                "desplazamiento",
+                "desplazamientos"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "El Kihon se estructura en trabajo fundamental estático (Sonoba Kihon) y con desplazamientos (Ido Kihon / Renraku).",
-            "hint": "Estático o con desplazamientos."
+            "sampleAnswer": "Dachi (posiciones), Uke (bloqueos/defensas), Tsuki (ataques de puño frontal), Uchi (golpes indirectos) o Geri (patadas).",
+            "isEssay": false,
+            "explanation": "El Kihon se subdivide en posiciones fundamentales (Dachi-waza), defensas (Uke-waza), ataques directos (Tsuki-waza), golpes de percusión (Uchi-waza) y patadas (Geri-waza).",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-4k-q30",
-            "type": "multiple_choice",
-            "prompt": "30. COMPLETE: ¿Cuál es el nombre en japonés del uniforme de Karate Do?",
-            "description": "Complete (1 Punto) - Indumentaria",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Karategi (o Gi / Dogi)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Kimono festivo",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Hakama de gala",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Yukata",
-                    "isCorrect": false
-                }
+            "id": "e4k-q30",
+            "type": "written",
+            "prompt": "30. COMPLETE: Escriba el nombre en japonés del uniforme de Karate Do:",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "karategi",
+                "gi",
+                "dogi",
+                "keikogi"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "El uniforme de entrenamiento se denomina Karategi (空手着) o simplemente Dogi / Gi.",
-            "hint": "Karategi."
+            "sampleAnswer": "Karategi (o simplemente Gi / Dogi).",
+            "isEssay": false,
+            "explanation": "Karategi (空手着) es el uniforme de lona blanca compuesto por chaqueta (Uwagi), pantalón (Zubon) y cinturón (Obi).",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-4k-q31",
+            "id": "e4k-q31",
             "type": "multiple_choice",
             "prompt": "31. POSICIONES: ¿Cuál es la posición que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Dachi-waza (1 Punto)",
+            "description": "Identificación visual de Dachi-waza",
             "image": "/images/didactic/exams/dachi_heisoku.png",
             "options": [
+                {
+                    "id": "o2",
+                    "text": "KIBA DACHI",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "HEISOKU DACHI",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "KIBA DACHI",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
+                    "id": "o4",
                     "text": "KOKUTSU DACHI",
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
+                    "id": "o3",
                     "text": "ZENKUTSU DACHI",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Heisoku-dachi: Postura con ambos pies completamente juntos y paralelos de talones a dedos.",
+            "explanation": "Heisoku-dachi: Postura con pies juntos en paralelo tocándose por completo bordes internos y talones.",
             "hint": "Pies juntos y paralelos."
         },
         {
-            "id": "exam-4k-q32",
+            "id": "e4k-q32",
             "type": "multiple_choice",
             "prompt": "32. POSICIONES: ¿Cuál es la posición que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Dachi-waza (1 Punto)",
+            "description": "Identificación visual de Dachi-waza",
             "image": "/images/didactic/exams/dachi_kiba.png",
             "options": [
-                {
-                    "id": "o1",
-                    "text": "KIBA DACHI",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "MUSUBI DACHI",
-                    "isCorrect": false
-                },
                 {
                     "id": "o3",
                     "text": "YOI DACHI",
@@ -1161,6 +981,16 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                 {
                     "id": "o4",
                     "text": "HEISOKU DACHI",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "KIBA DACHI",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o2",
+                    "text": "MUSUBI DACHI",
                     "isCorrect": false
                 }
             ],
@@ -1169,21 +999,16 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
             "hint": "Postura del jinete."
         },
         {
-            "id": "exam-4k-q33",
+            "id": "e4k-q33",
             "type": "multiple_choice",
             "prompt": "33. POSICIONES: ¿Cuál es la posición que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Dachi-waza (1 Punto)",
+            "description": "Identificación visual de Dachi-waza",
             "image": "/images/didactic/exams/dachi_kokutsu.png",
             "options": [
                 {
                     "id": "o1",
                     "text": "KOKUTSU DACHI",
                     "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "ZENKUTSU DACHI",
-                    "isCorrect": false
                 },
                 {
                     "id": "o3",
@@ -1194,6 +1019,11 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                     "id": "o4",
                     "text": "YOI DACHI",
                     "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "ZENKUTSU DACHI",
+                    "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
@@ -1201,16 +1031,16 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
             "hint": "Mayoría del peso en la pierna de atrás."
         },
         {
-            "id": "exam-4k-q34",
+            "id": "e4k-q34",
             "type": "multiple_choice",
             "prompt": "34. POSICIONES: ¿Cuál es la posición que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Dachi-waza (1 Punto)",
+            "description": "Identificación visual de Dachi-waza",
             "image": "/images/didactic/exams/dachi_musubi.png",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "MUSUBI DACHI",
-                    "isCorrect": true
+                    "id": "o4",
+                    "text": "KIBA DACHI",
+                    "isCorrect": false
                 },
                 {
                     "id": "o2",
@@ -1223,9 +1053,9 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
-                    "text": "KIBA DACHI",
-                    "isCorrect": false
+                    "id": "o1",
+                    "text": "MUSUBI DACHI",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
@@ -1233,10 +1063,10 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
             "hint": "Talones juntos y puntas abiertas para saludar."
         },
         {
-            "id": "exam-4k-q35",
+            "id": "e4k-q35",
             "type": "multiple_choice",
             "prompt": "35. POSICIONES: ¿Cuál es la posición que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Dachi-waza (1 Punto)",
+            "description": "Identificación visual de Dachi-waza",
             "image": "/images/didactic/exams/dachi_zenkutsu.png",
             "options": [
                 {
@@ -1265,21 +1095,16 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
             "hint": "Postura adelantada clásica."
         },
         {
-            "id": "exam-4k-q36",
+            "id": "e4k-q36",
             "type": "multiple_choice",
             "prompt": "36. POSICIONES: ¿Cuál es la posición que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Dachi-waza (1 Punto)",
+            "description": "Identificación visual de Dachi-waza",
             "image": "/images/didactic/exams/dachi_yoi.png",
             "options": [
                 {
                     "id": "o1",
                     "text": "YOI DACHI (HACHIJI DACHI)",
                     "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "KOKUTSU DACHI",
-                    "isCorrect": false
                 },
                 {
                     "id": "o3",
@@ -1290,6 +1115,11 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
                     "id": "o4",
                     "text": "MUSUBI DACHI",
                     "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "KOKUTSU DACHI",
+                    "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
@@ -1297,73 +1127,33 @@ export const EXAM_KYU_4_TO_3: BeltExamConfig = {
             "hint": "Postura de atención y espera."
         },
         {
-            "id": "exam-4k-q37",
-            "type": "multiple_choice",
-            "prompt": "37. DESARROLLO: ¿En qué aspecto fundamental beneficia personalmente el Karate-Do en la vida diaria?",
-            "description": "Desarrollo y Madurez Marcial (2 Puntos)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Forja del carácter, autodisciplina, respeto al prójimo, salud física y control del estrés",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Aprender a buscar confrontaciones físicas en la calle",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Sentirse superior a las personas que no entrenan",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Solo como pasatiempo sin ninguna repercusión mental",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "El Karate-Do es una disciplina de desarrollo integral donde la autodefensa es el vehículo para cultivar la templanza humana.",
-            "hint": "Crecimiento del carácter y salud."
+            "id": "e4k-q37",
+            "type": "written",
+            "prompt": "37. DESARROLLO: ¿En qué aspecto fundamental le ha beneficiado personalmente el Karate-Do en su vida diaria?",
+            "description": "Ensayo formativo de grado (2 Puntos)",
+            "acceptedKeywords": [],
+            "sampleAnswer": "Forja del carácter, disciplina personal en la escuela/trabajo, respeto sincero al prójimo, serenidad para manejar el estrés y salud física integral.",
+            "isEssay": true,
+            "explanation": "El Karate-Do es una disciplina de desarrollo humano donde la autodefensa es el vehículo para cultivar la templanza, la humildad y la fortaleza mental.",
+            "hint": "Reflexión personal honesta y profunda."
         },
         {
-            "id": "exam-4k-q38",
-            "type": "multiple_choice",
-            "prompt": "38. DESARROLLO: Del Niju Kun (20 preceptos de Funakoshi), ¿cómo se relaciona 'Karate wa rei ni hajimari, rei ni owaru koto' con el vivir diario?",
-            "description": "Desarrollo y Filosofía del Budo (2 Puntos)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "El respeto sincero debe guiar cada acto cotidiano, tratando con cortesía y empatía a los demás antes y después de cualquier acción",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Que solo se debe saludar a personas con cinturón más alto",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Que la cortesía se deja dentro del dojo y no se aplica afuera",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Hacer reverencias mecánicas sin sentir respeto",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "'El Karate comienza con cortesía y concluye con cortesía'. Este precepto exige humildad y respeto en la familia, escuela y trabajo.",
-            "hint": "Respeto dentro y fuera del tatami."
+            "id": "e4k-q38",
+            "type": "written",
+            "prompt": "38. DESARROLLO: Del Niju Kun (20 preceptos de Funakoshi), elija un concepto y explique cómo lo relaciona con su vivir diario:",
+            "description": "Ensayo formativo de Budo (2 Puntos)",
+            "acceptedKeywords": [],
+            "sampleAnswer": "Por ejemplo: 'Karate wa rei ni hajimari, rei ni owaru koto' (El Karate empieza y termina con respeto): aplicar la cortesía y la humildad en la familia y la sociedad, tratando a los demás con empatía antes y después de cualquier desacuerdo.",
+            "isEssay": true,
+            "explanation": "Los 20 principios rectores de Funakoshi enseñan que el verdadero Karate se practica fuera del Dojo en cada acto de la vida cotidiana.",
+            "hint": "Reflexión personal honesta y profunda."
         }
     ]
 };
 
 // ====================================================================
 // EXAMEN OFICIAL: 3° KYU A 2° KYU (CAFÉ 3 LÍNEAS A CAFÉ 2 LÍNEAS)
-// Fuente: "I EXAMEN ESCRITO DE 3 KYU A 2 KYU.pdf" (38 Preguntas)
+// Fuente Oficial: "I EXAMEN ESCRITO DE 3 KYU A 2 KYU.pdf" (38 Preguntas)
 // ====================================================================
 export const EXAM_KYU_3_TO_2: BeltExamConfig = {
     "beltId": "kyu-3",
@@ -1375,50 +1165,45 @@ export const EXAM_KYU_3_TO_2: BeltExamConfig = {
     "xpReward": 380,
     "title": "I Examen Escrito Oficial: 3° Kyu a 2° Kyu",
     "subtitle": "Tribunal Examinador Oficial de Grado • Kuma Sensei Dojo",
-    "description": "Evaluación oficial de ascenso a 2° Kyu: Terminología marcial, Complete de historia y Katas, reconocimiento visual de Kihon Waza y ensayo sobre Kime y Budo.",
+    "description": "Evaluación oficial canónica de ascenso de grado Café: Asocie de terminología y comandos, Complete técnico/histórico escrito, reconocimiento visual de técnicas de Kihon y ensayo sobre Kime-waza.",
     "questions": [
         {
-            "id": "exam-3k-q1",
+            "id": "e3k-q1",
             "type": "multiple_choice",
             "prompt": "1. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'BUNKAI'?",
-            "description": "Asocie de terminología marcial (Kata)",
+            "description": "Comprensión de Kata",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Desglose de kata",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "Puño",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Grande",
+                    "text": "Puño grande",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Representación lineal del kata",
+                    "text": "Saludo al frente",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Desglose de Kata / Aplicación práctica",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o3",
+                    "text": "Línea de ejecución",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Bunkai (分解): Desglose, análisis o aplicación combativa práctica de cada movimiento de un Kata.",
-            "hint": "Desglose o aplicación práctica."
+            "explanation": "Bunkai (分解) es el análisis y aplicación marcial real de cada técnica y movimiento del kata.",
+            "hint": "Descomponer y analizar la técnica."
         },
         {
-            "id": "exam-3k-q2",
+            "id": "e3k-q2",
             "type": "multiple_choice",
             "prompt": "2. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'BUDOKA'?",
-            "description": "Asocie de terminología marcial (Persona)",
+            "description": "Identidad marcial",
             "options": [
-                {
-                    "id": "o1",
-                    "text": "Practicante de artes marciales",
-                    "isCorrect": true
-                },
                 {
                     "id": "o2",
                     "text": "Desglose de kata",
@@ -1426,127 +1211,256 @@ export const EXAM_KYU_3_TO_2: BeltExamConfig = {
                 },
                 {
                     "id": "o3",
-                    "text": "Representación lineal del kata",
+                    "text": "Línea del kata",
                     "isCorrect": false
                 },
                 {
+                    "id": "o1",
+                    "text": "Practicante de artes marciales",
+                    "isCorrect": true
+                },
+                {
                     "id": "o4",
-                    "text": "Puño",
+                    "text": "Dojo central",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Budoka (武道家): Aquel que transita y consagra su vida a la práctica y valores del Budo (vía marcial).",
-            "hint": "Practicante del camino marcial."
+            "explanation": "Budoka (武道家) es la persona que consagra su vida y conducta al camino del Budo.",
+            "hint": "El estudiante o maestro comprometido con el Budo."
         },
         {
-            "id": "exam-3k-q3",
+            "id": "e3k-q3",
             "type": "multiple_choice",
             "prompt": "3. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'ENBUSEN'?",
-            "description": "Asocie de terminología marcial (Kata)",
+            "description": "Geometría del Kata",
             "options": [
+                {
+                    "id": "o3",
+                    "text": "Puño grande",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "Representación lineal del kata",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Practicante de artes marciales",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Grande",
-                    "isCorrect": false
-                },
-                {
                     "id": "o4",
-                    "text": "Puño",
+                    "text": "Saludo entre nosotros",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Desglose de kata",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Enbusen (演武線): Línea, diagrama o esquema geométrico que dibuja el practicante en el tatami al ejecutar el Kata.",
-            "hint": "Línea o diagrama del Kata."
+            "explanation": "Enbusen (演武線) es el diagrama o línea sobre el suelo por donde transcurre la trayectoria del kata.",
+            "hint": "La línea imaginaria que traza el kata."
         },
         {
-            "id": "exam-3k-q4",
+            "id": "e3k-q4",
             "type": "multiple_choice",
             "prompt": "4. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'DAI'?",
-            "description": "Asocie de terminología marcial (Katas)",
+            "description": "Nomenclatura de Katas",
             "options": [
                 {
+                    "id": "o3",
+                    "text": "Primero",
+                    "isCorrect": false
+                },
+                {
                     "id": "o1",
-                    "text": "Grande",
+                    "text": "Grande o mayor",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Puño",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Desglose de kata",
-                    "isCorrect": false
-                },
-                {
                     "id": "o4",
-                    "text": "Practicante de artes marciales",
+                    "text": "Segundo",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Pequeño o menor",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Dai (大): Grande o mayor (en oposición a Sho / 小 que significa menor; ej. Bassai Dai vs Bassai Sho).",
-            "hint": "Grande o mayor."
+            "explanation": "Dai (大) significa grande o mayor; se usa para distinguir versiones extensas (Bassai Dai, Kanku Dai).",
+            "hint": "Opuesto a Sho (pequeño/menor)."
         },
         {
-            "id": "exam-3k-q5",
+            "id": "e3k-q5",
             "type": "multiple_choice",
             "prompt": "5. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SEIKEN'?",
-            "description": "Asocie de terminología marcial (Arma natural)",
+            "description": "Armas corporales",
             "options": [
                 {
+                    "id": "o3",
+                    "text": "Línea del kata",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Desglose de kata",
+                    "isCorrect": false
+                },
+                {
                     "id": "o1",
-                    "text": "Puño",
+                    "text": "Puño frontal (nudillos principales)",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o4",
+                    "text": "Saludo al frente",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Seiken (正拳) es el puño fundamental cerrado que impacta con los nudillos del índice y corazón.",
+            "hint": "El puño correcto tradicional."
+        },
+        {
+            "id": "e3k-q6",
+            "type": "multiple_choice",
+            "prompt": "6. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SHOMEN NI REI'?",
+            "description": "Etiqueta del Dojo",
+            "options": [
+                {
+                    "id": "o3",
+                    "text": "Dojo central",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o4",
+                    "text": "Espíritu y armonía",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Saludo al frente",
                     "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "Grande",
+                    "text": "Saludo entre nosotros",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Shomen ni rei (正面に礼) es el saludo reverente hacia el frente principal del dojo.",
+            "hint": "Saludo hacia el punto focal del dojo."
+        },
+        {
+            "id": "e3k-q7",
+            "type": "multiple_choice",
+            "prompt": "7. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KIAI'?",
+            "description": "Energía marcial",
+            "options": [
+                {
+                    "id": "o3",
+                    "text": "Línea del kata",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o4",
+                    "text": "Pinos ondulantes",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Desglose de kata",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Espíritu y armonía / unión de energía",
+                    "isCorrect": true
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Kiai (気合): 'Ki' (energía vital) y 'Ai' (unión/armonía), proyectado con voz firme en el momento del impacto.",
+            "hint": "La liberación vocal de la energía interna."
+        },
+        {
+            "id": "e3k-q8",
+            "type": "multiple_choice",
+            "prompt": "8. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'HONBU DOJO'?",
+            "description": "Organización marcial",
+            "options": [
+                {
+                    "id": "o4",
+                    "text": "Espíritu y armonía",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Saludo al frente",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Representación lineal del kata",
+                    "text": "Pinos ondulantes",
                     "isCorrect": false
                 },
+                {
+                    "id": "o1",
+                    "text": "Dojo central / Sede principal",
+                    "isCorrect": true
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Honbu Dojo (本部道場) es el dojo matriz o sede central de una organización o escuela.",
+            "hint": "El dojo principal de la organización."
+        },
+        {
+            "id": "e3k-q9",
+            "type": "multiple_choice",
+            "prompt": "9. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SHOTO'?",
+            "description": "Historia de Funakoshi",
+            "options": [
+                {
+                    "id": "o4",
+                    "text": "Puño grande",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "Saludo al frente",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Dojo central",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Pinos ondulantes",
+                    "isCorrect": true
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Shoto (松濤) era el seudónimo con el que Funakoshi firmaba sus poemas juveniles en Shuri ('el rumor del viento en los pinos').",
+            "hint": "Seudónimo poético del Maestro Funakoshi."
+        },
+        {
+            "id": "e3k-q10",
+            "type": "multiple_choice",
+            "prompt": "10. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'OTAGAI NI REI'?",
+            "description": "Etiqueta del Dojo",
+            "options": [
                 {
                     "id": "o4",
                     "text": "Desglose de kata",
                     "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Seiken (正拳): Puño fundamental o puño correcto; zona de impacto de los nudillos del índice y medio.",
-            "hint": "El puño frontal."
-        },
-        {
-            "id": "exam-3k-q6",
-            "type": "multiple_choice",
-            "prompt": "6. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SHOMEN NI REI'?",
-            "description": "Asocie de terminología marcial (Protocolo de saludo)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Saludo al frente",
-                    "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Saludo entre nosotros",
-                    "isCorrect": false
+                    "id": "o1",
+                    "text": "Saludo entre nosotros / mutuo",
+                    "isCorrect": true
                 },
                 {
                     "id": "o3",
@@ -1554,308 +1468,91 @@ export const EXAM_KYU_3_TO_2: BeltExamConfig = {
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
-                    "text": "Espíritu y armonía",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Shomen ni rei (正面に礼): Reverencia y saludo de respeto hacia el frente de honor del Dojo.",
-            "hint": "Saludo hacia el frente."
-        },
-        {
-            "id": "exam-3k-q7",
-            "type": "multiple_choice",
-            "prompt": "7. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KIAI'?",
-            "description": "Asocie de terminología marcial (Energía y Sonido)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Espíritu y armonía",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "Pinos ondulantes",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Dojo central",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
                     "text": "Saludo al frente",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Kiai (気合): Definido como 'espíritu y armonía' (Ki = energía vital, Ai = armonía/unión); grito que libera la fuerza concentrada.",
-            "hint": "Unión de espíritu y energía."
+            "explanation": "Otagai ni rei (お互いに礼) es la reverencia mutua entre compañeros de entrenamiento.",
+            "hint": "Saludo recíproco de respeto mutuo."
         },
         {
-            "id": "exam-3k-q8",
+            "id": "e3k-q11",
             "type": "multiple_choice",
-            "prompt": "8. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'HONBU DOJO'?",
-            "description": "Asocie de terminología marcial (Sede central)",
+            "prompt": "11. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'HIDARI'?",
+            "description": "Direccionales en el dojo",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Dojo central",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Pinos ondulantes",
+                    "id": "o4",
+                    "text": "Abajo",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Saludo entre nosotros",
+                    "text": "Arriba",
                     "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Espíritu y armonía",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Honbu Dojo (本部道場): Sede matriz, dojo principal o cuartel general de una organización de Karate.",
-            "hint": "Dojo central o sede principal."
-        },
-        {
-            "id": "exam-3k-q9",
-            "type": "multiple_choice",
-            "prompt": "9. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SHOTO'?",
-            "description": "Asocie de terminología marcial (Poesía y Linaje)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Pinos ondulantes",
-                    "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "Dojo central",
+                    "text": "Derecha",
                     "isCorrect": false
                 },
-                {
-                    "id": "o3",
-                    "text": "Espíritu y armonía",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Saludo al frente",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Shoto (松濤): 'Pinos ondulantes' o el rumor del viento entre los pinos; seudónimo poético del Maestro Gichin Funakoshi.",
-            "hint": "Olas de pinos mecidas por el viento."
-        },
-        {
-            "id": "exam-3k-q10",
-            "type": "multiple_choice",
-            "prompt": "10. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'OTAGAI NI REI'?",
-            "description": "Asocie de terminología marcial (Protocolo de saludo)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Saludo entre nosotros",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Saludo al frente",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Dojo central",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Pinos ondulantes",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Otagai ni rei (お互いに礼): Saludo y reverencia mutua entre compañeros de entrenamiento.",
-            "hint": "Saludo mutuo entre practicantes."
-        },
-        {
-            "id": "exam-3k-q11",
-            "type": "multiple_choice",
-            "prompt": "11. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'WAZA'?",
-            "description": "Asocie de terminología marcial (Técnica)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Técnica",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Lema",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Izquierda",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Palo",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Waza (技): Técnica, habilidad o recurso motor específico (ej. Kihon-waza, Buki-waza).",
-            "hint": "Técnica marcial."
-        },
-        {
-            "id": "exam-3k-q12",
-            "type": "multiple_choice",
-            "prompt": "12. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KUN'?",
-            "description": "Asocie de terminología marcial (Regla o Lema)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Lema",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Técnica",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Palo",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Recupérese",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Kun (訓): Regla, lema, norma o precepto formativo (como en Dojo Kun o Niju Kun).",
-            "hint": "Lema o precepto."
-        },
-        {
-            "id": "exam-3k-q13",
-            "type": "multiple_choice",
-            "prompt": "13. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'HIDARI'?",
-            "description": "Asocie de terminología marcial (Direcciones)",
-            "options": [
                 {
                     "id": "o1",
                     "text": "Izquierda",
                     "isCorrect": true
-                },
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Hidari (左) designa el lado o dirección izquierda.",
+            "hint": "Lado opuesto a Migi."
+        },
+        {
+            "id": "e3k-q12",
+            "type": "multiple_choice",
+            "prompt": "12. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'BO'?",
+            "description": "Armamento tradicional Kobudo",
+            "options": [
                 {
-                    "id": "o2",
-                    "text": "Técnica",
-                    "isCorrect": false
+                    "id": "o1",
+                    "text": "Palo o bastón largo de madera",
+                    "isCorrect": true
                 },
                 {
                     "id": "o3",
-                    "text": "Palo",
+                    "text": "Escudo",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Cuchillo",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Recupérese",
+                    "text": "Espada",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Hidari (左): Izquierda (ej. Hidari Zenkutsu-dachi = postura adelantada con pierna izquierda).",
-            "hint": "Lado izquierdo."
+            "explanation": "Bo (棒) es el bastón de madera largo (aprox. 180 cm) clásico del Kobudo okinawense.",
+            "hint": "Bastón largo tradicional de madera."
         },
         {
-            "id": "exam-3k-q14",
+            "id": "e3k-q13",
             "type": "multiple_choice",
-            "prompt": "14. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'BO'?",
-            "description": "Asocie de terminología marcial (Kobudo)",
+            "prompt": "13. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'NAORE'?",
+            "description": "Comandos del tatami",
             "options": [
-                {
-                    "id": "o1",
-                    "text": "Palo",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Lema",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Técnica",
-                    "isCorrect": false
-                },
                 {
                     "id": "o4",
-                    "text": "Izquierda",
+                    "text": "Golpear fuerte",
                     "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Bo (棒): Bastón o palo largo de madera tradicional del Kobudo okinawense (típicamente de 1.82 m / Rokushakubo).",
-            "hint": "Palo largo de madera."
-        },
-        {
-            "id": "exam-3k-q15",
-            "type": "multiple_choice",
-            "prompt": "15. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'NAORE'?",
-            "description": "Asocie de terminología marcial (Comandos)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Recupérese",
-                    "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "Palo",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Lema",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Izquierda",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Naore (直れ): Orden de 'recupérese' o volver a la postura natural de partida tras una ejecución o saludo.",
-            "hint": "Comando de retorno a la normalidad."
-        },
-        {
-            "id": "exam-3k-q16",
-            "type": "multiple_choice",
-            "prompt": "16. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KAMAE'?",
-            "description": "Asocie de terminología marcial (Combate)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Posición de combate",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Empezar",
+                    "text": "Empezar combate",
                     "isCorrect": false
                 },
                 {
@@ -1864,31 +1561,52 @@ export const EXAM_KYU_3_TO_2: BeltExamConfig = {
                     "isCorrect": false
                 },
                 {
+                    "id": "o1",
+                    "text": "Recupérese / Volver a posición natural",
+                    "isCorrect": true
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Naore (直れ) es la orden para relajarse y regresar a la postura natural (Shizentai/Hachiji-dachi).",
+            "hint": "Orden para regresar al estado normal de atención."
+        },
+        {
+            "id": "e3k-q14",
+            "type": "multiple_choice",
+            "prompt": "14. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KAMAE'?",
+            "description": "Posición táctica",
+            "options": [
+                {
+                    "id": "o1",
+                    "text": "Posición de guardia / combate",
+                    "isCorrect": true
+                },
+                {
                     "id": "o4",
-                    "text": "Encuentro de manos",
+                    "text": "Lema del dojo",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "Recupérese",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Ponerse en fila",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Kamae (構え): Guardia o posición de combate activa y alerta.",
-            "hint": "Guardia o postura combativa."
+            "explanation": "Kamae (構え) es la postura de alerta, guardia y disposición corporal/mental ante el oponente.",
+            "hint": "Guardia activa de combate."
         },
         {
-            "id": "exam-3k-q17",
+            "id": "e3k-q15",
             "type": "multiple_choice",
-            "prompt": "17. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'HAJIME'?",
-            "description": "Asocie de terminología marcial (Comandos)",
+            "prompt": "15. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'HAJIME'?",
+            "description": "Comandos de combate",
             "options": [
-                {
-                    "id": "o1",
-                    "text": "Empezar",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Posición de combate",
-                    "isCorrect": false
-                },
                 {
                     "id": "o3",
                     "text": "Ponerse en fila",
@@ -1896,20 +1614,35 @@ export const EXAM_KYU_3_TO_2: BeltExamConfig = {
                 },
                 {
                     "id": "o4",
-                    "text": "Rango de cinturón",
+                    "text": "Saludo mutuo",
                     "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Detenerse",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Empezar",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Hajime (始め): Voz de mando arbitral y docente para iniciar o comenzar la técnica o combate.",
-            "hint": "Iniciar o comenzar."
+            "explanation": "Hajime (始め) es el comando arbitral o del instructor para dar inicio inmediato a la acción.",
+            "hint": "¡Comenzar!"
         },
         {
-            "id": "exam-3k-q18",
+            "id": "e3k-q16",
             "type": "multiple_choice",
-            "prompt": "18. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SEIRETSU'?",
-            "description": "Asocie de terminología marcial (Comandos)",
+            "prompt": "16. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SEIRETSU'?",
+            "description": "Comandos de formación",
             "options": [
+                {
+                    "id": "o4",
+                    "text": "Recupérese",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "Ponerse en fila",
@@ -1922,428 +1655,316 @@ export const EXAM_KYU_3_TO_2: BeltExamConfig = {
                 },
                 {
                     "id": "o3",
-                    "text": "Encuentro de manos",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Posición de combate",
+                    "text": "Posición de guardia",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Seiretsu (整列): Ponerse en fila de manera ordenada y alineada.",
-            "hint": "Alinearse en fila."
+            "explanation": "Seiretsu (整列) es la orden para formar en línea recta ordenada por graduaciones.",
+            "hint": "Formación alineada de los karatekas."
         },
         {
-            "id": "exam-3k-q19",
+            "id": "e3k-q17",
             "type": "multiple_choice",
-            "prompt": "19. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KUMITE'?",
-            "description": "Asocie de terminología marcial (Pilares)",
+            "prompt": "17. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KUMITE'?",
+            "description": "Pilares del Karate",
             "options": [
                 {
                     "id": "o1",
-                    "text": "Encuentro de manos",
+                    "text": "Encuentro de manos / Combate",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Rango de cinturón",
+                    "id": "o4",
+                    "text": "Rango de grado",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Posición de combate",
+                    "text": "Lema formativo",
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
-                    "text": "Empezar",
+                    "id": "o2",
+                    "text": "Forma coreografiada",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Kumite (組手): Literalmente 'encuentro o cruce de manos'; el combate reglamentario con adversario.",
-            "hint": "Combate o cruce de manos."
+            "explanation": "Kumite (組手): 'Kumi' (entrelazar/encuentro) y 'Te' (manos), el combate real o pautado con un oponente.",
+            "hint": "La aplicación técnica frente a un adversario."
         },
         {
-            "id": "exam-3k-q20",
+            "id": "e3k-q18",
             "type": "multiple_choice",
-            "prompt": "20. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KYU'?",
-            "description": "Asocie de terminología marcial (Grados)",
+            "prompt": "18. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KYU'?",
+            "description": "Sistema de grados",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Rango de cinturón",
-                    "isCorrect": true
+                    "id": "o2",
+                    "text": "Grado de cinta negra",
+                    "isCorrect": false
                 },
                 {
-                    "id": "o2",
-                    "text": "Encuentro de manos",
+                    "id": "o4",
+                    "text": "Uniforme oficial",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Empezar",
+                    "text": "Maestro supremo",
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
-                    "text": "Posición de combate",
-                    "isCorrect": false
+                    "id": "o1",
+                    "text": "Rango de grado previo a cinta negra",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Kyu (級): Rango o grado de aprendizaje previo a la categoría de cinturón negro (Dan).",
-            "hint": "Grado de estudiante."
+            "explanation": "Kyu (級) designa los niveles de aprendizaje de cinturones de color previos al Dan.",
+            "hint": "Los grados de cinturones de color hasta el café."
         },
         {
-            "id": "exam-3k-q21",
+            "id": "e3k-q19",
             "type": "multiple_choice",
-            "prompt": "21. COMPLETE: ¿Cuál es el significado de 'SHOTOKAN'?",
-            "description": "Complete (1 Punto) - Nombre del estilo",
+            "prompt": "19. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'WAZA'?",
+            "description": "Terminología técnica",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "La casa o escuela de Shoto (Shoto: pinos ondulantes; Kan: casa o escuela)",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "El templo de los guerreros del sol",
+                    "text": "Lema",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "El estilo de las manos duras",
+                    "text": "Grado",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "La academia militar de Okinawa",
+                    "text": "Palo largo",
                     "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Técnica",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Shotokan proviene del pseudónimo 'Shoto' que usaba Funakoshi para firmar poemas y 'Kan' que significa edificio o escuela.",
-            "hint": "Casa de Shoto."
+            "explanation": "Waza (技) significa técnica o arte en la ejecución de los movimientos marciales.",
+            "hint": "Habilidad o técnica corporal."
         },
         {
-            "id": "exam-3k-q22",
+            "id": "e3k-q20",
             "type": "multiple_choice",
-            "prompt": "22. COMPLETE: ¿Cuál es el significado de 'ENPI'?",
-            "description": "Complete (1 Punto) - Técnica y Kata",
+            "prompt": "20. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KUN'?",
+            "description": "Filosofía del Budo",
             "options": [
                 {
                     "id": "o1",
-                    "text": "Codo (o 'El vuelo de la golondrina' en el Kata)",
+                    "text": "Lema / Precepto formativo",
                     "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "Salto del tigre",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Garra de águila",
+                    "text": "Bastón",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Frente de hierro",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Empi/Enpi significa codo (猿臂) como arma natural, y en el Kata Enpi alude al vuelo ágil de la golondrina (燕飛).",
-            "hint": "Codo o vuelo de golondrina."
-        },
-        {
-            "id": "exam-3k-q23",
-            "type": "multiple_choice",
-            "prompt": "23. COMPLETE: ¿Cuál es el significado de 'TEKKI NIDAN'?",
-            "description": "Complete (1 Punto) - Kata tradicional",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Jinete de hierro nivel 2 (o montar a caballo 2)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Vuelo de la grulla nivel 2",
+                    "text": "Combate",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Dos golpes de montaña",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "El dragón oculto",
+                    "text": "Izquierda",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Tekki (鉄騎) significa 'caballero de hierro o jinete de hierro' en postura Kiba-dachi; Nidan indica el segundo nivel.",
-            "hint": "Jinete de hierro nivel 2."
+            "explanation": "Kun (訓) significa lema, regla o enseñanza moral (como en Dojo Kun).",
+            "hint": "Precepto moral o máxima de conducta."
         },
         {
-            "id": "exam-3k-q24",
-            "type": "multiple_choice",
-            "prompt": "24. COMPLETE: ¿Cuál es la similitud fundamental que comparten todos los Katas Heian?",
-            "description": "Complete (1 Punto) - Pedagogía de Anko Itosu",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Todas inician con una técnica defensiva o bloqueo (reflejando 'Karate Ni Sente Nashi')",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Todas tienen la misma cantidad de pasos exactos",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Todas se ejecutan exclusivamente en Kiba-dachi",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Todas usan técnicas con armas de madera",
-                    "isCorrect": false
-                }
+            "id": "e3k-q21",
+            "type": "written",
+            "prompt": "21. COMPLETE: Escriba el significado de 'SHOTOKAN':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "shoto",
+                "ondas de los pinos",
+                "casa de shoto",
+                "pinos",
+                "viento en los pinos",
+                "seudonimo"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Los 5 Katas Heian inician invariablemente con un bloqueo defensivo, enseñando que en el Karate no existe el primer ataque.",
-            "hint": "Inician siempre defendiendo."
+            "sampleAnswer": "La casa de Shoto (Shoto = seudónimo poético de Funakoshi 'ondas de pinos', Kan = casa o salón).",
+            "isEssay": false,
+            "explanation": "Shotokan (松濤館) fue el nombre dado por sus alumnos al primer dojo de Funakoshi en Tokio en 1939.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-3k-q25",
-            "type": "multiple_choice",
-            "prompt": "25. COMPLETE: ¿Cuáles son las siglas del reglamento utilizado internacionalmente para campeonatos oficiales de Karate Do?",
-            "description": "Complete (1 Punto) - Ámbito federado",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "WKF (World Karate Federation)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "FIFA",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "NBA",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "UFC",
-                    "isCorrect": false
-                }
+            "id": "e3k-q22",
+            "type": "written",
+            "prompt": "22. COMPLETE: Escriba el significado del Kata 'ENPI':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "vuelo de la golondrina",
+                "golondrina",
+                "vuelo de golondrina",
+                "vuelo golondrina"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "La WKF (World Karate Federation) es el organismo rector mundial oficial reconocido por el Comité Olímpico Internacional.",
-            "hint": "Siglas WKF."
+            "sampleAnswer": "El vuelo de la golondrina (movimientos ligeros y rápidos arriba y abajo simulando el vuelo del ave).",
+            "isEssay": false,
+            "explanation": "Enpi (燕飛) destaca por su velocidad vertiginosa, cambio súbito de alturas y técnicas de agarre y salto.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-3k-q26",
-            "type": "multiple_choice",
-            "prompt": "26. COMPLETE: ¿Quién es el Jefe Instructor de la federación ISKF (International Shotokan Karate Federation)?",
-            "description": "Complete (1 Punto) - Linaje institucional",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Master Teruyuki Okazaki (fundador) / Master Hiroyoshi Okazaki",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Bruce Lee",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Chuck Norris",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Miyamoto Musashi",
-                    "isCorrect": false
-                }
+            "id": "e3k-q23",
+            "type": "written",
+            "prompt": "23. COMPLETE: Escriba el significado del Kata 'TEKKI NIDAN':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "jinete de hierro",
+                "caballo de hierro",
+                "jinete hierro",
+                "hierro nivel 2",
+                "jinete de hierro 2"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "La ISKF fue fundada por el legendario Shihan Teruyuki Okazaki, sucedido por Master Hiroyoshi Okazaki como Chairman y Chief Instructor.",
-            "hint": "Familia y maestros Okazaki."
+            "sampleAnswer": "Jinete de hierro nivel 2 (Tekki = jinete a caballo de hierro, Nidan = segundo nivel).",
+            "isEssay": false,
+            "explanation": "Tekki Nidan se desarrolla en Kiba-dachi sobre un Enbusen lineal simulando combate con la espalda pegada a un muro o sobre una embarcación.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-3k-q27",
-            "type": "multiple_choice",
-            "prompt": "27. COMPLETE: ¿Cuál es el origen ancestral e histórico de las artes marciales según la tradición clásica?",
-            "description": "Complete (1 Punto) - Raíces orientales",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "India y China (Templo Shaolin con Bodhidharma / Daruma)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Roma y los gladiadores",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Inglaterra medieval",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Egipto antiguo",
-                    "isCorrect": false
-                }
+            "id": "e3k-q24",
+            "type": "written",
+            "prompt": "24. COMPLETE: Escriba la similitud fundamental que comparten todos los Katas Heian:",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "defensa",
+                "bloqueo",
+                "uke",
+                "inician con defensa",
+                "comienzan con defensa",
+                "empiezan con defensa",
+                "defensivo",
+                "pacificar"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "La tradición marcial ubica su génesis filosófico y físico en la India y su paso a China en el Templo Shaolin mediante Bodhidharma.",
-            "hint": "India, China y el Templo Shaolin."
+            "sampleAnswer": "Todos los 5 Katas Heian inician con un movimiento defensivo o bloqueo (Uke), reflejando que el Karate nunca ataca primero.",
+            "isEssay": false,
+            "explanation": "El principio 'Karate ni sente nashi' (en el Karate no hay primer ataque) se plasma en el inicio defensivo de los katas básicos.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-3k-q28",
-            "type": "multiple_choice",
-            "prompt": "28. COMPLETE: ¿Cuál es el significado de 'JIYU IPPON KUMITE'?",
-            "description": "Complete (1 Punto) - Modalidad táctica",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Combate semilibre a un paso (con ataque convenido y distancia dinámica)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Combate libre sin ninguna regla",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Solo bloqueos sin responder",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Lucha cuerpo a cuerpo en el piso",
-                    "isCorrect": false
-                }
+            "id": "e3k-q25",
+            "type": "written",
+            "prompt": "25. COMPLETE: Escriba las siglas del reglamento utilizado internacionalmente para campeonatos oficiales de Karate Do:",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "wkf",
+                "world karate federation"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Jiyu Ippon Kumite entrena el timing y la distancia real permitiendo desplazamiento libre antes de lanzar un solo ataque convenido.",
-            "hint": "Semilibre a un solo ataque."
+            "sampleAnswer": "WKF (World Karate Federation).",
+            "isEssay": false,
+            "explanation": "La WKF es la entidad internacional rectora del deporte del Karate olímpico y mundial.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-3k-q29",
-            "type": "multiple_choice",
-            "prompt": "29. COMPLETE: ¿Cuál es el significado de la palabra 'YAKUSOKU'?",
-            "description": "Complete (1 Punto) - Metodología",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Promesa o acuerdo (combate predeterminado)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Golpe fulminante",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Salto con giro",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Piso de tatami",
-                    "isCorrect": false
-                }
+            "id": "e3k-q26",
+            "type": "written",
+            "prompt": "26. COMPLETE: Escriba el nombre del Jefe Instructor de la federación ISKF (International Shotokan Karate Federation):",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "teruyuki okazaki",
+                "hiroyoshi okazaki",
+                "okazaki",
+                "sensei okazaki"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Yakusoku (約束) significa literalmente 'promesa o acuerdo', refiriéndose al entrenamiento donde las técnicas están pactadas.",
-            "hint": "Acuerdo o promesa."
+            "sampleAnswer": "Maestro Teruyuki Okazaki (Fundador) / Hiroyoshi Okazaki (Jefe Instructor actual).",
+            "isEssay": false,
+            "explanation": "La ISKF fue fundada por el Shihan Teruyuki Okazaki (10° Dan, discípulo directo de Funakoshi y Nakayama).",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-3k-q30",
-            "type": "multiple_choice",
-            "prompt": "30. COMPLETE: ¿Cuál de los siguientes es uno de los estilos principales tradicionales del Karate Do?",
-            "description": "Complete (1 Punto) - Estilos reconocidos",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Shotokan (junto con Goju-Ryu, Shito-Ryu y Wado-Ryu)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Capoeira",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Taekwondo",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Krav Maga",
-                    "isCorrect": false
-                }
+            "id": "e3k-q27",
+            "type": "written",
+            "prompt": "27. COMPLETE: Escriba el origen ancestral de las artes marciales según la tradición clásica:",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "india",
+                "china",
+                "shaolin",
+                "bodhidharma",
+                "okinawa"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Los 4 estilos mayores canónicos son Shotokan, Goju-Ryu, Shito-Ryu y Wado-Ryu.",
-            "hint": "Shotokan."
+            "sampleAnswer": "India (Bodhidharma) y el Monasterio Shaolin de China, con posterior desarrollo en Okinawa.",
+            "isEssay": false,
+            "explanation": "La tradición marcial traza sus raíces en las enseñanzas de Bodhidharma en el Monasterio Shaolin, que florecieron en Okinawa.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-3k-q31",
+            "id": "e3k-q28",
+            "type": "written",
+            "prompt": "28. COMPLETE: Escriba el significado de 'JIYU IPPON KUMITE':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "semi libre",
+                "semi-libre",
+                "un paso",
+                "ataque anunciado",
+                "un solo ataque",
+                "combate semi libre"
+            ],
+            "sampleAnswer": "Combate semi-libre a un solo ataque anunciado a distancia real.",
+            "isEssay": false,
+            "explanation": "Entrenamiento transitorio crucial para adquirir sentido del timing, Maai y contragolpe fulminante con Kime.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
+        },
+        {
+            "id": "e3k-q29",
+            "type": "written",
+            "prompt": "29. COMPLETE: Escriba el significado de la palabra 'YAKUSOKU':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "promesa",
+                "acuerdo",
+                "pactado",
+                "acordado",
+                "compromiso"
+            ],
+            "sampleAnswer": "Promesa o acuerdo (combate acordado / predeterminado).",
+            "isEssay": false,
+            "explanation": "Yakusoku Kumite es el combate donde el atacante y defensor siguen una secuencia convenida para pulir la técnica sin daño.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
+        },
+        {
+            "id": "e3k-q30",
+            "type": "written",
+            "prompt": "30. COMPLETE: Escriba uno de los cuatro estilos principales tradicionales del Karate Do:",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "shotokan",
+                "shito",
+                "goju",
+                "wado",
+                "shito ryu",
+                "goju ryu",
+                "wado ryu",
+                "shorin ryu"
+            ],
+            "sampleAnswer": "Shotokan, Shito-Ryu, Goju-Ryu o Wado-Ryu.",
+            "isEssay": false,
+            "explanation": "Son los 4 estilos tradicionales universales que integran las directrices técnicas del Karate japonés.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
+        },
+        {
+            "id": "e3k-q31",
             "type": "multiple_choice",
             "prompt": "31. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Kihon Waza (1 Punto)",
-            "image": "/images/didactic/exams/waza_oi_zuki.png",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "OI ZUKI",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "MANJI UKE",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "MOROTE UKE",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "GYAKU ZUKI",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Oi-Zuki: Puñetazo directo ejecutado con el mismo brazo de la pierna que avanza en Zenkutsu-dachi.",
-            "hint": "Puñetazo al avanzar."
-        },
-        {
-            "id": "exam-3k-q32",
-            "type": "multiple_choice",
-            "prompt": "32. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Kihon Waza (1 Punto)",
+            "description": "Identificación visual de Kihon/Waza",
             "image": "/images/didactic/exams/waza_manji_uke.png",
             "options": [
                 {
@@ -2353,125 +1974,29 @@ export const EXAM_KYU_3_TO_2: BeltExamConfig = {
                 },
                 {
                     "id": "o2",
-                    "text": "OI ZUKI",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "YAMA ZUKI",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "MAWASHI GERI",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Manji-Uke: Bloqueo doble combinado con Gedan-barai hacia atrás y Jodan-uchi-uke hacia adelante.",
-            "hint": "Doble bloqueo alto y bajo en forma de esvástica budista (Manji)."
-        },
-        {
-            "id": "exam-3k-q33",
-            "type": "multiple_choice",
-            "prompt": "33. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Kihon Waza (1 Punto)",
-            "image": "/images/didactic/exams/waza_yama_zuki.png",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "YAMA ZUKI",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "GYAKU ZUKI",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "OI ZUKI",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
                     "text": "MOROTE UKE",
                     "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Yama-Zuki: Golpe de puño simultáneo en forma de montaña (U) con un brazo a nivel Jodan y el otro a nivel Chudan/Gedan.",
-            "hint": "Golpe en forma de montaña."
-        },
-        {
-            "id": "exam-3k-q34",
-            "type": "multiple_choice",
-            "prompt": "34. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Kihon Waza (1 Punto)",
-            "image": "/images/didactic/exams/waza_mawashi_geri.png",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "MAWASHI GERI",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "OI ZUKI",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "MANJI UKE",
-                    "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "GYAKU ZUKI",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Mawashi-Geri: Patada circular propulsada con rotación de cadera, impactando con Koshi o Haisoku.",
-            "hint": "Patada circular."
-        },
-        {
-            "id": "exam-3k-q35",
-            "type": "multiple_choice",
-            "prompt": "35. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Kihon Waza (1 Punto)",
-            "image": "/images/didactic/exams/waza_gyaku_zuki.png",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "GYAKU ZUKI",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "OI ZUKI",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
                     "text": "YAMA ZUKI",
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
-                    "text": "MOROTE UKE",
+                    "id": "o3",
+                    "text": "GYAKU ZUKI",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Gyaku-Zuki: Puñetazo penetrante ejecutado con el brazo contrario a la pierna adelantada, aprovechando la rotación de cadera.",
-            "hint": "Puño contrario con torsión de cadera."
+            "explanation": "Manji-Uke: Bloqueo doble en 'vórtice' con Gedan Barai frontal y Jodan Uchi-Uke hacia atrás.",
+            "hint": "Defensa doble característica de Heian Godan y Kanku Dai."
         },
         {
-            "id": "exam-3k-q36",
+            "id": "e3k-q32",
             "type": "multiple_choice",
-            "prompt": "36. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
-            "description": "Identificación visual de Kihon Waza (1 Punto)",
+            "prompt": "32. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
+            "description": "Identificación visual de Kihon/Waza",
             "image": "/images/didactic/exams/waza_morote_uke.png",
             "options": [
                 {
@@ -2480,93 +2005,181 @@ export const EXAM_KYU_3_TO_2: BeltExamConfig = {
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
+                    "id": "o3",
+                    "text": "MAWASHI GERI",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o4",
                     "text": "MANJI UKE",
                     "isCorrect": false
                 },
                 {
-                    "id": "o3",
+                    "id": "o2",
+                    "text": "OI ZUKI",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Morote-Uke: Bloqueo medio reforzado con el otro puño apoyado en el antebrazo o codo ejecutor.",
+            "hint": "Defensa reforzada a dos manos."
+        },
+        {
+            "id": "e3k-q33",
+            "type": "multiple_choice",
+            "prompt": "33. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
+            "description": "Identificación visual de Kihon/Waza",
+            "image": "/images/didactic/exams/waza_gyaku_zuki.png",
+            "options": [
+                {
+                    "id": "o1",
                     "text": "GYAKU ZUKI",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o3",
+                    "text": "OI ZUKI",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "YAMA ZUKI",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
+                    "text": "MOROTE UKE",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Gyaku-Zuki: Golpe de puño contrario a la pierna adelantada aprovechando la potente rotación de cadera.",
+            "hint": "Golpe de puño inverso o contrario."
+        },
+        {
+            "id": "e3k-q34",
+            "type": "multiple_choice",
+            "prompt": "34. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
+            "description": "Identificación visual de Kihon/Waza",
+            "image": "/images/didactic/exams/waza_oi_zuki.png",
+            "options": [
+                {
+                    "id": "o3",
                     "text": "MAWASHI GERI",
                     "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Morote-Uke: Bloqueo reforzado con dos brazos donde el puño de apoyo se sitúa junto al codo del brazo defensor.",
-            "hint": "Bloqueo reforzado a dos manos."
-        },
-        {
-            "id": "exam-3k-q37",
-            "type": "multiple_choice",
-            "prompt": "37. DESARROLLO: ¿En qué consiste 'KIME WAZA' y cuáles son dos criterios utilizados para calificarlo?",
-            "description": "Desarrollo y Biomecánica (2 Puntos)",
-            "options": [
+                },
                 {
                     "id": "o1",
-                    "text": "Es la máxima concentración de fuerza en el impacto con relajación previa y posterior; se califica por alineación articular sólida y respiración/Zanshin sincronizado",
+                    "text": "OI ZUKI",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Es mantener los músculos completamente tensos durante toda la clase sin respirar",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Es dar un salto hacia atrás con un grito agudo",
-                    "isCorrect": false
-                },
-                {
                     "id": "o4",
-                    "text": "Es golpear con fuerza descontrolada lesionando al compañero",
+                    "text": "MANJI UKE",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "GYAKU ZUKI",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Kime es el foco decisivo instantáneo. Exige velocidad sin tensión previa, máxima contracción en el instante de contacto y retorno a la alerta relajada.",
-            "hint": "Foco instantáneo y criterios biomecánicos."
+            "explanation": "Oi-Zuki: Ataque directo de puño avanzando con el mismo brazo y pierna delantera.",
+            "hint": "Golpe de puño en avance con el mismo lado."
         },
         {
-            "id": "exam-3k-q38",
+            "id": "e3k-q35",
             "type": "multiple_choice",
-            "prompt": "38. DESARROLLO: Los grandes maestros afirman que el Karate Do es un estilo de vida. ¿Es esto Cierto o Falso y por qué?",
-            "description": "Desarrollo y Filosofía del Budo (2 Puntos)",
+            "prompt": "35. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
+            "description": "Identificación visual de Kihon/Waza",
+            "image": "/images/didactic/exams/waza_yama_zuki.png",
             "options": [
                 {
+                    "id": "o3",
+                    "text": "MANJI UKE",
+                    "isCorrect": false
+                },
+                {
                     "id": "o1",
-                    "text": "CIERTO: Porque sus valores de respeto, perseverancia y autocontrol se aplican continuamente en la vida diaria, el trabajo y la familia",
+                    "text": "YAMA ZUKI",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "FALSO: Porque solo es una actividad física que termina al salir por la puerta del gimnasio",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "FALSO: Porque solo sirve para ganar trofeos deportivos en competencias",
-                    "isCorrect": false
-                },
-                {
                     "id": "o4",
-                    "text": "CIERTO: Porque obliga a vestir el Karategi las 24 horas del día",
+                    "text": "MOROTE UKE",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "OI ZUKI",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "El Maestro Funakoshi sentenció que el Karate es para cultivar el espíritu a lo largo de toda la existencia; no se limita a técnicas físicas.",
-            "hint": "Cierto, porque forja el carácter cotidiano."
+            "explanation": "Yama-Zuki: Golpe simultáneo a dos alturas (U-zuki o golpe en montaña) característico de Bassai Dai.",
+            "hint": "Golpe doble de puño en forma de montaña."
+        },
+        {
+            "id": "e3k-q36",
+            "type": "multiple_choice",
+            "prompt": "36. TÉCNICAS: ¿Cuál es la técnica que se muestra en la imagen oficial del examen?",
+            "description": "Identificación visual de Kihon/Waza",
+            "image": "/images/didactic/exams/waza_mawashi_geri.png",
+            "options": [
+                {
+                    "id": "o3",
+                    "text": "OI ZUKI",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "MAWASHI GERI",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o4",
+                    "text": "MOROTE UKE",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "GYAKU ZUKI",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Mawashi-Geri: Patada circular percutante con elevación de rodilla y rotación completa de la cadera de apoyo.",
+            "hint": "Patada circular tradicional."
+        },
+        {
+            "id": "e3k-q37",
+            "type": "written",
+            "prompt": "37. DESARROLLO: KIME-WAZA: Explique en qué consiste y enumere dos criterios fundamentales que se utilizan para calificarlo:",
+            "description": "Ensayo biomecánico y formativo (2 Puntos)",
+            "acceptedKeywords": [],
+            "sampleAnswer": "Kime es la concentración explosiva instantánea de la fuerza muscular, mental y respiratoria en el momento exacto del impacto. Criterios para calificarlo: 1) Torsión y fijación articular sólida de cadera con Hikite y Kiai; 2) Estabilidad postural y retorno inmediato al estado de alerta vigilante (Zanshin) sin perder el equilibrio.",
+            "isEssay": true,
+            "explanation": "Kime (決め) es el alma del golpe en Karate: máxima aceleración y transmisión de energía cinética con parada instantánea en el blanco.",
+            "hint": "Reflexión personal honesta y profunda."
+        },
+        {
+            "id": "e3k-q38",
+            "type": "written",
+            "prompt": "38. DESARROLLO: Afirman los grandes maestros que el Karate Do es un estilo de vida: ¿Es esto Cierto o Falso y por qué?",
+            "description": "Ensayo ético y filosófico (2 Puntos)",
+            "acceptedKeywords": [],
+            "sampleAnswer": "Es Cierto. Porque los valores de respeto, disciplina, paciencia y superación que se forjan en el entrenamiento se aplican permanentemente en la convivencia familiar, académica y laboral, guiando la toma de decisiones con templanza y rectitud moral.",
+            "isEssay": true,
+            "explanation": "El Karate-Do trasciende la técnica física deportiva: es una vía de perfeccionamiento humano permanente que acompaña al practicante toda la vida.",
+            "hint": "Reflexión personal honesta y profunda."
         }
     ]
 };
 
 // ====================================================================
 // EXAMEN OFICIAL: 2° KYU A 1° KYU (CAFÉ 2 LÍNEAS A CAFÉ 1 LÍNEA)
-// Fuente: "I EXAMEN ESCRITO DE 2 KYU A 1 KYU.pdf" (44 Preguntas)
+// Fuente Oficial: "I EXAMEN ESCRITO DE 2 KYU A 1 KYU.pdf" (44 Preguntas)
 // ====================================================================
 export const EXAM_KYU_2_TO_1: BeltExamConfig = {
     "beltId": "kyu-2",
@@ -2578,13 +2191,13 @@ export const EXAM_KYU_2_TO_1: BeltExamConfig = {
     "xpReward": 420,
     "title": "I Examen Escrito Oficial: 2° Kyu a 1° Kyu",
     "subtitle": "Tribunal Examinador Oficial de Grado • Kuma Sensei Dojo",
-    "description": "Evaluación oficial previa al Shodan: Filosofía Bushido y Zen, Katas Superiores, Reglamento WKF de arbitraje y puntuación, y criterios de maestría.",
+    "description": "Evaluación oficial canónica de antesala a Cinta Negra: Asocie de filosofía y Budo, Complete técnico/histórico escrito, reconocimiento visual de Katas superiores, normativa deportiva WKF y ensayo ético.",
     "questions": [
         {
-            "id": "exam-2k-q1",
+            "id": "e2k-q1",
             "type": "multiple_choice",
             "prompt": "1. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'BUSHIDO'?",
-            "description": "Asocie de terminología marcial (Filosofía)",
+            "description": "Código ético samurái",
             "options": [
                 {
                     "id": "o1",
@@ -2593,39 +2206,34 @@ export const EXAM_KYU_2_TO_1: BeltExamConfig = {
                 },
                 {
                     "id": "o2",
-                    "text": "Kata obligatoria",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Camino de la mano vacía",
+                    "text": "Kata obligatorio",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Tabla para dar puñetazos",
+                    "text": "Tabla para golpear",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "Cinta negra",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Bushido (武士道): 'El camino del guerrero', código ético y moral de honor, lealtad y rectitud samurai.",
-            "hint": "El camino del guerrero samurai."
+            "explanation": "Bushido (武士道): Código moral y de honor que regía la vida y conducta de la casta samurái.",
+            "hint": "La vía del honor del guerrero japonés."
         },
         {
-            "id": "exam-2k-q2",
+            "id": "e2k-q2",
             "type": "multiple_choice",
             "prompt": "2. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SHITEI KATA'?",
-            "description": "Asocie de terminología marcial (Competición)",
+            "description": "Normativa de competición",
             "options": [
                 {
                     "id": "o1",
-                    "text": "Kata obligatoria",
+                    "text": "Kata obligatorio de competición",
                     "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Kata favorita",
-                    "isCorrect": false
                 },
                 {
                     "id": "o3",
@@ -2634,826 +2242,700 @@ export const EXAM_KYU_2_TO_1: BeltExamConfig = {
                 },
                 {
                     "id": "o4",
-                    "text": "Tabla para dar puñetazos",
+                    "text": "Cinturón negro",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Kata libre favorito",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Shitei Kata (指定形): Katas obligatorios reglamentarios designados en torneos para rondas clasificatorias.",
-            "hint": "Kata obligatorio de torneo."
+            "explanation": "Shitei Kata (指定形) son los katas obligatorios reglamentarios en las primeras rondas de torneos.",
+            "hint": "Katas designados oficialmente por sorteo o ronda obligatoria."
         },
         {
-            "id": "exam-2k-q3",
+            "id": "e2k-q3",
             "type": "multiple_choice",
-            "prompt": "3. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KARATE DO'?",
-            "description": "Asocie de terminología marcial (Disciplina)",
+            "prompt": "3. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KARATEDO'?",
+            "description": "Filosofía",
             "options": [
+                {
+                    "id": "o2",
+                    "text": "El camino del guerrero",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o4",
+                    "text": "Matar de un golpe",
+                    "isCorrect": false
+                },
                 {
                     "id": "o1",
                     "text": "Camino de la mano vacía",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Kata favorita",
-                    "isCorrect": false
-                },
-                {
                     "id": "o3",
-                    "text": "El camino del guerrero",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Kata obligatoria",
+                    "text": "Kata obligatorio",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Karate-Do: Camino de la mano desarmada y vacía de intenciones violentas o ego.",
-            "hint": "Camino de la mano vacía."
+            "explanation": "Karatedo (空手道) es la vía marcial de defensa con el cuerpo desarmado y el espíritu desprovisto de malicia.",
+            "hint": "Vía de la mano sin armas."
         },
         {
-            "id": "exam-2k-q4",
+            "id": "e2k-q4",
             "type": "multiple_choice",
             "prompt": "4. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'TOKUI KATA'?",
-            "description": "Asocie de terminología marcial (Competición)",
+            "description": "Especialización técnica",
             "options": [
                 {
                     "id": "o1",
-                    "text": "Kata favorita",
+                    "text": "Kata favorito o de libre elección",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Kata obligatoria",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
+                    "id": "o4",
                     "text": "El camino del guerrero",
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
-                    "text": "Tabla para dar puñetazos",
+                    "id": "o2",
+                    "text": "Kata obligatorio",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "Tabla de golpeo",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Tokui Kata (得意形): Kata de libre elección o forma predilecta en la que el practicante destaca al máximo.",
-            "hint": "Kata favorita o de elección personal."
+            "explanation": "Tokui Kata (得意形) es el kata de máxima maestría y predilección personal que el karateka escoge para finales.",
+            "hint": "La forma predilecta del competidor."
         },
         {
-            "id": "exam-2k-q5",
+            "id": "e2k-q5",
             "type": "multiple_choice",
             "prompt": "5. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'MAKIWARA'?",
-            "description": "Asocie de terminología marcial (Acondicionamiento)",
+            "description": "Acondicionamiento tradicional",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Tabla para dar puñetazos",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Kata obligatoria",
-                    "isCorrect": false
-                },
-                {
                     "id": "o3",
-                    "text": "Kata favorita",
+                    "text": "Kata obligatorio",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "El camino del guerrero",
+                    "text": "Camino del guerrero",
                     "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Meditación zen",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Tabla para golpear y forjar los puños",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Makiwara (巻藁): Poste tradicional de madera con cuerda o almohadilla para acondicionar los nudillos y entrenar el Kime.",
-            "hint": "Poste o tabla tradicional de golpeo."
+            "explanation": "Makiwara (巻藁) es el poste de madera tradicional almohadillado usado para acondicionar puños y afinar el impacto.",
+            "hint": "Instrumento okinawense de golpeo."
         },
         {
-            "id": "exam-2k-q6",
+            "id": "e2k-q6",
             "type": "multiple_choice",
             "prompt": "6. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'ZAZEN'?",
-            "description": "Asocie de terminología marcial (Meditación)",
+            "description": "Práctica zen",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Zen sentado",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "Estado de concentración",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Cortar el hara",
+                    "text": "Matar de un golpe",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Matar en un solo golpe",
+                    "text": "Cinturón negro",
                     "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "Corte del vientre",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Meditación zen sentado",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Zazen (座禅): Práctica de meditación sentada en postura de loto o Seiza para alcanzar la serenidad y presencia plena.",
-            "hint": "Zen sentado."
+            "explanation": "Zazen (座禅) es la práctica de meditación sentada para alcanzar calma mental y presencia plena.",
+            "hint": "Sentarse en quietud contemplativa."
         },
         {
-            "id": "exam-2k-q7",
+            "id": "e2k-q7",
             "type": "multiple_choice",
             "prompt": "7. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'IPPON KEN'?",
-            "description": "Asocie de terminología marcial (Arma natural)",
+            "description": "Armas corporales",
             "options": [
                 {
                     "id": "o1",
-                    "text": "Puño de un nudillo",
+                    "text": "Puño con nudillo del dedo índice sobresaliente",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Matar en un solo golpe",
+                    "id": "o3",
+                    "text": "Patada de gato",
                     "isCorrect": false
                 },
                 {
-                    "id": "o3",
-                    "text": "Cortar el hara",
+                    "id": "o2",
+                    "text": "Puño de martillo",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Zen sentado",
+                    "text": "Matar de un golpe",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Ippon Ken (一本拳): Puño con el segundo nudillo del índice sobresaliendo firmemente para atacar puntos vitales.",
-            "hint": "Puño con un solo nudillo."
+            "explanation": "Ippon-Ken (一本拳) concentra la fuerza en un único nudillo saliente para atacar puntos vitales.",
+            "hint": "Puño de un solo nudillo prominente."
         },
         {
-            "id": "exam-2k-q8",
+            "id": "e2k-q8",
             "type": "multiple_choice",
             "prompt": "8. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'IKKEN HISSATSU'?",
-            "description": "Asocie de terminología marcial (Principio clásico)",
+            "description": "Principio terminal",
             "options": [
                 {
                     "id": "o1",
-                    "text": "Matar en un solo golpe",
+                    "text": "Vencer o abatir de un solo golpe decisivo",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Cortar el hara",
+                    "id": "o4",
+                    "text": "Entrenar juntos",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Puño de un nudillo",
+                    "text": "Corte del vientre",
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
-                    "text": "Estado de concentración",
+                    "id": "o2",
+                    "text": "Meditación zen",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Ikken Hissatsu (一拳必殺): 'Vencer o aniquilar de un solo golpe'; máxima concentración de Kime para neutralizar la agresión al instante.",
-            "hint": "Un solo golpe decisivo."
+            "explanation": "Ikken Hissatsu (一拳必殺): Máxima del Karate clásico que exige que cada técnica sea ejecutada con tal plenitud que decida el combate.",
+            "hint": "Un golpe, victoria definitiva."
         },
         {
-            "id": "exam-2k-q9",
+            "id": "e2k-q9",
             "type": "multiple_choice",
             "prompt": "9. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SEPPUKU'?",
-            "description": "Asocie de terminología marcial (Cultura samurai)",
+            "description": "Tradición samurái",
             "options": [
                 {
                     "id": "o1",
-                    "text": "Cortar el hara",
+                    "text": "Corte del vientre / Harakiri ritual",
                     "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "Matar en un solo golpe",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Estado de concentración",
+                    "text": "Cinturón negro",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Zen sentado",
+                    "text": "Alojarse juntos",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "Matar de un golpe",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Seppuku (切腹): Ritual de honor samurai consistente en cortar el Hara para preservar la dignidad y rectitud ética.",
-            "hint": "Cortar el hara."
+            "explanation": "Seppuku (切腹) era el suicidio ritual samurái para preservar el honor ante la derrota o deshonra.",
+            "hint": "El ritual solemne de honor samurái."
         },
         {
-            "id": "exam-2k-q10",
+            "id": "e2k-q10",
             "type": "multiple_choice",
             "prompt": "10. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'ZEN'?",
-            "description": "Asocie de terminología marcial (Filosofía)",
+            "description": "Filosofía oriental",
             "options": [
                 {
+                    "id": "o2",
+                    "text": "Puño de hierro",
+                    "isCorrect": false
+                },
+                {
                     "id": "o1",
-                    "text": "Estado de concentración",
+                    "text": "Estado de concentración y vacío mental",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Cortar el hara",
+                    "id": "o4",
+                    "text": "Corte del vientre",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "Matar en un solo golpe",
+                    "text": "Tabla de golpeo",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Zen (禅) es la escuela budista que enfatiza la iluminación a través de la meditación y la acción directa sin apego.",
+            "hint": "Serenidad y atención sin distracciones."
+        },
+        {
+            "id": "e2k-q11",
+            "type": "multiple_choice",
+            "prompt": "11. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'DAN'?",
+            "description": "Graduación avanzada",
+            "options": [
+                {
+                    "id": "o1",
+                    "text": "Rango de grado de cinta negra",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o4",
+                    "text": "Kata obligatorio",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "De menor antigüedad",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Cinta blanca",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Dan (段) designa los niveles de maestría a partir del cinturón negro (Shodan a Judan).",
+            "hint": "Nivel de cinturón negro."
+        },
+        {
+            "id": "e2k-q12",
+            "type": "multiple_choice",
+            "prompt": "12. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'GASSHUKU'?",
+            "description": "Convivencia marcial",
+            "options": [
+                {
+                    "id": "o3",
+                    "text": "Técnica decisiva",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Corte del vientre",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
+                    "text": "Cinturón negro",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Alojarse y entrenar juntos en concentración intensiva",
+                    "isCorrect": true
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Gasshuku (合宿) es el campamento intensivo donde maestros y alumnos conviven y entrenan bajo el mismo techo.",
+            "hint": "Retiro o campamento colectivo de entrenamiento."
+        },
+        {
+            "id": "e2k-q13",
+            "type": "multiple_choice",
+            "prompt": "13. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SAMURAI'?",
+            "description": "Historia japonesa",
+            "options": [
+                {
+                    "id": "o4",
+                    "text": "Campesino",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Monje pacífico",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Clase militar del Japón feudal",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o3",
+                    "text": "Árbitro deportivo",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Samurái (侍): Miembro de la nobleza militar del Japón feudal regido por la lealtad y el honor.",
+            "hint": "El guerrero feudal japonés."
+        },
+        {
+            "id": "e2k-q14",
+            "type": "multiple_choice",
+            "prompt": "14. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'TETSUI'?",
+            "description": "Armas corporales",
+            "options": [
+                {
+                    "id": "o3",
+                    "text": "Espíritu que perdura",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Puño de martillo de hierro",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o2",
                     "text": "Puño de un nudillo",
                     "isCorrect": false
+                },
+                {
+                    "id": "o4",
+                    "text": "Cinturón negro",
+                    "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Zen (禅): Corriente espiritual budista enfocada en la atención consciente, concentración profunda y mente vacía de distracciones.",
-            "hint": "Estado de concentración plena."
+            "explanation": "Tetsui (鉄槌) golpea con la base carnosa del puño cerrado simulando un martillo de hierro.",
+            "hint": "Golpe con la base o canto del puño cerrado."
         },
         {
-            "id": "exam-2k-q11",
+            "id": "e2k-q15",
             "type": "multiple_choice",
-            "prompt": "11. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'MAWATTE'?",
-            "description": "Asocie de terminología marcial (Comandos)",
+            "prompt": "15. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KIME-WAZA'?",
+            "description": "Eficacia marcial",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Vuelta",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Primero",
+                    "id": "o4",
+                    "text": "Patada de gato",
                     "isCorrect": false
                 },
                 {
+                    "id": "o1",
+                    "text": "Técnica decisiva con máxima concentración de fuerza",
+                    "isCorrect": true
+                },
+                {
                     "id": "o3",
-                    "text": "Gato",
+                    "text": "Vuelta completa",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Saludo formal",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Kime-waza (決め技) es la técnica ejecutada con enfoque terminal capaz de neutralizar la agresión.",
+            "hint": "Técnica terminal y concluyente."
+        },
+        {
+            "id": "e2k-q16",
+            "type": "multiple_choice",
+            "prompt": "16. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'ZANSHIN'?",
+            "description": "Conciencia marcial",
+            "options": [
+                {
+                    "id": "o4",
+                    "text": "Puño de martillo",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "El espíritu que perdura / Alerta continua post-técnica",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o3",
+                    "text": "Cinturón negro",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Corte del vientre",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Zanshin (残心) es la actitud de calma y vigilancia ininterrumpida que se mantiene antes, durante y después del ataque.",
+            "hint": "Mente atenta que no se relaja tras el golpe."
+        },
+        {
+            "id": "e2k-q17",
+            "type": "multiple_choice",
+            "prompt": "17. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'MAWATTE'?",
+            "description": "Comandos de tatami",
+            "options": [
+                {
+                    "id": "o2",
+                    "text": "Detenerse",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Cinta negra",
+                    "text": "Sentarse",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Giro / Vuelta",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o3",
+                    "text": "Avanzar",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Mawatte (回って): Comando para girar 180° sobre los talones y cambiar de dirección.",
-            "hint": "Girar o dar la vuelta."
+            "explanation": "Mawatte (回って) es la orden para girar o cambiar de frente en el Kihon y los Katas.",
+            "hint": "Comando de giro o media vuelta."
         },
         {
-            "id": "exam-2k-q12",
+            "id": "e2k-q18",
             "type": "multiple_choice",
-            "prompt": "12. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KURO OBI'?",
-            "description": "Asocie de terminología marcial (Indumentaria de maestría)",
+            "prompt": "18. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KURO OBI'?",
+            "description": "Indumentaria",
             "options": [
                 {
+                    "id": "o3",
+                    "text": "Cinturón café",
+                    "isCorrect": false
+                },
+                {
                     "id": "o1",
-                    "text": "Cinta negra",
+                    "text": "Cinturón negro",
                     "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "Rango de cinturón negro",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Primero",
+                    "text": "Cinturón blanco",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Gato",
+                    "text": "Uniforme negro",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Kuro Obi (黒帯): Cinturón negro que visten los practicantes graduados con grado Dan.",
-            "hint": "Cinta o cinturón negro."
+            "explanation": "Kuro Obi (黒帯) es el cinturón negro que simboliza la consagración de los fundamentos.",
+            "hint": "La cinta negra de maestría."
         },
         {
-            "id": "exam-2k-q13",
+            "id": "e2k-q19",
             "type": "multiple_choice",
-            "prompt": "13. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'NEKO'?",
-            "description": "Asocie de terminología marcial (Posturas y animales)",
+            "prompt": "19. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'NEKO'?",
+            "description": "Posiciones zoomorfas",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "Gato",
-                    "isCorrect": true
+                    "id": "o3",
+                    "text": "Águila",
+                    "isCorrect": false
                 },
                 {
                     "id": "o2",
-                    "text": "Vuelta",
+                    "text": "Tigre",
                     "isCorrect": false
                 },
-                {
-                    "id": "o3",
-                    "text": "Primero",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Cinta negra",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Neko (猫): Gato; raíz de la postura Neko-Ashi-Dachi (postura del pie de gato).",
-            "hint": "Gato."
-        },
-        {
-            "id": "exam-2k-q14",
-            "type": "multiple_choice",
-            "prompt": "14. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'HITOTSU'?",
-            "description": "Asocie de terminología marcial (Dojo Kun)",
-            "options": [
                 {
                     "id": "o1",
-                    "text": "Primero",
+                    "text": "Gato (como en Neko-ashi-dachi)",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Vuelta",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Gato",
-                    "isCorrect": false
-                },
-                {
                     "id": "o4",
-                    "text": "Cinta negra",
+                    "text": "Dragón",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Hitotsu (一つ): 'Primero'; se antepone a cada una de las 5 normas del Dojo Kun para indicar que todas tienen la máxima prioridad.",
-            "hint": "Primero."
+            "explanation": "Neko (猫) significa gato; Neko-ashi-dachi es la postura elástica del pie de gato con el 90% del peso en la pierna trasera.",
+            "hint": "El felino ágil que inspira la postura de guardia corta."
         },
         {
-            "id": "exam-2k-q15",
+            "id": "e2k-q20",
             "type": "multiple_choice",
-            "prompt": "15. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'DAN'?",
-            "description": "Asocie de terminología marcial (Grados)",
+            "prompt": "20. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'HITOSU'?",
+            "description": "Estructura del Dojo Kun",
             "options": [
                 {
                     "id": "o1",
-                    "text": "Rango de cinturón negro",
+                    "text": "Primero / Uno (lema que encabeza cada precepto)",
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "Cinta negra",
+                    "id": "o3",
+                    "text": "Segundo",
                     "isCorrect": false
                 },
                 {
-                    "id": "o3",
-                    "text": "Vuelta",
+                    "id": "o2",
+                    "text": "Último",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "Primero",
+                    "text": "Tercero",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Dan (段): Peldaño, nivel o grado de maestría para cinturones negros (desde Shodan 1° Dan en adelante).",
-            "hint": "Grado de cinturón negro."
+            "explanation": "Hitosu (一つ) precede cada uno de los 5 preceptos del Dojo Kun para indicar que todos tienen la misma importancia primordial.",
+            "hint": "La palabra con la que inicia cada frase del Dojo Kun."
         },
         {
-            "id": "exam-2k-q16",
-            "type": "multiple_choice",
-            "prompt": "16. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'GASSHUKO'?",
-            "description": "Asocie de terminología marcial (Entrenamiento)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Alojarse juntos",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Clase militar del Japón feudal",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Martillo de hierro",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "El espíritu que perdura",
-                    "isCorrect": false
-                }
+            "id": "e2k-q21",
+            "type": "written",
+            "prompt": "21. COMPLETE: Escriba el significado de 'KARATEDO SHOTOKAN':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "mano vacia",
+                "shoto",
+                "ondas de los pinos",
+                "casa de shoto",
+                "camino de la mano vacia"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Gasshuko (合宿): Convivencia o campamento de entrenamiento intensivo donde los practicantes se alojan y entrenan juntos.",
-            "hint": "Alojarse juntos en campamento."
+            "sampleAnswer": "El camino de la mano vacía de la escuela de las ondas de los pinos (Shoto = seudónimo de Funakoshi, Kan = casa/escuela, Kara = vacío, Te = mano, Do = camino).",
+            "isEssay": false,
+            "explanation": "Sintetiza la disciplina ética del vacío físico y mental enseñada en la escuela tradicional fundada por Funakoshi.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-2k-q17",
-            "type": "multiple_choice",
-            "prompt": "17. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'SAMURAI'?",
-            "description": "Asocie de terminología marcial (Historia)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Clase militar del Japón feudal",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Alojarse juntos",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Técnica decisiva",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "El espíritu que perdura",
-                    "isCorrect": false
-                }
+            "id": "e2k-q22",
+            "type": "written",
+            "prompt": "22. COMPLETE: Escriba el significado del Kata 'HANGETSU':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "media luna",
+                "mitad de la luna",
+                "semicirculo"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Samurai (侍): Miembro de la casta guerrera y aristocracia militar del Japón feudal, regida por el Bushido.",
-            "hint": "Guerrero militar feudal."
+            "sampleAnswer": "Media luna (debido a los desplazamientos semicirculares y la postura Hangetsu-dachi).",
+            "isEssay": false,
+            "explanation": "Hangetsu (半月) es uno de los katas más antiguos de origen Naha-Te, focalizado en respiración profunda (Ibuki) y tensión isométrica.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-2k-q18",
-            "type": "multiple_choice",
-            "prompt": "18. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'TETTSUI'?",
-            "description": "Asocie de terminología marcial (Arma natural)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Martillo de hierro",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Alojarse juntos",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Clase militar del Japón feudal",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "El espíritu que perdura",
-                    "isCorrect": false
-                }
+            "id": "e2k-q23",
+            "type": "written",
+            "prompt": "23. COMPLETE: Escriba el significado del Kata 'JION':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "amor y bondad",
+                "templo jion",
+                "piedad",
+                "templo",
+                "bondad",
+                "compasion"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Tettsui (鉄槌): Golpe de puño de martillo con el borde cubital carnoso de la mano cerrada.",
-            "hint": "Martillo de hierro."
+            "sampleAnswer": "Amor y bondad (o Sonido del Templo budista Jion-ji).",
+            "isEssay": false,
+            "explanation": "Jion (慈恩) proviene de las formas de Tomari-Te; inicia con el saludo Ming (mano cerrada y mano abierta) en señal de respeto y devoción budista.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-2k-q19",
-            "type": "multiple_choice",
-            "prompt": "19. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'KIME WAZA'?",
-            "description": "Asocie de terminología marcial (Concepto biomecánico)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Técnica decisiva",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Alojarse juntos",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Martillo de hierro",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Clase militar del Japón feudal",
-                    "isCorrect": false
-                }
+            "id": "e2k-q24",
+            "type": "written",
+            "prompt": "24. COMPLETE: Escriba el nombre del Jefe Instructor de la federación ISKF:",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "teruyuki okazaki",
+                "hiroyoshi okazaki",
+                "okazaki",
+                "sensei okazaki"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Kime Waza: La ejecución y culminación de una técnica de forma contundente y decisiva.",
-            "hint": "Técnica decisiva con foco."
+            "sampleAnswer": "Maestro Teruyuki Okazaki (Fundador) / Hiroyoshi Okazaki (Jefe Instructor actual).",
+            "isEssay": false,
+            "explanation": "La ISKF es una de las mayores federaciones internacionales de Shotokan tradicional a nivel mundial.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-2k-q20",
-            "type": "multiple_choice",
-            "prompt": "20. TERMINOLOGÍA: Según el examen oficial, ¿cuál es el significado de 'ZANSHIN'?",
-            "description": "Asocie de terminología marcial (Estado mental)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "El espíritu que perdura",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Alojarse juntos",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Martillo de hierro",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Técnica decisiva",
-                    "isCorrect": false
-                }
+            "id": "e2k-q25",
+            "type": "written",
+            "prompt": "25. COMPLETE: Escriba el significado de 'JIYU KUMITE':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "combate libre",
+                "pelea libre",
+                "combate sin predeterminar",
+                "libre"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Zanshin (残心): Estado de alerta serena y mente atenta que permanece activo tras ejecutar cualquier acción marcial.",
-            "hint": "El espíritu que perdura en alerta."
+            "sampleAnswer": "Combate libre (combate dinámico sin técnicas predeterminadas pero con control total de impacto).",
+            "isEssay": false,
+            "explanation": "Jiyu Kumite pone a prueba la improvisación, el timing, la lectura de intenciones y la serenidad bajo presión de combate.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-2k-q21",
-            "type": "multiple_choice",
-            "prompt": "21. COMPLETE: ¿Cuál es el significado de 'KARATE DO SHOTOKAN'?",
-            "description": "Complete (1 Punto) - Nombre formal completo",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "El camino de la mano vacía de la escuela o casa de Shoto",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "El arte de luchar con espada de la corte",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Defensa militar del emperador",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "La escuela de boxeo rápido",
-                    "isCorrect": false
-                }
+            "id": "e2k-q26",
+            "type": "written",
+            "prompt": "26. COMPLETE: Escriba el significado de 'CHAKUGAN':",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "mirada",
+                "contacto visual",
+                "fijacion de la mirada",
+                "fijar la mirada",
+                "ojos"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Karate (mano vacía), Do (camino espiritual), Shotokan (la escuela de Shoto, en honor a Funakoshi).",
-            "hint": "Mano vacía de la escuela de Shoto."
+            "sampleAnswer": "Fijación y enfoque de la mirada (contacto visual constante con los ojos del adversario).",
+            "isEssay": false,
+            "explanation": "Chakugan (着眼) enseña a mirar los ojos del oponente abarcando todo su cuerpo en visión periférica sin delatar intenciones.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-2k-q22",
-            "type": "multiple_choice",
-            "prompt": "22. COMPLETE: ¿Cuál es el significado del Kata 'HANGETSU'?",
-            "description": "Complete (1 Punto) - Kata tradicional",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Media luna",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Sol brillante",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "El vuelo del halcón",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Romper la piedra",
-                    "isCorrect": false
-                }
+            "id": "e2k-q27",
+            "type": "written",
+            "prompt": "27. COMPLETE: Escriba los 4 estilos oficiales tradicionales de Karate Do reconocidos internacionalmente por la WKF:",
+            "description": "Respuesta escrita de grado (1 Punto)",
+            "acceptedKeywords": [
+                "shotokan",
+                "shito",
+                "goju",
+                "wado",
+                "shito ryu",
+                "goju ryu",
+                "wado ryu"
             ],
-            "correctAnswerId": "o1",
-            "explanation": "Hangetsu (半月) significa 'Media luna', por la trayectoria circular de los pasos y la postura semicircular Hangetsu-dachi.",
-            "hint": "Media luna."
+            "sampleAnswer": "Shotokan, Shito-Ryu, Goju-Ryu y Wado-Ryu.",
+            "isEssay": false,
+            "explanation": "Los cuatro estilos matrices fundados respectivamente por Funakoshi, Mabuni, Miyagi y Otsuka.",
+            "hint": "Escriba los términos o palabras clave correspondientes."
         },
         {
-            "id": "exam-2k-q23",
+            "id": "e2k-q28",
             "type": "multiple_choice",
-            "prompt": "23. COMPLETE: ¿Cuál es el significado del Kata 'JION'?",
-            "description": "Complete (1 Punto) - Kata tradicional",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Amor y compasión / Nombre del templo budista Jion-ji",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Guerrero de la tormenta",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Media luna",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Paso de la montaña",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Jion (慈恩) significa 'Amor, piedad y gratitud filial'; se vincula al templo budista clásico Jion-ji.",
-            "hint": "Amor y compasión o templo budista."
-        },
-        {
-            "id": "exam-2k-q24",
-            "type": "multiple_choice",
-            "prompt": "24. COMPLETE: ¿Quién es el Jefe Instructor de la federación ISKF?",
-            "description": "Complete (1 Punto) - Liderazgo internacional",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Master Teruyuki Okazaki / Master Hiroyoshi Okazaki",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Miyamoto Musashi",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Jigoro Kano",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Kenwa Mabuni",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "La ISKF mantiene la línea técnica directa de Master Teruyuki Okazaki y Master Hiroyoshi Okazaki.",
-            "hint": "Maestros Okazaki."
-        },
-        {
-            "id": "exam-2k-q25",
-            "type": "multiple_choice",
-            "prompt": "25. COMPLETE: ¿Cuál es el significado de 'JIYU KUMITE'?",
-            "description": "Complete (1 Punto) - Modalidad de combate",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Combate libre",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Combate a tres pasos predeterminados",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Combate con armas tradicionales",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Solo bloqueos en Seiza",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Jiyu Kumite (自由組手): Combate libre donde ambos oponentes aplican libremente técnicas con control Sundome.",
-            "hint": "Combate libre."
-        },
-        {
-            "id": "exam-2k-q26",
-            "type": "multiple_choice",
-            "prompt": "26. COMPLETE: ¿Cuál es el significado de 'CHAKUGAN'?",
-            "description": "Complete (1 Punto) - Principio ocular marcial",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Punto de enfoque visual / fijación de la mirada",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Salto con rodillazo",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Cinturón de seda",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Caída sobre el tatami",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Chakugan (着眼): La mirada atenta y el punto de fijación visual (Metsuke) para anticipar los movimientos del adversario.",
-            "hint": "Fijación y enfoque de la mirada."
-        },
-        {
-            "id": "exam-2k-q27",
-            "type": "multiple_choice",
-            "prompt": "27. COMPLETE: ¿Cuáles son los 4 estilos oficiales tradicionales de Karate Do reconocidos internacionalmente por la WKF?",
-            "description": "Complete (4 Puntos) - Las 4 grandes escuelas",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Shotokan, Goju-Ryu, Shito-Ryu y Wado-Ryu",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Kyokushin, Capoeira, Taekwondo y Kung Fu",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Judo, Aikido, Kendo y Kudo",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Muay Thai, Krav Maga, Jiu-Jitsu y Sambo",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "La WKF reconoce formalmente a las 4 ramas matrices: Shotokan (Funakoshi), Goju-Ryu (Miyagi), Shito-Ryu (Mabuni) y Wado-Ryu (Otsuka).",
-            "hint": "Shotokan, Goju-Ryu, Shito-Ryu y Wado-Ryu."
-        },
-        {
-            "id": "exam-2k-q28",
-            "type": "multiple_choice",
-            "prompt": "28. ASOCIE KATAS: ¿En cuál Kata se encuentra la posición que se muestra en la imagen oficial?",
-            "description": "Identificación de Katas Superiores (1 Punto)",
-            "image": "/images/didactic/exams/kata_jion.png",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "JION",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "HANGETSU",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "KANKU DAI",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "TEKKI NIDAN",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Jion: Saludo inicial con brazos cruzados cubriendo el pecho (Kosa-Uke) y pies paralelos.",
-            "hint": "Brazos cruzados en guardia solemne inicial."
-        },
-        {
-            "id": "exam-2k-q29",
-            "type": "multiple_choice",
-            "prompt": "29. ASOCIE KATAS: ¿En cuál Kata se encuentra la posición que se muestra en la imagen oficial?",
-            "description": "Identificación de Katas Superiores (1 Punto)",
+            "prompt": "28. KATAS: ¿En cuál Kata oficial se encuentra la posición que se muestra en la imagen?",
+            "description": "Identificación visual de Kata",
             "image": "/images/didactic/exams/kata_hangetsu.png",
             "options": [
                 {
@@ -3462,94 +2944,62 @@ export const EXAM_KYU_2_TO_1: BeltExamConfig = {
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "BASSAI DAI",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "ENPI",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "JION",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Hangetsu: Postura semicircular en Hangetsu-dachi con puños al frente y respiración profunda.",
-            "hint": "Postura en media luna con puños al frente."
-        },
-        {
-            "id": "exam-2k-q30",
-            "type": "multiple_choice",
-            "prompt": "30. ASOCIE KATAS: ¿En cuál Kata se encuentra la posición que se muestra en la imagen oficial?",
-            "description": "Identificación de Katas Superiores (1 Punto)",
-            "image": "/images/didactic/exams/kata_bassai_dai.png",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "BASSAI DAI",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "JION",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "TEKKI NIDAN",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "ENPI",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Bassai Dai: Ejecución de Manji-Uke / Yama-Zuki en Kokutsu-dachi mirando hacia el flanco.",
-            "hint": "Defensa doble característica en Kokutsu-dachi."
-        },
-        {
-            "id": "exam-2k-q31",
-            "type": "multiple_choice",
-            "prompt": "31. ASOCIE KATAS: ¿En cuál Kata se encuentra la posición que se muestra en la imagen oficial?",
-            "description": "Identificación de Katas Superiores (1 Punto)",
-            "image": "/images/didactic/exams/kata_enpi.png",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "ENPI",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "HANGETSU",
-                    "isCorrect": false
-                },
-                {
                     "id": "o3",
                     "text": "KANKU DAI",
                     "isCorrect": false
                 },
                 {
+                    "id": "o2",
+                    "text": "JION",
+                    "isCorrect": false
+                },
+                {
                     "id": "o4",
+                    "text": "TEKKI NIDAN",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Hangetsu: Paso semicircular característico con postura Hangetsu-dachi y respiración concentrada.",
+            "hint": "Katas de pasos semicirculares de media luna."
+        },
+        {
+            "id": "e2k-q29",
+            "type": "multiple_choice",
+            "prompt": "29. KATAS: ¿En cuál Kata oficial se encuentra la posición que se muestra en la imagen?",
+            "description": "Identificación visual de Kata",
+            "image": "/images/didactic/exams/kata_jion.png",
+            "options": [
+                {
+                    "id": "o2",
+                    "text": "ENPI",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "JION",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o4",
+                    "text": "HANGETSU",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
                     "text": "BASSAI DAI",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Enpi: Postura en piernas cruzadas (Kosa-dachi) con codos laterales elevados (doble golpe de codo).",
-            "hint": "Kosa-dachi con codos laterales."
+            "explanation": "Jion: Saludo budista inicial de puño cubierto (Jiai no kamae) y desplazamientos firmes en Kiba y Zenkutsu.",
+            "hint": "Katas del templo Jion con saludo inicial de puño cubierto."
         },
         {
-            "id": "exam-2k-q32",
+            "id": "e2k-q30",
             "type": "multiple_choice",
-            "prompt": "32. ASOCIE KATAS: ¿En cuál Kata se encuentra la posición que se muestra en la imagen oficial?",
-            "description": "Identificación de Katas Superiores (1 Punto)",
+            "prompt": "30. KATAS: ¿En cuál Kata oficial se encuentra la posición que se muestra en la imagen?",
+            "description": "Identificación visual de Kata",
             "image": "/images/didactic/exams/kata_kanku_dai.png",
             "options": [
                 {
@@ -3558,36 +3008,9 @@ export const EXAM_KYU_2_TO_1: BeltExamConfig = {
                     "isCorrect": true
                 },
                 {
-                    "id": "o2",
-                    "text": "JION",
-                    "isCorrect": false
-                },
-                {
                     "id": "o3",
-                    "text": "TEKKI NIDAN",
+                    "text": "ENPI",
                     "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "HANGETSU",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Kanku Dai: Gesto emblemático de apertura elevando ambas manos juntas hacia el cielo formando un triángulo.",
-            "hint": "Manos elevadas mirando al cielo."
-        },
-        {
-            "id": "exam-2k-q33",
-            "type": "multiple_choice",
-            "prompt": "33. ASOCIE KATAS: ¿En cuál Kata se encuentra la posición que se muestra en la imagen oficial?",
-            "description": "Identificación de Katas Superiores (1 Punto)",
-            "image": "/images/didactic/exams/kata_tekki_nidan.png",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "TEKKI NIDAN",
-                    "isCorrect": true
                 },
                 {
                     "id": "o2",
@@ -3595,360 +3018,411 @@ export const EXAM_KYU_2_TO_1: BeltExamConfig = {
                     "isCorrect": false
                 },
                 {
-                    "id": "o3",
+                    "id": "o4",
+                    "text": "TEKKI NIDAN",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Kanku Dai: Gesto majestuoso de apertura mirando el cielo a través del triángulo de las manos.",
+            "hint": "Apertura contemplando el cielo."
+        },
+        {
+            "id": "e2k-q31",
+            "type": "multiple_choice",
+            "prompt": "31. KATAS: ¿En cuál Kata oficial se encuentra la posición que se muestra en la imagen?",
+            "description": "Identificación visual de Kata",
+            "image": "/images/didactic/exams/kata_tekki_nidan.png",
+            "options": [
+                {
+                    "id": "o4",
                     "text": "ENPI",
                     "isCorrect": false
                 },
                 {
+                    "id": "o1",
+                    "text": "TEKKI NIDAN",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o2",
+                    "text": "HANGETSU",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "JION",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Tekki Nidan: Guardia característica con codo arriba y trabajo de Kiba-dachi sobre línea lateral.",
+            "hint": "Jinete de hierro nivel 2."
+        },
+        {
+            "id": "e2k-q32",
+            "type": "multiple_choice",
+            "prompt": "32. KATAS: ¿En cuál Kata oficial se encuentra la posición que se muestra en la imagen?",
+            "description": "Identificación visual de Kata",
+            "image": "/images/didactic/exams/kata_enpi.png",
+            "options": [
+                {
+                    "id": "o1",
+                    "text": "ENPI",
+                    "isCorrect": true
+                },
+                {
                     "id": "o4",
+                    "text": "BASSAI DAI",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
                     "text": "KANKU DAI",
                     "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Tekki Nidan: Cruce lateral de pies y deslizamiento de apoyo en Kiba-dachi (Kosa-dachi lateral).",
-            "hint": "Paso lateral de pies en Tekki."
-        },
-        {
-            "id": "exam-2k-q34",
-            "type": "multiple_choice",
-            "prompt": "34. ASOCIE WKF: En el sistema de arbitraje WKF, ¿a cuántos puntos equivale un 'IPPON'?",
-            "description": "Puntuación de Kumite WKF (1 Punto)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "3 PUNTOS",
-                    "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "2 PUNTOS",
+                    "text": "JION",
                     "isCorrect": false
-                },
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Enpi: Movimiento ágil de elevación y descenso súbito característico de la golondrina.",
+            "hint": "El vuelo de la golondrina."
+        },
+        {
+            "id": "e2k-q33",
+            "type": "multiple_choice",
+            "prompt": "33. KATAS: ¿En cuál Kata oficial se encuentra la posición que se muestra en la imagen?",
+            "description": "Identificación visual de Kata",
+            "image": "/images/didactic/exams/kata_bassai_dai.png",
+            "options": [
                 {
-                    "id": "o3",
-                    "text": "1 PUNTO",
+                    "id": "o2",
+                    "text": "HANGETSU",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "PISO",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Ippon (3 puntos) se otorga por patadas a nivel Jodan (cabeza/cuello) o cualquier técnica válida sobre un rival derribado en el suelo.",
-            "hint": "Tres puntos."
-        },
-        {
-            "id": "exam-2k-q35",
-            "type": "multiple_choice",
-            "prompt": "35. ASOCIE WKF: En el sistema de arbitraje WKF, ¿a cuántos puntos equivale un 'WAZA-RI'?",
-            "description": "Puntuación de Kumite WKF (1 Punto)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "2 PUNTOS",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "3 PUNTOS",
+                    "text": "ENPI",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "1 PUNTO",
+                    "text": "TEKKI NIDAN",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "BASSAI DAI",
+                    "isCorrect": true
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Bassai Dai: Potente avance de ruptura con Morote Tsukami-Uke y Yama-Zuki penetrando la fortaleza.",
+            "hint": "Penetrar en la fortaleza con máxima fuerza."
+        },
+        {
+            "id": "e2k-q34",
+            "type": "multiple_choice",
+            "prompt": "34. WKF: Según el reglamento oficial de competición, ¿cuántos puntos otorga el 'YUKO'?",
+            "description": "Puntuación de Kumite WKF",
+            "options": [
+                {
+                    "id": "o2",
+                    "text": "2 Puntos",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "PISO",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Waza-ari (2 puntos) se otorga por patadas a nivel Chudan (abdomen, torso o espalda).",
-            "hint": "Dos puntos."
-        },
-        {
-            "id": "exam-2k-q36",
-            "type": "multiple_choice",
-            "prompt": "36. ASOCIE WKF: En el sistema de arbitraje WKF, ¿a cuántos puntos equivale un 'YUKO'?",
-            "description": "Puntuación de Kumite WKF (1 Punto)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "1 PUNTO",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "2 PUNTOS",
+                    "text": "Descalificación",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "3 PUNTOS",
+                    "text": "3 Puntos",
                     "isCorrect": false
                 },
                 {
-                    "id": "o4",
-                    "text": "PISO",
-                    "isCorrect": false
+                    "id": "o1",
+                    "text": "1 Punto",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Yuko (1 punto) se concede por puñetazos válidos directos (Tsuki) o técnicas de mano abierta (Uchi) a zonas puntuables.",
-            "hint": "Un punto."
+            "explanation": "Yuko (有効): 1 punto técnico otorgado por Chudan o Jodan Tsuki.",
+            "hint": "Un punto técnico."
         },
         {
-            "id": "exam-2k-q37",
+            "id": "e2k-q35",
             "type": "multiple_choice",
-            "prompt": "37. ASOCIE WKF: En la terminología oficial de competición, ¿qué significa 'TATAMI'?",
-            "description": "Área de combate WKF (1 Punto)",
+            "prompt": "35. WKF: Según el reglamento oficial de competición, ¿cuántos puntos otorga el 'WAZA-ARI'?",
+            "description": "Puntuación de Kumite WKF",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "PISO",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "3 PUNTOS",
+                    "text": "1 Punto",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "2 PUNTOS",
+                    "text": "3 Puntos",
                     "isCorrect": false
                 },
                 {
+                    "id": "o1",
+                    "text": "2 Puntos",
+                    "isCorrect": true
+                },
+                {
                     "id": "o4",
-                    "text": "1 PUNTO",
+                    "text": "4 Puntos",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Tatami es la colchoneta o piso oficial sobre el que se desarrollan los encuentros de combate y kata.",
-            "hint": "Piso o superficie de combate."
+            "explanation": "Waza-ari (技あり): 2 puntos técnicos otorgados por patadas al cuerpo (Chudan Geri).",
+            "hint": "Dos puntos técnicos."
         },
         {
-            "id": "exam-2k-q38",
+            "id": "e2k-q36",
             "type": "multiple_choice",
-            "prompt": "38. ASOCIE WKF: En las órdenes y colores del árbitro, ¿qué significa 'AKA'?",
-            "description": "Comandos y arbitraje WKF (1 Punto)",
+            "prompt": "36. WKF: Según el reglamento oficial de competición, ¿cuántos puntos otorga el 'IPPON'?",
+            "description": "Puntuación de Kumite WKF",
             "options": [
                 {
-                    "id": "o1",
-                    "text": "ROJO",
-                    "isCorrect": true
-                },
-                {
                     "id": "o2",
-                    "text": "AZUL",
+                    "text": "1 Punto",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "GANADOR",
+                    "text": "2 Puntos",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "DECISION ARBITRAL",
+                    "text": "Medio Punto",
                     "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "3 Puntos",
+                    "isCorrect": true
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Aka (赤) es el competidor que viste cinturón y protecciones rojas.",
-            "hint": "Color rojo."
+            "explanation": "Ippon (一本): 3 puntos técnicos otorgados por patadas a la cabeza (Jodan Geri) o derribo seguido de golpe puntuable.",
+            "hint": "Máxima puntuación técnica (3 puntos)."
         },
         {
-            "id": "exam-2k-q39",
+            "id": "e2k-q37",
             "type": "multiple_choice",
-            "prompt": "39. ASOCIE WKF: En las órdenes y colores del árbitro, ¿qué significa 'AO'?",
-            "description": "Comandos y arbitraje WKF (1 Punto)",
+            "prompt": "37. WKF: Según el reglamento oficial, ¿cómo se denomina el piso o área de combate?",
+            "description": "Reglamento del tatami",
             "options": [
                 {
                     "id": "o1",
-                    "text": "AZUL",
+                    "text": "TATAMI",
                     "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "ROJO",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "EMPEZAR COMBATE",
+                    "text": "DOJO",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "GANADOR",
+                    "text": "ENBUSEN",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "KAMAE",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Ao (青) es el competidor que viste cinturón y protecciones azules.",
-            "hint": "Color azul."
+            "explanation": "El Tatami oficial de competición WKF tiene 8x8 metros de área de combate más zona de seguridad perimetral.",
+            "hint": "Superficie de colchonetas reglamentarias."
         },
         {
-            "id": "exam-2k-q40",
+            "id": "e2k-q38",
             "type": "multiple_choice",
-            "prompt": "40. ASOCIE WKF: ¿Qué significa la orden arbitral 'TSUZUKETE HAJIME'?",
-            "description": "Comandos y arbitraje WKF (1 Punto)",
+            "prompt": "38. WKF: En el arbitraje oficial WKF, ¿qué designa el término 'AKA'?",
+            "description": "Identificación de competidores",
+            "options": [
+                {
+                    "id": "o2",
+                    "text": "Azul",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o3",
+                    "text": "Ganador",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o4",
+                    "text": "Empate",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Rojo (competidor del lado rojo)",
+                    "isCorrect": true
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Aka (赤) es el competidor que porta cinturón y protecciones rojas y se posiciona a la derecha del árbitro.",
+            "hint": "Color rojo en japonés."
+        },
+        {
+            "id": "e2k-q39",
+            "type": "multiple_choice",
+            "prompt": "39. WKF: En el arbitraje oficial WKF, ¿qué designa el término 'AO'?",
+            "description": "Identificación de competidores",
+            "options": [
+                {
+                    "id": "o4",
+                    "text": "Piso",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "Rojo",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "Azul (competidor del lado azul)",
+                    "isCorrect": true
+                },
+                {
+                    "id": "o3",
+                    "text": "Empate",
+                    "isCorrect": false
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Ao (青) es el competidor que porta cinturón y protecciones azules y se posiciona a la izquierda del árbitro.",
+            "hint": "Color azul en japonés."
+        },
+        {
+            "id": "e2k-q40",
+            "type": "multiple_choice",
+            "prompt": "40. WKF: ¿Cuál es la señal arbitral utilizada para reanudar el combate suspendido?",
+            "description": "Comandos del réferi",
+            "options": [
+                {
+                    "id": "o3",
+                    "text": "HANTEI",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o4",
+                    "text": "SEIRETSU",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o2",
+                    "text": "YAME",
+                    "isCorrect": false
+                },
+                {
+                    "id": "o1",
+                    "text": "TSUZUKETE (Hajime)",
+                    "isCorrect": true
+                }
+            ],
+            "correctAnswerId": "o1",
+            "explanation": "Tsuzukete (続けて) es la orden para continuar la acción; el réferi puede ordenar 'Tsuzukete Hajime'.",
+            "hint": "¡Continuar!"
+        },
+        {
+            "id": "e2k-q41",
+            "type": "multiple_choice",
+            "prompt": "41. WKF: ¿Cuál es el comando utilizado por el árbitro central para iniciar el combate?",
+            "description": "Comandos del réferi",
             "options": [
                 {
                     "id": "o1",
-                    "text": "EMPEZAR COMBATE (o reanudar combate)",
+                    "text": "HAJIME",
                     "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "DECISION ARBITRAL",
+                    "text": "YAME",
                     "isCorrect": false
                 },
                 {
                     "id": "o3",
-                    "text": "GANADOR",
+                    "text": "HANTEI",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "ROJO",
+                    "text": "KIRITSU",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Tsuzukete Hajime: 'Continuar, ¡empiecen!'; comando para reanudar la contienda tras una interrupción arbitral.",
-            "hint": "Reanudar o empezar el combate."
+            "explanation": "Hajime (始め) marca el inicio de las acciones.",
+            "hint": "Comenzar."
         },
         {
-            "id": "exam-2k-q41",
+            "id": "e2k-q42",
             "type": "multiple_choice",
-            "prompt": "41. ASOCIE WKF: ¿Cuál es el significado del término arbitral 'HANTEI'?",
-            "description": "Comandos y arbitraje WKF (1 Punto)",
+            "prompt": "42. WKF: ¿Cómo se denomina el procedimiento en que los jueces declaran el resultado por decisión?",
+            "description": "Veredicto arbitral",
             "options": [
                 {
+                    "id": "o3",
+                    "text": "TSUZUKETE",
+                    "isCorrect": false
+                },
+                {
                     "id": "o1",
-                    "text": "DECISION ARBITRAL",
+                    "text": "HANTEI / NO KACHI",
                     "isCorrect": true
                 },
                 {
                     "id": "o2",
-                    "text": "GANADOR",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "EMPEZAR COMBATE",
+                    "text": "YAME",
                     "isCorrect": false
                 },
                 {
                     "id": "o4",
-                    "text": "AZUL",
+                    "text": "KIRITSU",
                     "isCorrect": false
                 }
             ],
             "correctAnswerId": "o1",
-            "explanation": "Hantei (判定): Votación o decisión conjunta de los jueces y árbitro para resolver un empate o determinar el vencedor.",
-            "hint": "Decisión de los jueces."
+            "explanation": "Hantei (判定) es la consulta arbitral por banderas para definir al ganador (Aka/Ao no Kachi).",
+            "hint": "Decisión y declaración de victoria."
         },
         {
-            "id": "exam-2k-q42",
-            "type": "multiple_choice",
-            "prompt": "42. ASOCIE WKF: ¿Qué proclama el árbitro con la expresión 'NO KACHI'?",
-            "description": "Comandos y arbitraje WKF (1 Punto)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "GANADOR",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "DECISION ARBITRAL",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "EMPEZAR COMBATE",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "ROJO",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "No Kachi (の勝ち) significa 'victoria para' (ej. 'Aka no kachi' = victoria para el competidor rojo).",
-            "hint": "Ganador o victoria."
+            "id": "e2k-q43",
+            "type": "written",
+            "prompt": "43. DESARROLLO: Explique dos criterios fundamentales respectivamente utilizados para calificar Kumite y Kata en el arbitraje oficial:",
+            "description": "Ensayo arbitral y reglamentario (2 Puntos)",
+            "acceptedKeywords": [],
+            "sampleAnswer": "Para Kumite: 1) Buena forma y aplicación técnica rigurosa; 2) Distancia correcta (Maai) y control absoluto sin causar daño lesivo (Sun-dome). Para Kata: 1) Conformidad y precisión biomecánica del estilo respetando el Enbusen; 2) Potencia, velocidad, ritmo y estabilidad sólida con Kime y Zanshin.",
+            "isEssay": true,
+            "explanation": "Se evalúa el dominio del reglamento WKF: en Kumite prima la precisión y control; en Kata la maestría de ejecución técnica y presencia marcial.",
+            "hint": "Reflexión personal honesta y profunda."
         },
         {
-            "id": "exam-2k-q43",
-            "type": "multiple_choice",
-            "prompt": "43. DESARROLLO: Explique los criterios fundamentales utilizados respectivamente para calificar Kumite y Kata:",
-            "description": "Evaluación Técnica Comparada (4 Puntos)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "KATA: Conformidad técnica de posturas/trayectorias, potencia, velocidad, ritmo y respiración. KUMITE: Buena forma, actitud deportiva vigorosa, Zanshin, distancia (Ma-ai) y oportunidad de tiempo (Timing)",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "En Kata solo cuenta gritar fuerte y en Kumite lastimar al oponente",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Ambos se califican únicamente por la cantidad de veces que se saluda",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "No existen criterios objetivos, depende del azar del jurado",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Los 6 criterios WKF de Kumite y los criterios técnicos/atléticos de Kata definen la maestría objetiva del practicante avanzado.",
-            "hint": "Conformidad técnica en Kata y los 6 criterios de puntuación en Kumite."
-        },
-        {
-            "id": "exam-2k-q44",
-            "type": "multiple_choice",
-            "prompt": "44. DESARROLLO: ¿Qué significa para usted haber alcanzado el grado de Café 1° Kyu y estar pronto a su Cinta Negra?",
-            "description": "Madurez Ética y Vocación de Maestría (1 Punto)",
-            "options": [
-                {
-                    "id": "o1",
-                    "text": "Comprender con humildad que el cinturón negro no es el fin sino el inicio del verdadero aprendizaje (Shodan = Primer Nivel), asumiendo el deber ético de liderar como Sempai y dar ejemplo de perseverancia a los grados menores",
-                    "isCorrect": true
-                },
-                {
-                    "id": "o2",
-                    "text": "Pensar que ya se sabe todo y que no es necesario volver a entrenar con esfuerzo",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o3",
-                    "text": "Tener autoridad para exigir privilegios sin respetar a los compañeros",
-                    "isCorrect": false
-                },
-                {
-                    "id": "o4",
-                    "text": "Un simple adorno de color para presumir en redes sociales",
-                    "isCorrect": false
-                }
-            ],
-            "correctAnswerId": "o1",
-            "explanation": "Shodan significa 'primer escalón'. El 1° Kyu alcanza la madurez cuando comprende que el cinturón negro renace como un principiante de nivel superior.",
-            "hint": "Humildad, ejemplo como Sempai y comienzo del verdadero camino."
+            "id": "e2k-q44",
+            "type": "written",
+            "prompt": "44. DESARROLLO: ¿Qué significado tiene para usted haber alcanzado el grado de Café 2° Kyu y estar pronto a su Cinta Negra?",
+            "description": "Ensayo formativo de madurez marcial (2 Puntos)",
+            "acceptedKeywords": [],
+            "sampleAnswer": "Representa una enorme responsabilidad moral: dejar atrás el aprendizaje básico para convertirse en modelo de perseverancia y humildad para los grados menores, comprendiendo que el cinturón negro no es la cima, sino el auténtico inicio del camino marcial.",
+            "isEssay": true,
+            "explanation": "El paso de 2° Kyu a 1° Kyu y Shodan exige madurez, espíritu de servicio al Dojo, fidelidad a los valores del Sensei y temple de carácter.",
+            "hint": "Reflexión personal honesta y profunda."
         }
     ]
 };
