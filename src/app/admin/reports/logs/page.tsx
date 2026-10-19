@@ -30,7 +30,7 @@ export default async function RoutineLogsPage({
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
     const session = await auth();
-    if (!session?.user || session.user.role !== "super_admin") {
+    if (!session?.user || (session.user.role !== "super_admin" && session.user.role !== "admin")) {
         redirect("/admin");
     }
 

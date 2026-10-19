@@ -8,8 +8,8 @@ export default async function ReportsLayout({
 }) {
     const session = await auth();
 
-    // Enforce super_admin role
-    if (session?.user?.role !== "super_admin") {
+    // Enforce admin or super_admin role
+    if (session?.user?.role !== "super_admin" && session?.user?.role !== "admin") {
         redirect("/admin");
     }
 

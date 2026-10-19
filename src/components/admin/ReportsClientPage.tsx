@@ -29,8 +29,8 @@ const REPORTS: ReportLink[] = [
     {
         id: "didactica",
         href: "/admin/reports/didactica",
-        title: "Progreso Didáctico & Alumnos",
-        description: "Auditoría en vivo de estudiantes en el tatami interactivo: frecuencia de entrada, días inactivos, lecciones ganadas y avance de cinturón.",
+        title: "Kuma Sensei Academy (Alumnos & Progreso)",
+        description: "Auditoría en vivo de quiénes entran a Kuma Sensei Academy: frecuencia de entrada, días de inactividad, lecciones completadas, estrellas y avance de cinturón.",
         icon: GraduationCap,
         colorClass: "text-amber-400",
         bgClass: "bg-amber-500/20",

@@ -235,8 +235,8 @@ export function KumaRanking({
                 />
             )}
 
-            {/* SUPER ADMIN QUICK BANNER: REPORTE DIDÁCTICO */}
-            {currentUser?.role === "super_admin" && (
+            {/* ADMIN / SUPER ADMIN QUICK BANNER: REPORTE DIDÁCTICO */}
+            {(currentUser?.role === "super_admin" || currentUser?.role === "admin") && (
                 <div className="mb-10 p-4 md:p-5 rounded-3xl bg-gradient-to-r from-amber-950/80 via-zinc-900/90 to-zinc-950 border border-kuma-gold/50 shadow-[0_0_35px_rgba(245,158,11,0.18)] flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
                     <div className="flex items-center gap-3.5">
                         <div className="w-11 h-11 rounded-2xl bg-kuma-gold/20 border border-kuma-gold/50 flex items-center justify-center text-kuma-gold shrink-0 shadow-inner">
@@ -245,7 +245,7 @@ export function KumaRanking({
                         <div>
                             <div className="flex items-center gap-2 flex-wrap">
                                 <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-kuma-gold text-black shadow-sm">
-                                    Super Admin
+                                    Administración
                                 </span>
                                 <h4 className="text-sm font-serif font-black text-white">
                                     Auditoría & Progreso Didáctico de la Academia
@@ -498,15 +498,15 @@ export function KumaRanking({
                                                             </div>
                                                         </div>
 
-                                                        {/* Super Admin Didactic Audit Button */}
-                                                        {currentUser?.role === "super_admin" && (
+                                                        {/* Admin / Super Admin Didactic Audit Button */}
+                                                        {(currentUser?.role === "super_admin" || currentUser?.role === "admin") && (
                                                             <button
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     setAuditAthlete(ath);
                                                                 }}
                                                                 className="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-sm hover:scale-105 shrink-0"
-                                                                title="Auditar Progreso Didáctico Super Admin"
+                                                                title="Auditar Progreso Didáctico"
                                                             >
                                                                 <GraduationCap className="w-3.5 h-3.5 text-kuma-gold" />
                                                                 <span className="hidden sm:inline">Auditar</span>
@@ -902,8 +902,8 @@ function PodiumCard({ athlete, position, currentUser, onEditPhoto, onClickCard, 
                 </div>
             </div>
 
-            {/* SUPER ADMIN DIDACTIC AUDIT ACTION BUTTON */}
-            {currentUser?.role === "super_admin" && (
+            {/* ADMIN / SUPER ADMIN DIDACTIC AUDIT ACTION BUTTON */}
+            {(currentUser?.role === "super_admin" || currentUser?.role === "admin") && (
                 <button
                     onClick={(e) => {
                         e.stopPropagation();

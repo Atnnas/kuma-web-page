@@ -19,7 +19,9 @@ import {
     Dumbbell,
     Trophy,
     Star,
-    ClipboardCheck
+    ClipboardCheck,
+    BarChart3,
+    GraduationCap
 } from "lucide-react";
 import { handleSignOut } from "@/lib/actions";
 import Image from "next/image"; // Added for Avatar
@@ -33,14 +35,16 @@ type User = {
 
 const menuItems = [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { label: "Kuma Academy", href: "/admin/reports/didactica", icon: GraduationCap },
+    { label: "Reportes", href: "/admin/reports", icon: BarChart3 },
+    { label: "Kuma Manager", href: "/admin/athletes", icon: Star },
+    { label: "Asistencia", href: "/admin/attendance", icon: ClipboardCheck },
+    { label: "Usuarios", href: "/admin/users", icon: Users },
     { label: "Noticias", href: "/admin/news", icon: Newspaper },
     { label: "Calendario", href: "/admin/events", icon: Calendar },
     { label: "Rutinas", href: "/admin/routines", icon: Dumbbell },
     { label: "Organizadores", href: "/admin/organizers", icon: Briefcase },
     { label: "Tienda", href: "/admin/shop", icon: ShoppingBag },
-    { label: "Usuarios", href: "/admin/users", icon: Users },
-    { label: "Kuma Manager", href: "/admin/athletes", icon: Star },
-    { label: "Asistencia", href: "/admin/attendance", icon: ClipboardCheck },
     { label: "Recompensas", href: "/admin/rewards", icon: Trophy },
     { label: "Configuración", href: "/admin/settings", icon: Settings },
 ];
