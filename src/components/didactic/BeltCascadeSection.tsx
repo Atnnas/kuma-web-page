@@ -1364,7 +1364,7 @@ export function BeltCascadeSection({
                         </h4>
 
                         <p className="text-xs md:text-sm text-zinc-300 leading-relaxed max-w-md mx-auto mb-5">
-                            Este grado se evalúa de manera integral a través del examen oficial escrito de Kuma Sensei Dojo. Incluye terminología marcial, preguntas de complete escrito, reconocimiento visual de técnicas/katas y ensayo formativo de desarrollo.
+                            Este grado se evalúa de manera integral a través del examen oficial de Kuma Sensei Dojo en formato de selección única con retroalimentación inmediata, ideal para estudiar y prepararse hacia el examen escrito presencial.
                         </p>
 
                         <div className="flex flex-wrap items-center justify-center gap-3 text-xs mb-5">
