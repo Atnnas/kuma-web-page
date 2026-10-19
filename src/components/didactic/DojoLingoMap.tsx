@@ -90,19 +90,17 @@ export function DojoLingoMap({
     const whiteUncompleted = whiteUnit ? whiteUnit.levels.filter((l) => !progress.completedLevelIds.includes(l.id)).length : 0;
     const whiteExamPassed = progress.completedLevelIds.includes("exam-kyu-10");
 
-    const yellowUnit = tradUnits.find((u) => u.beltId === "kyu-9");
-    const yellowUncompleted = yellowUnit ? yellowUnit.levels.filter((l) => !progress.completedLevelIds.includes(l.id)).length : 0;
-    const yellowExamPassed = progress.completedLevelIds.includes("exam-kyu-9");
-
     let nextMilestoneText = "";
     if (whiteUncompleted > 0) {
         nextMilestoneText = `A ${whiteUncompleted} ${whiteUncompleted === 1 ? "lección" : "lecciones"} del Tribunal de Examen de Cinturón Blanco`;
     } else if (!whiteExamPassed) {
         nextMilestoneText = "¡Tribunal de Examen de Cinturón Blanco desbloqueado! Rinde tu prueba abajo.";
-    } else if (yellowUncompleted > 0) {
-        nextMilestoneText = `A ${yellowUncompleted} ${yellowUncompleted === 1 ? "lección" : "lecciones"} del Tribunal de Examen de Cinturón Amarillo`;
-    } else if (!yellowExamPassed) {
-        nextMilestoneText = "¡Tribunal de Examen de Cinturón Amarillo desbloqueado! Demuestra tu maestría.";
+    } else if (!progress.completedLevelIds.includes("exam-kyu-4")) {
+        nextMilestoneText = "¡Módulo de Examen Oficial de 4° Kyu a 3° Kyu disponible! Rinde tu evaluación.";
+    } else if (!progress.completedLevelIds.includes("exam-kyu-3")) {
+        nextMilestoneText = "¡Módulo de Examen Oficial de 3° Kyu a 2° Kyu disponible! Rinde tu evaluación.";
+    } else if (!progress.completedLevelIds.includes("exam-kyu-2")) {
+        nextMilestoneText = "¡Módulo de Examen Oficial de 2° Kyu a 1° Kyu disponible! Rinde tu evaluación.";
     } else {
         nextMilestoneText = "¡Has completado todos los grados activos con honor! Continúa repasando tu racha diaria.";
     }
@@ -395,11 +393,11 @@ export function DojoLingoMap({
                                 const prevBelt = prevUnit ? getBeltRank(prevUnit.beltId || "") : null;
                                 const prevBeltExamPassed = prevBelt ? progress.completedLevelIds.includes(`exam-${prevBelt.id}`) : true;
                                 const prevBeltWon = prevUnit
-                                    ? prevUnit.levels.every((l) => progress.completedLevelIds.includes(l.id)) && prevBeltExamPassed
+                                    ? (prevUnit.levels.length === 0 || prevUnit.levels.every((l) => progress.completedLevelIds.includes(l.id))) && prevBeltExamPassed
                                     : true;
-                                const currentBeltStarted = unit.levels.some((l) => progress.completedLevelIds.includes(l.id));
-
-                                const isBeltUnlocked = isAvailable && (isSuperAdmin || isFirstBelt || prevBeltWon || currentBeltStarted);
+                                const currentBeltStarted = unit.levels.some((l) => progress.completedLevelIds.includes(l.id)) || progress.completedLevelIds.includes(`exam-${beltRank.id}`);
+                                const isExamOnlyBelt = ["kyu-4", "kyu-3", "kyu-2"].includes(beltRank.id);
+                                const isBeltUnlocked = isAvailable && (isSuperAdmin || isFirstBelt || isExamOnlyBelt || prevBeltWon || currentBeltStarted);
 
                                 const nextUnit = idx < tradUnits.length - 1 ? tradUnits[idx + 1] : null;
                                 const nextBelt = nextUnit ? getBeltRank(nextUnit.beltId || "") : null;

@@ -1,4 +1,10 @@
 import { Question, BeltRank, Unit } from "@/types/didactica";
+import {
+    EXAM_KYU_5_TO_4,
+    EXAM_KYU_4_TO_3,
+    EXAM_KYU_3_TO_2,
+    EXAM_KYU_2_TO_1,
+} from "./advancedBeltExams";
 
 export interface BeltExamConfig {
     beltId: string;
@@ -770,6 +776,21 @@ export const BELT_EXAMS: Record<string, BeltExamConfig> = {
             },
         ],
     },
+
+    // ── 5° KYU ➔ 4° KYU (MORADO ➔ MORADO CON BLANCO) ──
+    "kyu-5": EXAM_KYU_5_TO_4,
+
+    // ── 4° KYU ➔ 3° KYU (MORADO CON BLANCO ➔ CAFÉ 3 LÍNEAS) ──
+    // Fuente: "I EXAMEN ESCRITO DE 4 KYU A 3 KYU.pdf" (38 Preguntas completas)
+    "kyu-4": EXAM_KYU_4_TO_3,
+
+    // ── 3° KYU ➔ 2° KYU (CAFÉ 3 LÍNEAS ➔ CAFÉ 2 LÍNEAS) ──
+    // Fuente: "I EXAMEN ESCRITO DE 3 KYU A 2 KYU.pdf" (38 Preguntas completas)
+    "kyu-3": EXAM_KYU_3_TO_2,
+
+    // ── 2° KYU ➔ 1° KYU (CAFÉ 2 LÍNEAS ➔ CAFÉ 1 LÍNEA) ──
+    // Fuente: "I EXAMEN ESCRITO DE 2 KYU A 1 KYU.pdf" (44 Preguntas completas)
+    "kyu-2": EXAM_KYU_2_TO_1,
 };
 
 /**

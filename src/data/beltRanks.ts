@@ -429,10 +429,15 @@ export function getDanRanks(): BeltRank[] {
 
 /**
  * Belts currently available in the Academy curriculum.
- * Only White (10° Kyu) and Yellow (9° Kyu) are active.
- * All subsequent belts (8° Kyu Orange to 10° Dan) are marked as coming soon.
+ * Only 10° Kyu, 4° Kyu, 3° Kyu, and 2° Kyu are active.
+ * All other belts (9°, 8°, 7°, 6°, 5°, 1° Kyu and 1° to 10° Dan) are marked as coming soon.
  */
-export const AVAILABLE_BELT_IDS = ["kyu-10", "kyu-9"] as const;
+export const AVAILABLE_BELT_IDS = [
+    "kyu-10",
+    "kyu-4",
+    "kyu-3",
+    "kyu-2",
+] as const;
 
 export function isBeltAvailable(beltId: string): boolean {
     return AVAILABLE_BELT_IDS.includes(beltId as any);

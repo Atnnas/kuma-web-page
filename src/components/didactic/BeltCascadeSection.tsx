@@ -989,6 +989,7 @@ export function BeltCascadeSection({
 
     const isDan = belt.category === "dan";
     const isWhiteBelt = belt.category === "kyu" && belt.levelNumber === 10;
+    const isExamOnlyBelt = ["kyu-4", "kyu-3", "kyu-2"].includes(belt.id);
     const beltLevels = unit.levels;
     const unitHasNewQuestions = updatedLevelIds.length > 0 
         ? beltLevels.some((lvl) => updatedLevelIds.includes(lvl.id))
@@ -998,7 +999,9 @@ export function BeltCascadeSection({
     const completedLevelsCount = beltLevels.filter((l) =>
         progress.completedLevelIds.includes(l.id)
     ).length;
-    const isAllLevelsCompleted = completedLevelsCount === beltLevels.length && beltLevels.length > 0;
+    const isAllLevelsCompleted = isExamOnlyBelt
+        ? true
+        : completedLevelsCount === beltLevels.length && beltLevels.length > 0;
     const isBeltCompleted = isLast
         ? isAllLevelsCompleted
         : isAllLevelsCompleted && hasPassedExam;
@@ -1176,17 +1179,19 @@ export function BeltCascadeSection({
                                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-black/50 border border-amber-500/40 text-amber-300 text-xs font-black backdrop-blur-sm shadow-md">
                                     <Sparkle className="w-3.5 h-3.5 text-amber-400" weight="fill" />
                                     <span>
-                                        {completedLevelsCount} / {beltLevels.length} Grados
+                                        {isExamOnlyBelt ? "Módulo de Examen" : `${completedLevelsCount} / ${beltLevels.length} Grados`}
                                     </span>
                                 </div>
-                                <div className="w-24 h-1.5 bg-black/60 rounded-full mt-2 overflow-hidden border border-white/20">
-                                    <div
-                                        className="h-full bg-gradient-to-r from-amber-500 to-kuma-gold transition-all duration-500"
-                                        style={{
-                                            width: `${(completedLevelsCount / beltLevels.length) * 100}%`,
-                                        }}
-                                    />
-                                </div>
+                                {!isExamOnlyBelt && beltLevels.length > 0 && (
+                                    <div className="w-24 h-1.5 bg-black/60 rounded-full mt-2 overflow-hidden border border-white/20">
+                                        <div
+                                            className="h-full bg-gradient-to-r from-amber-500 to-kuma-gold transition-all duration-500"
+                                            style={{
+                                                width: `${(completedLevelsCount / beltLevels.length) * 100}%`,
+                                            }}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-zinc-950/70 border border-zinc-700/60 text-zinc-400 text-xs font-bold shadow-md backdrop-blur-sm">
@@ -1278,7 +1283,7 @@ export function BeltCascadeSection({
             {/* 2. PIEDRAS FLOTANTES EN EL ESTANQUE ZEN (TOBI-ISHI 飛び石)        */}
             {/* ¡SIN CAJA ENVOLVENTE! FLOTAN DIRECTAMENTE SOBRE EL AGUA Y PECES KOI */}
             {/* ================================================================= */}
-            {effectiveBeltUnlocked && (
+            {effectiveBeltUnlocked && !isExamOnlyBelt && (
                 <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -1335,28 +1340,58 @@ export function BeltCascadeSection({
                 </motion.div>
             )}
 
-            {/* CELEBRACIÓN DE FIN DE GRADOS DISPONIBLES AL TERMINAR AMARILLO */}
-            {belt.id === "kyu-9" && isAllLevelsCompleted && (
+            {/* ================================================================= */}
+            {/* 2B. MÓDULO EXCLUSIVO DE EXAMEN ESCRITO PARA 4°, 3° Y 2° KYU       */}
+            {/* ================================================================= */}
+            {effectiveBeltUnlocked && isExamOnlyBelt && (
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="my-6 p-6 rounded-3xl bg-gradient-to-b from-[#2B230E] via-zinc-950 to-black border-2 border-yellow-400/60 shadow-[0_0_30px_rgba(250,204,21,0.25)] text-center max-w-md mx-auto"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="relative my-8 py-2 w-full max-w-xl mx-auto flex flex-col items-center"
                 >
-                    <div className="w-12 h-12 rounded-2xl bg-yellow-400/20 border border-yellow-400/50 flex items-center justify-center text-yellow-300 mx-auto mb-3 shadow-[0_0_15px_rgba(250,204,21,0.3)]">
-                        <Trophy className="w-6 h-6 text-yellow-300" weight="fill" />
-                    </div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-yellow-400 block mb-1">
-                        ¡Grados Disponibles Superados!
-                    </span>
-                    <h4 className="text-lg font-serif font-black text-white">
-                        Has Culminado el Cinturón Amarillo (9° Kyu)
-                    </h4>
-                    <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-                        ¡Felicitaciones! Has completado todas las clases de los cinturones <strong className="text-white">Blanco</strong> y <strong className="text-yellow-300">Amarillo</strong>. Los cinturones superiores (desde Cinturón Naranja hasta Cinturón Negro) se habilitarán próximamente.
-                    </p>
-                    <div className="mt-3.5 pt-3 border-t border-white/10 text-[11px] font-bold text-yellow-300 flex items-center justify-center gap-1.5">
-                        <Sparkle className="w-3.5 h-3.5 text-yellow-300" weight="fill" />
-                        <span>¡Puedes seguir repasando tus lecciones y manteniendo tu racha diaria!</span>
+                    <div className="w-full rounded-3xl bg-gradient-to-b from-zinc-900/90 via-zinc-950/95 to-black border-2 border-kuma-gold/50 p-6 md:p-8 shadow-[0_15px_40px_rgba(0,0,0,0.85),0_0_25px_rgba(245,158,11,0.15)] text-center relative overflow-hidden">
+                        <div className="absolute -top-16 -right-16 w-44 h-44 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+                        <div className="absolute -bottom-16 -left-16 w-44 h-44 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-[10px] font-black uppercase tracking-widest mb-3">
+                            <Sparkle className="w-3.5 h-3.5 text-amber-400" weight="fill" />
+                            <span>Módulo Oficial • Examen Teórico Escrito</span>
+                        </div>
+
+                        <h4 className="text-lg md:text-xl font-serif font-black text-white leading-tight mb-2">
+                            Evaluación Canónica de Grado
+                        </h4>
+
+                        <p className="text-xs md:text-sm text-zinc-300 leading-relaxed max-w-md mx-auto mb-5">
+                            Este grado se evalúa de manera integral a través del examen oficial escrito de Kuma Sensei Dojo. Incluye terminología marcial, principios biomecánicos, reconocimiento visual de técnicas/katas y desarrollo formativo.
+                        </p>
+
+                        <div className="flex flex-wrap items-center justify-center gap-3 text-xs mb-5">
+                            <div className="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-300 flex items-center gap-2 font-bold">
+                                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                                <span>Preguntas Oficiales: <strong>{belt.id === "kyu-2" ? 44 : 38}</strong></span>
+                            </div>
+                            <div className="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-300 flex items-center gap-2 font-bold">
+                                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                                <span>Modo Comprobación Activo</span>
+                            </div>
+                            {hasPassedExam && (
+                                <div className="px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 flex items-center gap-2 font-black">
+                                    <CheckCircle className="w-4 h-4 text-emerald-400" weight="fill" />
+                                    <span>Examen Aprobado</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => setIsExamModalOpen(true)}
+                            className="w-full sm:w-auto px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-black text-xs md:text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(245,158,11,0.5)] cursor-pointer active:scale-95 transition-all inline-flex items-center justify-center gap-2"
+                        >
+                            <Trophy className="w-4 h-4 text-black" weight="fill" />
+                            <span>{hasPassedExam ? "Repasar Examen Oficial" : "Presentar Examen Escrito"}</span>
+                        </button>
                     </div>
                 </motion.div>
             )}

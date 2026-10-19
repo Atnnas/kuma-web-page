@@ -47,6 +47,7 @@ export function BeltExamModal({
     const currentQuestion = questions[currentIndex];
     const isLastQuestion = currentIndex === questions.length - 1;
     const isPassing = correctAnswersCount >= examConfig.passingScore;
+    const isSpecialExamBelt = ["kyu-4", "kyu-3", "kyu-2"].includes(currentBelt.id);
 
     const handleSelectOption = (optionId: string) => {
         if (isAnswerSubmitted) return;
@@ -149,7 +150,7 @@ export function BeltExamModal({
                         </button>
                     </div>
 
-                    {/* BARRA DE PROGRESO DE 10 PREGUNTAS */}
+                    {/* BARRA DE PROGRESO DE PREGUNTAS */}
                     {!isFinished && (
                         <div className="px-5 py-2.5 bg-zinc-950/80 border-b border-zinc-800/60 flex items-center justify-between gap-4">
                             <div className="flex-1">
@@ -190,6 +191,19 @@ export function BeltExamModal({
                                     )}
                                 </div>
 
+                                {/* IMAGEN DE LA PREGUNTA (Si aplica) */}
+                                {currentQuestion.image && (
+                                    <div className="mb-5 flex justify-center">
+                                        <div className="p-3 rounded-2xl bg-white border border-amber-500/30 shadow-lg shadow-black/40 inline-flex items-center justify-center max-w-xs">
+                                            <img
+                                                src={currentQuestion.image}
+                                                alt={currentQuestion.prompt}
+                                                className="max-h-52 w-auto object-contain mx-auto"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* OPCIONES DE RESPUESTA */}
                                 <div className="space-y-2.5 mb-5">
                                     {currentQuestion.options?.map((option, idx) => {
@@ -207,10 +221,10 @@ export function BeltExamModal({
                                         if (isAnswerSubmitted) {
                                             if (isCorrect) {
                                                 optionStyle =
-                                                    "bg-emerald-950/80 border-emerald-400 text-emerald-200 shadow-[0_0_14px_rgba(16,185,129,0.4)]";
+                                                    "bg-emerald-950/90 border-emerald-400 text-emerald-100 shadow-[0_0_18px_rgba(16,185,129,0.5)] ring-2 ring-emerald-500/60";
                                             } else if (isSelected && !isCorrect) {
                                                 optionStyle =
-                                                    "bg-red-950/80 border-red-500 text-red-200 shadow-[0_0_14px_rgba(239,68,68,0.4)]";
+                                                    "bg-red-950/90 border-red-500 text-red-200 shadow-[0_0_14px_rgba(239,68,68,0.4)]";
                                             } else {
                                                 optionStyle = "bg-zinc-950/60 border-zinc-800/60 text-zinc-500 opacity-60";
                                             }
@@ -229,22 +243,39 @@ export function BeltExamModal({
                                                 <div className="flex items-center gap-3">
                                                     <span
                                                         className={`w-6 h-6 rounded-lg text-xs font-black flex items-center justify-center shrink-0 border ${
-                                                            isSelected
+                                                            isAnswerSubmitted && isCorrect
+                                                                ? "bg-emerald-500 text-black border-emerald-300 font-black"
+                                                                : isAnswerSubmitted && isSelected && !isCorrect
+                                                                ? "bg-red-500 text-white border-red-400 font-black"
+                                                                : isSelected
                                                                 ? "bg-amber-400 text-black border-amber-300"
                                                                 : "bg-zinc-800 text-zinc-400 border-zinc-700"
                                                         }`}
                                                     >
                                                         {letter}
                                                     </span>
-                                                    <span>{option.text}</span>
+                                                    <span className="font-medium">{option.text}</span>
                                                 </div>
 
-                                                {isAnswerSubmitted && isCorrect && (
-                                                    <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" weight="fill" />
-                                                )}
-                                                {isAnswerSubmitted && isSelected && !isCorrect && (
-                                                    <XCircle className="w-5 h-5 text-red-400 shrink-0" weight="fill" />
-                                                )}
+                                                {/* BADGES E ICONOS DE IDENTIFICACIÓN */}
+                                                <div className="flex items-center gap-2 shrink-0 ml-2">
+                                                    {isAnswerSubmitted && isSpecialExamBelt && isCorrect && (
+                                                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-400 text-[10px] font-black uppercase text-emerald-300 tracking-wider shadow-sm animate-pulse">
+                                                            ✓ Respuesta Correcta
+                                                        </span>
+                                                    )}
+                                                    {isAnswerSubmitted && isSpecialExamBelt && isSelected && !isCorrect && (
+                                                        <span className="px-2.5 py-0.5 rounded-full bg-red-500/25 border border-red-400 text-[10px] font-black uppercase text-red-300 tracking-wider">
+                                                            ✗ Tu Selección
+                                                        </span>
+                                                    )}
+                                                    {isAnswerSubmitted && isCorrect && (
+                                                        <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" weight="fill" />
+                                                    )}
+                                                    {isAnswerSubmitted && isSelected && !isCorrect && (
+                                                        <XCircle className="w-5 h-5 text-red-400 shrink-0" weight="fill" />
+                                                    )}
+                                                </div>
                                             </button>
                                         );
                                     })}
@@ -256,14 +287,35 @@ export function BeltExamModal({
                                         <motion.div
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            className="p-3.5 rounded-2xl bg-zinc-900/90 border border-zinc-800 text-xs text-zinc-300 mb-5 flex items-start gap-2.5"
+                                            className={`p-4 rounded-2xl border text-xs mb-5 ${
+                                                isSpecialExamBelt
+                                                    ? "bg-zinc-900/95 border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.15)] text-zinc-200"
+                                                    : "bg-zinc-900/90 border-zinc-800 text-zinc-300"
+                                            }`}
                                         >
-                                            <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" weight="duotone" />
-                                            <div>
-                                                <strong className="text-amber-300 block mb-0.5">
-                                                    Veredicto de los Árbitros WKF:
-                                                </strong>
-                                                <span>{currentQuestion.explanation}</span>
+                                            {isSpecialExamBelt && (
+                                                <div className="mb-3 pb-2.5 border-b border-zinc-800 flex items-start gap-2.5">
+                                                    <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center shrink-0 mt-0.5">
+                                                        <CheckCircle className="w-4 h-4 text-emerald-400" weight="fill" />
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 block font-bold">
+                                                            Respuesta Oficial Identificada:
+                                                        </span>
+                                                        <p className="text-xs sm:text-sm font-black text-white mt-0.5">
+                                                            {currentQuestion.options?.find((o) => o.isCorrect)?.text}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div className="flex items-start gap-2.5">
+                                                <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" weight="duotone" />
+                                                <div>
+                                                    <strong className="text-amber-300 block mb-0.5">
+                                                        {isSpecialExamBelt ? "Criterio Técnico del Tribunal Examinador:" : "Veredicto de los Árbitros WKF:"}
+                                                    </strong>
+                                                    <span className="leading-relaxed">{currentQuestion.explanation}</span>
+                                                </div>
                                             </div>
                                         </motion.div>
                                     )}
@@ -282,7 +334,7 @@ export function BeltExamModal({
                                                     : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
                                             }`}
                                         >
-                                            <span>Presentar Respuesta</span>
+                                            <span>{isSpecialExamBelt ? "Comprobar" : "Presentar Respuesta"}</span>
                                         </button>
                                     ) : (
                                         <button
@@ -317,9 +369,9 @@ export function BeltExamModal({
                                             ¡Examen Oficial Aprobado!
                                         </h3>
                                         <p className="text-xs sm:text-sm text-zinc-300 max-w-md mx-auto mb-6">
-                                            Has superado con honor las 10 preguntas marciales con{" "}
+                                            Has superado con honor las {questions.length} preguntas marciales con{" "}
                                             <strong className="text-amber-300 font-black">
-                                                 {correctAnswersCount}/10 aciertos
+                                                {correctAnswersCount}/{questions.length} aciertos
                                             </strong>
                                             . El panel de árbitros y examinadores avala formalmente tu nuevo rango.
                                         </p>
@@ -361,7 +413,7 @@ export function BeltExamModal({
                                         </button>
                                     </motion.div>
                                 ) : (
-                                    /* EXAMEN NO SUPERADO (MENOS DE 7/10) */
+                                    /* EXAMEN NO SUPERADO */
                                     <div>
                                         <div className="w-16 h-16 rounded-full bg-zinc-800 border-2 border-zinc-700 mx-auto flex items-center justify-center text-amber-400 mb-3">
                                             <GraduationCap className="w-8 h-8" weight="duotone" />
@@ -370,7 +422,7 @@ export function BeltExamModal({
                                             Buen Intento Marcial
                                         </h3>
                                         <p className="text-xs sm:text-sm text-zinc-300 max-w-md mx-auto mb-6">
-                                            Obtuviste <strong className="text-amber-400">{correctAnswersCount}/10</strong> aciertos. Se requiere un mínimo de <strong>{examConfig.passingScore}/10</strong> para consagrar el grado. Los árbitros te invitan a repasar los 4 módulos y volver a presentarte cuando desees.
+                                            Obtuviste <strong className="text-amber-400">{correctAnswersCount}/{questions.length}</strong> aciertos. Se requiere un mínimo de <strong>{examConfig.passingScore}/{questions.length}</strong> para consagrar el grado. Los árbitros te invitan a repasar y volver a presentarte cuando desees.
                                         </p>
 
                                         <div className="flex items-center justify-center gap-3">

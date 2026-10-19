@@ -58,3 +58,5 @@ next-env.d.ts
 # public backups
 /public/images/backup/
 .vercel
+
+*.pdf

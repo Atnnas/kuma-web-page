@@ -450,12 +450,16 @@ export function DidacticController() {
             : [...progress.completedLevelIds, passedExamId];
 
         // Ensure active belt never moves to an unreleased/coming soon belt
-        const nextActiveBelt = isBeltAvailable(targetBeltId) ? targetBeltId : "kyu-9";
+        const nextActiveBelt = isBeltAvailable(targetBeltId)
+            ? targetBeltId
+            : isBeltAvailable(progress.activeBeltId || "")
+            ? progress.activeBeltId
+            : "kyu-10";
 
         const now = Date.now();
         const updated: UserDidacticProgress = {
             ...progress,
-            activeBeltId: (nextActiveBelt as any) || "kyu-9",
+            activeBeltId: (nextActiveBelt as any) || "kyu-10",
             completedLevelIds: newCompleted,
             levelStars: {
                 ...progress.levelStars,

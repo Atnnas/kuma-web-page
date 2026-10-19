@@ -24,10 +24,12 @@ export function BeltSelector({ activeBeltId, onSelectBelt, progress }: BeltSelec
 
     const tradUnits = DIDACTIC_UNITS.filter((u) => u.path === "tradicional");
     const checkIsBeltUnlocked = (beltId: string) => {
+        if (!isBeltAvailable(beltId)) return false;
+        if (["kyu-10", "kyu-4", "kyu-3", "kyu-2"].includes(beltId)) return true;
         const idx = tradUnits.findIndex((u) => u.beltId === beltId);
         if (idx <= 0) return true;
         const prevUnit = tradUnits[idx - 1];
-        const prevWon = prevUnit.levels.every((l) => progress.completedLevelIds.includes(l.id));
+        const prevWon = prevUnit ? prevUnit.levels.every((l) => progress.completedLevelIds.includes(l.id)) : true;
         const currStarted = tradUnits[idx]?.levels.some((l) => progress.completedLevelIds.includes(l.id));
         return prevWon || currStarted;
     };
