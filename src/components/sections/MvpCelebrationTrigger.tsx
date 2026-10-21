@@ -9,7 +9,8 @@ interface MvpCelebrationTriggerProps {
 }
 
 export default function MvpCelebrationTrigger({ currentUser }: MvpCelebrationTriggerProps) {
-    const [selectedMvp, setSelectedMvp] = useState<any | null>(null);
+    const [mvpAthletes, setMvpAthletes] = useState<any[]>([]);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [mvpDate, setMvpDate] = useState<string>("");
 
     useEffect(() => {
@@ -31,11 +32,12 @@ export default function MvpCelebrationTrigger({ currentUser }: MvpCelebrationTri
                 const hasSeenDate = localStorage.getItem(dateKey);
 
                 if (!hasSeenToday && !hasSeenDate) {
-                    // If multiple MVPs exist, prioritize showing the logged-in user if they are one of them
-                    const athleteToShow = data.athletes.find((a: any) => a && a._id === currentUserId) || data.athletes[0];
-
                     setMvpDate(data.date);
-                    setSelectedMvp(athleteToShow);
+                    setMvpAthletes(data.athletes);
+
+                    // If multiple MVPs exist, prioritize showing the logged-in user if they are one of them
+                    const userMvpIdx = data.athletes.findIndex((a: any) => a && a._id === currentUserId);
+                    setCurrentIndex(userMvpIdx >= 0 ? userMvpIdx : 0);
 
                     // Mark as seen immediately (in case they close the page or reload)
                     localStorage.setItem(calendarKey, "true");
@@ -49,6 +51,7 @@ export default function MvpCelebrationTrigger({ currentUser }: MvpCelebrationTri
         checkMvp();
     }, [currentUser?.id]);
 
+    const selectedMvp = mvpAthletes[currentIndex];
     if (!selectedMvp) return null;
 
     const handleClose = () => {
@@ -61,18 +64,21 @@ export default function MvpCelebrationTrigger({ currentUser }: MvpCelebrationTri
             localStorage.setItem(calendarKey, "true");
             localStorage.setItem(dateKey, "true");
         }
-        setSelectedMvp(null);
+        setMvpAthletes([]);
     };
 
     const isUserMvp = currentUser?.id === selectedMvp._id;
+    const isMultiple = mvpAthletes.length > 1;
+
     const customTitle = isUserMvp ? (
-        <>¡Fuiste el <span className="text-kuma-gold">MVP</span> del último entrenamiento! 👑</>
+        <>¡Fuiste {isMultiple ? "uno de los MVPs" : "el MVP"} del último entrenamiento! 👑</>
     ) : (
         <>¡MVP del último entrenamiento: <span className="text-kuma-gold">{selectedMvp.name}</span>! 👑</>
     );
+
     const customSubtitle = isUserMvp 
-        ? "¡Excelente trabajo en la clase anterior!" 
-        : "Reconozcamos el gran desempeño de nuestro compañero";
+        ? `¡Excelente trabajo en la clase anterior! ${isMultiple ? `(MVP ${currentIndex + 1} de ${mvpAthletes.length})` : ""}` 
+        : `Reconozcamos el gran desempeño de nuestro compañero ${isMultiple ? `(MVP ${currentIndex + 1} de ${mvpAthletes.length})` : ""}`;
 
     return (
         <KumaCelebrationModal
@@ -81,6 +87,12 @@ export default function MvpCelebrationTrigger({ currentUser }: MvpCelebrationTri
             athlete={selectedMvp}
             customTitle={customTitle}
             customSubtitle={customSubtitle}
+            onNext={() => setCurrentIndex((prev) => (prev + 1) % mvpAthletes.length)}
+            onPrev={() => setCurrentIndex((prev) => (prev - 1 + mvpAthletes.length) % mvpAthletes.length)}
+            hasNext={isMultiple}
+            hasPrev={isMultiple}
+            currentIndex={currentIndex}
+            totalCount={mvpAthletes.length}
         />
     );
 }

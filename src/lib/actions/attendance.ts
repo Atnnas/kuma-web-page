@@ -74,6 +74,13 @@ export async function getAthletesForAttendance() {
                 workoutCount: user.workoutCount || 0,
                 monthlyAttendanceCount: attendanceCountsMap[user._id.toString()] || 0,
                 mvpCount: mvpCountsMap[user._id.toString()] || 0,
+                cc: user.athleteProfile?.cc || "",
+                habilidadSecreta: user.athleteProfile?.habilidadSecreta || "",
+                statsLastMonth: user.athleteProfile?.statsLastMonth || user.athleteProfile?.stats,
+                birthDate: user.athleteProfile?.birthDate || "",
+                gender: user.athleteProfile?.gender || "Masculino",
+                wkfCategory: user.athleteProfile?.wkfCategory || "",
+                categoryWeight: user.athleteProfile?.categoryWeight || 0,
                 dojo: user.athleteProfile?.dojo ? (
                     typeof user.athleteProfile.dojo === "object" && "_id" in user.athleteProfile.dojo
                         ? {

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { getEnrolledAthletes, updateAthletePhotoSelf } from "@/lib/actions/athletes";
-import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid, AlertTriangle, GraduationCap, ArrowUpRight, BarChart3, Building2, ChevronDown, Share2 } from "lucide-react";
+import { Trophy, Star, Shield, Flame, Search, FlameKindling, Zap, Target, HeartPulse, Activity, Camera, Lock, Check, Loader2, X, Award, Sparkles, User as UserIcon, LayoutGrid, AlertTriangle, GraduationCap, ArrowUpRight, BarChart3, Building2, ChevronDown, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -1294,6 +1294,12 @@ interface KumaCelebrationModalProps {
     athlete: Athlete | null;
     customTitle?: React.ReactNode;
     customSubtitle?: string;
+    onNext?: () => void;
+    onPrev?: () => void;
+    hasNext?: boolean;
+    hasPrev?: boolean;
+    currentIndex?: number;
+    totalCount?: number;
 }
 
 export const getKumaHonorDetails = (ath: any) => {
@@ -1361,12 +1367,18 @@ export function KumaCelebrationModal({
     onClose, 
     athlete,
     customTitle,
-    customSubtitle
+    customSubtitle,
+    onNext,
+    onPrev,
+    hasNext,
+    hasPrev,
+    currentIndex,
+    totalCount
 }: KumaCelebrationModalProps) {
     const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, glossX: 50, glossY: 50, scale: 1 });
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-    // Bloquear scroll de la página de fondo y capturar tecla Escape
+    // Bloquear scroll de la página de fondo y capturar tecla Escape / Flechas
     useEffect(() => {
         if (!isOpen) return;
 
@@ -1376,6 +1388,10 @@ export function KumaCelebrationModal({
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
                 onClose();
+            } else if (e.key === "ArrowRight" && onNext && hasNext) {
+                onNext();
+            } else if (e.key === "ArrowLeft" && onPrev && hasPrev) {
+                onPrev();
             }
         };
         window.addEventListener("keydown", handleKeyDown);
@@ -1519,6 +1535,30 @@ export function KumaCelebrationModal({
                 >
                     <X className="w-5 h-5" />
                 </button>
+
+                {/* Botones de navegación laterales (cuando hay múltiples MVPs) */}
+                {totalCount && totalCount > 1 && (
+                    <>
+                        <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); onPrev?.(); }}
+                            disabled={!hasPrev}
+                            className="fixed left-2 sm:left-6 top-1/2 -translate-y-1/2 p-2.5 sm:p-3.5 rounded-full bg-zinc-950/90 hover:bg-zinc-900 border border-amber-500/40 text-kuma-gold hover:text-white transition-all shadow-[0_0_25px_rgba(0,0,0,0.9)] z-50 cursor-pointer disabled:opacity-20 disabled:pointer-events-none active:scale-95 group"
+                            title="Anterior MVP (Tecla Flecha Izquierda)"
+                        >
+                            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-0.5 transition-transform" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); onNext?.(); }}
+                            disabled={!hasNext}
+                            className="fixed right-2 sm:right-6 top-1/2 -translate-y-1/2 p-2.5 sm:p-3.5 rounded-full bg-zinc-950/90 hover:bg-zinc-900 border border-amber-500/40 text-kuma-gold hover:text-white transition-all shadow-[0_0_25px_rgba(0,0,0,0.9)] z-50 cursor-pointer disabled:opacity-20 disabled:pointer-events-none active:scale-95 group"
+                            title="Siguiente MVP (Tecla Flecha Derecha)"
+                        >
+                            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-0.5 transition-transform" />
+                        </button>
+                    </>
+                )}
 
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9, y: 30 }}
@@ -1704,8 +1744,15 @@ export function KumaCelebrationModal({
 
                     <div className="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start text-center md:text-left gap-6">
                         <div>
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/35 text-amber-400 text-[10px] font-black uppercase tracking-widest mb-3 animate-pulse">
-                                <Award className="w-3.5 h-3.5" /> {humor.badge}
+                            <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start mb-3">
+                                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/35 text-amber-400 text-[10px] font-black uppercase tracking-widest animate-pulse">
+                                    <Award className="w-3.5 h-3.5" /> {humor.badge}
+                                </div>
+                                {totalCount && totalCount > 1 ? (
+                                    <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black text-[10px] font-black uppercase tracking-wider shadow-sm">
+                                        <span>👑 MVP {(currentIndex ?? 0) + 1} de {totalCount}</span>
+                                    </div>
+                                ) : null}
                             </div>
 
                             <h3 className="text-3xl font-serif font-black text-white leading-tight mb-2">
@@ -1772,6 +1819,36 @@ export function KumaCelebrationModal({
                                 </div>
                             )}
                         </div>
+
+                        {/* Stepper bar para múltiples MVPs */}
+                        {totalCount && totalCount > 1 && (
+                            <div className="w-full max-w-md flex items-center justify-between bg-zinc-900/90 border border-amber-500/30 rounded-xl px-3 py-2 shadow-lg">
+                                <button
+                                    type="button"
+                                    onClick={onPrev}
+                                    disabled={!hasPrev}
+                                    className="px-3 py-1.5 rounded-lg bg-zinc-850 hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none text-zinc-300 hover:text-white text-xs font-bold flex items-center gap-1 cursor-pointer active:scale-95 transition-all"
+                                >
+                                    <ChevronLeft className="w-4 h-4 text-kuma-gold" />
+                                    <span>Anterior</span>
+                                </button>
+                                <div className="text-center">
+                                    <span className="text-[9px] text-zinc-400 font-bold block uppercase tracking-wider">Kumas MVP</span>
+                                    <span className="text-xs font-serif font-black text-kuma-gold">
+                                        {(currentIndex ?? 0) + 1} de {totalCount}
+                                    </span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={onNext}
+                                    disabled={!hasNext}
+                                    className="px-3 py-1.5 rounded-lg bg-zinc-850 hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none text-zinc-300 hover:text-white text-xs font-bold flex items-center gap-1 cursor-pointer active:scale-95 transition-all"
+                                >
+                                    <span>Siguiente</span>
+                                    <ChevronRight className="w-4 h-4 text-kuma-gold" />
+                                </button>
+                            </div>
+                        )}
 
                         {/* Botones de acción: Compartir en Redes & Cerrar */}
                         <div className="w-full max-w-md flex flex-col sm:flex-row gap-2.5">

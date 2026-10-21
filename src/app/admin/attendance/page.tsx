@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { SwipeBackWrapper } from "@/components/admin/AdminNavigation";
 import { Button } from "@/components/ui/Button";
-import { Loader2, Search, User, ClipboardCheck, Calendar, Info, Check, Clock, UserX, Sparkles, CheckCircle, ChevronDown, Share2 } from "lucide-react";
+import { Loader2, Search, User, ClipboardCheck, Calendar, Info, Check, Clock, UserX, Sparkles, CheckCircle, ChevronDown, Share2, Crown, Trophy, Eye, X } from "lucide-react";
 import { ShareCardModal } from "@/components/share/ShareCardModal";
+import { KumaCelebrationModal } from "@/components/sections/KumaRanking";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -37,6 +38,7 @@ export default function AdminAttendancePage() {
     const [isSaving, setIsSaving] = useState(false);
     const [pressingUserId, setPressingUserId] = useState<string | null>(null);
     const [sharingAthlete, setSharingAthlete] = useState<any | null>(null);
+    const [celebratingAthlete, setCelebratingAthlete] = useState<any | null>(null);
     const [alertModal, setAlertModal] = useState<{
         isOpen: boolean;
         type: "success" | "error";
@@ -238,26 +240,17 @@ export default function AdminAttendancePage() {
         });
     };
 
-    // Handle Daily MVP Toggle (max 1 MVP per day)
+    // Handle Daily MVP Toggle (supports multiple MVPs per day)
     const handleMVPToggle = (userId: string) => {
         setAttendanceMap((prev) => {
-            const updated = { ...prev };
-            const wasMVP = !!updated[userId]?.isMVP;
-            
-            // First, clear isMVP for everyone
-            Object.keys(updated).forEach((uid) => {
-                updated[uid] = {
-                    ...updated[uid],
-                    isMVP: false,
-                };
-            });
-            
-            // If it wasn't MVP before, set this athlete as MVP
-            if (!wasMVP && updated[userId]) {
-                updated[userId].isMVP = true;
-            }
-            
-            return updated;
+            const current = prev[userId] || { status: "Presente", sessions: [], performance: "Standard", isMVP: false };
+            return {
+                ...prev,
+                [userId]: {
+                    ...current,
+                    isMVP: !current.isMVP,
+                }
+            };
         });
     };
 
@@ -418,6 +411,9 @@ export default function AdminAttendancePage() {
                             
         return matchesSearch && matchesStatus && matchesDojo;
     });
+
+    // List of athletes selected as MVP for this date
+    const currentMvpAthletes = athletes.filter((ath) => attendanceMap[ath._id]?.isMVP);
 
     // Helper for OVR Card color themes
     const getFUTStyles = (rating: number) => {
@@ -769,6 +765,184 @@ export default function AdminAttendancePage() {
                     </div>
                 </div>
 
+                {/* ========================================================================= */}
+                {/* SALÓN DE HONOR: TARJETAS DE KUMAS MVP DEL DÍA                             */}
+                {/* ========================================================================= */}
+                {currentMvpAthletes.length > 0 ? (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4 }}
+                        className="bg-gradient-to-r from-amber-950/40 via-zinc-950 to-amber-950/40 border-2 border-amber-500/40 rounded-3xl p-4 sm:p-6 mb-8 shadow-[0_0_35px_rgba(245,158,11,0.2)] relative overflow-hidden backdrop-blur-xl"
+                    >
+                        {/* Halos decorativos de fondo */}
+                        <div className="absolute -top-16 -right-16 w-56 h-56 bg-amber-400/15 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
+
+                        {/* Cabecera del Panel de Tarjetas MVP */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-amber-500/20 pb-4 relative z-10">
+                            <div className="flex items-center gap-3">
+                                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-yellow-400 via-amber-400 to-yellow-600 flex items-center justify-center text-black shadow-lg shadow-yellow-500/30 text-xl font-bold shrink-0">
+                                    👑
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <h2 className="text-lg sm:text-2xl font-serif font-black uppercase tracking-wider text-white">
+                                            Kumas <span className="text-kuma-gold">MVP del Día</span>
+                                        </h2>
+                                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-yellow-400 to-amber-500 text-black shadow-md shadow-amber-400/30">
+                                            {currentMvpAthletes.length} {currentMvpAthletes.length === 1 ? "Atleta de Honor" : "Atletas de Honor"}
+                                        </span>
+                                    </div>
+                                    <p className="text-zinc-400 text-xs font-medium mt-0.5">
+                                        Entrenamiento del <strong className="text-amber-300">{selectedDate}</strong> · Toca cualquier tarjeta para verla en 3D o publicarla en redes sociales.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="text-[10px] font-black uppercase tracking-widest text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3.5 py-1.5 rounded-xl self-start sm:self-auto flex items-center gap-1.5">
+                                <Sparkles className="w-3.5 h-3.5 text-yellow-400 animate-pulse" />
+                                <span>Bono Kaizen + Salón de Honor</span>
+                            </div>
+                        </div>
+
+                        {/* Rejilla de Tarjetas MVP */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 relative z-10">
+                            {currentMvpAthletes.map((ath) => {
+                                const state = attendanceMap[ath._id];
+                                const beltColor = getBeltBadgeColor(ath.athleteProfile.beltRank);
+                                const dojo = ath.athleteProfile?.dojo;
+                                const dojoName = dojo?.name || "DOJO KUMA";
+                                const dojoLogo = dojo?.logo || "/images/kuma-logo.jpg";
+                                const perf = state?.performance || "Standard";
+                                const ovr = Math.round(ath.athleteProfile.stats?.ovr ?? 50);
+
+                                return (
+                                    <motion.div
+                                        key={`mvp-card-${ath._id}`}
+                                        whileHover={{ y: -3, scale: 1.015 }}
+                                        onClick={() => setCelebratingAthlete(ath)}
+                                        className="group relative bg-zinc-900/90 hover:bg-zinc-900 border-2 border-amber-400/50 hover:border-amber-400 rounded-2xl p-4 shadow-xl hover:shadow-[0_0_25px_rgba(250,204,21,0.25)] transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden"
+                                    >
+                                        {/* Golden Light Sweep overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+                                        {/* Floating Crown Badge */}
+                                        <div className="absolute top-2.5 right-2.5 flex items-center gap-1">
+                                            <span className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shadow-md flex items-center gap-1">
+                                                <span>👑</span> MVP
+                                            </span>
+                                        </div>
+
+                                        {/* Avatar & Header */}
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-kuma-gold shadow-[0_0_15px_rgba(212,175,55,0.3)] bg-zinc-950 shrink-0">
+                                                {ath.image ? (
+                                                    <img src={ath.image} alt={ath.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                                                ) : (
+                                                    <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-500 font-serif font-black text-lg">
+                                                        {ath.name?.[0]?.toUpperCase()}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="min-w-0 flex-1">
+                                                <h3 className="text-sm font-serif font-black text-white group-hover:text-kuma-gold transition-colors truncate">
+                                                    {ath.name}
+                                                </h3>
+                                                {ath.athleteProfile?.cc && (
+                                                    <p className="text-[10px] font-black text-amber-400/90 uppercase tracking-wider truncate">
+                                                        &quot;{ath.athleteProfile.cc}&quot;
+                                                    </p>
+                                                )}
+                                                <div className="flex items-center gap-1.5 mt-0.5 text-[9px] text-zinc-400 font-bold truncate">
+                                                    <img src={dojoLogo} alt={dojoName} className="w-3 h-3 rounded-full object-cover shrink-0" />
+                                                    <span className="truncate">{dojoName}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* OVR Pill */}
+                                            <div className="flex flex-col items-center justify-center bg-amber-500/10 border border-amber-500/30 rounded-xl px-2 py-1 shrink-0">
+                                                <span className="text-[7px] font-black text-zinc-400 uppercase tracking-widest leading-none">OVR</span>
+                                                <span className="text-base font-serif font-black text-kuma-gold italic leading-none">{ovr}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Rank Badges & Performance */}
+                                        <div className="flex flex-wrap gap-1.5 items-center mb-3">
+                                            <span className={cn("text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest border", beltColor)}>
+                                                {ath.athleteProfile.beltRank}
+                                            </span>
+                                            <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest bg-yellow-500/10 text-yellow-300 border border-yellow-500/20">
+                                                {perf === "Elite" || perf === "5" ? "Elite 5★" : perf === "Destacado" || perf === "4" ? "Destacado 4★" : "Estándar 3★"}
+                                            </span>
+                                            {state?.sessions && state.sessions.length > 0 && (
+                                                <span className="text-[8px] font-bold text-zinc-400 bg-zinc-800/80 px-2 py-0.5 rounded-full">
+                                                    {state.sessions.join(", ")}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-zinc-800">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setCelebratingAthlete(ath);
+                                                }}
+                                                className="py-1.5 px-2 rounded-lg bg-yellow-500/20 hover:bg-yellow-500/35 text-yellow-300 border border-yellow-500/30 text-[9px] font-black uppercase tracking-wider flex items-center justify-center gap-1 cursor-pointer transition-all active:scale-95"
+                                                title="Ver Tarjeta FUT 3D"
+                                            >
+                                                <Eye className="w-3 h-3 text-kuma-gold" />
+                                                <span>Tarjeta</span>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSharingAthlete(ath);
+                                                }}
+                                                className="py-1.5 px-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/30 text-[9px] font-black uppercase tracking-wider flex items-center justify-center gap-1 cursor-pointer transition-all active:scale-95"
+                                                title="Publicar en WhatsApp y Redes Sociales"
+                                            >
+                                                <Share2 className="w-3 h-3" />
+                                                <span>Publicar</span>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleMVPToggle(ath._id);
+                                                }}
+                                                className="py-1.5 px-1 rounded-lg bg-zinc-800 hover:bg-red-950/40 text-zinc-400 hover:text-red-400 border border-zinc-700/50 hover:border-red-500/40 text-[9px] font-black uppercase tracking-wider flex items-center justify-center gap-0.5 cursor-pointer transition-all active:scale-95"
+                                                title="Quitar distinción MVP de este atleta"
+                                            >
+                                                <X className="w-3 h-3" />
+                                                <span>Quitar</span>
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+                    </motion.div>
+                ) : (
+                    <div className="bg-zinc-950/40 border border-zinc-800/60 rounded-2xl p-3 sm:p-4 mb-6 sm:mb-8 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs">
+                        <div className="flex items-center gap-2.5 text-zinc-400">
+                            <span className="text-lg">👑</span>
+                            <span>
+                                <strong>Kumas MVP del Día:</strong> Puedes definir <strong>más de un MVP por clase</strong> activando el botón 👑 en las tarjetas de los atletas presentes.
+                            </span>
+                        </div>
+                        <span className="text-[9px] uppercase font-black tracking-wider text-kuma-gold bg-kuma-gold/10 px-2.5 py-1 rounded-full border border-kuma-gold/20 shrink-0">
+                            Multiselección Activa
+                        </span>
+                    </div>
+                )}
+
                 {/* Listado de Atletas en Rejilla */}
                 {isLoading ? (
                     <div className="flex flex-col justify-center items-center py-32 gap-4">
@@ -885,12 +1059,19 @@ export default function AdminAttendancePage() {
                                             ? "from-zinc-900/50 via-zinc-950 to-zinc-950" 
                                             : "from-zinc-900 via-zinc-950 to-zinc-950"
                                     )}>
-                                        {/* Avatar / Portrait */}
-                                        <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-zinc-800 shadow-md">
+                                        {/* Avatar / Portrait - Toca para ver su Kuma Card */}
+                                        <div 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setCelebratingAthlete(ath);
+                                            }}
+                                            className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-zinc-800 hover:border-kuma-gold shadow-md cursor-pointer transition-colors group"
+                                            title="Ver Kuma Card de este atleta"
+                                        >
                                             {ath.image ? (
-                                                <img src={ath.image} alt={ath.name} className="object-cover w-full h-full" />
+                                                <img src={ath.image} alt={ath.name} className="object-cover w-full h-full group-hover:scale-105 transition-transform" />
                                             ) : (
-                                                <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-600 font-black text-lg">
+                                                <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-600 group-hover:text-kuma-gold font-black text-lg transition-colors">
                                                     {ath.name?.[0]?.toUpperCase()}
                                                 </div>
                                             )}
@@ -1054,18 +1235,32 @@ export default function AdminAttendancePage() {
                                                         </button>
 
                                                         {athleteState.isMVP && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setSharingAthlete(ath);
-                                                                }}
-                                                                className="px-2 py-1 text-[8px] font-black uppercase tracking-wider rounded-md bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/40 cursor-pointer flex items-center gap-1 leading-none min-h-[22px] active:scale-95 transition-all shadow-sm"
-                                                                title="Publicar este MVP en WhatsApp / Redes Sociales del Dojo"
-                                                            >
-                                                                <Share2 className="w-3 h-3" />
-                                                                <span>Publicar</span>
-                                                            </button>
+                                                            <>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setCelebratingAthlete(ath);
+                                                                    }}
+                                                                    className="px-2 py-1 text-[8px] font-black uppercase tracking-wider rounded-md bg-yellow-500/20 hover:bg-yellow-500/35 text-yellow-300 border border-yellow-500/40 cursor-pointer flex items-center gap-1 leading-none min-h-[22px] active:scale-95 transition-all shadow-sm"
+                                                                    title="Ver la Kuma Card completa en 3D"
+                                                                >
+                                                                    <Sparkles className="w-3 h-3 text-kuma-gold" />
+                                                                    <span>Tarjeta</span>
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setSharingAthlete(ath);
+                                                                    }}
+                                                                    className="px-2 py-1 text-[8px] font-black uppercase tracking-wider rounded-md bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/40 cursor-pointer flex items-center gap-1 leading-none min-h-[22px] active:scale-95 transition-all shadow-sm"
+                                                                    title="Publicar este MVP en WhatsApp / Redes Sociales del Dojo"
+                                                                >
+                                                                    <Share2 className="w-3 h-3" />
+                                                                    <span>Publicar</span>
+                                                                </button>
+                                                            </>
                                                         )}
                                                     </div>
                                                 </div>
@@ -1250,6 +1445,39 @@ export default function AdminAttendancePage() {
                     onClose={() => setSharingAthlete(null)}
                     athlete={sharingAthlete}
                     mode="daily_mvp"
+                />
+
+                {/* 3D Kuma Card Modal for Attendance */}
+                <KumaCelebrationModal
+                    isOpen={!!celebratingAthlete}
+                    onClose={() => setCelebratingAthlete(null)}
+                    athlete={celebratingAthlete}
+                    customTitle={
+                        attendanceMap[celebratingAthlete?._id]?.isMVP ? (
+                            <>Kuma MVP del Día: <span className="text-kuma-gold">{celebratingAthlete?.name}</span> 👑</>
+                        ) : (
+                            <>Ficha Kuma: <span className="text-kuma-gold">{celebratingAthlete?.name}</span> 🥋</>
+                        )
+                    }
+                    customSubtitle={`Entrenamiento del ${selectedDate} · Dojo Kuma`}
+                    onNext={() => {
+                        if (currentMvpAthletes.length <= 1) return;
+                        const currentIdx = currentMvpAthletes.findIndex(a => a._id === celebratingAthlete?._id);
+                        if (currentIdx === -1) return;
+                        const nextIdx = (currentIdx + 1) % currentMvpAthletes.length;
+                        setCelebratingAthlete(currentMvpAthletes[nextIdx]);
+                    }}
+                    onPrev={() => {
+                        if (currentMvpAthletes.length <= 1) return;
+                        const currentIdx = currentMvpAthletes.findIndex(a => a._id === celebratingAthlete?._id);
+                        if (currentIdx === -1) return;
+                        const prevIdx = (currentIdx - 1 + currentMvpAthletes.length) % currentMvpAthletes.length;
+                        setCelebratingAthlete(currentMvpAthletes[prevIdx]);
+                    }}
+                    hasNext={currentMvpAthletes.length > 1 && currentMvpAthletes.some(a => a._id === celebratingAthlete?._id)}
+                    hasPrev={currentMvpAthletes.length > 1 && currentMvpAthletes.some(a => a._id === celebratingAthlete?._id)}
+                    currentIndex={currentMvpAthletes.findIndex(a => a._id === celebratingAthlete?._id)}
+                    totalCount={currentMvpAthletes.length}
                 />
 
             </div>
