@@ -58,7 +58,8 @@ export function ExaminersTableCartoon({
                         src="/images/didactic/wkf_referees_table.jpg"
                         alt="Exámen de Grado"
                         className="w-full h-auto object-cover transform transition-transform duration-500 group-hover:scale-[1.02]"
-                        loading="eager"
+                        loading="lazy"
+                        decoding="async"
                     />
 
                     {/* DEGRADADO SUTIL INFERIOR */}

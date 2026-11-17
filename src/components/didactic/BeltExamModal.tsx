@@ -91,6 +91,18 @@ export function BeltExamModal({
         }
     }, [isOpen, examConfig]);
 
+    // Lock background scroll and pause ambient heavy animations during official belt exams
+    useEffect(() => {
+        if (!isOpen) return;
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        window.dispatchEvent(new CustomEvent("kuma-ambient-pause", { detail: true }));
+        return () => {
+            document.body.style.overflow = originalOverflow;
+            window.dispatchEvent(new CustomEvent("kuma-ambient-pause", { detail: false }));
+        };
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     const questions = examQuestions;

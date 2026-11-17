@@ -189,13 +189,27 @@ export function KoiPondCanvas({
             return 1.0; // Desktop y pantallas amplias
         };
 
+        const isMobileScreen = typeof window !== "undefined" && window.innerWidth <= 768;
+        const isLowEndDevice =
+            typeof navigator !== "undefined" &&
+            (((navigator as any).hardwareConcurrency && (navigator as any).hardwareConcurrency <= 4) ||
+                ((navigator as any).deviceMemory && (navigator as any).deviceMemory <= 4));
+
         const fishes: KoiFish[] = [];
 
         const handleResize = () => {
             if (!canvas) return;
-            dpr = Math.min(window.devicePixelRatio || 1, 2);
-            width = canvas.parentElement ? canvas.parentElement.clientWidth : window.innerWidth;
-            height = canvas.parentElement ? canvas.parentElement.clientHeight : window.innerHeight;
+            const isSmall = window.innerWidth <= 768;
+            const isLowPower = isSmall || isLowEndDevice;
+
+            // En móviles o dispositivos de recursos limitados, dpr = 1 evita saturar memoria VRAM y bus GPU
+            dpr = isLowPower ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+
+            // CRÍTICO: El canvas tiene clase CSS 'fixed inset-0', por lo que su área visible
+            // SIEMPRE es la ventana (viewport). NUNCA usar clientHeight del elemento padre
+            // porque mide más de 15,000px y congelaba celulares de gama de entrada.
+            width = window.innerWidth;
+            height = window.innerHeight;
 
             canvas.width = Math.floor(width * dpr);
             canvas.height = Math.floor(height * dpr);
@@ -469,7 +483,10 @@ export function KoiPondCanvas({
             };
         };
 
-        for (let i = 0; i < fishCount; i++) {
+        // En móviles, 3 o 4 peces dan un espacio Zen mucho más armónico,
+        // visualmente despejado y con máxima aceleración gráfica fluida.
+        const effectiveCount = isMobileScreen ? Math.min(fishCount, 4) : fishCount;
+        for (let i = 0; i < effectiveCount; i++) {
             fishes.push(createFish(i));
         }
 
@@ -772,11 +789,83 @@ export function KoiPondCanvas({
         window.addEventListener("touchstart", onPointerDown, { passive: true });
 
         // ====================================================================
+        // GESTIÓN DE PAUSA INTELIGENTE & LIMITADOR DE FPS ADAPTATIVO
+        // ====================================================================
+        let isPaused = false;
+        let manualEcoPause = false;
+        if (typeof window !== "undefined") {
+            try {
+                manualEcoPause = localStorage.getItem("kuma_didactic_eco_mode") === "true";
+            } catch {}
+        }
+
+        const updatePauseState = () => {
+            const isDocHidden = typeof document !== "undefined" && document.visibilityState === "hidden";
+            const isModalOpen = typeof document !== "undefined" && (
+                document.body.style.overflow === "hidden" ||
+                Boolean(document.querySelector(".didactic-modal-active"))
+            );
+            const shouldPause = isDocHidden || isModalOpen || manualEcoPause;
+            if (shouldPause !== isPaused) {
+                isPaused = shouldPause;
+                if (!isPaused) {
+                    lastFrameTime = performance.now();
+                }
+            }
+        };
+
+        const onVisibilityChange = () => {
+            updatePauseState();
+        };
+        document.addEventListener("visibilitychange", onVisibilityChange);
+
+        const onAmbientPause = (e: Event) => {
+            const customEvt = e as CustomEvent<boolean>;
+            if (typeof customEvt.detail === "boolean") {
+                manualEcoPause = customEvt.detail;
+            }
+            updatePauseState();
+        };
+        window.addEventListener("kuma-ambient-pause", onAmbientPause as EventListener);
+
+        const onEcoToggle = (e: Event) => {
+            const customEvt = e as CustomEvent<boolean>;
+            if (typeof customEvt.detail === "boolean") {
+                manualEcoPause = customEvt.detail;
+            }
+            updatePauseState();
+        };
+        window.addEventListener("kuma-eco-toggle", onEcoToggle as EventListener);
+
+        // ====================================================================
         // BUCLE PRINCIPAL DE ANIMACIÓN
         // ====================================================================
         let tick = 0;
+        let checkPauseTick = 0;
+        let lastFrameTime = typeof performance !== "undefined" ? performance.now() : Date.now();
+        // En móviles o equipos de pocos núcleos: 36 FPS estables (máxima fluidez y 50% menos consumo de CPU/batería)
+        // En desktop: 60 FPS
+        const targetFPS = isMobileScreen || isLowEndDevice ? 36 : 60;
+        const frameInterval = 1000 / targetFPS;
 
-        const render = () => {
+        const render = (currentTime: number = performance.now()) => {
+            animationFrameId = requestAnimationFrame(render);
+
+            checkPauseTick++;
+            if (checkPauseTick % 25 === 0) {
+                updatePauseState();
+            }
+
+            if (isPaused) {
+                return;
+            }
+
+            const delta = currentTime - lastFrameTime;
+            if (delta < frameInterval) {
+                return; // Omitir cuadro para mantener tasa de refresco suave y fría
+            }
+            lastFrameTime = currentTime - (delta % frameInterval);
+
             tick++;
 
             ctx.clearRect(0, 0, width, height);
@@ -1481,8 +1570,12 @@ export function KoiPondCanvas({
             // 5. COLORACIÓN SUBACUÁTICA & HALO LUMINOSO DE PROFUNDIDAD
             // ----------------------------------------------------------------
             // Halo de agua etéreo (Soft Underwater Bloom)
-            c.shadowColor = fish.glowColor;
-            c.shadowBlur = 14 * fish.depth;
+            if (!isMobileScreen && !isLowEndDevice) {
+                c.shadowColor = fish.glowColor;
+                c.shadowBlur = 14 * fish.depth;
+            } else {
+                c.shadowBlur = 0;
+            }
 
             c.fillStyle = fish.baseColor;
             c.fill();
@@ -2401,6 +2494,9 @@ export function KoiPondCanvas({
             window.removeEventListener("mousedown", onPointerDown);
             window.removeEventListener("touchmove", onPointerMove);
             window.removeEventListener("touchstart", onPointerDown);
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+            window.removeEventListener("kuma-ambient-pause", onAmbientPause as EventListener);
+            window.removeEventListener("kuma-eco-toggle", onEcoToggle as EventListener);
         };
     }, [fishCount]);
 

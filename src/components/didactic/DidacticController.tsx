@@ -47,6 +47,25 @@ export function DidacticController() {
     const [activeLesson, setActiveLesson] = useState<Level | null>(null);
     const loadedUserKeyRef = useRef<string | null>(null);
 
+    // Modo Rendimiento / Eco Fluido para dispositivos móviles y ahorro de batería
+    const [isEcoMode, setIsEcoMode] = useState<boolean>(() => {
+        if (typeof window === "undefined") return false;
+        try {
+            return localStorage.getItem("kuma_didactic_eco_mode") === "true";
+        } catch {
+            return false;
+        }
+    });
+
+    const toggleEcoMode = () => {
+        const next = !isEcoMode;
+        setIsEcoMode(next);
+        try {
+            localStorage.setItem("kuma_didactic_eco_mode", next ? "true" : "false");
+        } catch {}
+        window.dispatchEvent(new CustomEvent("kuma-eco-toggle", { detail: next }));
+    };
+
     // Kuma Sensei Absence Greeting & Simulation States
     const [isGreetingOpen, setIsGreetingOpen] = useState(false);
     const [simulatedDays, setSimulatedDays] = useState<number | null>(null);
@@ -585,6 +604,24 @@ export function DidacticController() {
 
                     {/* APP INSTALL BUTTON */}
                     <InstallAppButton variant="pill" />
+
+                    {/* PERFORMANCE / ECO MODE TOGGLE BUTTON */}
+                    <button
+                        onClick={toggleEcoMode}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer border ${
+                            isEcoMode
+                                ? "border-emerald-500/60 bg-emerald-950/70 text-emerald-300"
+                                : "border-slate-700/60 bg-slate-900/60 hover:bg-slate-800/80 text-slate-300 hover:text-white"
+                        }`}
+                        title={
+                            isEcoMode
+                                ? "Modo Fluido Activo (Ahorro de batería y recursos). Haz clic para reactivar efectos completos."
+                                : "Haz clic para activar el Modo Fluido / Ahorro de Recursos en celulares"
+                        }
+                    >
+                        <span>{isEcoMode ? "🍃" : "⚡"}</span>
+                        <span className="hidden sm:inline">{isEcoMode ? "Modo Fluido" : "Efectos Zen"}</span>
+                    </button>
 
                     {/* SUPER ADMIN SIMULATOR PILL */}
                     {isSuperAdmin && (

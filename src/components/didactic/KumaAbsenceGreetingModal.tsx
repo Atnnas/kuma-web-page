@@ -52,8 +52,10 @@ export function KumaAbsenceGreetingModal({
 
         const prevOverflow = document.body.style.overflow;
         document.body.style.overflow = "hidden";
+        window.dispatchEvent(new CustomEvent("kuma-ambient-pause", { detail: true }));
         return () => {
             document.body.style.overflow = prevOverflow;
+            window.dispatchEvent(new CustomEvent("kuma-ambient-pause", { detail: false }));
         };
     }, [isOpen, daysAbsent]);
 
